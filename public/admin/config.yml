@@ -1,0 +1,30 @@
+backend:
+  name: github
+  repo: abdulazizalhaaj728-del/tech-dalil
+  branch: main
+  client_id: "fc1db86c878f6eaf97fe86d467a768a90f0885dc"
+
+media_folder: "public/images"
+public_folder: "/images"
+
+collections:
+  - name: "blog"
+    label: "المقالات التقنية"
+    folder: "src/content/blog"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "العنوان", name: "title", widget: "string"}
+      - {label: "تاريخ النشر", name: "date", widget: "datetime"}
+      - {label: "الوصف المختصر", name: "description", widget: "text"}
+      - {label: "الصورة البارزة", name: "image", widget: "image", required: false}
+      - {label: "محتوى المقال", name: "body", widget: "markdown"}
+
+  - name: "pages"
+    label: "الصفحات الثابتة (سياسة الخصوصية وغيرها)"
+    folder: "src/content/pages"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "عنوان الصفحة", name: "title", widget: "string"}
+      - {label: "محتوى الصفحة", name: "body", widget: "markdown"}

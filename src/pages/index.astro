@@ -1,0 +1,488 @@
+---
+import { getCollection } from 'astro:content';
+// استيراد ملف الإعدادات الأساسي بدون تكرار الأسماء المتضاربة
+import settings from '../data/settings.json';
+
+// جلب المقالات من مجموعة 'blog' وترتيبها تنازلياً حسب التاريخ
+const posts = await getCollection('blog');
+posts.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
+
+// استخراج التصنيفات الفريدة للمقالات
+const categories = [...new Set(posts.map(p => p.data.category).filter(Boolean))];
+---
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&family=Readex+Pro:wght@400;600&family=Changa:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* إخفاء أيقونة وشريط أدوات أسترو العائم نهائياً من الشاشة */
+        astro-dev-toolbar {
+            display: none !important;
+        }
+
+        :root {
+            --primary-color: #0284c7;
+            --accent-color: #f59e0b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: var(--active-font, 'Cairo', sans-serif) !important;
+            background-color: var(--bg-color, #0f172a);
+            color: var(--text-main, #f8fafc);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --accent-color: #0284c7; --border-color: #334155; }
+        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --accent-color: #38bdf8; --border-color: #1d4ed8; }
+        body.theme-blue-2 { --bg-color: #020617; --card-bg: #090d16; --text-main: #e2e8f0; --text-muted: #93c5fd; --accent-color: #60a5fa; --border-color: #2563eb; }
+        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --accent-color: #e04885; --border-color: #5c2438; }
+        body.theme-pink-1 { --bg-color: #1f0212; --card-bg: #3b0724; --text-main: #fdf2f8; --text-muted: #f472b6; --accent-color: #f472b6; --border-color: #9d174d; }
+        body.theme-pink-2 { --bg-color: #260216; --card-bg: #4c0528; --text-main: #fff1f2; --text-muted: #fda4af; --accent-color: #fb7185; --border-color: #be123c; }
+        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --accent-color: #b86b3a; --border-color: #593f2b; }
+        body.theme-wood-1 { --bg-color: #1a1208; --card-bg: #362512; --text-main: #fef3c7; --text-muted: #fcd34d; --accent-color: #f59e0b; --border-color: #73512e; }
+        body.theme-wood-2 { --bg-color: #21160a; --card-bg: #47321a; --text-main: #fffbeb; --text-muted: #fde68a; --accent-color: #fbbf24; --border-color: #8c6338; }
+        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --accent-color: #10b981; --border-color: #065f46; }
+        body.theme-green-1 { --bg-color: #022c22; --card-bg: #064e3b; --text-main: #f0fdf4; --text-muted: #86efac; --accent-color: #34d399; --border-color: #047857; }
+        body.theme-green-2 { --bg-color: #064e3b; --card-bg: #065f46; --text-main: #d1fae5; --text-muted: #a7f3d0; --accent-color: #6ee7b7; --border-color: #059669; }
+        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --accent-color: #8b5cf6; --border-color: #5b21b6; }
+        body.theme-purple-1 { --bg-color: #1e1b4b; --card-bg: #312e81; --text-main: #e0e7ff; --text-muted: #a5b4fc; --accent-color: #a78bfa; --border-color: #4338ca; }
+        body.theme-purple-2 { --bg-color: #2e1065; --card-bg: #4c1d95; --text-main: #ede9fe; --text-muted: #ddd6fe; --accent-color: #c4b5fd; --border-color: #6d28d9; }
+
+        body.light-mode {
+            --bg-color: #f1f5f9 !important;
+            --card-bg: #ffffff !important;
+            --text-main: #0f172a !important;
+            --text-muted: #475569 !important;
+            --border-color: #cbd5e1 !important;
+        }
+
+        .top-bar {
+            background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 8px 20px;
+            display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;
+            max-width: 1200px; width: 100%; margin: 0 auto; border-radius: 0 0 8px 8px;
+        }
+        .top-pages { display: flex; gap: 15px; }
+        .top-pages a { color: var(--text-muted); text-decoration: none; }
+        .top-pages a:hover { color: var(--primary-color); }
+
+        .top-controls { display: flex; align-items: center; gap: 10px; }
+        .control-btn {
+            background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main);
+            padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;
+        }
+        .control-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+        .color-switcher-group {
+            display: flex; align-items: center; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;
+        }
+        .color-switcher-group button { background: transparent; border: none; color: var(--text-main); padding: 5px 8px; cursor: pointer; font-size: 0.75rem; }
+        .color-switcher-group button:hover { color: var(--accent-color); background: rgba(255,255,255,0.05); }
+        .color-center-icon { padding: 0 4px; font-size: 0.8rem; color: var(--accent-color); display: flex; align-items: center; }
+
+        header {
+            background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);
+            border-bottom: 2px solid var(--primary-color); padding: 20px;
+            display: grid; grid-template-columns: 200px 1fr 250px; align-items: center; gap: 15px;
+            max-width: 1200px; width: 100%; margin: 10px auto 0; border-radius: 10px; border: 1px solid var(--border-color);
+        }
+        @media(max-width: 900px) { header { grid-template-columns: 1fr; text-align: center; } }
+        .header-center h1 { font-size: 2.2rem; font-weight: 900; color: var(--text-main); }
+        .header-center h1 span { color: var(--primary-color); }
+        .header-center p { color: var(--text-muted); font-size: 0.95rem; }
+        
+        .header-logo img {
+            max-height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .slider-wrapper { max-width: 1200px; width: 100%; margin: 15px auto 0; padding: 0 15px; }
+        .main-slider { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 20px; position: relative; min-height: 180px; display: flex; flex-direction: column; justify-content: center; }
+        .slide-item { display: none; text-align: center; }
+        .slide-item.active { display: block; animation: fadeIn 0.5s ease; }
+        .slide-item h3 { color: var(--accent-color); font-size: 1.4rem; margin-bottom: 10px; }
+        .slide-item p { color: var(--text-muted); font-size: 1rem; margin-bottom: 15px; }
+        .slide-btn { display: inline-block; padding: 6px 16px; background: var(--primary-color); color: #fff; text-decoration: none; border-radius: 6px; font-size: 0.85rem; }
+        .slider-controls { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; display: flex; justify-content: space-between; padding: 0 10px; pointer-events: none; }
+        .slider-arrow { background: rgba(0,0,0,0.5); color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; pointer-events: auto; display: flex; align-items: center; justify-content: center; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .ticker-wrapper { max-width: 1200px; width: 100%; margin: 15px auto 0; padding: 0 15px; }
+        .ticker-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 15px; display: flex; align-items: center; }
+        .ticker-title { background: var(--accent-color); color: #000; padding: 5px 12px; font-size: 0.85rem; font-weight: 700; border-radius: 4px; margin-left: 15px; flex-shrink: 0; }
+        .ticker-viewport { overflow: hidden; width: 100%; position: relative; height: 24px; }
+        .ticker-content { display: inline-block; position: absolute; white-space: nowrap; animation: tickerSmooth 25s linear infinite; font-size: 0.9rem; color: var(--text-main); right: 0; }
+        .ticker-content a { margin-left: 35px; text-decoration: none; color: inherit; }
+        @keyframes tickerSmooth { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
+
+        .main-menu-bar { max-width: 1200px; width: 100%; margin: 15px auto 0; padding: 0 15px; position: sticky; top: 0; z-index: 999; }
+        .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .mega-menu li a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
+        .mega-menu li a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
+
+        .three-columns-grid { max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 15px; display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+        @media (max-width: 950px) { .three-columns-grid { grid-template-columns: 1fr; } }
+
+        .left-sticky-sidebar { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; position: sticky; top: 70px; }
+        .sidebar-widget { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+        .sidebar-widget h3 { color: var(--accent-color); font-size: 0.95rem; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
+        .sidebar-widget ul { list-style: none; }
+        .sidebar-widget ul li { padding: 6px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; }
+        .sidebar-widget ul li a { text-decoration: none; color: inherit; }
+        .sidebar-widget ul li a:hover { color: var(--accent-color); }
+
+        .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+        .post-title a { font-size: 1.15rem; font-weight: 700; color: var(--accent-color); text-decoration: none; }
+        .post-meta { font-size: 0.8rem; color: var(--text-muted); margin: 8px 0; display: flex; gap: 15px; }
+        .post-excerpt { font-size: 0.9rem; color: var(--text-main); line-height: 1.6; margin-bottom: 10px; }
+        .read-more-btn { color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem; }
+
+        footer { 
+            background: var(--card-bg); border-top: 3px solid var(--primary-color); 
+            padding: 40px 20px 35px; margin: 40px auto 0; max-width: 1200px; width: 100%; 
+            border-radius: 12px 12px 0 0; 
+        }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-bottom: 30px; }
+        @media(max-width: 900px) { .footer-content { grid-template-columns: repeat(2, 1fr); } }
+        .footer-box h3 { color: var(--primary-color); font-size: 0.95rem; margin-bottom: 10px; border-bottom: 1px dashed var(--border-color); padding-bottom: 5px; }
+        .footer-box p, .footer-box ul { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; list-style: none; }
+        .footer-box ul li { margin-bottom: 5px; }
+        .footer-box ul li a { color: var(--text-muted); text-decoration: none; }
+        .footer-bottom { 
+            text-align: center; border-top: 1px solid var(--border-color); 
+            padding-top: 20px; font-size: 0.85rem; color: var(--text-muted); 
+        }
+        #secret-trigger {
+            cursor: pointer;
+            display: inline-block;
+            padding: 0 4px;
+            user-select: none;
+        }
+    </style>
+</head>
+<body class="theme-default">
+
+    <div class="top-bar">
+        <div class="top-pages">
+            <a href="/"><i class="fa-solid fa-house"></i> الرئيسية</a>
+            <a href="/about">عن الموقع</a>
+        </div>
+        <div class="top-controls">
+            <div class="color-switcher-group" title="تنقل بين الألوان والثيمات">
+                <button id="prev-theme-btn" title="اللون السابق"><i class="fa-solid fa-chevron-right"></i></button>
+                <span class="color-center-icon"><i class="fa-solid fa-palette"></i></span>
+                <button id="next-theme-btn" title="اللون التالي"><i class="fa-solid fa-chevron-left"></i></button>
+            </div>
+            <button class="control-btn" id="font-toggle-btn" title="تغيير الخط"><i class="fa-solid fa-font"></i> الخط</button>
+            <button class="control-btn" id="dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-logo" id="header-logo-container">
+            <h2 style="color:var(--primary-color); font-weight: 900;" id="logo-text">تكنو-دليل</h2>
+        </div>
+        <div class="header-center">
+            <h1 id="site-main-heading">تكنو-<span>دليل</span></h1>
+            <p id="site-tagline">بوابة الحلول الرقمية والتقنية المبتكرة</p>
+        </div>
+        <div class="header-ad-banner" style="display:flex; align-items:center; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:10px; padding:8px;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);" id="header-notice">💡 إضاءة تقنية يومية ومقالات متجددة باستمرار.</span>
+        </div>
+    </header>
+
+    <div class="slider-wrapper">
+        <div class="main-slider" id="home-slider">
+            <div class="slide-item active">
+                <h3>مرحباً بك في مدونة تكنو-دليل</h3>
+                <p>اكتشف أحدث المقالات التقنية، الشروحات البرمجية، وحلول الأنظمة الذكية.</p>
+                <a href="#posts-container" class="slide-btn">تصفح المقالات</a>
+            </div>
+            <div class="slide-item">
+                <h3>دليلك المتكامل للذكاء الاصطناعي</h3>
+                <p>تابع معنا أحدث أدوات الإنتاجية وتقنيات المستقبل الرقمي.</p>
+                <a href="#posts-container" class="slide-btn">استكشف القسم</a>
+            </div>
+            <div class="slider-controls">
+                <button class="slider-arrow" id="prev-slide"><i class="fa-solid fa-chevron-right"></i></button>
+                <button class="slider-arrow" id="next-slide"><i class="fa-solid fa-chevron-left"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="ticker-wrapper">
+        <div class="ticker-container">
+            <div class="ticker-title">شريط الإعلانات</div>
+            <div class="ticker-viewport">
+                <div class="ticker-content">
+                    {posts.map((post) => (
+                        <a href={`/blog/${post.id}`}>• {post.data.title}</a>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-menu-bar">
+        <ul class="mega-menu" id="dynamic-mega-menu">
+            <li><a href="/"><i class="fa-solid fa-house"></i> الرئيسية</a></li>
+            {categories.map((cat) => (
+                <li><a href={`/#`}>{cat}</a></li>
+            ))}
+        </ul>
+    </div>
+
+    <div class="three-columns-grid">
+        <div class="right-scrollable-section" id="posts-container">
+            <h3 style="font-size: 1.1rem; color: var(--primary-color); margin-bottom: 15px;">📚 أحدث المقالات والتدوينات:</h3>
+            {posts.length === 0 ? (
+                <div class="post-card"><div class="post-title">لا توجد مقالات منشورة حالياً</div></div>
+            ) : (
+                posts.map((post) => (
+                    <div class="post-card">
+                        <div class="post-title">
+                            <a href={`/blog/${post.id}`}>{post.data.title}</a>
+                        </div>
+                        <div class="post-meta">
+                            <span>📅 {post.data.date}</span> | <span>📁 {post.data.category || 'عام'}</span>
+                        </div>
+                        <div class="post-excerpt">{post.data.description}</div>
+                        <a class="read-more-btn" href={`/blog/${post.id}`}>للقراءة أكثر ←</a>
+                    </div>
+                ))
+            )}
+        </div>
+
+        <div class="left-sticky-sidebar" id="dynamic-sidebar">
+            <div class="sidebar-widget">
+                <h3>📌 التصنيفات</h3>
+                <ul>
+                    {categories.map((cat) => (
+                        <li><a href="#">• {cat}</a></li>
+                    ))}
+                </ul>
+            </div>
+            <div class="sidebar-widget">
+                <h3>🔥 الأكثر إطلاعاً</h3>
+                <ul>
+                    {posts.slice(0, 3).map((p) => (
+                        <li><a href={`/blog/${p.id}`}>• {p.data.title}</a></li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content" id="dynamic-footer-content">
+            <div class="footer-box">
+                <h3>عن تكنو-دليل</h3>
+                <p>نعمل على إثراء المحتوى التقني العربي وتقديم أفضل الحلول البرمجية والشاملة.</p>
+            </div>
+            <div class="footer-box">
+                <h3>روابط سريعة</h3>
+                <ul>
+                    <li><a href="/">الصفحة الرئيسية</a></li>
+                    <li><a href="#">سياسة الخصوصية</a></li>
+                </ul>
+            </div>
+            <div class="footer-box">
+                <h3>التصنيفات</h3>
+                <ul>
+                    {categories.slice(0, 3).map(c => <li><a href="#">{c}</a></li>)}
+                </ul>
+            </div>
+            <div class="footer-box">
+                <h3>تواصل معنا</h3>
+                <p>يسعدنا تواصلكم المستمر عبر منصاتنا الرقمية.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            جميع الحقوق محفوظة <span id="secret-trigger" title="©">©</span> 2026 - تكنو-دليل
+        </div>
+    </footer>
+
+    <script>
+        // قراءة الإعدادات العامة المحفوظة من لوحة التحكم (إن وجدت)
+        window.addEventListener('DOMContentLoaded', () => {
+            // 1. تطبيق إعدادات الهيدر والعنوان والشعار
+            const savedSettings = localStorage.getItem('tech_site_settings');
+            if (savedSettings) {
+                try {
+                    const settings = JSON.parse(savedSettings);
+                    if (settings.siteName) {
+                        document.getElementById('site-title').innerText = settings.siteName + " | المدونة التقنية";
+                        document.getElementById('logo-text').innerText = settings.siteName;
+                        document.getElementById('site-main-heading').innerHTML = settings.siteName.includes('-') ? 
+                            settings.siteName.split('-')[0] + '-<span>' + settings.siteName.split('-')[1] + '</span>' : 
+                            settings.siteName;
+                    }
+                    if (settings.tagline) {
+                        document.getElementById('site-tagline').innerText = settings.tagline;
+                    }
+                    if (settings.logoUrl) {
+                        document.getElementById('header-logo-container').innerHTML = `<img src="${settings.logoUrl}" alt="شعار الموقع">`;
+                    }
+                } catch(e) { console.error("خطأ في قراءة إعدادات الموقع:", e); }
+            }
+
+            // 2. تطبيق إعدادات القوائم (Navigation Menus) المحفوظة
+            const savedMenus = localStorage.getItem('tech_menus');
+            if (savedMenus) {
+                try {
+                    const menus = JSON.parse(savedMenus);
+                    if (Array.isArray(menus) && menus.length > 0) {
+                        const menuContainer = document.getElementById('dynamic-mega-menu');
+                        menuContainer.innerHTML = menus.map(m => `<li><a href="${m.url}"><i class="${m.icon || 'fa-solid fa-link'}"></i> ${m.title}</a></li>`).join('');
+                    }
+                } catch(e) { console.error("خطأ في قراءة القوائم:", e); }
+            }
+
+            // 3. تطبيق إعدادات الودجات الجانبية (Sidebar Widgets)
+            const savedWidgets = localStorage.getItem('tech_widgets');
+            if (savedWidgets) {
+                try {
+                    const widgets = JSON.parse(savedWidgets);
+                    if (Array.isArray(widgets) && widgets.length > 0) {
+                        const sidebarContainer = document.getElementById('dynamic-sidebar');
+                        // تصفية الودجات المفعلة فقط مرتبة حسب الترتيب
+                        const activeWidgets = widgets.filter(w => w.active !== false);
+                        sidebarContainer.innerHTML = activeWidgets.map(w => `
+                            <div class="sidebar-widget">
+                                <h3>${w.title}</h3>
+                                <div>${w.content || ''}</div>
+                            </div>
+                        `).join('');
+                    }
+                } catch(e) { console.error("خطأ في قراءة الودجات:", e); }
+            }
+        });
+
+        const fontsList = [
+            "'Cairo', sans-serif",
+            "'Tajawal', sans-serif",
+            "'Almarai', sans-serif",
+            "'Readex Pro', sans-serif",
+            "'Changa', sans-serif",
+            "'Amiri', serif"
+        ];
+        let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
+        
+        document.getElementById('font-toggle-btn').addEventListener('click', () => {
+            currentFontIdx = (currentFontIdx + 1) % fontsList.length;
+            document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
+            localStorage.setItem('tech_font_idx', currentFontIdx);
+        });
+        document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
+
+        const themesList = [
+            'theme-default', 'theme-blue-1', 'theme-blue-2',
+            'theme-pink', 'theme-pink-1', 'theme-pink-2',
+            'theme-wood', 'theme-wood-1', 'theme-wood-2',
+            'theme-green', 'theme-green-1', 'theme-green-2',
+            'theme-purple', 'theme-purple-1', 'theme-purple-2'
+        ];
+        let currentThemeIdx = localStorage.getItem('tech_theme_idx') ? parseInt(localStorage.getItem('tech_theme_idx')) : 0;
+
+        function applyTheme(idx) {
+            document.body.classList.remove('light-mode');
+            themesList.forEach(t => document.body.classList.remove(t));
+            document.body.classList.add(themesList[idx]);
+            localStorage.setItem('tech_theme_idx', idx);
+        }
+
+        document.getElementById('next-theme-btn').addEventListener('click', () => {
+            currentThemeIdx = (currentThemeIdx + 1) % themesList.length;
+            applyTheme(currentThemeIdx);
+        });
+
+        document.getElementById('prev-theme-btn').addEventListener('click', () => {
+            currentThemeIdx = (currentThemeIdx - 1 + themesList.length) % themesList.length;
+            applyTheme(currentThemeIdx);
+        });
+
+        applyTheme(currentThemeIdx);
+
+        const darkModeBtn = document.getElementById('dark-mode-btn');
+        darkModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
+            darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        });
+        if(localStorage.getItem('tech_light_mode') === '1') {
+            document.body.classList.add('light-mode');
+            darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        }
+
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide-item');
+        function showSlide(idx) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[idx].classList.add('active');
+        }
+        document.getElementById('next-slide').addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        });
+        document.getElementById('prev-slide').addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        });
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }, 5000);
+
+        // فتح لوحة التحكم بالضغط على رمز الـ C حصراً
+        document.getElementById('secret-trigger').addEventListener('click', (e) => {
+            e.preventDefault();
+            const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
+            if(pass === "aziz728") {
+                window.location.href = "admin.html";
+            } else if(pass !== null) {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        });
+
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+            const NPOINT_URL = "https://api.npoint.io/7f8f7e39574c63df8ef6";
+
+            try {
+                const response = await fetch(NPOINT_URL);
+                if (!response.ok) throw new Error("فشل الاتصال");
+                
+                const data = await response.json();
+
+                // تطبيق البيانات عندما تكون جاهزة
+                if (data.logo && data.logo.siteTitle) {
+                    document.title = data.logo.siteTitle;
+                    const titleEl = document.querySelector('.site-title');
+                    if (titleEl) titleEl.textContent = data.logo.siteTitle;
+                }
+
+                // يمكنك إضافة بقية دوال التحديث هنا بنفس الطريقة
+                console.log("تم جلب إعدادات الموقع بنجاح من السحاب!");
+
+            } catch (error) {
+                console.error("خطأ في جلب بيانات الموقع:", error);
+            }
+        });
+
+    </script>
+</body>
+</html>
