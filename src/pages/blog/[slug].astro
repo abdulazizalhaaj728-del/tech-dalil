@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+
+// هذه الدالة تخبر Astro بكل المقالات الموجودة لإنشاء صفحة لكل مقال
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    // إذا وجدنا slug مخصصاً في بيانات المقالة نستخدمه، وإلا فنعتمد معرّف الملف التلقائي (post.id أو post.slug)
+    params: { slug: post.data.slug || post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>{post.data.title}</title>
+    <meta name="description" content={post.data.description}>
+</head>
+<body>
+    <main style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        <a href="/">&larr; العودة للرئيسية</a>
+        <h1>{post.data.title}</h1>
+        <p style="color: #666;"><small>{new Date(post.data.date).toLocaleDateString('ar')}</small></p>
+        
+        {post.data.image && <img src={post.data.image} alt={post.data.title} style="max-width: 100%; height: auto;" />}
+        
+        <hr style="margin: 2rem 0;" />
+        
+        <article>
+            <Content />
+        </article>
+    </main>
+</body>
+</html>
