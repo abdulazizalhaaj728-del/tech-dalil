@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة[cite: 7]</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&family=Readex+Pro:wght@400;600&family=Changa:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #0284c7;
+            --accent-color: #f59e0b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: var(--active-font, 'Cairo', sans-serif) !important;
+            background-color: var(--bg-color, #0f172a);
+            color: var(--text-main, #f8fafc);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* الثيمات والألوان */
+        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --accent-color: #0284c7; --border-color: #334155; }
+        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --accent-color: #38bdf8; --border-color: #1d4ed8; }
+        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --accent-color: #e04885; --border-color: #5c2438; }
+        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --accent-color: #b86b3a; --border-color: #593f2b; }
+        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --accent-color: #10b981; --border-color: #065f46; }
+        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --accent-color: #8b5cf6; --border-color: #5b21b6; }
+
+        body.light-mode {
+            --bg-color: #f1f5f9 !important;
+            --card-bg: #ffffff !important;
+            --text-main: #0f172a !important;
+            --text-muted: #475569 !important;
+            --border-color: #cbd5e1 !important;
+        }
+
+        /* شريط التحكم العلوي */
+        .top-bar {
+            background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 8px 20px;
+            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-size: 0.85rem;
+            max-width: 1200px; width: 100%; margin: 0 auto; border-radius: 0 0 8px 8px;
+        }
+        .top-pages { display: flex; gap: 12px; justify-content: flex-start; }
+        .top-pages a { color: var(--text-muted); text-decoration: none; font-size: 0.8rem; }
+        .top-pages a:hover { color: var(--primary-color); }
+
+        .top-controls { display: flex; align-items: center; gap: 10px; justify-content: center; }
+        .control-btn {
+            background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main);
+            padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;
+        }
+        .color-switcher-group {
+            display: flex; align-items: center; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;
+        }
+        .color-switcher-group button { background: transparent; border: none; color: var(--text-main); padding: 5px 8px; cursor: pointer; font-size: 0.75rem; }
+        .color-center-icon { padding: 0 4px; font-size: 0.8rem; color: var(--accent-color); }
+
+        /* أزرار السوشيال ميديا في الطرف الأيسر */
+        .top-social { display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
+        .top-social a { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; transition: color 0.2s; }
+        .top-social a:hover { color: var(--accent-color); }
+
+        /* الترويسة الرئيسية */
+        header {
+            background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);
+            border-bottom: 2px solid var(--primary-color); padding: 20px;
+            display: grid; grid-template-columns: 200px 1fr 200px; align-items: center; gap: 15px;
+            max-width: 1200px; width: 100%; margin: 10px auto 0; border-radius: 10px; border: 1px solid var(--border-color);
+        }
+        .header-logo { display: flex; align-items: center; justify-content: flex-start; }
+        .header-logo img { max-height: 55px; width: auto; object-fit: contain; }
+        
+        .header-center { text-align: center; }
+        .header-center h1 { font-size: 2.2rem; font-weight: 900; color: var(--text-main); }
+        .header-center h1 span { color: var(--primary-color); }
+        .header-center p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* الشريط الإخباري */
+        .ticker-wrapper { max-width: 1200px; width: 100%; margin: 15px auto 0; padding: 0 15px; }
+        .ticker-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 15px; display: flex; align-items: center; }
+        .ticker-title { background: var(--accent-color); color: #000; padding: 3px 10px; font-size: 0.8rem; font-weight: 700; border-radius: 4px; margin-left: 15px; flex-shrink: 0; }
+        .ticker-content { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* القائمة الرئيسية */
+        .main-menu-bar { max-width: 1200px; width: 100%; margin: 10px auto 0; padding: 0 15px; position: sticky; top: 0; z-index: 999; }
+        .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; }
+        .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
+        .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
+
+        .three-columns-grid { max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 15px; display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+        @media (max-width: 950px) { .three-columns-grid { grid-template-columns: 1fr; } header { grid-template-columns: 1fr; text-align: center; } .header-logo { justify-content: center; } }
+
+        .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+        .post-title a { font-size: 1.15rem; font-weight: 700; color: var(--accent-color); text-decoration: none; }
+        .post-meta { font-size: 0.8rem; color: var(--text-muted); margin: 8px 0; display: flex; gap: 15px; }
+        .post-excerpt { font-size: 0.9rem; color: var(--text-main); line-height: 1.6; margin-bottom: 10px; }
+        
+        /* تنسيقات عرض المقال المنفرد داخل نفس كارد المدونة الأصلي */
+        .single-post-content { font-size: 1.05rem; color: var(--text-main); line-height: 1.8; margin-top: 15px; }
+        .single-post-content p { margin-bottom: 15px; }
+
+        /* تنسيقات الودجات */
+        .widget-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 15px; }
+        .widget-title { color: var(--accent-color); font-size: 1rem; margin-bottom: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 5px; }
+        .recent-posts-list { list-style: none; padding: 0; }
+        .recent-posts-list li { margin-bottom: 6px; font-size: 0.85rem; }
+        .recent-posts-list li a { color: var(--text-main); text-decoration: none; }
+        .recent-posts-list li a:hover { color: var(--accent-color); }
+
+        .site-footer { max-width: 1200px; width: 100%; margin: 40px auto 20px; padding: 0 15px; }
+        .footer-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
+        .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
+    </style>
+</head>
+<body class="theme-default">
+
+    <!-- مكان إعلانات أعلى الصفحة -->
+    <div id="site-ad-top" style="max-width: 1200px; margin: 10px auto; text-align: center;"></div>
+
+    <!-- شريط التحكم العلوي -->
+    <div class="top-bar">
+        <div class="top-pages">
+            <a href="privacy.html">خصوصية</a>
+            <a href="terms.html">شروط</a>
+            <a href="about.html">من نحن</a>
+            <a href="contact.html">اتصل بنا</a>
+        </div>
+        
+        <div class="top-controls">
+            <div class="color-switcher-group">
+                <button id="prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
+                <span class="color-center-icon"><i class="fa-solid fa-palette"></i></span>
+                <button id="next-theme-btn" title="الثيم التالي"><i class="fa-solid fa-chevron-left"></i></button>
+            </div>
+            <button class="control-btn" id="font-toggle-btn" title="تغيير الخط"><i class="fa-solid fa-font"></i> الخط</button>
+            <button class="control-btn" id="dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
+        </div>
+
+        <div class="top-social">
+            <a href="#" title="إكس (تويتر)"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" title="يوتيوب"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#" title="تيليجرام"><i class="fa-brands fa-telegram"></i></a>
+            <a href="#" title="سناب شات"><i class="fa-brands fa-snapchat"></i></a>
+            <a href="#" title="جيت هب"><i class="fa-brands fa-github"></i></a>
+        </div>
+    </div>
+
+    <!-- الترويسة الرئيسية -->
+    <header>
+        <div class="header-logo" id="site-logo-container"></div>
+        <div class="header-center">
+            <h1 id="site-main-heading">تكنو-<span>دليل</span></h1>
+            <p id="site-tagline">بوابة الحلول الرقمية والتقنية المبتكرة</p>
+        </div>
+        <div></div>
+    </header>
+
+    <!-- الشريط الإخباري -->
+    <div class="ticker-wrapper" id="site-ticker-wrapper">
+        <div class="ticker-container">
+            <div class="ticker-title">إضاءة</div>
+            <div class="ticker-content" id="ticker-text">مرحباً بك في مدونة تكنو-دليل | تابع أحدث المقالات التقنية والشروحات البرمجية المتجددة.</div>
+        </div>
+    </div>
+
+    <!-- القائمة الرئيسية -->
+    <div class="main-menu-bar">
+        <nav id="site-main-menu" class="mega-menu">
+            <a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
+            <a href="blog.html"><i class="fa-solid fa-book-open"></i> المدونة</a>
+        </nav>
+    </div>
+
+    <!-- مكان إعلانات وسط الصفحة -->
+    <div id="site-ad-mid" style="max-width: 1200px; margin: 15px auto; text-align: center;"></div>
+
+    <!-- شبكة المحتوى -->
+    <div class="three-columns-grid">
+        <main id="posts-container">
+            <p style="color: var(--text-muted);">جاري تحميل المحتوى...</p>
+        </main>
+
+        <aside id="main-sidebar" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px;">
+            <h3 style="color: var(--accent-color); font-size: 1rem; margin-bottom: 10px;">الشريط الجانبي</h3>
+            <div id="site-sidebar-widgets"></div>
+        </aside>
+    </div>
+
+    <!-- مكان إعلانات أسفل الصفحة -->
+    <div id="site-ad-bot" style="max-width: 1200px; margin: 15px auto; text-align: center;"></div>
+
+    <!-- الفوتر -->
+    <footer class="site-footer">
+        <div class="footer-container" id="site-footer-widgets"></div>
+        <div class="footer-bottom-bar">
+            جميع الحقوق محفوظة <span class="secret-c" id="secret-trigger" title="إدارة">©</span> 2026 - <span id="footer-site-name">تكنو-دليل</span>
+        </div>
+    </footer>
+
+    <!-- السكريبتات الموحدة للتحكم وعرض المقالات ديناميكياً -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = urlParams.get('id'); // فحص ما إذا كان المطلوب عرض مقال محدد
+
+            try {
+                const response = await fetch('data.json?t=' + Date.now());
+                const data = await response.json();
+                const postsContainer = id => document.getElementById('posts-container');
+                
+                // 1. إدارة العرض: مقال منفرد أو قائمة المقالات بالرئيسية
+                const container = document.getElementById('posts-container');
+                
+                if (postId) {
+                    // حالة عرض المقال المنفرد ضمن القالب الأصلي الأنيق
+                    const post = (data.posts || []).find(p => p.id == postId);
+                    if (post) {
+                        document.getElementById('site-title').innerText = post.title + " | تكنو-دليل";
+                        
+                        let ads = data.ads || {};
+                        let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
+                        let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
+
+                        container.innerHTML = `
+                            <div class="post-card">
+                                <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--accent-color); margin-bottom: 10px;">${post.title}</h1>
+                                <div class="post-meta">
+                                    <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
+                                </div>
+                                ${topAd}
+                                <div class="single-post-content">
+                                    ${post.content || ''}
+                                </div>
+                                ${botAd}
+                                <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                                    <a href="index.html" style="display: inline-block; background: var(--primary-color); color: #fff; padding: 6px 15px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← العودة إلى الصفحة الرئيسية</a>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        container.innerHTML = `<div class="post-card"><h2>عذراً</h2><p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود.</p><a href="index.html" style="color: var(--accent-color); text-decoration: none; font-weight: bold;">العودة للرئيسية</a></div>`;
+                    }
+                } else {
+                    // حالة عرض الصفحة الرئيسية الأصلية للمقالات
+                    if (data.posts && data.posts.length > 0) {
+                        container.innerHTML = data.posts.map(post => `
+                            <div class="post-card">
+                                <div class="post-title">
+                                    <a href="index.html?id=${post.id}">${post.title}</a>
+                                </div>
+                                <div class="post-meta">
+                                    <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
+                                </div>
+                                <div class="post-excerpt">${post.description || ''}</div>
+                                <a href="index.html?id=${post.id}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                            </div>
+                        `).join('');
+                    } else {
+                        container.innerHTML = `<div class="post-card"><p>لا توجد مقالات منشورة حالياً.</p></div>`;
+                    }
+                }
+
+                // 2. تحديث إعدادات الشعار والشريط الإخباري
+                if (data.settings) {
+                    if (data.settings.logoUrl) {
+                        const logoContainer = document.getElementById('site-logo-container');
+                        if (logoContainer) {
+                            logoContainer.innerHTML = `<a href="index.html"><img src="${data.settings.logoUrl}" alt="الشعار" style="height: ${data.settings.logoHeight || '55px'}; object-fit: contain;"></a>`;
+                        }
+                    }
+                    const tickerWrapper = document.getElementById('site-ticker-wrapper');
+                    if (tickerWrapper) {
+                        tickerWrapper.style.display = data.settings.tickerVisible !== false ? 'block' : 'none';
+                    }
+                }
+
+                // 3. تحديث القوائم الذكية الهرمية
+                if (data.menu && data.menu.length > 0) {
+                    const menuContainer = document.getElementById('site-main-menu');
+                    if (menuContainer) {
+                        let menuHtml = '';
+                        data.menu.forEach(item => {
+                            let paddingRight = (item.level - 1) * 15;
+                            menuHtml += `<a href="${item.url || 'index.html'}" style="padding-right: ${paddingRight}px;" class="menu-level-${item.level}">${item.title}</a>`;
+                        });
+                        menuContainer.innerHTML = menuHtml;
+                    }
+                }
+
+                // 4. تحديث الودجات (الشريط الجانبي والتذييل)
+                if (data.widgets && data.widgets.length > 0) {
+                    const sidebarWidgetsContainer = document.getElementById('site-sidebar-widgets');
+                    const footerWidgetsContainer = document.getElementById('site-footer-widgets');
+                    
+                    let sidebarHtml = '';
+                    let footerHtml = '';
+
+                    data.widgets.forEach(w => {
+                        if (!w.active) return;
+
+                        let contentBox = '';
+                        if (w.type === 'recent') {
+                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="index.html?id=${p.id}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
+                        } else if (w.type === 'links') {
+                            contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
+                        } else {
+                            contentBox = '<div>' + (w.content || '') + '</div>';
+                        }
+
+                        let widgetBlock = `
+                            <div class="widget-card" id="${w.id}">
+                                <h3 class="widget-title">${w.title}</h3>
+                                <div class="widget-content">${contentBox}</div>
+                            </div>
+                        `;
+
+                        if (w.location === 'footer') {
+                            footerHtml += widgetBlock;
+                        } else {
+                            sidebarHtml += widgetBlock;
+                        }
+                    });
+
+                    if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
+                    if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml;
+                }
+
+                // 5. تحديث الإعلانات
+                if (data.ads) {
+                    if (data.ads.topOn && data.ads.topCode) {
+                        const topAdBox = document.getElementById('site-ad-top');
+                        if (topAdBox) topAdBox.innerHTML = data.ads.topCode;
+                    }
+                    if (data.ads.midOn && data.ads.midCode) {
+                        const midAdBox = document.getElementById('site-ad-mid');
+                        if (midAdBox) midAdBox.innerHTML = data.ads.midCode;
+                    }
+                    if (data.ads.botOn && data.ads.botCode) {
+                        const botAdBox = document.getElementById('site-ad-bot');
+                        if (botAdBox) botAdBox.innerHTML = data.ads.botCode;
+                    }
+                }
+
+            } catch (err) {
+                console.error("تعذر جلب ملف بيانات المدونة:", err);
+            }
+
+            const customLogo = localStorage.getItem('tech_custom_logo');
+            if (customLogo) {
+                const logoContainer = document.getElementById('site-logo-container');
+                if(logoContainer && !logoContainer.innerHTML.trim()) {
+                    logoContainer.innerHTML = `<a href="index.html"><img src="${customLogo}" alt="الشعار"></a>`;
+                }
+            }
+        });
+
+        // إدارة الخطوط والثيمات والوضع الليلي
+        const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
+        let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
+        document.getElementById('font-toggle-btn').addEventListener('click', () => {
+            currentFontIdx = (currentFontIdx + 1) % fontsList.length;
+            document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
+            localStorage.setItem('tech_font_idx', currentFontIdx);
+        });
+        document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
+
+        const themesList = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
+        let currentThemeIdx = localStorage.getItem('tech_theme_idx') ? parseInt(localStorage.getItem('tech_theme_idx')) : 0;
+
+        function applyTheme(idx) {
+            document.body.classList.remove('light-mode');
+            themesList.forEach(t => document.body.classList.remove(t));
+            document.body.classList.add(themesList[idx]);
+            localStorage.setItem('tech_theme_idx', idx);
+        }
+
+        document.getElementById('next-theme-btn').addEventListener('click', () => {
+            currentThemeIdx = (currentThemeIdx + 1) % themesList.length;
+            applyTheme(currentThemeIdx);
+        });
+        document.getElementById('prev-theme-btn').addEventListener('click', () => {
+            currentThemeIdx = (currentThemeIdx - 1 + themesList.length) % themesList.length;
+            applyTheme(currentThemeIdx);
+        });
+        applyTheme(currentThemeIdx);
+
+        const darkModeBtn = document.getElementById('dark-mode-btn');
+        darkModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
+            darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        });
+
+        if(localStorage.getItem('tech_light_mode') === '1') {
+            document.body.classList.add('light-mode');
+            darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        }
+
+        // لوحة التحكم المخفية على حرف C في التذييل
+        document.getElementById('secret-trigger').addEventListener('click', () => {
+            const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
+            if(pass === "aziz728") {
+                window.location.href = "admin.html";
+            } else if(pass !== null) {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">عرض المقال | تكنو-دليل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0284c7; --accent-color: #f59e0b;
+            --bg-dark: #0f172a; --card-bg: #1e293b;
+            --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.7; }
+        
+        /* شريط الخدمات العلوي */
+        .top-bar { background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+        .top-social { display: flex; gap: 15px; }
+        .top-social a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+        .top-social a:hover { color: var(--accent-color); }
+        .top-links { display: flex; gap: 15px; }
+        .top-links a { color: var(--text-muted); text-decoration: none; }
+        .top-links a:hover { color: var(--primary-color); }
+
+        /* الهيدر الرئيسي */
+        header { background: var(--card-bg); padding: 25px 20px; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .logo-area h1 { font-size: 2.5rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; }
+        .logo-area h1 span { color: var(--primary-color); }
+        .logo-area p { color: var(--text-muted); font-size: 0.95rem; }
+        .logo-area img { object-fit: contain; }
+
+        /* الشريط المتحرك (Ticker) */
+        .news-ticker { background: var(--card-bg); border-bottom: 1px solid var(--border-color); border-top: 1px solid var(--border-color); padding: 10px 20px; display: flex; align-items: center; gap: 15px; overflow: hidden; }
+        .ticker-badge { background: var(--primary-color); color: #fff; padding: 4px 12px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
+        .ticker-content { color: var(--text-muted); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* القوائم الهرمية */
+        nav.main-nav { background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 0 20px; }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; list-style: none; flex-wrap: wrap; }
+        .nav-container li { position: relative; }
+        .nav-container a { display: block; padding: 12px 18px; color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: background 0.2s, color 0.2s; }
+        .nav-container a:hover { color: var(--accent-color); background: rgba(255,255,255,0.03); }
+
+        /* تخطيط الصفحة (المحتوى والشريط الجانبي) */
+        .main-layout { max-width: 1200px; margin: 25px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 320px; gap: 25px; }
+        @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
+
+        /* كارت المقال */
+        .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        h1.post-title { color: var(--accent-color); font-size: 2rem; margin-bottom: 15px; line-height: 1.3; }
+        .post-meta { display: flex; gap: 15px; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .post-meta span { display: flex; align-items: center; gap: 5px; }
+        .post-body { font-size: 1.05rem; color: #e2e8f0; margin-bottom: 30px; }
+        .post-body p { margin-bottom: 15px; }
+
+        /* الشريط الجانبي والودجات */
+        aside { display: flex; flex-direction: column; gap: 20px; }
+        .widget-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; }
+        .widget-title { color: var(--accent-color); font-size: 1.1rem; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; font-weight: 700; }
+
+        .back-btn { display: inline-block; background: var(--primary-color); color: #fff; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: opacity 0.2s; }
+        .back-btn:hover { opacity: 0.9; }
+
+        /* التذييل */
+        footer { background: var(--card-bg); border-top: 1px solid var(--border-color); text-align: center; margin-top: 50px; color: var(--text-muted); font-size: 0.85rem; padding: 25px 20px; }
+    </style>
+</head>
+<body>
+
+    <!-- شريط الخدمات العلوي -->
+    <div class="top-bar">
+        <div class="top-social">
+            <a href="#"><i class="fa-brands fa-github"></i></a>
+            <a href="#"><i class="fa-brands fa-snapchat"></i></a>
+            <a href="#"><i class="fa-brands fa-telegram"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+        <div class="top-links">
+            <a href="#">خصوصية</a>
+            <a href="#">شروط</a>
+            <a href="#">من نحن</a>
+            <a href="#">اتصل بنا</a>
+        </div>
+    </div>
+
+    <!-- الهيدر الرئيسي -->
+    <header>
+        <div class="logo-area" id="header-logo-box">
+            <h1><span>تكنو</span>-دليل</h1>
+            <p>بوابة الحلول الرقمية والتقنية المبتكرة</p>
+        </div>
+    </header>
+
+    <!-- الشريط المتحرك -->
+    <div class="news-ticker" id="ticker-box">
+        <span class="ticker-badge">إِضاءَة</span>
+        <span class="ticker-content">مرحباً بك في مدونة تكنو-دليل | تابع أحدث المقالات التقنية والشروحات البرمجية المتجددة.</span>
+    </div>
+
+    <!-- القوائم الهرمية العلوية -->
+    <nav class="main-nav">
+        <ul class="nav-container" id="nav-menu-container">
+            <li><a href="index.html">الرئيسية</a></li>
+        </ul>
+    </nav>
+
+    <!-- المحتوى والشريط الجانبي -->
+    <div class="main-layout">
+        <!-- محتوى المقال الرئيسي -->
+        <main>
+            <article class="post-card" id="post-content-box">
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">جاري تحميل المقال...</div>
+            </article>
+        </main>
+
+        <!-- الشريط الجانبي (Sidebar) -->
+        <aside id="sidebar-widgets-container">
+            <div class="widget-box">
+                <h3 class="widget-title">الشريط الجانبي</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">جاري التحميل...</p>
+            </div>
+        </aside>
+    </div>
+
+    <!-- التذييل -->
+    <footer>
+        <p>جميع الحقوق محفوظة لمدونة تكنو-دليل &copy; 2026</p>
+    </footer>
+
+    <script>
+        async function loadFullTemplatePost() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = urlParams.get('id');
+
+            try {
+                const response = await fetch('data.json?t=' + Date.now());
+                if (!response.ok) throw new Error("تعذر جلب البيانات.");
+                
+                const data = await response.json();
+                
+                // 1. الشعار والإعدادات
+                if (data.settings) {
+                    if (data.settings.logoUrl) {
+                        document.getElementById('header-logo-box').innerHTML = `<img src="${data.settings.logoUrl}" style="height: ${data.settings.logoHeight || '55px'};" alt="شعار المدونة">`;
+                    }
+                    if (data.settings.tickerVisible === false) {
+                        document.getElementById('ticker-box').style.display = 'none';
+                    }
+                }
+
+                // 2. بناء القوائم الهرمية العلوية تماماً مثل الرئيسية
+                const navContainer = document.getElementById('nav-menu-container');
+                if (data.menu && data.menu.length > 0) {
+                    let navHtml = '';
+                    data.menu.forEach(item => {
+                        navHtml += `<li><a href="${item.url || '#'}"><i class="fa-solid fa-book-open" style="margin-left: 5px; font-size: 0.8rem;"></i>${item.title}</a></li>`;
+                    });
+                    navContainer.innerHTML = navHtml;
+                }
+
+                // 3. بناء الشريط الجانبي والودجات
+                const sidebarContainer = document.getElementById('sidebar-widgets-container');
+                let widgetsHtml = '';
+                if (data.widgets && data.widgets.length > 0) {
+                    data.widgets.filter(w => w.active && w.location !== 'footer').forEach(w => {
+                        let widgetBody = w.content || '';
+                        if (w.type === 'recent') {
+                            widgetBody = '<ul style="list-style: none; padding: 0;">';
+                            (data.posts || []).forEach(p => {
+                                widgetBody += `<li style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;"><a href="post.html?id=${p.id}" style="color: var(--text-main); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">${p.title}</a></li>`;
+                            });
+                            widgetBody += '</ul>';
+                        }
+                        widgetsHtml += `<div class="widget-box"><h3 class="widget-title">${w.title}</h3><div>${widgetBody}</div></div>`;
+                    });
+                }
+                sidebarContainer.innerHTML = widgetsHtml || '<div class="widget-box"><p style="color:var(--text-muted)">لا توجد ودجات مفعلة.</p></div>';
+
+                // 4. جلب المقال وعرضه
+                let posts = data.posts || [];
+                let post = posts.find(p => p.id == postId) || posts[0];
+                const container = document.getElementById('post-content-box');
+
+                if (!post) {
+                    container.innerHTML = `<h2>عذراً</h2><p style="color:var(--text-muted); margin: 15px 0;">المقال المطلوب غير موجود.</p><a href="index.html" class="back-btn">العودة للرئيسية</a>`;
+                    return;
+                }
+
+                document.getElementById('page-title').innerText = post.title + " | تكنو-دليل";
+
+                let ads = data.ads || {};
+                let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:20px 0; text-align:center;">${ads.topCode}</div>` : '';
+                let midAd = (ads.midOn && ads.midCode) ? `<div style="margin:20px 0; text-align:center;">${ads.midCode}</div>` : '';
+                let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:20px 0; text-align:center;">${ads.botCode}</div>` : '';
+
+                container.innerHTML = `
+                    <h1 class="post-title">${post.title}</h1>
+                    <div class="post-meta">
+                        <span><i class="fa-regular fa-calendar"></i> ${post.date || 'حديث'}</span>
+                        <span><i class="fa-regular fa-user"></i> ${post.author || 'إدارة المدونة'}</span>
+                    </div>
+                    ${topAd}
+                    <div class="post-body">
+                        ${post.content || ''}
+                    </div>
+                    ${midAd}
+                    ${botAd}
+                    <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                        <a href="index.html" class="back-btn">← العودة إلى الصفحة الرئيسية</a>
+                    </div>
+                `;
+
+            } catch (err) {
+                console.log(err);
+                document.getElementById('post-content-box').innerHTML = `<h2>خطأ</h2><p style="color:var(--text-muted);">تعذر تحميل المقال من الخادم.</p>`;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadFullTemplatePost);
+    </script>
+</body>
+</html>

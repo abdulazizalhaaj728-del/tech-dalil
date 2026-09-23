@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الشاملة | تكنو-دليل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; opacity: 0; visibility: hidden; transition: all 0.25s ease;
+        }
+        .custom-modal-overlay.active { opacity: 1; visibility: visible; }
+        .custom-modal-box {
+            background: var(--card-bg, #1e293b); color: var(--text-main, #f8fafc);
+            border: 1px solid var(--border-color, #334155); border-radius: 14px;
+            padding: 25px; width: 90%; max-width: 380px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25); text-align: right; direction: rtl;
+        }
+        .custom-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .custom-modal-btn { padding: 8px 18px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer; border: none; }
+        .custom-modal-btn.confirm { background: var(--accent-color, #f59e0b); color: #fff; }
+        .custom-modal-btn.cancel { background: var(--border-color, #334155); color: var(--text-main, #f8fafc); }
+
+        :root {
+            --primary-color: #0284c7; --accent-color: #f59e0b;
+            --bg-dark: #0f172a; --card-bg: #1e293b;
+            --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); padding: 20px; }
+        .admin-container { max-width: 950px; margin: 0 auto; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { color: var(--accent-color); margin-bottom: 20px; border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; }
+        h3 { color: var(--primary-color); margin-bottom: 12px; font-size: 1.1rem; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
+        input, textarea, select { width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; font-size: 0.95rem; }
+        textarea { height: 110px; resize: vertical; }
+        .btn { background: var(--primary-color); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; }
+        .btn:hover { opacity: 0.9; }
+        .btn-danger { background: #ef4444; }
+        .btn-warning { background: #eab308; color: #000; }
+        .section-box { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: normal; }
+        .checkbox-label input { width: auto; }
+        .widgets-table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.85rem; }
+        .widgets-table th { color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding: 8px; }
+        .widgets-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        
+        .drag-item.drop-indicator-top { border-top: 2px solid var(--accent-color) !important; }
+        .drag-item.drop-indicator-bottom { border-bottom: 2px solid var(--accent-color) !important; }
+        .drag-item.drag-over-parent { background: rgba(245, 158, 11, 0.15) !important; border-left: 4px solid #ff9800 !important; }
+        .drag-item.dragging { opacity: 0.4; }
+
+        @keyframes fq-pulse {
+            0% { background-color: transparent; box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.7); }
+            70% { background-color: rgba(255, 87, 34, 0.3); box-shadow: 0 0 0 10px rgba(255, 87, 34, 0); }
+            100% { background-color: transparent; box-shadow: 0 0 0 0 rgba(255, 87, 34, 0); }
+        }
+        .pulse-highlight {
+            animation: fq-pulse 0.8s ease-in-out;
+            border: 2px solid #ff5722 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <a href="index.html" style="color: var(--primary-color); text-decoration: none; font-weight: bold; display:inline-block; margin-bottom:15px;">← العودة للموقع الرئيسي</a>
+        <h2>لوحة التحكم الشاملة لمدونة تكنو-دليل</h2>
+
+        <!-- إدارة شعار المدونة -->
+        <div class="section-box">
+            <h3>🖼️ إدارة شعار المدونة وأحجامه</h3>
+            <div id="admin-logo-preview" style="margin-bottom: 10px;"></div>
+            <input type="file" id="logo-file-input" accept="image/*" onchange="uploadLogoFile(this)" style="margin-bottom:10px;">
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;">
+                <select id="logo-size-selector" style="width: auto;">
+                    <option value="35px">صغير جداً (35 بكسل)</option>
+                    <option value="45px">صغير (45 بكسل)</option>
+                    <option value="55px" selected>متوسط افتراضي (55 بكسل)</option>
+                    <option value="75px">كبير (75 بكسل)</option>
+                    <option value="100px">كبير جداً (100 بكسل)</option>
+                </select>
+                <button type="button" class="btn" onclick="saveSelectedLogoSize()" style="padding: 6px 15px;">حفظ وحفظ للسيرفر</button>
+                <button type="button" class="btn btn-danger" onclick="removeLogo()" style="padding: 6px 15px;">إزالة الشعار</button>
+            </div>
+        </div>
+
+        <!-- الشريط المتحرك -->
+        <div class="section-box">
+            <h3>📢 إعدادات الشريط المتحرك</h3>
+            <div class="form-group">
+                <label class="checkbox-label"><input type="checkbox" id="ticker-visible-toggle" onchange="saveTickerSetting()"> إظهار الشريط المتحرك في الصفحة الرئيسية</label>
+            </div>
+        </div>
+
+        <!-- نظام القوائم الذكي الهرمي -->
+        <div class="section-box">
+            <h3 style="color: var(--accent-color);">📋 نظام القوائم الذكي الهرمي</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
+                أدخل اسم العنصر والرابط، واستخدم الشرطات للتحديد: <code>_</code> (رئيسي) | <code>__</code> (فرعي).
+            </p>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <input type="text" id="menu-raw-input" placeholder="_تقنية أو __أول شرح" style="flex: 2;">
+                <input type="text" id="menu-url-input" placeholder="الرابط (مثال: # أو رابط مقال)" style="flex: 2;">
+                <button type="button" class="btn" id="menu-add-btn" onclick="addOrUpdateStructuredMenuItem()">إضافة للقائمة</button>
+                <button type="button" class="btn" id="menu-cancel-edit-btn" onclick="resetMenuForm()" style="display:none; background:#64748b;">إلغاء</button>
+            </div>
+            <div id="admin-menu-structured-list" style="max-height: 300px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
+            <div style="margin-top: 15px;">
+                <button type="button" class="btn" onclick="saveServerData('تم حفظ وتحديث القوائم بنجاح على السيرفر!')" style="background: #28a745;">حفظ التغييرات النهائية للسيرفر</button>
+            </div>
+        </div>
+
+        <!-- ودجات الشريط الأيسر والتذييل -->
+        <div class="section-box">
+            <h3>⚙️ ودجات الشريط الأيسر (Sidebar) والتذييل (Footer)</h3>
+            <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
+                <div style="flex: 0.9; min-width: 260px;">
+                    <input type="hidden" id="editing-widget-index" value="">
+                    <div class="form-group">
+                        <label>عنوان الودجت:</label>
+                        <input type="text" id="widget-title-input" placeholder="عنوان الودجت..." disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>نوع الودجت:</label>
+                        <select id="widget-type-input" disabled>
+                            <option value="recent">أحدث المواضيع</option>
+                            <option value="links">روابط سريعة</option>
+                            <option value="custom">محتوى مخصص / HTML</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>محتوى الودجت (نص / HTML):</label>
+                        <textarea id="widget-custom-text" rows="3" placeholder="محتوى الودجت..." disabled></textarea>
+                    </div>
+                    <div class="form-group" style="display: flex; gap: 20px; margin: 15px 0;">
+                        <label class="checkbox-label"><input type="checkbox" id="widget-pos-sidebar" disabled checked onchange="handleWidgetPosChange('sidebar')"> للشريط الأيسر</label>
+                        <label class="checkbox-label"><input type="checkbox" id="widget-pos-footer" disabled onchange="handleWidgetPosChange('footer')"> للتذييل (أقصى 4 أفقية)</label>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn" id="widget-main-action-btn" onclick="handleWidgetMainAction()">إضافة ودجت جديد</button>
+                        <button type="button" class="btn" id="widget-cancel-btn" onclick="resetWidgetForm()" style="display:none; background:#64748b;">إلغاء</button>
+                    </div>
+                </div>
+                <div style="width: 1px; background: var(--border-color); align-self: stretch;"></div>
+                <div style="flex: 1.1; min-width: 320px;">
+                    <label style="color: var(--accent-color); margin-bottom: 8px;">قائمة الودجات المخزنة:</label>
+                    <div id="widgets-list-box" style="max-height: 250px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- إعلانات المقالات -->
+        <div class="section-box">
+            <h3>📢 إعلانات المقالات (سكريبتات الإعلانات)</h3>
+            <div class="form-group">
+                <label class="checkbox-label"><input type="checkbox" id="ad-top-on"> تفعيل إعلان أعلى المقال</label>
+                <textarea id="ad-top-code" placeholder="أدخل شفرة/سكريبت الإعلان هنا..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label"><input type="checkbox" id="ad-mid-on"> تفعيل إعلان منتصف المقال</label>
+                <textarea id="ad-mid-code" placeholder="أدخل شفرة/سكريبت الإعلان هنا..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label"><input type="checkbox" id="ad-bot-on"> تفعيل إعلان نهاية المقال</label>
+                <textarea id="ad-bot-code" placeholder="أدخل شفرة/سكريبت الإعلان هنا..."></textarea>
+            </div>
+            <button class="btn" onclick="saveAdsSettings()">حفظ إعدادات الإعلانات للسيرفر</button>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة للتنبيهات -->
+    <div id="custom-modal-container" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <h3 id="modal-title">تنبيه</h3>
+            <p id="modal-message">رسالة التنبيه...</p>
+            <div class="custom-modal-actions">
+                <button id="modal-ok-btn" class="custom-modal-btn confirm">حسناً</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let globalData = {
+            settings: { logoUrl: "", logoHeight: "55px", tickerVisible: true },
+            menu: [],
+            widgets: [],
+            ads: { topOn: false, topCode: '', midOn: false, midCode: '', botOn: false, botCode: '' },
+            posts: []
+        };
+
+        let editingWidgetIndex = null;
+        let editingMenuIndex = null;
+        let menuHasChanges = false;
+
+        function showCustomAlert(title, message, callback) {
+            const overlay = document.getElementById('custom-modal-container');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            overlay.classList.add('active');
+            
+            const okBtn = document.getElementById('modal-ok-btn');
+            okBtn.onclick = function() {
+                overlay.classList.remove('active');
+                if (typeof callback === 'function') callback();
+            };
+        }
+
+        // جلب البيانات من ملف data.json على السيرفر عند فتح اللوحة
+        async function loadServerData() {
+            try {
+                const response = await fetch('data.json?t=' + Date.now());
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data) globalData = data;
+                }
+            } catch (err) {
+                console.log("لم يتم العثور على ملف data.json أو حدث خطأ في الجلب، سيتم استخدام القيم الافتراضية.");
+            }
+            initAdminUI();
+        }
+
+        // إرسال البيانات وحفظها في data.json عبر ملف save.php
+        async function saveServerData(successMsg) {
+            try {
+                const response = await fetch('save.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(globalData, null, 2)
+                });
+                const result = await response.json();
+                if (response.ok && result.status === 'success') {
+                    showCustomAlert("نجاح", successMsg || "تم الحفظ بنجاح على السيرفر!");
+                    menuHasChanges = false;
+                } else {
+                    showCustomAlert("خطأ", "فشل الحفظ: " + (result.message || "خطأ غير معروف"));
+                }
+            } catch (err) {
+                showCustomAlert("خطأ اتصال", "تعذر الاتصال بملف الحفظ (save.php). تأكد من رفع الملف على الاستضافة.");
+            }
+        }
+
+        function initAdminUI() {
+            // Logo Size
+            if (globalData.settings && globalData.settings.logoHeight) {
+                document.getElementById('logo-size-selector').value = globalData.settings.logoHeight;
+            }
+            // Ticker
+            if (globalData.settings && globalData.settings.tickerVisible !== undefined) {
+                document.getElementById('ticker-visible-toggle').checked = globalData.settings.tickerVisible;
+            }
+            // Ads
+            if (globalData.ads) {
+                document.getElementById('ad-top-on').checked = globalData.ads.topOn || false;
+                document.getElementById('ad-top-code').value = globalData.ads.topCode || '';
+                document.getElementById('ad-mid-on').checked = globalData.ads.midOn || false;
+                document.getElementById('ad-mid-code').value = globalData.ads.midCode || '';
+                document.getElementById('ad-bot-on').checked = globalData.ads.botOn || false;
+                document.getElementById('ad-bot-code').value = globalData.ads.botCode || '';
+            }
+            loadSidebarWidgetsAdmin();
+            renderStructuredMenuAdmin();
+        }
+
+        // إدارة الشعار
+        function uploadLogoFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if(!globalData.settings) globalData.settings = {};
+                    globalData.settings.logoUrl = e.target.result;
+                    saveServerData("تم رفع وتحديث الشعار وحفظه على السيرفر بنجاح!");
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        function removeLogo() {
+            if(!globalData.settings) globalData.settings = {};
+            globalData.settings.logoUrl = "";
+            saveServerData("تمت إزالة الشعار وتحديث السيرفر بنجاح!");
+        }
+        function saveSelectedLogoSize() {
+            const selector = document.getElementById('logo-size-selector');
+            if (!selector) return;
+            if(!globalData.settings) globalData.settings = {};
+            globalData.settings.logoHeight = selector.value;
+            saveServerData("تم حفظ حجم الشعار (" + selector.value + ") على السيرفر بنجاح!");
+        }
+
+        // الشريط المتحرك
+        function saveTickerSetting() {
+            const tickerToggle = document.getElementById('ticker-visible-toggle');
+            if (!tickerToggle) return;
+            if(!globalData.settings) globalData.settings = {};
+            globalData.settings.tickerVisible = tickerToggle.checked;
+            saveServerData("تم حفظ إعداد الشريط المتحرك على السيرفر بنجاح!");
+        }
+
+        // إدارة الودجات
+        function loadSidebarWidgetsAdmin() {
+            if (!globalData.widgets) globalData.widgets = [];
+            const widgets = globalData.widgets;
+            const listBox = document.getElementById('widgets-list-box');
+            if(!listBox) return;
+            
+            if (widgets.length === 0) {
+                listBox.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); text-align:center;">لا توجد ودجات مخزنة.</p>';
+                return;
+            }
+
+            let html = `<table class="widgets-table"><thead><tr><th>العنوان</th><th>المكان</th><th>تفعيل</th><th>إدارة</th></tr></thead><tbody>`;
+            widgets.forEach((w, index) => {
+                let loc = w.location === 'footer' ? 'التذييل (أفقي)' : 'الشريط الأيسر';
+                html += `<tr>
+                    <td>${w.title}</td>
+                    <td style="color: var(--text-muted);">${loc}</td>
+                    <td><input type="checkbox" ${w.active ? 'checked' : ''} onchange="toggleWidgetActive(${index})"></td>
+                    <td>
+                        <button type="button" class="btn-warning" onclick="editWidget(${index})" style="padding: 2px 6px; font-size: 0.75rem; border:none; border-radius:3px; cursor:pointer;">تعديل</button>
+                        <button type="button" class="btn-danger" onclick="removeSidebarWidget(${index})" style="padding: 2px 6px; font-size: 0.75rem; border:none; border-radius:3px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+            html += `</tbody></table>`;
+            listBox.innerHTML = html;
+        }
+
+        function handleWidgetPosChange(pos) {
+            const sb = document.getElementById('widget-pos-sidebar');
+            const ft = document.getElementById('widget-pos-footer');
+            if (pos === 'sidebar' && sb.checked) ft.checked = false;
+            else if (pos === 'footer' && ft.checked) {
+                const footerCount = (globalData.widgets || []).filter((w, idx) => w.location === 'footer' && idx !== editingWidgetIndex).length;
+                if (footerCount >= 4) {
+                    ft.checked = false;
+                    showCustomAlert("تنبيه", "عذراً، الحد الأقصى لودجات التذييل الأفقية هو 4 فقط!");
+                    return;
+                }
+                sb.checked = false;
+            }
+        }
+
+        function handleWidgetMainAction() {
+            const titleInput = document.getElementById('widget-title-input');
+            const typeInput = document.getElementById('widget-type-input');
+            const contentInput = document.getElementById('widget-custom-text');
+            const footerPos = document.getElementById('widget-pos-footer');
+            const btn = document.getElementById('widget-main-action-btn');
+
+            if (titleInput.disabled) {
+                titleInput.disabled = false; typeInput.disabled = false;
+                contentInput.disabled = false; document.getElementById('widget-pos-sidebar').disabled = false;
+                footerPos.disabled = false; titleInput.focus();
+                btn.innerText = "حفظ التعديلات";
+                document.getElementById('widget-cancel-btn').style.display = 'inline-block';
+                return;
+            }
+
+            const title = titleInput.value.trim();
+            if (!title) { showCustomAlert("تنبيه", "الرجاء إدخال عنوان الودجت!"); return; }
+
+            if (!globalData.widgets) globalData.widgets = [];
+            const location = footerPos.checked ? 'footer' : 'sidebar';
+
+            if (editingWidgetIndex !== null) {
+                globalData.widgets[editingWidgetIndex] = { ...globalData.widgets[editingWidgetIndex], title, type: typeInput.value, content: contentInput.value.trim(), location };
+                editingWidgetIndex = null;
+            } else {
+                if (location === 'footer') {
+                    let footerWidgets = globalData.widgets.filter(w => w.location === 'footer');
+                    if (footerWidgets.length >= 4) {
+                        showCustomAlert("تنبيه", "الحد الأقصى لودجات الفوتر هو 4 ودجات أفقية!");
+                        return;
+                    }
+                }
+                globalData.widgets.push({ id: 'w_' + Date.now(), title, type: typeInput.value, content: contentInput.value.trim(), active: true, location });
+            }
+
+            resetWidgetForm();
+            loadSidebarWidgetsAdmin();
+            saveServerData("تم حفظ وتحديث الودجات على السيرفر بنجاح!");
+        }
+
+        function editWidget(index) {
+            const w = globalData.widgets[index];
+            if (!w) return;
+            editingWidgetIndex = index;
+
+            const titleInput = document.getElementById('widget-title-input');
+            const typeInput = document.getElementById('widget-type-input');
+            const contentInput = document.getElementById('widget-custom-text');
+            const sb = document.getElementById('widget-pos-sidebar');
+            const ft = document.getElementById('widget-pos-footer');
+
+            titleInput.disabled = false; typeInput.disabled = false; contentInput.disabled = false; sb.disabled = false; ft.disabled = false;
+            titleInput.value = w.title; typeInput.value = w.type || 'custom'; contentInput.value = w.content || '';
+            
+            if (w.location === 'footer') { ft.checked = true; sb.checked = false; }
+            else { sb.checked = true; ft.checked = false; }
+
+            document.getElementById('widget-main-action-btn').innerText = "حفظ التعديلات";
+            document.getElementById('widget-cancel-btn').style.display = 'inline-block';
+        }
+
+        function resetWidgetForm() {
+            editingWidgetIndex = null;
+            document.getElementById('widget-title-input').disabled = true;
+            document.getElementById('widget-type-input').disabled = true;
+            document.getElementById('widget-custom-text').disabled = true;
+            document.getElementById('widget-pos-sidebar').disabled = true;
+            document.getElementById('widget-pos-footer').disabled = true;
+            document.getElementById('widget-title-input').value = '';
+            document.getElementById('widget-custom-text').value = '';
+            document.getElementById('widget-main-action-btn').innerText = "إضافة ودجت جديد";
+            document.getElementById('widget-cancel-btn').style.display = 'none';
+        }
+
+        function toggleWidgetActive(index) {
+            if (globalData.widgets && globalData.widgets[index]) {
+                globalData.widgets[index].active = !globalData.widgets[index].active;
+                saveServerData("تم تحديث حالة الودجت على السيرفر!");
+            }
+        }
+
+        function removeSidebarWidget(index) {
+            showCustomAlert("تأكيد", "هل أنت متأكد من رغبتك في حذف هذا الودجت؟", () => {
+                globalData.widgets.splice(index, 1);
+                loadSidebarWidgetsAdmin();
+                saveServerData("تم حذف الودجت وتحديث السيرفر بنجاح!");
+            });
+        }
+
+        // القوائم الهرمية
+        function addOrUpdateStructuredMenuItem() {
+            const rawInput = document.getElementById('menu-raw-input');
+            const urlInput = document.getElementById('menu-url-input');
+            const rawText = rawInput.value.trim();
+            const url = urlInput.value.trim() || '#';
+
+            if (!rawText) {
+                showCustomAlert("تنبيه", "الرجاء إدخال اسم العنصر مع الشرطات (مثال: _تقنية)!");
+                return;
+            }
+
+            let level = 1;
+            if (rawText.startsWith('___')) level = 3;
+            else if (rawText.startsWith('__')) level = 2;
+            
+            let cleanTitle = rawText.replace(/^_+\s*/, '');
+
+            if (!globalData.menu) globalData.menu = [];
+
+            if (editingMenuIndex !== null) {
+                globalData.menu[editingMenuIndex] = { rawText, title: cleanTitle, level, url };
+                editingMenuIndex = null;
+                document.getElementById('menu-add-btn').innerText = "إضافة للقائمة";
+                document.getElementById('menu-cancel-edit-btn').style.display = 'none';
+            } else {
+                globalData.menu.push({ rawText, title: cleanTitle, level, url });
+            }
+
+            rawInput.value = '';
+            urlInput.value = '';
+            menuHasChanges = true;
+            renderStructuredMenuAdmin();
+        }
+
+        function editStructuredItem(index) {
+            const item = globalData.menu[index];
+            if (!item) return;
+            document.getElementById('menu-raw-input').value = item.rawText;
+            document.getElementById('menu-url-input').value = item.url;
+            editingMenuIndex = index;
+            document.getElementById('menu-add-btn').innerText = "حفظ التعديل";
+            document.getElementById('menu-cancel-edit-btn').style.display = 'inline-block';
+        }
+
+        function resetMenuForm() {
+            editingMenuIndex = null;
+            document.getElementById('menu-raw-input').value = '';
+            document.getElementById('menu-url-input').value = '';
+            document.getElementById('menu-add-btn').innerText = "إضافة للقائمة";
+            document.getElementById('menu-cancel-edit-btn').style.display = 'none';
+        }
+
+        function deleteStructuredItem(index) {
+            globalData.menu.splice(index, 1);
+            menuHasChanges = true;
+            renderStructuredMenuAdmin();
+        }
+
+        function renderStructuredMenuAdmin() {
+            const container = document.getElementById('admin-menu-structured-list');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            if (!globalData.menu || globalData.menu.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">لا توجد عناصر مضافة بعد.</p>';
+                return;
+            }
+
+            globalData.menu.forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = 'drag-item';
+                row.setAttribute('draggable', 'true');
+                row.dataset.index = index;
+                row.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem; transition: all 0.2s;";
+                
+                let indent = (item.level - 1) * 25; 
+                row.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px; margin-right: ${indent}px; flex: 1;">
+                        <input type="checkbox" class="menu-item-checkbox" data-index="${index}" style="width: 16px; height: 16px; cursor: pointer;">
+                        <span style="color: var(--text-muted); cursor: grab;"><i class="fa-solid fa-grip-vertical"></i></span>
+                        <span style="color: var(--accent-color); font-weight: bold;">${item.rawText}</span>
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">(رابط: ${item.url})</span>
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <button type="button" class="btn-warning" onclick="editStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;">تعديل</button>
+                        <button type="button" class="btn-danger" onclick="deleteStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+
+                row.addEventListener('dragstart', handleDragStart);
+                row.addEventListener('dragover', handleDragOver);
+                row.addEventListener('dragleave', handleDragLeave);
+                row.addEventListener('drop', handleDrop);
+                row.addEventListener('dragend', handleDragEnd);
+
+                container.appendChild(row);
+            });
+        }
+        
+        let draggedIndices = [];
+
+        function handleDragStart(e) {
+            const currentIndex = parseInt(this.dataset.index);
+            const checkboxes = document.querySelectorAll('.menu-item-checkbox');
+            let selected = [];
+            checkboxes.forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
+
+            if (selected.includes(currentIndex) && selected.length > 0) {
+                draggedIndices = selected.sort((a, b) => a - b);
+            } else {
+                draggedIndices = [currentIndex];
+                const chk = this.querySelector('.menu-item-checkbox');
+                if (chk) chk.checked = true;
+            }
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const targetRow = this;
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            if (yClick < threshold) targetRow.classList.add('drop-indicator-top');
+            else if (yClick > rect.height - threshold) targetRow.classList.add('drop-indicator-bottom');
+            else targetRow.classList.add('drag-over-parent');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const targetRow = this;
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+
+            const targetIndex = parseInt(targetRow.dataset.index);
+            if (draggedIndices.includes(targetIndex)) return;
+
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            let dropMode = 'after';
+            if (yClick < threshold) dropMode = 'top';
+            else if (yClick > rect.height - threshold) dropMode = 'bottom';
+            else dropMode = 'child';
+
+            let itemsToMove = draggedIndices.map(i => globalData.menu[i]);
+            let remainingItems = globalData.menu.filter((_, idx) => !draggedIndices.includes(idx));
+            
+            let targetItemInRemaining = globalData.menu[targetIndex];
+            let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
+            if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
+
+            if (dropMode === 'top') {
+                remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
+            } else if (dropMode === 'bottom') {
+                remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+            } else if (dropMode === 'child') {
+                let parentItem = targetItemInRemaining;
+                if (parentItem) {
+                    let levelDiff = (parentItem.level + 1) - itemsToMove[0].level;
+                    itemsToMove.forEach(it => {
+                        it.level = Math.max(1, it.level + levelDiff);
+                        it.rawText = '_'.repeat(it.level) + (it.title || 'عنصر');
+                    });
+                    remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+                    targetRow.classList.add('pulse-highlight');
+                    setTimeout(() => targetRow.classList.remove('pulse-highlight'), 800);
+                }
+            }
+
+            menuHasChanges = true;
+            globalData.menu = remainingItems;
+            renderStructuredMenuAdmin();
+        }
+
+        function handleDragEnd(e) {
+            document.querySelectorAll('.drag-item').forEach(item => {
+                item.classList.remove('dragging', 'drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            });
+            draggedIndices = [];
+        }
+
+        // إعلانات
+        function saveAdsSettings() {
+            if(!globalData.ads) globalData.ads = {};
+            globalData.ads.topOn = document.getElementById('ad-top-on').checked;
+            globalData.ads.topCode = document.getElementById('ad-top-code').value;
+            globalData.ads.midOn = document.getElementById('ad-mid-on').checked;
+            globalData.ads.midCode = document.getElementById('ad-mid-code').value;
+            globalData.ads.botOn = document.getElementById('ad-bot-on').checked;
+            globalData.ads.botCode = document.getElementById('ad-bot-code').value;
+            
+            saveServerData("تم حفظ إعدادات وشفرات الإعلانات على السيرفر بنجاح!");
+        }
+
+        window.addEventListener('beforeunload', function (e) {
+            if (menuHasChanges) {
+                e.preventDefault();
+                e.returnValue = ''; 
+            }
+        });
+
+        // التهيئة عند التحميل وجلب البيانات من السيرفر
+        window.addEventListener('DOMContentLoaded', () => {
+            loadServerData();
+        });
+    </script>
+</body>
+</html>
