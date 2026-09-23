@@ -78,6 +78,14 @@
             "content": "ودجت شريط 1",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1790149964834",
+            "title": "ودجت شريط 2",
+            "type": "recent",
+            "content": "ودجت شريط 2",
+            "active": true,
+            "location": "sidebar"
         }
     ],
     "ads": {
