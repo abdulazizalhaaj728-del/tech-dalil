@@ -95,18 +95,13 @@
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
 
         /* التخطيط العام والتمرير المستقل للشريط الأيسر والأيمن */
-        .three-columns-grid { 
-            max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 15px; 
-            display: grid; grid-template-columns: 1fr 320px; gap: 20px; 
-            align-items: start; position: relative; 
-        }
-        @media (max-width: 950px) { .three-columns-grid { grid-template-columns: 1fr; } }
-
-        .main-content-area {
-            flex: 1;
-            min-width: 0;
-        }
-
+.three-columns-grid { 
+    max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 15px; 
+    display: grid; grid-template-columns: 1fr 320px; gap: 20px; 
+    align-items: start; 
+    position: relative;
+    /* تأكد من عدم وجود overflow: hidden هنا أو في الـ body */
+}
         /* الشريط الأيسر (الثابت الذكي Sticky الذي يبدأ من القائمة ويتوقف عند التذييل) */
         .left-sticky-sidebar { 
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
