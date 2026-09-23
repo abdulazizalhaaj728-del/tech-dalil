@@ -72,6 +72,13 @@
         <a href="index.html" style="color: var(--primary-color); text-decoration: none; font-weight: bold; display:inline-block; margin-bottom:15px;">← العودة للموقع الرئيسي</a>
         <h2>لوحة التحكم الشاملة لمدونة تكنو-دليل</h2>
 
+        <!-- إعدادات ربط GitHub (مضافة حديثاً لتعمل مع Cloudflare دون PHP) -->
+        <div class="section-box" style="border-color: #38bdf8;">
+            <h3 style="color: #38bdf8;"><i class="fa-brands fa-github"></i> إعدادات الربط السحابي (GitHub Token)</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">أدخل رمز الصلاحية الخاص بك لكي تتمكن اللوحة من حفظ التغييرات مباشرة في ملف <code>data.json</code> أونلاين:</p>
+            <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" style="direction: ltr;">
+        </div>
+
         <!-- إدارة شعار المدونة -->
         <div class="section-box">
             <h3>🖼️ إدارة شعار المدونة وأحجامه</h3>
@@ -197,6 +204,7 @@
         let editingWidgetIndex = null;
         let editingMenuIndex = null;
         let menuHasChanges = false;
+        let globalFileSha = ""; // لحفظ رمز الـ SHA الخاص بملف جيت هب للتحديث المباشر
 
         function showCustomAlert(title, message, callback) {
             const overlay = document.getElementById('custom-modal-container');
@@ -211,7 +219,7 @@
             };
         }
 
-        // جلب البيانات من ملف data.json على السيرفر عند فتح اللوحة
+        // جلب البيانات من ملف data.json على السيرفر وجلب الـ SHA الخاص بـ GitHub
         async function loadServerData() {
             try {
                 const response = await fetch('data.json?t=' + Date.now());
@@ -220,28 +228,66 @@
                     if (data) globalData = data;
                 }
             } catch (err) {
-                console.log("لم يتم العثور على ملف data.json أو حدث خطأ في الجلب، سيتم استخدام القيم الافتراضية.");
+                console.log("لم يتم العثور على ملف data.json أو حدث خطأ في الجلب.");
             }
+
+            // جلب الـ SHA من GitHub API مباشرة
+            try {
+                const owner = "abdulazizalhaaj728-del";
+                const repo = "tech-dalil";
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json`);
+                if (res.ok) {
+                    const fileData = await res.json();
+                    globalFileSha = fileData.sha;
+                }
+            } catch (e) {
+                console.log("تعذر جلب ملف الـ SHA من جيت هب تلقائياً.");
+            }
+
             initAdminUI();
         }
 
-        // إرسال البيانات وحفظها في data.json عبر ملف save.php
+        // إرسال البيانات وحفظها مباشرة عبر GitHub API بدلاً من save.php
         async function saveServerData(successMsg) {
+            const token = document.getElementById('gh-token-input').value.trim();
+            if (!token) {
+                showCustomAlert("تنبيه هامة", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
+                return;
+            }
+
             try {
-                const response = await fetch('save.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(globalData, null, 2)
+                const owner = "abdulazizalhaaj728-del";
+                const repo = "tech-dalil";
+                const path = "data.json";
+                
+                const contentString = JSON.stringify(globalData, null, 4);
+                // تشفير المحتوى بالكامل لدعم اللغة العربية بشكل سليم عبر API
+                const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
+
+                const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: "Update data.json via Techno-Guide Admin Panel",
+                        content: encodedContent,
+                        sha: globalFileSha
+                    })
                 });
+
                 const result = await response.json();
-                if (response.ok && result.status === 'success') {
-                    showCustomAlert("نجاح", successMsg || "تم الحفظ بنجاح على السيرفر!");
+                if (response.ok) {
+                    globalFileSha = result.content.sha; // تحديث الـ SHA للعملية القادمة
+                    showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر بنجاح على السحابة!");
                     menuHasChanges = false;
                 } else {
-                    showCustomAlert("خطأ", "فشل الحفظ: " + (result.message || "خطأ غير معروف"));
+                    showCustomAlert("خطأ في الحفظ", "فشل الحفظ: تأكد من صحة الـ Token. (" + (result.message || "") + ")");
                 }
             } catch (err) {
-                showCustomAlert("خطأ اتصال", "تعذر الاتصال بملف الحفظ (save.php). تأكد من رفع الملف على الاستضافة.");
+                showCustomAlert("خطأ اتصال", "تعذر الاتصال بخوادم GitHub. تأكد من اتصالك بالإنترنت.");
+                console.error(err);
             }
         }
 
@@ -274,7 +320,7 @@
                 reader.onload = function(e) {
                     if(!globalData.settings) globalData.settings = {};
                     globalData.settings.logoUrl = e.target.result;
-                    saveServerData("تم رفع وتحديث الشعار وحفظه على السيرفر بنجاح!");
+                    saveServerData("تم رفع وتحديث الشعار وحفظه على السحابة بنجاح!");
                 };
                 reader.readAsDataURL(input.files[0]);
             }
@@ -282,14 +328,14 @@
         function removeLogo() {
             if(!globalData.settings) globalData.settings = {};
             globalData.settings.logoUrl = "";
-            saveServerData("تمت إزالة الشعار وتحديث السيرفر بنجاح!");
+            saveServerData("تمت إزالة الشعار وتحديث السحابة بنجاح!");
         }
         function saveSelectedLogoSize() {
             const selector = document.getElementById('logo-size-selector');
             if (!selector) return;
             if(!globalData.settings) globalData.settings = {};
             globalData.settings.logoHeight = selector.value;
-            saveServerData("تم حفظ حجم الشعار (" + selector.value + ") على السيرفر بنجاح!");
+            saveServerData("تم حفظ حجم الشعار (" + selector.value + ") على السحابة بنجاح!");
         }
 
         // الشريط المتحرك
@@ -298,7 +344,7 @@
             if (!tickerToggle) return;
             if(!globalData.settings) globalData.settings = {};
             globalData.settings.tickerVisible = tickerToggle.checked;
-            saveServerData("تم حفظ إعداد الشريط المتحرك على السيرفر بنجاح!");
+            saveServerData("تم حفظ إعداد الشريط المتحرك على السحابة بنجاح!");
         }
 
         // إدارة الودجات
@@ -383,7 +429,7 @@
 
             resetWidgetForm();
             loadSidebarWidgetsAdmin();
-            saveServerData("تم حفظ وتحديث الودجات على السيرفر بنجاح!");
+            saveServerData("تم حفظ وتحديث الودجات على السحابة بنجاح!");
         }
 
         function editWidget(index) {
@@ -423,7 +469,7 @@
         function toggleWidgetActive(index) {
             if (globalData.widgets && globalData.widgets[index]) {
                 globalData.widgets[index].active = !globalData.widgets[index].active;
-                saveServerData("تم تحديث حالة الودجت على السيرفر!");
+                saveServerData("تم تحديث حالة الودجت على السحابة!");
             }
         }
 
@@ -431,7 +477,7 @@
             showCustomAlert("تأكيد", "هل أنت متأكد من رغبتك في حذف هذا الودجت؟", () => {
                 globalData.widgets.splice(index, 1);
                 loadSidebarWidgetsAdmin();
-                saveServerData("تم حذف الودجت وتحديث السيرفر بنجاح!");
+                saveServerData("تم حذف الودجت وتحديث السحابة بنجاح!");
             });
         }
 
@@ -636,7 +682,7 @@
             globalData.ads.botOn = document.getElementById('ad-bot-on').checked;
             globalData.ads.botCode = document.getElementById('ad-bot-code').value;
             
-            saveServerData("تم حفظ إعدادات وشفرات الإعلانات على السيرفر بنجاح!");
+            saveServerData("تم حفظ إعدادات وشفرات الإعلانات على السحابة بنجاح!");
         }
 
         window.addEventListener('beforeunload', function (e) {
@@ -646,7 +692,7 @@
             }
         });
 
-        // التهيئة عند التحميل وجلب البيانات من السيرفر
+        // التهيئة عند التحميل وجلب البيانات
         window.addEventListener('DOMContentLoaded', () => {
             loadServerData();
         });
