@@ -94,26 +94,56 @@
         .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
 
-        /* التخطيط العام والتمرير المستقل للشريط الأيسر والأيمن */
+/* حاوية الشبكة الرئيسية */
 .three-columns-grid { 
-    max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 15px; 
-    display: grid; grid-template-columns: 1fr 320px; gap: 20px; 
+    max-width: 1200px; 
+    width: 100%; 
+    margin: 20px auto 0; 
+    padding: 0 15px; 
+    display: grid; 
+    grid-template-columns: 1fr 320px; 
+    gap: 20px; 
     align-items: start; 
     position: relative;
-    /* تأكد من عدم وجود overflow: hidden هنا أو في الـ body */
+    /* تأكد تماماً بعدم وجود أي overflow: hidden هنا */
 }
-        /* الشريط الأيسر (الثابت الذكي Sticky الذي يبدأ من القائمة ويتوقف عند التذييل) */
-        .left-sticky-sidebar { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
-            position: sticky; 
-            top: 70px; /* المسافة من أعلى الشاشة بعد القائمة الرئيسية */
-            align-self: flex-start;
-            max-height: calc(100vh - 90px);
-            overflow-y: auto;
-        }
-        .left-sticky-sidebar::-webkit-scrollbar { width: 5px; }
-        .left-sticky-sidebar::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
 
+@media (max-width: 950px) { 
+    .three-columns-grid { grid-template-columns: 1fr; } 
+}
+
+/* الشريط الجانبي الأيسر الذكي والمستقل */
+.left-sticky-sidebar { 
+    background: var(--card-bg); 
+    border: 1px solid var(--border-color); 
+    border-radius: 12px; 
+    padding: 15px; 
+    
+    /* خاصية التثبيت الذكي */
+    position: sticky; 
+    top: 75px; /* المسافة من أعلى الشاشة (تحت القائمة الرئيسية مباشرة) */
+    
+    /* قفل الارتفاع بناءً على نافذة المتصفح لكي لا يتجاوز الحدود ولا يتداخل مع التذييل */
+    height: calc(100vh - 100px); 
+    
+    /* تفعيل التمرير الداخلي فقط عند الوقوف عليه بالماوس وزيادة المحتوى */
+    overflow-y: auto; 
+}
+
+/* تخصيص مظهر شريط التمرير الخاص بالشريط الأيسر ليكون أنيقاً */
+.left-sticky-sidebar::-webkit-scrollbar { 
+    width: 5px; 
+}
+.left-sticky-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.left-sticky-sidebar::-webkit-scrollbar-thumb { 
+    background: var(--border-color); 
+    border-radius: 4px; 
+}
+.left-sticky-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
         .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
         .post-title a { font-size: 1.15rem; font-weight: 700; color: var(--accent-color); text-decoration: none; }
         .post-meta { font-size: 0.8rem; color: var(--text-muted); margin: 8px 0; display: flex; gap: 15px; }
