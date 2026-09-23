@@ -38,6 +38,14 @@
             "content": "",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1790149828222",
+            "title": "ودجت تذييل 1",
+            "type": "recent",
+            "content": "ودجت تذييل 1",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
