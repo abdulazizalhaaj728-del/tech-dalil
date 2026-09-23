@@ -243,22 +243,17 @@
     <div id="site-ad-mid" style="max-width: 1200px; margin: 15px auto; text-align: center;"></div>
 
     <!-- حاوية المحتوى والشريط الجانبي المعدلة والمنظمة -->
-    <div class="main-layout-container">
+<!-- حاوية المحتوى والشريط الجانبي المعدلة والمنظمة -->
+    <div class="three-columns-grid">
         <main class="main-content-area" id="posts-container">
             <p style="color: var(--text-muted);">جاري تحميل المحتوى...</p>
         </main>
-
-        <!--
-        <aside class="sidebar">
-            <h3 style="color: var(--accent-color); font-size: 1rem; margin-bottom: 10px;">الشريط الجانبي</h3>
-            <div id="site-sidebar-widgets"></div>
-        </aside>
-        -->
+    
         <div class="left-sticky-sidebar">
             <div class="left-content-area" id="left-widgets-area"></div>
         </div>
-
     </div>
+    
 
     <div id="site-ad-bot" style="max-width: 1200px; margin: 15px auto; text-align: center;"></div>
 
@@ -352,7 +347,7 @@
                 }
 
                 if (data.widgets && data.widgets.length > 0) {
-                    const sidebarWidgetsContainer = document.getElementById('site-sidebar-widgets');
+                    const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
                     const footerWidgetsContainer = document.getElementById('site-footer-widgets');
                     
                     let sidebarHtml = '';
