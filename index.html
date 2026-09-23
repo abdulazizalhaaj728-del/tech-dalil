@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة</title>
+    <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة[cite: 7]</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&family=Readex+Pro:wght@400;600&family=Changa:wght@400;600&display=swap" rel="stylesheet">
@@ -63,6 +63,7 @@
         .color-switcher-group button { background: transparent; border: none; color: var(--text-main); padding: 5px 8px; cursor: pointer; font-size: 0.75rem; }
         .color-center-icon { padding: 0 4px; font-size: 0.8rem; color: var(--accent-color); }
 
+        /* أزرار السوشيال ميديا في الطرف الأيسر */
         .top-social { display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
         .top-social a { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; transition: color 0.2s; }
         .top-social a:hover { color: var(--accent-color); }
@@ -94,56 +95,72 @@
         .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
 
-        /* التخطيط العام والتمرير المستقل للشريط الأيسر */
-        .three-columns-grid { 
-            max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 15px; 
-            display: grid; grid-template-columns: 1fr 320px; gap: 20px; 
-            align-items: start; position: relative; 
-        }
-        @media (max-width: 950px) { .three-columns-grid { grid-template-columns: 1fr; } }
-
-        .main-content-area {
-            flex: 1;
-            min-width: 0;
-        }
-
-        /* الشريط الأيسر (الثابت الذكي Sticky) */
-        .left-sticky-sidebar { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
-            position: sticky; 
-            top: 70px; 
-            align-self: flex-start;
-            max-height: calc(100vh - 90px);
-            overflow-y: auto;
-        }
-        .left-sticky-sidebar::-webkit-scrollbar { width: 5px; }
-        .left-sticky-sidebar::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        .three-columns-grid { max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 15px; display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+        @media (max-width: 950px) { .three-columns-grid { grid-template-columns: 1fr; } header { grid-template-columns: 1fr; text-align: center; } .header-logo { justify-content: center; } }
 
         .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
         .post-title a { font-size: 1.15rem; font-weight: 700; color: var(--accent-color); text-decoration: none; }
         .post-meta { font-size: 0.8rem; color: var(--text-muted); margin: 8px 0; display: flex; gap: 15px; }
         .post-excerpt { font-size: 0.9rem; color: var(--text-main); line-height: 1.6; margin-bottom: 10px; }
         
+        /* تنسيقات عرض المقال المنفرد داخل نفس كارد المدونة الأصلي */
         .single-post-content { font-size: 1.05rem; color: var(--text-main); line-height: 1.8; margin-top: 15px; }
         .single-post-content p { margin-bottom: 15px; }
 
-        .widget-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 15px; }
+        /* تنسيقات الودجات */
+        .widget-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 15px; }
         .widget-title { color: var(--accent-color); font-size: 1rem; margin-bottom: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 5px; }
         .recent-posts-list { list-style: none; padding: 0; }
         .recent-posts-list li { margin-bottom: 6px; font-size: 0.85rem; }
-        .recent-posts-list li a { color: var(--text-main); text-decoration: none; display: flex; align-items: center; }
+        .recent-posts-list li a { color: var(--text-main); text-decoration: none; }
         .recent-posts-list li a:hover { color: var(--accent-color); }
 
         .site-footer { max-width: 1200px; width: 100%; margin: 40px auto 20px; padding: 0 15px; }
         .footer-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
+
+        /* تأكد أن الحاوية الرئيسية للموقع تحتل مساحة الشاشة ولا تملك overflow مخفي */
+        .main-layout-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            position: relative;
+            min-height: calc(100vh - 100px); 
+        }
+        
+        /* محتوى المقالات الرئيسي يأخذ مساحته الطبيعية للتمرير */
+        .main-content-area {
+            flex: 1;
+        }
+        
+        /* الشريط الجانبي الأيسر: ثابت ومستقل بالحركة تماماً مثل القديم */
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            width: 320px;
+            padding-left: 5px;
+        }
+        
+        /* إخفاء شريط التمرير المزعج مع الحفاظ على نعومة الحركة */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(150, 150, 150, 0.3);
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body class="theme-default">
 
+    <!-- مكان إعلانات أعلى الصفحة -->
     <div id="site-ad-top" style="max-width: 1200px; margin: 10px auto; text-align: center;"></div>
 
+    <!-- شريط التحكم العلوي -->
     <div class="top-bar">
         <div class="top-pages">
             <a href="privacy.html">خصوصية</a>
@@ -171,6 +188,7 @@
         </div>
     </div>
 
+    <!-- الترويسة الرئيسية -->
     <header>
         <div class="header-logo" id="site-logo-container"></div>
         <div class="header-center">
@@ -180,6 +198,7 @@
         <div></div>
     </header>
 
+    <!-- الشريط الإخباري -->
     <div class="ticker-wrapper" id="site-ticker-wrapper">
         <div class="ticker-container">
             <div class="ticker-title">إضاءة</div>
@@ -187,6 +206,7 @@
         </div>
     </div>
 
+    <!-- القائمة الرئيسية -->
     <div class="main-menu-bar">
         <nav id="site-main-menu" class="mega-menu">
             <a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
@@ -194,21 +214,25 @@
         </nav>
     </div>
 
+    <!-- مكان إعلانات وسط الصفحة -->
     <div id="site-ad-mid" style="max-width: 1200px; margin: 15px auto; text-align: center;"></div>
 
-    <!-- حاوية المحتوى والشريط الجانبي المعدلة والمنظمة -->
+    <!-- شبكة المحتوى -->
     <div class="three-columns-grid">
-        <main class="main-content-area" id="posts-container">
+        <main id="posts-container">
             <p style="color: var(--text-muted);">جاري تحميل المحتوى...</p>
         </main>
 
-        <div class="left-sticky-sidebar">
-            <div class="left-content-area" id="left-widgets-area"></div>
-        </div>
+        <aside id="main-sidebar" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px;">
+            <h3 style="color: var(--accent-color); font-size: 1rem; margin-bottom: 10px;">الشريط الجانبي</h3>
+            <div id="site-sidebar-widgets"></div>
+        </aside>
     </div>
 
+    <!-- مكان إعلانات أسفل الصفحة -->
     <div id="site-ad-bot" style="max-width: 1200px; margin: 15px auto; text-align: center;"></div>
 
+    <!-- الفوتر -->
     <footer class="site-footer">
         <div class="footer-container" id="site-footer-widgets"></div>
         <div class="footer-bottom-bar">
@@ -216,17 +240,22 @@
         </div>
     </footer>
 
+    <!-- السكريبتات الموحدة للتحكم وعرض المقالات ديناميكياً -->
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const postId = urlParams.get('id');
+            const postId = urlParams.get('id'); // فحص ما إذا كان المطلوب عرض مقال محدد
 
             try {
                 const response = await fetch('data.json?t=' + Date.now());
                 const data = await response.json();
+                const postsContainer = id => document.getElementById('posts-container');
+                
+                // 1. إدارة العرض: مقال منفرد أو قائمة المقالات بالرئيسية
                 const container = document.getElementById('posts-container');
                 
                 if (postId) {
+                    // حالة عرض المقال المنفرد ضمن القالب الأصلي الأنيق
                     const post = (data.posts || []).find(p => p.id == postId);
                     if (post) {
                         document.getElementById('site-title').innerText = post.title + " | تكنو-دليل";
@@ -255,6 +284,7 @@
                         container.innerHTML = `<div class="post-card"><h2>عذراً</h2><p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود.</p><a href="index.html" style="color: var(--accent-color); text-decoration: none; font-weight: bold;">العودة للرئيسية</a></div>`;
                     }
                 } else {
+                    // حالة عرض الصفحة الرئيسية الأصلية للمقالات
                     if (data.posts && data.posts.length > 0) {
                         container.innerHTML = data.posts.map(post => `
                             <div class="post-card">
@@ -273,6 +303,7 @@
                     }
                 }
 
+                // 2. تحديث إعدادات الشعار والشريط الإخباري
                 if (data.settings) {
                     if (data.settings.logoUrl) {
                         const logoContainer = document.getElementById('site-logo-container');
@@ -286,6 +317,7 @@
                     }
                 }
 
+                // 3. تحديث القوائم الذكية الهرمية
                 if (data.menu && data.menu.length > 0) {
                     const menuContainer = document.getElementById('site-main-menu');
                     if (menuContainer) {
@@ -298,8 +330,9 @@
                     }
                 }
 
+                // 4. تحديث الودجات (الشريط الجانبي والتذييل)
                 if (data.widgets && data.widgets.length > 0) {
-                    const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
+                    const sidebarWidgetsContainer = document.getElementById('site-sidebar-widgets');
                     const footerWidgetsContainer = document.getElementById('site-footer-widgets');
                     
                     let sidebarHtml = '';
@@ -335,6 +368,7 @@
                     if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml;
                 }
 
+                // 5. تحديث الإعلانات
                 if (data.ads) {
                     if (data.ads.topOn && data.ads.topCode) {
                         const topAdBox = document.getElementById('site-ad-top');
@@ -363,12 +397,12 @@
             }
         });
 
+        // إدارة الخطوط والثيمات والوضع الليلي
         const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
         let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
         document.getElementById('font-toggle-btn').addEventListener('click', () => {
             currentFontIdx = (currentFontIdx + 1) % fontsList.length;
             document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
-            localStorage.getItem('tech_font_idx', currentFontIdx);
             localStorage.setItem('tech_font_idx', currentFontIdx);
         });
         document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
@@ -406,6 +440,7 @@
             darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
         }
 
+        // لوحة التحكم المخفية على حرف C في التذييل
         document.getElementById('secret-trigger').addEventListener('click', () => {
             const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
             if(pass === "aziz728") {
