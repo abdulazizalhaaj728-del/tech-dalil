@@ -75,7 +75,7 @@
             max-width: 1200px; width: 100%; margin: 10px auto 0; border-radius: 10px; border: 1px solid var(--border-color);
         }
         .header-logo { display: flex; align-items: center; justify-content: flex-start; }
-        .header-logo img { max-height: 55px; width: auto; object-fit: contain; }
+        .header-logo img {height: auto !important; max-height: none !important; width: auto !important; object-fit: contain;}
         
         .header-center { text-align: center; }
         .header-center h1 { font-size: 2.2rem; font-weight: 900; color: var(--text-main); }
@@ -548,5 +548,24 @@
             }
         });
     </script>
+    
+    <script>
+            /* إطار يحيط بكامل المدونة من الحافة للحافة وبسمك ثخين */
+        body {
+            background-color: var(--bg-color, #0f172a);
+            padding: 15px; /* مسافة بسيطة بين الإطار وحافة الشاشة لتظهر بشكل فخم */
+        }
+        
+            .site-outer-frame {
+            max-width: 1230px; /* أكبر قليلاً من عناصر المحتوى (1200px) ليحتويها بإتقان */
+            margin: 0 auto;
+            border: 4px solid var(--primary-color); /* سمك الإطار 4 بكسل (ثخين وقوي) ويمكنك زيادته إلى 6px حسب رغبتك */
+            border-radius: 16px;
+            padding: 10px;
+            background: var(--bg-color);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5); /* ظل خفيف لإبراز فخامة الإطار */
+        }
+    </script>
+    
 </body>
 </html>
