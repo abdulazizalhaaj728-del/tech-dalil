@@ -46,6 +46,14 @@
             "content": "ودجت تذييل 1",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1790149857825",
+            "title": "ودجت تذييل 2",
+            "type": "recent",
+            "content": "ودجت تذييل 1",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
