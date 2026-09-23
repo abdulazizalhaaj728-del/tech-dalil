@@ -120,40 +120,39 @@
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
 
-/* تأكد أن الحاوية الرئيسية للموقع تحتل مساحة الشاشة ولا تملك overflow مخفي */
-.main-layout-container {
-    display: flex;
-    align-items: flex-start;
-    gap: 30px;
-    position: relative;
-    /* تحديد ارتفاع يعتمد على الشاشة لضمان عمل السكرول الداخلي */
-    min-height: calc(100vh - 100px); 
-}
-
-/* محتوى المقالات الرئيسي (الجهة اليمنى) يأخذ مساحته الطبيعية للتمرير */
-.main-content-area {
-    flex: 1;
-}
-
-/* الشريط الجانبي الأيسر: ثابت ومستقل بالحركة */
-.sidebar {
-    position: sticky;
-    top: 20px; /* المسافة من أعلى الشاشة عند النزول */
-    height: calc(100vh - 40px); /* يلتصق بارتفاع الشاشة تماماً */
-    overflow-y: auto; /* سكرول خاص بالشريط الأيسر فقط */
-    flex-shrink: 0;
-    width: 320px; /* أو العرض المخصص لشريطك */
-    padding-left: 5px;
-}
-
-/* إخفاء شريط التمرير المزعج مع الحفاظ على نعومة الحركة */
-.sidebar::-webkit-scrollbar {
-    width: 4px;
-}
-.sidebar::-webkit-scrollbar-thumb {
-    background: rgba(150, 150, 150, 0.3);
-    border-radius: 4px;
-}
+        /* تأكد أن الحاوية الرئيسية للموقع تحتل مساحة الشاشة ولا تملك overflow مخفي */
+        .main-layout-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            position: relative;
+            min-height: calc(100vh - 100px); 
+        }
+        
+        /* محتوى المقالات الرئيسي يأخذ مساحته الطبيعية للتمرير */
+        .main-content-area {
+            flex: 1;
+        }
+        
+        /* الشريط الجانبي الأيسر: ثابت ومستقل بالحركة تماماً مثل القديم */
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            width: 320px;
+            padding-left: 5px;
+        }
+        
+        /* إخفاء شريط التمرير المزعج مع الحفاظ على نعومة الحركة */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(150, 150, 150, 0.3);
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body class="theme-default">
