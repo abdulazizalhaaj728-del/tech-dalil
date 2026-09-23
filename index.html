@@ -94,50 +94,76 @@
         .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
 
-        /* الهيكلية الجديدة لضمان استقرار وثبات الشريط الجانبي وسلاسة التمرير */
-        .main-layout-container {
-            max-width: 1200px;
-            width: 100%;
-            margin: 20px auto 0;
-            padding: 0 15px;
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            position: relative;
+        /* التخطيط العام والتمرير المستقل للشريط الأيسر */
+        .three-columns-grid { 
+            max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 15px; 
+            display: grid; grid-template-columns: 1fr 320px; gap: 20px; 
+            align-items: start; position: relative; 
         }
+        @media (max-width: 950px) { .three-columns-grid { grid-template-columns: 1fr; } }
+
+        /* قسم الأخبار الأيمن (يتمرر بشكل منفصل تماماً) */
+        .right-scrollable-section { 
+            /* تم إزالة الارتفاع الثابت لكي لا يؤثر على الصفحة، ويعمل سكرول طبيعي للجهة اليمنى */
+            width: 100%;
+        }
+        
+        .top-right-row { display: grid; grid-template-columns: 1fr 320px; gap: 20px; margin-bottom: 20px; }
+        @media(max-width: 768px) { .top-right-row { grid-template-columns: 1fr; } }
+
+        .square-slider-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; height: 310px; position: relative; }
+        .square-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.6s ease; background-size: cover; background-position: center; display: flex; align-items: flex-end; }
+        .square-slide.active { opacity: 1; }
+        .square-caption { background: linear-gradient(to top, rgba(15,23,42,0.95), transparent); width: 100%; padding: 15px; z-index: 2; }
+        .square-title { font-size: 1.05rem; color: var(--accent-color); font-weight: 700; margin-bottom: 5px; cursor: pointer; }
+        .square-desc { font-size: 0.75rem; color: #cbd5e1; }
 
         .main-content-area {
             flex: 1;
         }
 
-        .sidebar {
-            position: sticky;
-            top: 20px;
-            height: calc(100vh - 40px);
+
+                /* أسهم التنقل للسلايدر */
+        .slider-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.6); color: #fff; border: none;
+            width: 35px; height: 35px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10; transition: 0.3s; font-size: 0.9rem;
+        }
+        .slider-arrow:hover { background: var(--primary-color); }
+        .slider-prev { right: 10px; }
+        .slider-next { left: 10px; }
+
+        .news-mini-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; height: 310px; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+        .mini-news-card { border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin-bottom: 6px; }
+        .mini-news-title { font-size: 0.85rem; color: var(--accent-color); font-weight: 700; cursor: pointer; }
+        .mini-news-excerpt { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* الشريط الأيسر (الثابت الذكي Sticky الذي يتوقف عند حدود الترويسة والتذييل ولن يختفي) */
+        .left-sticky-sidebar { 
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
+            position: sticky; 
+            top: 20px; 
+            align-self: flex-start;
+            max-height: calc(100vh - 40px);
             overflow-y: auto;
-            flex-shrink: 0;
-            width: 320px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 15px;
         }
+        /* تخصيص سكرول الشريط الأيسر ليكون منفصلاً وجميلاً */
+        .left-sticky-sidebar::-webkit-scrollbar { width: 5px; }
+        .left-sticky-sidebar::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
 
-        /* تحسين مظهر شريط التمرير الجانبي */
-        .sidebar::-webkit-scrollbar {
-            width: 4px;
-        }
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(150, 150, 150, 0.3);
-            border-radius: 4px;
-        }
+        .sidebar-widget { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+        .sidebar-widget h4 { color: var(--accent-color); font-size: 0.95rem; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
+        .sidebar-widget ul { list-style: none; }
+        .sidebar-widget ul li { padding: 6px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; cursor: pointer; }
 
-        @media (max-width: 950px) { 
-            .main-layout-container { flex-direction: column; } 
-            .sidebar { position: static; height: auto; width: 100%; overflow-y: visible; }
-            header { grid-template-columns: 1fr; text-align: center; } 
-            .header-logo { justify-content: center; } 
-        }
+
+        /* استخدام الدرجة الأولى الأفتح عند المرور بال鼠标 (Hover) */
+    .button-primary:hover, 
+    .sidebar-widget ul li:hover {
+        background-color: var(--accent-light-1) !important;
+    }
 
         .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
         .post-title a { font-size: 1.15rem; font-weight: 700; color: var(--accent-color); text-decoration: none; }
@@ -222,10 +248,16 @@
             <p style="color: var(--text-muted);">جاري تحميل المحتوى...</p>
         </main>
 
+        <!--
         <aside class="sidebar">
             <h3 style="color: var(--accent-color); font-size: 1rem; margin-bottom: 10px;">الشريط الجانبي</h3>
             <div id="site-sidebar-widgets"></div>
         </aside>
+        -->
+        <div class="left-sticky-sidebar">
+            <div class="left-content-area" id="left-widgets-area"></div>
+        </div>
+
     </div>
 
     <div id="site-ad-bot" style="max-width: 1200px; margin: 15px auto; text-align: center;"></div>
