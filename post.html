@@ -63,6 +63,32 @@
         .back-btn { display: inline-block; background: var(--primary-color); color: #fff; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: opacity 0.2s; }
         .back-btn:hover { opacity: 0.9; }
 
+        /* خصائص الحاوية الرئيسية لتكون شبكية (Grid) أو فليكس لضبط الأبعاد بجانب بعضها */
+.main-layout-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    position: relative;
+}
+
+/* الشريط الجانبي الذكي والثابت */
+.sidebar {
+    position: sticky;
+    top: 20px; /* المسافة من أعلى الشاشة عند التمرير */
+    max-height: calc(100vh - 40px); /* ألا يتجاوز ارتفاع الشاشة */
+    overflow-y: auto; /* تمكين السكرول الداخلي للشريط الجانبي فقط إذا كان طويلاً */
+    scrollbar-width: thin; /* لتنحيف شريط التمرير (للمتصفحات الحديثة) */
+}
+
+/* إخفاء شريط التمرير المزعج مع الحفاظ على إمكانية السكرول (اختياري) */
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
         /* التذييل */
         footer { background: var(--card-bg); border-top: 1px solid var(--border-color); text-align: center; margin-top: 50px; color: var(--text-muted); font-size: 0.85rem; padding: 25px 20px; }
     </style>
