@@ -62,6 +62,14 @@
             "content": "ودجت تذييل 3",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1790149903621",
+            "title": "ودجت تذييل 4",
+            "type": "recent",
+            "content": "ودجت تذييل 4",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
