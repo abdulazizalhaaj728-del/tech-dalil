@@ -151,6 +151,65 @@
             color: var(--text-muted); font-size: 0.9rem; border: 2px dashed var(--border-color);
         }
 
+        .digital-products-section {
+            border: 2px dashed #1b4d3e; /* لون الإطار المنقط متناسق مع المدونة */
+            background-color: #0b2219; /* خلفية داكنة متناسقة */
+            border-radius: 12px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .section-title {
+            text-align: center;
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background-color: #1b4d3e;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 أعمدة */
+            grid-template-rows: repeat(3, 1fr);     /* 3 صفوف */
+            gap: 10px; /* المسافة بين المربعات */
+        }
+        
+        .product-card {
+            background-color: #11382b;
+            border: 1px solid #1b4d3e;
+            border-radius: 8px;
+            aspect-ratio: 1; /* يجعل المربع متساوي الأبعاد (عرض وطول متطابقان) */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:not(.empty):hover {
+            background-color: #1b4d3e;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .product-card span {
+            color: #ffffff;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 5px;
+        }
+        
+        .product-card.empty {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+
+        
+
         .left-sticky-sidebar { 
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
             position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
