@@ -145,68 +145,89 @@
         .slider-prev { right: 10px; }
         .slider-next { left: 10px; }
 
-        .news-mini-container { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; height: 310px; padding: 15px; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow: hidden; 
-            color: var(--text-muted); font-size: 0.9rem; border: 2px dashed var(--border-color);
-        }
+.news-mini-container { 
+        background: var(--card-bg); 
+        border: 2px dashed var(--border-color); 
+        border-radius: 12px; 
+        height: 310px; 
+        padding: 15px; 
+        display: flex; 
+        flex-direction: column; 
+        overflow: hidden; 
+        color: var(--text-muted); 
+        font-size: 0.9rem; 
+        box-sizing: border-box;
+    }
 
-        .digital-products-section {
-            border: 2px dashed #1b4d3e; /* لون الإطار المنقط متناسق مع المدونة */
-            background-color: #0b2219; /* خلفية داكنة متناسقة */
-            border-radius: 12px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        
-        .section-title {
-            text-align: center;
-            color: #ffffff;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            background-color: #1b4d3e;
-            padding: 8px;
-            border-radius: 6px;
-        }
-        
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 3 أعمدة */
-            grid-template-rows: repeat(2, 1fr);     /* 3 صفوف */
-            gap: 10px; /* المسافة بين المربعات */
-        }
-        
-        .product-card {
-            background-color: #11382b;
-            border: 1px solid #1b4d3e;
-            border-radius: 8px;
-            aspect-ratio: 1; /* يجعل المربع متساوي الأبعاد (عرض وطول متطابقان) */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .product-card:not(.empty):hover {
-            background-color: #1b4d3e;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .product-card span {
-            color: #ffffff;
-            font-size: 0.9rem;
-            text-align: center;
-            padding: 5px;
-        }
-        
-        .product-card.empty {
-            opacity: 0.5;
-            cursor: default;
-        }
+    .section-title {
+        text-align: center;
+        color: #ffffff;
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        background-color: #1b4d3e;
+        padding: 6px;
+        border-radius: 6px;
+    }
+    
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* عمودان متساويان */
+        grid-template-rows: repeat(2, 1fr);     /* صفان متساويان */
+        gap: 8px; /* المسافة بين المربعات */
+        flex: 1;  /* ليأخذ باقي المساحة المتاحة داخل الحاوية */
+        min-height: 0; /* مهم جداً لمنع تمدد الشبكة خارج الحاوية */
+    }
+    
+    .product-card {
+        background-color: #11382b;
+        border: 1px solid #1b4d3e;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        overflow: hidden; /* يحصر المحتوى داخل حدود المربع تماماً */
+        position: relative;
+        transition: all 0.3s ease;
+        height: 100%; /* الالتزام باركام المربع المتساوي */
+    }
+    
+    .product-card:not(.empty):hover {
+        background-color: #1b4d3e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
 
+    /* تنسيق حاوية الصورة لتملأ المربع تقريباً مع هامش بسيط وتتساوى الأبعاد */
+    .product-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px; /* هامش بسيط يجعل الصورة أصغر قليلاً من المربع */
+        box-sizing: border-box;
+    }
+    
+    .ad-game-thumb {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* تغطية المساحة المخصصة بشكل متناسق ودون تشوه */
+        border-radius: 6px;
+    }
+    
+    .product-card span {
+        color: #ffffff;
+        font-size: 0.85rem;
+        text-align: center;
+        padding: 5px;
+    }
+    
+    .product-card.empty {
+        opacity: 0.4;
+        cursor: default;
+    }
        
         
 
@@ -323,39 +344,30 @@
                         <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
                     </div>
 
-                    
+                                        
                     <div class="news-mini-container" id="side-news-summaries">
-                        <i class="fa-solid fa-layer-group" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i> 
-                        <!--<div class="digital-products-section"> -->
-                            <div class="section-title">منتجات رقمية</div>
-                                <div class="products-grid">
-                                    <!-- المربع الأول: لعبة الاختبار -->
-                                    <!--<a href="test.html" class="ad-banner-link" -->
-                                    <a href="game.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
-                                        <div class="product-content">
-                                           <div class="ad-image-container">
-                                                <img src="https://tech-dalil.com/4.png"> alt=<"لعبة تحدي الثقافة التعليمية" class="ad-game-thumb">
-                                           </div>
-                                            <span> </span>
-                                            
-                                        </div>
-                                    </a>
-                            
-                                    <!-- المربع الثاني: الاختبار -->
-                                    <a href="test.html" class="product-card">
-                                        <div class="product-content">
-                                            <span>اختبار الذكاء</span>
-                                        </div>
-                                    </a>
-                            
-                                    <!-- مربعات فارغة للاستخدام المستقبلي -->
-                                    <div class="product-card empty"></div>
-                                    <div class="product-card empty"></div>
+                        <div class="section-title">منتجات رقمية</div>
+                        <div class="products-grid">
+                            <!-- المربع الأول: اللعبة (تم تصحيح الوسوم والصورة) -->
+                            <a href="game.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
+                                <div class="product-content">
+                                    <img src="https://tech-dalil.com/4.png" alt="لعبة تحدي الثقافة التعليمية" class="ad-game-thumb">
                                 </div>
-                            </div>
-                        <!--</div> -->
-                   </div> 
-
+                            </a>
+                    
+                            <!-- المربع الثاني: الاختبار -->
+                            <a href="test.html" class="product-card">
+                                <div class="product-content">
+                                    <span>اختبار الذكاء</span>
+                                </div>
+                            </a>
+                    
+                            <!-- مربعات فارغة للاستخدام المستقبلي -->
+                            <div class="product-card empty"></div>
+                            <div class="product-card empty"></div>
+                        </div>
+                    </div>
+                                        
                 <div class="tags-filter-section">
                     <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 10px;">🏷️ تصفية حسب التسميات:</h3>
                     <div class="tags-bar" id="tags-filter-bar"></div>
