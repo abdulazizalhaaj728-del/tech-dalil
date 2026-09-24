@@ -92,6 +92,14 @@
             "content": "ودجت شريط 2",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1790272552071",
+            "title": "ودجت للشريط الأيسر",
+            "type": "recent",
+            "content": "ودجت للشريط الأيسر",
+            "active": true,
+            "location": "sidebar"
         }
     ],
     "ads": {
