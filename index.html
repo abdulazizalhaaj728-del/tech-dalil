@@ -43,21 +43,26 @@
         }
 
         /* الثيمات والألوان */
-        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --accent-color: #0284c7; --border-color: #334155; }
-        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --accent-color: #38bdf8; --border-color: #1d4ed8; }
-        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --accent-color: #e04885; --border-color: #5c2438; }
-        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --accent-color: #b86b3a; --border-color: #593f2b; }
-        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --accent-color: #10b981; --border-color: #065f46; }
-        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --accent-color: #8b5cf6; --border-color: #5b21b6; }
+        /* استبدل سطر متغيرات الثيمات في قسم الـ style بهذا الكود لتفعيل اللون الأساسي في كل ثيم */
+        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --primary-color: #0284c7; --accent-color: #0284c7; --border-color: #334155; }
+        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --primary-color: #38bdf8; --accent-color: #38bdf8; --border-color: #1d4ed8; }
+        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --primary-color: #e04885; --accent-color: #e04885; --border-color: #5c2438; }
+        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --primary-color: #b86b3a; --accent-color: #b86b3a; --border-color: #593f2b; }
+        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; }
+        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; }
 
-        body.light-mode {
-            --bg-color: #f1f5f9 !important;
-            --card-bg: #ffffff !important;
-            --text-main: #0f172a !important;
-            --text-muted: #475569 !important;
-            --border-color: #cbd5e1 !important;
+        /* استبدال تنسيقات عنوان صندوق المنتجات ومربعات الشبكة لتتفاعل مع الثيم */
+        .section-title {
+            text-align: center;
+            color: var(--text-main);
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            background-color: var(--accent-color);
+            padding: 5px;
+            border-radius: 6px;
         }
-
+        
         /* شريط التحكم العلوي */
         .top-bar {
             background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 8px 20px;
@@ -194,8 +199,8 @@
     }
     
     .product-card {
-        background-color: #11382b;
-        border: 1px solid #1b4d3e;
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
         border-radius: 8px;
         display: flex;
         align-items: center;
@@ -207,11 +212,11 @@
         height: 100%;
     }
     
-    .product-card:not(.empty):hover {
-        background-color: #1b4d3e;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
+        .product-card:not(.empty):hover {
+            background-color: var(--card-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
 
     /* تعديل حاوية المحتوى لتكون عمودية (صورة بالأعلى وتحتها النص) */
         .product-content {
