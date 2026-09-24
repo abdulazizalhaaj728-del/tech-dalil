@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+
+<script type="text/javascript" src="https://payhip.com/payhip.js"></script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E6MDY7EZNJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-E6MDY7EZNJ');
+</script>
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي المعرفة الثقافي</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        header {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .header-left-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .header-right-btns {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-header {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-header:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 750px;
+            width: 90%;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .quiz-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            position: relative;
+        }
+
+        .strict-warning-banner {
+            background-color: #fde8e8;
+            color: #9b1c1c;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #f8b4b4;
+            font-weight: bold;
+            line-height: 1.5;
+            box-shadow: 0 2px 5px rgba(231, 76, 60, 0.1);
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #eef2f5;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .timer { color: var(--danger-color); font-size: 18px; }
+        .question-count { color: var(--primary-color); }
+        .score { color: var(--accent-color); font-size: 18px; }
+
+        .deduction-toast {
+            display: none;
+            background-color: var(--danger-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            animation: pulse 0.5s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .question-text {
+            font-size: 22px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 17px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            background-color: #e2e6ea;
+            border-color: #dae0e5;
+        }
+
+        .result-screen { display: none; }
+
+        .result-grade {
+            font-size: 26px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 15px 0;
+        }
+
+        .result-feedback {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border-right: 4px solid var(--accent-color);
+        }
+
+        .btn-main {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        .btn-main:hover { opacity: 0.9; }
+
+        .btn-secondary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        .btn-secondary:hover { opacity: 0.9; }
+
+        .btn-print {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        .btn-print:hover { opacity: 0.9; }
+
+        .btn-end-quiz {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .btn-end-quiz:hover { opacity: 0.9; }
+
+        .action-buttons-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .input-name {
+            padding: 12px;
+            font-size: 16px;
+            width: 80%;
+            max-width: 300px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        .input-name:focus { border-color: var(--accent-color); }
+
+        .leaderboard-scroll-container {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 15px;
+        }
+
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .leaderboard-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .leaderboard-table tr:nth-child(even) { background-color: #f8fafc; }
+
+        #leaderboard-screen { display: none; text-align: right; }
+
+        footer {
+            margin-top: auto;
+            width: 100%;
+            background-color: #e9ecef;
+            padding: 15px 0;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            line-height: 1.6;
+            animation: slideDown 0.25s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+
+        .modal-card p {
+            font-size: 15px;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* ==================== تنسيقات الطباعة ==================== */
+        @media print {
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+
+            html, body {
+                height: 100% !important;
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            header, footer, .strict-warning-banner, .btn-main, .btn-secondary, .btn-print, .btn-end-quiz, .btn-header, .header-left-btn, .header-right-btns, .action-buttons-group, .modal-overlay {
+                display: none !important;
+            }
+
+            body.print-result-mode {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                min-height: 100vh !important;
+            }
+
+            body.print-result-mode .container {
+                width: 90% !important;
+                max-width: 650px !important;
+                margin: auto !important;
+                padding: 0 !important;
+            }
+
+            body.print-result-mode .quiz-card {
+                border: 4px double #2c3e50 !important;
+                outline: 2px solid #27ae60 !important;
+                outline-offset: 6px !important;
+                padding: 40px 30px !important;
+                border-radius: 12px !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+                text-align: center !important;
+            }
+
+            body.print-result-mode .quiz-card > div:not(#result-screen) {
+                display: none !important;
+            }
+
+            body.print-result-mode #result-screen {
+                display: block !important;
+            }
+
+            body.print-result-mode #result-feedback {
+                background-color: #f8f9fa !important;
+                border-right: 4px solid #27ae60 !important;
+                padding: 15px !important;
+                font-size: 17px !important;
+                margin-top: 20px !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            body.print-result-mode .print-header {
+                display: block !important;
+                text-align: center;
+                border-bottom: 2px solid #2c3e50;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+
+            body.print-result-mode .print-footer {
+                display: block !important;
+                margin-top: 30px;
+                text-align: center;
+                border-top: 1px solid #ccc;
+                padding-top: 10px;
+                font-size: 12px;
+                color: #555;
+            }
+
+            body.print-leaderboard-mode {
+                display: block !important;
+                height: auto !important;
+            }
+
+            body.print-leaderboard-mode .container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            body.print-leaderboard-mode .quiz-card {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+            }
+
+            body.print-leaderboard-mode .quiz-card > div:not(#leaderboard-screen) {
+                display: none !important;
+            }
+
+            body.print-leaderboard-mode #leaderboard-screen {
+                display: block !important;
+            }
+
+            body.print-leaderboard-mode .leaderboard-scroll-container {
+                max-height: none !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            body.print-leaderboard-mode .leaderboard-table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                page-break-inside: auto;
+            }
+
+            body.print-leaderboard-mode .leaderboard-table tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            body.print-leaderboard-mode .leaderboard-table thead {
+                display: table-header-group;
+            }
+
+            body.print-leaderboard-mode .leaderboard-table th {
+                background-color: #2c3e50 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            body.print-leaderboard-mode .print-header {
+                display: block !important;
+                text-align: center;
+                border-bottom: 2px solid #2c3e50;
+                padding-bottom: 15px;
+                margin-bottom: 20px;
+            }
+
+            body.print-leaderboard-mode .print-footer {
+                display: block !important;
+                margin-top: 25px;
+                text-align: center;
+                border-top: 1px solid #ccc;
+                padding-top: 10px;
+                font-size: 12px;
+                color: #777;
+            }
+        }
+
+        .print-header, .print-footer {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left-btn">
+            <button class="btn-header" onclick="openAboutModal()">❓ عن التطبيق</button>
+        </div>
+
+        <h1 id="app-title">تحدي المعرفة الثقافي</h1>
+
+        <div class="header-right-btns">
+            <button class="btn-header" id="sound-toggle-btn" onclick="toggleSound()">🔊 الصوت: مفعّل</button>
+            <button class="btn-header" onclick="openLeaderboard()">🏆 ترتيب المتسابقين</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="quiz-card">
+            
+            <div class="print-header">
+                <h1 style="margin: 0; color: #2c3e50; font-size: 26px;">تحدي المعرفة الثقافي 🏆</h1>
+                <p style="margin: 5px 0 0 0; color: #555; font-size: 14px;">منصة الاختبارات والتقييم الثقافي التفاعلي</p>
+            </div>
+
+            <!-- شاشة البداية -->
+            <div id="start-screen">
+                <h2>أهلاً بك في تحدي السرعة والمعرفة!</h2>
+                <p id="welcome-msg">لديك وقت محدد لإجابة أكبر عدد ممكن من الأسئلة. الإجابة الصحيحة تمنحك 10 نقاط.</p>
+                <div>
+                    <input type="text" id="player-name-input" class="input-name" placeholder="أدخل اسمك الكريم للبدء..." maxlength="25">
+                </div>
+                <button class="btn-main" onclick="startQuiz()">ابدأ التحدي الآن ⏱️</button>
+            </div>
+
+            <!-- شاشة الاختبار -->
+            <div id="quiz-screen" style="display: none;">
+                <div class="strict-warning-banner">
+                    ⚠️ تحذير مهم: يُحظر تماماً التبديل بين النوافذ أو فتح تبويب آخر! التبديل سيؤدي فوراً لخصم نقاط السؤال الحالي (10 نقاط).
+                </div>
+
+                <div class="stats-bar">
+                    <div class="timer" id="timer-display">⏱️ 00:00</div>
+                    <div class="question-count" id="question-count-display">السؤال: #1</div>
+                    <div class="score" id="score-text-display">النقاط: 0</div>
+                </div>
+
+                <div id="deduction-toast" class="deduction-toast">
+                    🚨 تم رصد خروج من النافذة! تم خصم 10 نقاط والانتقال للسؤال التالي.
+                </div>
+
+                <div id="question" class="question-text">جاري إعداد السؤال...</div>
+                <div id="options" class="options-grid"></div>
+
+                <button class="btn-end-quiz" onclick="confirmEndQuiz()">🛑 إنهاء الاختبار</button>
+            </div>
+
+            <!-- شاشة النتيجة الفردية للمتسابق فقط -->
+            <div id="result-screen" class="result-screen">
+                <h2>بطاقة نتيجة التحدي 🎉</h2>
+                <div id="player-result-title" style="font-size: 22px; font-weight: bold; color: var(--accent-color);"></div>
+                <div id="final-score" style="font-size: 18px; margin-top: 8px;"></div>
+                <div id="result-grade" class="result-grade"></div>
+                <div id="result-feedback" class="result-feedback"></div>
+
+                <div class="action-buttons-group">
+                    <button class="btn-print" onclick="printSingleResult()">🖨️ طباعة النتيجة والشهادة</button>
+                    <button class="btn-secondary" onclick="openLeaderboard()">🏆 عرض ترتيب المتسابقين</button>
+                    <button class="btn-main" onclick="resetToStart()">إعادة التحدي 🔄</button>
+                </div>
+            </div>
+
+            <!-- شاشة لوحة الصدارة العامة ورصد المتسابقين -->
+            <div id="leaderboard-screen">
+                <h2 style="text-align: center;">🏆 قائمة ترتيب جميع المتسابقين</h2>
+                <div class="leaderboard-scroll-container">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>الترتيب</th>
+                                <th>اسم المتسابق</th>
+                                <th>مجموع النقاط</th>
+                                <th>التقدير</th>
+                                <th>نسبة الدقة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="global-leaderboard-body"></tbody>
+                    </table>
+                </div>
+                <div class="action-buttons-group">
+    <button class="btn-print" onclick="printLeaderboard()">🖨️ طباعة سجل المتسابقين الكامل</button>
+    <!-- تم إضافة زر مسح السجل -->
+    <button class="btn-end-quiz" style="margin-top: 0;" onclick="confirmClearLeaderboard()">🗑️ مسح جميع السجلات</button>
+    <button class="btn-secondary" onclick="resetToStart()">العودة للرئيسية</button>
+</div>
+            </div>
+
+            <div class="print-footer">
+                <p>تم إصدار هذا التقرير تلقائياً من منصة تحدي المعرفة الثقافي - جميع الحقوق محفوظة &copy; 2026</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="about-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h2 style="color: var(--primary-color); margin-top: 0;">ℹ️ عن الاختبار والتطبيق</h2>
+            <p><strong>مبرمج الاختبار:</strong> عبدالعزيز الحاج</p>
+            <p style="font-size: 15px; color: #555;">
+                تطبيق "تحدي المعرفة الثقافي" هو منصة تفاعلية لاختبار وتقييم الثقافة العامة والسرعة في الإجابة بشكل ممتع ومحفز.
+            </p>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            <p style="font-size: 14px;">
+                💡 إذا كانت لديك أي اقتراحات أو تحسينات أو ملاحظات تطويرية، يمكنك التواصل مباشرة عبر الإيميل:
+            </p>
+            <p style="font-weight: bold; direction: ltr; color: var(--accent-color); font-size: 16px;">
+                <a href="mailto:abdulazizalhaaj728@gmail.com" style="color: inherit; text-decoration: none;">abdulazizalhaaj728@gmail.com</a>
+            </p>
+            <button class="btn-main" style="margin-top: 15px; padding: 8px 20px;" onclick="closeAboutModal()">إغلاق</button>
+        </div>
+    </div>
+
+    <div id="custom-dialog-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 id="dialog-title">تنبيه</h3>
+            <p id="dialog-msg"></p>
+            <div class="modal-actions">
+                <button id="dialog-confirm-btn" class="btn-main" style="padding: 8px 22px;">موافق</button>
+                <button id="dialog-cancel-btn" class="btn-main" style="background-color: #7f8c8d; padding: 8px 22px; display: none;">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+        <!-- مساحة إعلانية سفلية -->
+<div class="ad-banner" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #ced4da; border-radius: 8px; padding: 5px; text-align: center; margin: 5px auto; max-width: 800px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-family: system-ui, -apple-system, sans-serif;">
+    
+    <p style="font-size: .8rem; color: #333; line-height: 1.6; margin-bottom: 5px; font-weight: 500;">
+        إذا رغبت في عمل اختبار مماثل لزملائك أو طلابك وتكوين أسئلة ثقافية مع أجوبتها، فيمكنك شراء هذا النموذج الجاهز.
+    </p>
+
+    <div style="margin-bottom: 5px;">
+        <a href="https://payhip.com/b/SEtTr" class="payhip-buy-button" data-theme="green" data-product="SEtTr" style="display: inline-block; padding: 5px 24px; font-size: .8rem; font-weight: bold; border-radius: 6px; text-decoration: none;">اشتري الآن</a>
+    </div>
+
+    <div style="font-size: 0.8rem; color: #495057; border-top: 1px dashed #adb5bd; pt-10px; padding-top: 5px; margin-top: 5px;">
+        
+        <a href="https://www.youtube.com/watch?v=K9EaWL9p3fw" target="_blank" rel="noopener noreferrer" style="color: #ff0000; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-right: 5px;">
+            <svg style="width:20px; height:20px; vertical-align: middle;" viewBox="0 0 24 24">
+                <path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/>
+                <path fill="#FFFFFF" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+            شاهد الشرح على يوتيوب
+        </a>
+    </div>
+
+</div>      
+
+
+
+
+
+    <footer>
+        <p>جميع الحقوق محفوظة &copy; 2026 - منصة التحدي الثقافي</p>
+    </footer>
+
+    <script>
+        let dialogConfirmCallback = null;
+
+        function showCustomAlert(msg, title = "ℹ️ تنبيه") {
+            document.getElementById('dialog-title').innerText = title;
+            document.getElementById('dialog-msg').innerText = msg;
+            document.getElementById('dialog-cancel-btn').style.display = 'none';
+            document.getElementById('dialog-confirm-btn').innerText = 'موافق';
+            
+            dialogConfirmCallback = null;
+            document.getElementById('custom-dialog-modal').style.display = 'flex';
+        }
+
+        function showCustomConfirm(msg, onConfirm, title = "❓ تأكيد") {
+            document.getElementById('dialog-title').innerText = title;
+            document.getElementById('dialog-msg').innerText = msg;
+            document.getElementById('dialog-cancel-btn').style.display = 'inline-block';
+            document.getElementById('dialog-confirm-btn').innerText = 'نعم، أؤكد';
+            
+            dialogConfirmCallback = onConfirm;
+            document.getElementById('custom-dialog-modal').style.display = 'flex';
+        }
+
+        document.getElementById('dialog-confirm-btn').onclick = () => {
+            document.getElementById('custom-dialog-modal').style.display = 'none';
+            if (dialogConfirmCallback) dialogConfirmCallback();
+        };
+
+        document.getElementById('dialog-cancel-btn').onclick = () => {
+            document.getElementById('custom-dialog-modal').style.display = 'none';
+        };
+
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'question') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'correct') {
+                    [523.25, 659.25, 783.99].forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        const startTime = now + (idx * 0.07);
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, startTime);
+                        gain.gain.setValueAtTime(0.2, startTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.18);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.18);
+                    });
+                } else if (type === 'wrong') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(130.81, now + 0.25);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }
+            } catch (e) {
+                console.log("Audio error:", e);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('sound-toggle-btn');
+            btn.innerText = soundEnabled ? '🔊 الصوت: مفعّل' : '🔇 الصوت: معطّل';
+        }
+
+        let isQuizActive = false;
+
+        function enterFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(err => console.log(err));
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            }
+        }
+
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(err => console.log(err));
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
+
+        window.addEventListener('blur', () => {
+            if (isQuizActive) {
+                handleViolation();
+            }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (isQuizActive && document.hidden) {
+                handleViolation();
+            }
+        });
+
+        function handleViolation() {
+            if (!isQuizActive) return;
+            score -= 10;
+            if (score < 0) score = 0;
+            document.getElementById('score-text-display').innerText = `النقاط: ${score}`;
+            
+            playSound('wrong');
+            
+            const toast = document.getElementById('deduction-toast');
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+
+            nextQuestion();
+        }
+
+        const QUESTIONS = [
+            { q: "ما هي عاصمة المملكة العربية السعودية؟", correct: "الرياض", options: ["الرياض", "جدة", "الدمام"] },
+            { q: "ما هو أكبر كوكب في المجموعة الشمسية؟", correct: "المشتري", options: ["المشتري", "زحل", "المريخ"] },
+            { q: "كم عدد أضلاع المثلث؟", correct: "3", options: ["3", "4", "5"] },
+            { q: "ما هو الحيوان الملقب بـ 'سفينة الصحراء'؟", correct: "الجمال", options: ["الجمال", "الحصان", "الفيل"] },
+            { q: "ما هو أسرع كائن حي بري على وجه الأرض؟", correct: "الفهد", options: ["الفهد", "الأسد", "الغزال"] },
+            { q: "ما هو العنصر الكيميائي الذي رمزه (O)؟", correct: "الأكسجين", options: ["الأكسجين", "الذهب", "الحديد"] },
+            { q: "كم عدد ألوان قوس قزح؟", correct: "7", options: ["7", "5", "9"] },
+            { q: "ما هي أكبر قارة في العالم من حيث المساحة؟", correct: "آسيا", options: ["آسيا", "أفريقيا", "أوروبا"] },
+            { q: "ما هو العضو المسؤول عن ضخ الدم في جسم الإنسان؟", correct: "القلب", options: ["القلب", "الرئة", "المعدة"] },
+            { q: "ما هي الدولة الأكثر إنتاجاً للقهوة في العالم؟", correct: "البرازيل", options: ["البرازيل", "كولومبيا", "إثيوبيا"] },
+            { q: "ما هو الغاز الأكثر وجوداً في الغلاف الجوي للأرض؟", correct: "النيتروجين", options: ["النيتروجين", "الأكسجين", "ثاني أكسيد الكربون"] },
+            { q: "كم عدد خطوط الطول على الكرة الأرضية؟", correct: "360", options: ["360", "180", "90"] },
+            { q: "ما هو أصغر كوكب في المجموعة الشمسية؟", correct: "عطارد", options: ["عطارد", "بلوتو", "المريخ"] },
+            { q: "ما هي عاصمة مصر؟", correct: "القاهرة", options: ["القاهرة", "الإسكندرية", "أسوان"] },
+            { q: "ما هو أطول نهر في العالم؟", correct: "نهر النيل", options: ["نهر النيل", "الأمازون", "المسيسيبي"] },
+            { q: "من هو العضو الذي يستهلك أكبر كمية من الأكسجين في الجسم؟", correct: "الدماغ", options: ["الدماغ", "القلب", "الكبد"] },
+            { q: "ما هي درجة غليان الماء بالسيليزيوس عند الضغط الجوي العادي؟", correct: "100", options: ["100", "90", "120"] },
+            { q: "ما هو أثقل معدن في الطبيعة؟", correct: "الأوسميوم", options: ["الأوسميوم", "الذهب", "الرصاص"] },
+            { q: "كم عدد القارات في العالم؟", correct: "7", options: ["7", "6", "5"] },
+            { q: "ما هي عاصمة اليابان؟", correct: "طوكيو", options: ["طوكيو", "أوساكا", "كيوتو"] },
+            { q: "ما هي الدولة المسماة بأرض الفراعنة؟", correct: "مصر", options: ["مصر", "السودان", "العراق"] },
+            { q: "أي من هذه الأشكال لديه 4 أضلاع متساوية وزوايا قائمة؟", correct: "المربع", options: ["المربع", "المستطيل", "المعين"] },
+            { q: "ما هو الحيوان الذي يستطيع تغيير لونه للتمويه؟", correct: "الحرباء", options: ["الحرباء", "الثعبان", "الضفدع"] },
+            { q: "ما هو الرمز الكيميائي للماء؟", correct: "H2O", options: ["H2O", "CO2", "NaCl"] },
+            { q: "كم عدد أسنان الشخص البالغ الطبيعية؟", correct: "32", options: ["32", "30", "28"] },
+            { q: "ما هي عاصمة الإمارات العربية المتحدة؟", correct: "أبوظبي", options: ["أبوظبي", "دبي", "الشارقة"] },
+            { q: "ما هي القارة التي تقع فيها الصحراء الكبرى؟", correct: "أفريقيا", options: ["أفريقيا", "آسيا", "أستراليا"] },
+            { q: "ما هو أقرب كوكب إلى الشمس؟", correct: "عطارد", options: ["عطارد", "الزهرة", "الأرض"] },
+            { q: "ما هو الطائر الذي يُضرب به المثل في الحكمة؟", correct: "البومة", options: ["البومة", "النسر", "الغراب"] },
+            { q: "ما هي عاصمة فرنسا؟", correct: "باريس", options: ["باريس", "ليون", "مارسيليا"] },
+            { q: "ما هو أطول كائن حي في العالم؟", correct: "الحوت الأزرق", options: ["الحوت الأزرق", "الفيل", "الزرافة"] },
+            { q: "كم عدد عظام جسم الإنسان البالغ؟", correct: "206", options: ["206", "300", "150"] },
+            { q: "ما هي عاصمة تركيا؟", correct: "أنقرة", options: ["أنقرة", "إسطنبول", "إزمير"] },
+            { q: "ما هو أسرع طائر في العالم عند الهبوط؟", correct: "الصقر الشاهين", options: ["الصقر الشاهين", "النسر", "النعامة"] },
+            { q: "ما هو الفيتامين الذي نحصل عليه بشكل أساسي من أشعة الشمس؟", correct: "فيتامين د", options: ["فيتامين د", "فيتامين ج", "فيتامين أ"] },
+            { q: "ما هي أكبر دولة في العالم من حيث المساحة؟", correct: "روسيا", options: ["روسيا", "كندا", "الصين"] },
+            { q: "ما هو العلم الذي يهتم بدراسة الكواكب والنجوم؟", correct: "الفلك", options: ["الفلك", "الجيولوجيا", "الأحياء"] },
+            { q: "كم يبلغ عدد لاعبي فريق كرة القدم داخل الملعب؟", correct: "11", options: ["11", "10", "12"] },
+            { q: "ما هي عاصمة المملكة المتحدة؟", correct: "لندن", options: ["لندن", "مانشستر", "ادنبرة"] },
+            { q: "ما هو أعمق محيط في العالم؟", correct: "المحيط الهادئ", options: ["المحيط الهادئ", "المحيط الأطلسي", "المحيط الهندي"] },
+            { q: "ما هو المكون الأساسي للزجاج؟", correct: "الرمل", options: ["الرمل", "الصلصال", "الحديد"] },
+            { q: "ما هو الحيوان الذي يبني السدود في الأنهار؟", correct: "القندس", options: ["القندس", "السنجاب", "الفقمة"] },
+            { q: "ما هي عاصمة إيطاليا؟", correct: "روما", options: ["روما", "ميلانو", "فلورنسا"] },
+            { q: "كم عدد فصول السنة؟", correct: "4", options: ["4", "3", "5"] },
+            { q: "ما هي أكبر جزيرة في العالم؟", correct: "جرينلاند", options: ["جرينلاند", "مدغشقر", "بورنيو"] },
+            { q: "ما هو المحيط الذي يقع بين أفريقيا وأستراليا؟", correct: "المحيط الهندي", options: ["المحيط الهندي", "المحيط الأطلسي", "المحيط الهادئ"] },
+            { q: "ما هي عاصمة ألمانيا؟", correct: "برلين", options: ["برلين", "ميونخ", "فرانکفورت"] },
+            { q: "ما هو الغاز الذي تستهلكه النباتات في عملية البناء الضوئي؟", correct: "ثاني أكسيد الكربون", options: ["ثاني أكسيد الكربون", "الأكسجين", "النيتروجين"] },
+            { q: "كم عدد الكواكب في المجموعة الشمسية؟", correct: "8", options: ["8", "9", "7"] },
+            { q: "ما هي الدولة الأكثر سكاناً في العالم حالياً؟", correct: "الهند", options: ["الهند", "الصين", "أمريكا"] },
+            { q: "ما هي عاصمة الصين؟", correct: "بكين", options: ["بكين", "شنغهاي", "هوانغتشو"] },
+            { q: "ما هو المعدن السائل في درجة حرارة الغرفة؟", correct: "الزئبق", options: ["الزئبق", "الحديد", "النحاس"] },
+            { q: "ما هي أكبر صحراء رملية متصلة في العالم؟", correct: "الربع الخالي", options: ["الربع الخالي", "صحراء كالاهاري", "صحراء جوبي"] },
+            { q: "كم عدد أضلاع الشكل الثماني؟", correct: "8", options: ["8", "6", "10"] },
+            { q: "ما هي عاصمة إسبانيا؟", correct: "مدريد", options: ["مدريد", "برشلونة", "إشبيلية"] },
+            { q: "ما هو أطول جدار بناه الإنسان في التاريخ؟", correct: "سور الصين العظيم", options: ["سور الصين العظيم", "جدار برلين", "أسوار عكا"] },
+            { q: "ما هو الحيوان البري الضخم الذي له بوق في وجهه؟", correct: "وحيد القرن", options: ["وحيد القرن", "الفيل", "فرس النهر"] },
+            { q: "ما هي العملة الرسمية للولايات المتحدة الأمريكية؟", correct: "الدولار", options: ["الدولار", "اليورو", "الجنيه"] },
+            { q: "ما هي عاصمة أستراليا؟", correct: "كانبرا", options: ["كانبرا", "سيدني", "ملبورن"] },
+            { q: "كم عدد النجوم في علم الولايات المتحدة الأمريكية؟", correct: "50", options: ["50", "48", "52"] },
+            { q: "ما هو الكوكب الملقب بـ 'الكوكب الأحمر'؟", correct: "المريخ", options: ["المريخ", "الزهرة", "المشتري"] },
+            { q: "ما هي عاصمة كندا؟", correct: "أوتاوا", options: ["أوتاوا", "تورونتو", "مونتريال"] },
+            { q: "ما هو أعلى جبل في العالم فوق سطح البحر؟", correct: "إيفرست", options: ["إيفرست", "كيليمانجارو", "K2"] },
+            { q: "ما هي عاصمة الكويت؟", correct: "الكويت", options: ["الكويت", "الجهراء", "الأحمدي"] },
+            { q: "ما هو الطائر الذي لا يستطيع الطيران ويسبح بمهارة؟", correct: "البطريق", options: ["البطريق", "النعامة", "البجعة"] },
+            { q: "ما هو الحيوان الذي يعيش في أستراليا ويحمل طفله في جيبه؟", correct: "الكانغر", options: ["الكانغر", "الكوالا", "الذئب"] },
+            { q: "ما هي عاصمة المغرب؟", correct: "الرباط", options: ["الرباط", "الدار البيضاء", "مراكش"] },
+            { q: "ما هي أكبر بحيرة في العالم من حيث المساحة؟", correct: "بحر قزوين", options: ["بحر قزوين", "بحيرة فيكتوريا", "بحيرة سوبراريور"] },
+            { q: "كم عدد دقائق الساعة؟", correct: "60", options: ["60", "100", "50"] },
+            { q: "ما هي عاصمة الأردن؟", correct: "عمان", options: ["عمان", "إربد", "الزرقاء"] },
+            { q: "ما هو اسم الوحدة المستخدمة لقياس الصوت؟", correct: "الديسيبل", options: ["الديسيبل", "الهرتز", "الأوم"] },
+            { q: "ما هي الدولة المشهورة ببرج إيفل؟", correct: "فرنسا", options: ["فرنسا", "إيطاليا", "إسبانيا"] },
+            { q: "ما هي عاصمة العراق؟", correct: "بغداد", options: ["بغداد", "الموصل", "البصرة"] },
+            { q: "ما هي أسرع طريقة لانتشار الضوء؟", correct: "الفراغ", options: ["الفراغ", "الهواء", "الماء"] },
+            { q: "ما هي عاصمة قطر؟", correct: "الدوحة", options: ["الدوحة", "الريان", "الوكرة"] },
+            { q: "ما هو الكائن الذي ليس له عظام إطلاقاً؟", correct: "قنديل البحر", options: ["قنديل البحر", "القرش", "الثعبان"] },
+            { q: "ما هي أقدم حضارة مأهولة بالتاريخ؟", correct: "سومر", options: ["سومر", "الفرعونية", "الإغريقية"] },
+            { q: "ما هي عاصمة سلطنة عمان؟", correct: "مسقط", options: ["مسقط", "صلالة", "صحار"] },
+            { q: "ما هي عاصمة البحرين؟", correct: "المنامة", options: ["المنامة", "المحرق", "الرفاع"] },
+            { q: "ما هو الحيوان الذي يبدل جلده دورياً؟", correct: "الثعبان", options: ["الثعبان", "التمساح", "السلحفاة"] },
+            { q: "ما هي القارة التي يقع فيها نهر الأمازون؟", correct: "أمريكا الجنوبية", options: ["أمريكا الجنوبية", "أمريكا الشمالية", "أفريقيا"] },
+            { q: "ما هي عاصمة الجزائر؟", correct: "الجزائر", options: ["الجزائر", "وهران", "قسنطينة"] },
+            { q: "ما هي الدولة الأكثر إنتاجاً للشاي في العالم؟", correct: "الصين", options: ["الصين", "الهند", "سريلانكا"] },
+            { q: "ما هي عاصمة تونس؟", correct: "تونس", options: ["تونس", "صفاقس", "سوسة"] },
+            { q: "كم عدد لاعبي فريق كرة السلة داخل الملعب؟", correct: "5", options: ["5", "6", "11"] },
+            { q: "ما هو الشجر الذي يستخرج منه المطاط الطبيعي؟", correct: "شجرة المطاط", options: ["شجرة المطاط", "النخيل", "الأرز"] },
+            { q: "ما هي عاصمة لبنان؟", correct: "بيروت", options: ["بيروت", "طرابلس", "صيدا"] },
+            { q: "ما هو العلم المسؤول عن دراسة الصخور والأرض؟", correct: "الجيولوجيا", options: ["الجيولوجيا", "الكيمياء", "الفيزياء"] },
+            { q: "ما هي عاصمة السودان؟", correct: "الخرطوم", options: ["الخرطوم", "أم درمان", "بورتسودان"] },
+            { q: "ما هو المكون الرئيسي للغاز الطبيعي؟", correct: "الميثان", options: ["الميثان", "البروبان", "البوتان"] },
+            { q: "ما هي عاصمة روسيا؟", correct: "موسكو", options: ["موسكو", "سان بطرسبرغ", "سوتشي"] },
+            { q: "كم يبلغ عدد الألوان الأساسية في الرسم؟", correct: "3", options: ["3", "4", "7"] },
+            { q: "ما هي عاصمة هولندا؟", correct: "أمستردام", options: ["أمستردام", "لاهاي", "روتردام"] },
+            { q: "ما هي الدولة المشهورة بزهور التوليب؟", correct: "هولندا", options: ["هولندا", "سويسرا", "بلجيكا"] },
+            { q: "ما هي عاصمة سويسرا؟", correct: "برن", options: ["برن", "جنيف", "زوريخ"] },
+            { q: "ما هو الكوكب الملقب بـ 'توأم الأرض'؟", correct: "الزهرة", options: ["الزهرة", "المريخ", "عطارد"] },
+            { q: "ما هي الدولة الأفريقية الوحيدة التي لم تُستعمر أبداً؟", correct: "إثيوبيا", options: ["إثيوبيا", "نيجيريا", "كينيا"] },
+            { q: "ما هي عاصمة السويد؟", correct: "ستوكهولم", options: ["ستوكهولم", "أوسلو", "هلسنكي"] },
+            { q: "ما هي أصغر دولة في العالم من حيث المساحة؟", correct: "الفاتيكان", options: ["الفاتيكان", "موناكو", "سان مارينو"] },
+            { q: "ما هو المحيط الذي يحيط بالقطب الجنوبي؟", correct: "المحيط المتجمد الجنوبي", options: ["المحيط المتجمد الجنوبي", "المحيط الأطلسي", "المحيط الهادئ"] }
+        ];
+
+
+
+
+
+
+
+
+        const FEEDBACKS = {
+            "ممتاز جداً": "ماشاء الله عليك! ثقافة عالية وسرعة بديهة فائقة، إجاباتك تدل على اطلاع واسع.",
+            "جيد جداً": "أداء رائع ومتميز! لديك حصيلة ثقافية ممتازة، وقريب جداً من النتيجة الكاملة.",
+            "جيد": "أداء جيد! لديك معلومات طيبة، ومع القليل من التركيز والسرعة ستصل للقمة.",
+            "مقبول": "محاولة مقبولة! تحتاج إلى المزيد من الاطلاع وتوسيع ثقافة السرعة في التحديات.",
+            "ضعيف": "يبدو أن الحظ لم يحالفك اليوم! لا تقلق، أعد المحاولة واستعد جيداً للمرة القادمة."
+        };
+
+
+        const QUIZ_DURATION_MINUTES = 2;
+
+        function getLeaderboard() {
+            const data = localStorage.getItem('quiz_leaderboard');
+            return data ? JSON.parse(data) : [];
+        }
+
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswersCount = 0;
+        let totalAnsweredCount = 0;
+        let timerInterval = null;
+        let timeRemaining = 0;
+        let currentPlayerName = "";
+
+        function startQuiz() {
+            const nameInput = document.getElementById('player-name-input').value.trim();
+            if (!nameInput) {
+                showCustomAlert("يرجى إدخال اسمك الكريم قبل بدء التحدي!");
+                return;
+            }
+
+            currentPlayerName = nameInput;
+            currentQuestions = [...QUESTIONS];
+            
+            currentQuestions.sort(() => Math.random() - 0.5);
+
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswersCount = 0;
+            totalAnsweredCount = 0;
+            isQuizActive = true;
+
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('leaderboard-screen').style.display = 'none';
+
+            enterFullscreen();
+
+            timeRemaining = QUIZ_DURATION_MINUTES * 60;
+            updateTimerDisplay();
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 0) {
+                    endQuiz();
+                }
+            }, 1000);
+
+            showQuestion();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer-display').innerText = 
+                `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex >= currentQuestions.length) {
+                currentQuestions.sort(() => Math.random() - 0.5);
+                currentQuestionIndex = 0;
+            }
+
+            const qData = currentQuestions[currentQuestionIndex];
+            document.getElementById('question-count-display').innerText = `السؤال: #${totalAnsweredCount + 1}`;
+            document.getElementById('score-text-display').innerText = `النقاط: ${score}`;
+            document.getElementById('question').innerText = qData.q;
+
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+
+            const shuffledOptions = [...qData.options].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, qData.correct);
+                optionsContainer.appendChild(btn);
+            });
+
+            playSound('question');
+        }
+
+        function checkAnswer(selectedOption, correctOption) {
+            totalAnsweredCount++;
+            if (selectedOption === correctOption) {
+                score += 10;
+                correctAnswersCount++;
+                playSound('correct');
+            } else {
+                playSound('wrong');
+            }
+
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        function confirmEndQuiz() {
+            showCustomConfirm("هل أنت تأكد من رغبتك في إنهاء الاختبار الآن؟", () => {
+                endQuiz();
+            });
+        }
+
+        function endQuiz() {
+            isQuizActive = false;
+            clearInterval(timerInterval);
+            exitFullscreen();
+
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+
+            const accuracy = totalAnsweredCount > 0 ? Math.round((correctAnswersCount / totalAnsweredCount) * 100) : 0;
+            
+            document.getElementById('player-result-title').innerText = `المتسابق: ${currentPlayerName}`;
+            document.getElementById('final-score').innerText = `النقاط النهائية: ${score} | الإجابات الصحيحة: ${correctAnswersCount} من ${totalAnsweredCount}`;
+
+            let grade = "";
+            if (totalAnsweredCount < 5) {
+                if (accuracy >= 50 && totalAnsweredCount >= 2) {
+                    grade = "مقبول";
+                } else {
+                    grade = "ضعيف";
+                }
+            } else {
+                if (accuracy >= 90) grade = "ممتاز جداً";
+                else if (accuracy >= 75) grade = "جيد جداً";
+                else if (accuracy >= 60) grade = "جيد";
+                else if (accuracy >= 50) grade = "مقبول";
+                else grade = "ضعيف";
+            }
+
+            document.getElementById('result-grade').innerText = `التقدير: ${grade}`;
+            document.getElementById('result-feedback').innerText = FEEDBACKS[grade] || "";
+
+            saveToLeaderboard(currentPlayerName, score, grade, accuracy);
+        }
+
+        function saveToLeaderboard(name, scoreVal, gradeVal, accuracyVal) {
+            let list = getLeaderboard();
+            list.push({
+                name: name,
+                score: scoreVal,
+                grade: gradeVal,
+                accuracy: accuracyVal,
+                date: new Date().toLocaleDateString('ar-SA')
+            });
+            
+            list.sort((a, b) => b.score - a.score || b.accuracy - a.accuracy);
+            localStorage.setItem('quiz_leaderboard', JSON.stringify(list));
+        }
+
+        function renderLeaderboard(targetElemId) {
+            const list = getLeaderboard();
+            const tbody = document.getElementById(targetElemId);
+            tbody.innerHTML = '';
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5">لا توجد نتائج مسجلة حتى الآن</td></tr>`;
+                return;
+            }
+
+            list.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>${item.score}</td>
+                    <td>${item.grade || '—'}</td>
+                    <td>${item.accuracy}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openLeaderboard() {
+            if (isQuizActive) return;
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('leaderboard-screen').style.display = 'block';
+
+            renderLeaderboard('global-leaderboard-body');
+        }
+
+        function resetToStart() {
+            if (isQuizActive) return;
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('leaderboard-screen').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
+        }
+
+        function printSingleResult() {
+            document.body.classList.add('print-result-mode');
+            document.body.classList.remove('print-leaderboard-mode');
+            window.print();
+            setTimeout(() => {
+                document.body.classList.remove('print-result-mode');
+            }, 1000);
+        }
+
+        function printLeaderboard() {
+            document.body.classList.add('print-leaderboard-mode');
+            document.body.classList.remove('print-result-mode');
+            window.print();
+            setTimeout(() => {
+                document.body.classList.remove('print-leaderboard-mode');
+            }, 1000);
+        }
+
+        function openAboutModal() {
+            document.getElementById('about-modal').style.display = 'flex';
+        }
+
+        function closeAboutModal() {
+            document.getElementById('about-modal').style.display = 'none';
+        }
+
+
+
+
+// دالة التأكيد قبل المسح
+function confirmClearLeaderboard() {
+    showCustomConfirm("هل أنت متأكد من رغبتك في حذف جميع سجلات المتسابقين نهائياً؟ لا يمكن التراجع عن هذا الإجراء.", () => {
+        clearLeaderboard();
+    });
+}
+
+// دالة تنفيذ المسح
+function clearLeaderboard() {
+    localStorage.removeItem('quiz_leaderboard'); // حذف البيانات من التخزين المحلي
+    renderLeaderboard('global-leaderboard-body'); // تحديث الجدول ليظهر فارغاً
+    showCustomAlert("تم مسح سجل المتسابقين بنجاح.");
+}
+    </script>
+</body>
+</html>

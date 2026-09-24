@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="page-main-title">منظومة التحدي التعليمية - برمجة وتصميم: عبدالعزيز الحاج</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+        body {
+            background-color: #0b0f19;
+            color: #fff;
+            text-align: center;
+            font-family: 'Cairo', Tahoma, sans-serif;
+            margin: 0;
+            padding: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 630px;
+            margin: auto;
+            background: #111827;
+            border: 2px solid #374151;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            padding: 8px;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .panel-box {
+            background: #1f2937;
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 6px 0;
+            text-align: right;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        [dir="ltr"] .panel-box { text-align: left; }
+        .panel-box h2 { color: #38bdf8; text-align: center; margin-top: 0; margin-bottom: 5px; font-size: 16px; }
+        .panel-box p { margin: 4px 0; font-size: 12px; }
+        
+        input[type="text"], input[type="password"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 6px;
+            margin: 4px 0;
+            background: #374151;
+            border: 1px solid #6b7280;
+            color: #fff;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+        }
+
+        @keyframes nameInputPulse {
+            0% { border-color: #38bdf8; box-shadow: 0 0 5px rgba(56, 189, 248, 0.4); }
+            50% { border-color: #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.8); }
+            100% { border-color: #38bdf8; box-shadow: 0 0 5px rgba(56, 189, 248, 0.4); }
+        }
+        #contestant-name {
+            animation: nameInputPulse 1.5s infinite ease-in-out;
+            border: 2px solid #38bdf8;
+        }
+
+        input:disabled, button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed !important;
+        }
+        .btn {
+            background: #0284c7; color: white; border: none;
+            padding: 8px 14px; border-radius: 6px; cursor: pointer;
+            font-weight: bold; font-family: 'Cairo', sans-serif;
+            transition: 0.2s; margin: 4px; font-size: 13px;
+        }
+        .btn:hover:not(:disabled) { background: #0369a1; }
+        .btn-green { background: #16a34a; }
+        .btn-green:hover:not(:disabled) { background: #15803d; }
+        .btn-red { background: #dc2626; }
+        .btn-red:hover:not(:disabled) { background: #b91c1c; }
+        .btn-gray { background: #4b5563; }
+        .btn-gray:hover:not(:disabled) { background: #374151; }
+        .btn-yellow { background: #ca8a04; color: #fff; }
+        .btn-yellow:hover:not(:disabled) { background: #a16207; }
+
+        @keyframes pulseGlowBox {
+            0% { border-color: #ca8a04; box-shadow: 0 0 0 0 rgba(202, 138, 4, 0.7); }
+            50% { border-color: #facc15; box-shadow: 0 0 15px 5px rgba(202, 138, 4, 0.5); }
+            100% { border-color: #ca8a04; box-shadow: 0 0 0 0 rgba(202, 138, 4, 0); }
+        }
+        .lang-select-box {
+            background: #1f2937;
+            border: 2px solid #ca8a04;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px auto;
+            max-width: 400px;
+            animation: pulseGlowBox 2s infinite ease-in-out;
+        }
+
+        .difficulty-container {
+            display: flex;
+            justify-content: space-around;
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 6px;
+            padding: 6px;
+            margin: 6px 0;
+            gap: 6px;
+        }
+        .difficulty-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+            flex: 1;
+        }
+        .difficulty-option input { cursor: pointer; margin-bottom: 2px; width: auto; }
+        .difficulty-subtext {
+            font-size: 9px;
+            color: #38bdf8;
+            font-weight: 400;
+        }
+
+        #info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            margin-bottom: 4px;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .clock-icon {
+            width: 20px; height: 20px;
+            border: 2px solid #38bdf8;
+            border-radius: 50%;
+            position: relative;
+            background: #111827;
+            overflow: hidden;
+        }
+        .clock-pie {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(rgba(250, 204, 21, 0.8) 0deg, transparent 0deg);
+        }
+
+        #question-box {
+            font-size: 14px; font-weight: bold;
+            margin: 4px 0; color: #facc15; min-height: 22px;
+        }
+        
+        #canvas-wrapper {
+            position: relative; 
+            width: 100%; 
+            max-width: 680px;
+            height: 440px;
+            margin: 0 auto;
+            touch-action: none;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; 
+            height: 100%;
+        }
+
+        .heli-elem {
+            position: absolute; width: 70px; height: 48px;
+            transform: translate(-50%, -50%); pointer-events: none; display: none;
+            z-index: 5;
+        }
+        .heli-gif { width: 100%; height: 100%; object-fit: contain; }
+        .box-elem {
+            position: absolute; width: 70px; height: 32px;
+            transform: translate(-50%, -50%); pointer-events: none; display: none;
+            z-index: 5;
+        }
+        .box-gif { width: 100%; height: 100%; object-fit: contain; }
+        .box-text {
+            position: absolute; top: 80%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff; font-weight: bold; font-size: 9px;
+            font-family: 'Cairo', sans-serif; text-align: center;
+            text-shadow: 1px 1px 2px #000; width: 100%;
+        }
+        #player-container {
+            position: absolute; width: 75px; height: 60px;
+            transform: translate(-50%, -50%); cursor: pointer;
+            z-index: 10;
+        }
+        .player-gif { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+
+        .main-top-buttons {
+            display: none; justify-content: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; background: #1f2937; }
+        th, td { border: 1px solid #374151; padding: 5px; text-align: center; font-size: 11px; }
+        th { background: #374151; color: #38bdf8; }
+        .clickable-row { cursor: pointer; transition: background 0.2s; }
+        .clickable-row:hover { background: #374151; }
+
+        .modal {
+            display: none; position: fixed; z-index: 9999;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            backdrop-filter: blur(6px);
+        }
+        .modal-content {
+            background: linear-gradient(145deg, #1f2937, #111827);
+            margin: 3% auto; padding: 12px;
+            border: 2px solid #38bdf8; width: 92%; max-width: 450px;
+            border-radius: 12px; text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        [dir="ltr"] .modal-content { text-align: left; }
+
+        .feedback-sign {
+            position: absolute;
+            font-size: 50px;
+            font-weight: bold;
+            transform: translate(-50%, -50%);
+            z-index: 30;
+            pointer-events: none;
+            animation: signPopupAnim 1.2s forwards;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+        }
+        @keyframes signPopupAnim {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            75% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+
+
+        <div class="main-top-buttons" id="external-nav-bar" style="display: none;">
+            <button class="btn btn-gray" onclick="openRecordsModal()" id="btn-records-txt" style="display: none;">سجل المتسابقين</button>
+            <button class="btn btn-gray" onclick="openControlPanel()" id="btn-ctrl-txt" style="display: none;">لوحة التحكم</button>
+            <button class="btn btn-gray" onclick="openPdfGuideModal()" id="btn-guide-txt" style="display: none;">دليل الاستخدام</button>
+            <button class="btn btn-gray" onclick="openAboutModal()" id="btn-about-txt" style="display: none;">برمجة وتصميم</button>
+        </div>
+
+
+        <div id="screen-role" class="screen active">
+            <h1 id="role-main-title" style="font-size: 20px; margin: 5px 0;">منظومة التحدي التعليمية</h1>
+            
+            <div class="lang-select-box">
+                <p id="lang-prompt-txt" style="color: #facc15; font-weight: 700; margin-top: 0; margin-bottom: 8px; font-size: 13px;">الرجاء اختيار لغة النظام للبدء:</p>
+                <div style="display: flex; justify-content: center; gap: 8px;">
+                    <button class="btn btn-yellow" style="padding: 6px 16px; font-size: 13px;" onclick="setLanguage('ar')">🇸🇦 العربية</button>
+                    <button class="btn btn-yellow" style="padding: 6px 16px; font-size: 13px;" onclick="setLanguage('en')">🇬🇧 English</button>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+                <button class="btn btn-green" id="btn-role-contestant" style="padding: 10px 20px; font-size: 15px;" onclick="selectRole('contestant')" disabled>👨‍🎓 متسابق جديد</button>
+                <button class="btn btn-red" id="btn-role-admin" style="padding: 10px 20px; font-size: 15px;" onclick="selectRole('admin')" disabled>🔑 مسؤول النظام</button>
+            </div>
+
+            <div style="margin-top: 12px;">
+                <button class="btn btn-gray" style="font-size: 11px; padding: 5px 12px;" onclick="openAboutModal()" id="btn-about-main">برمجة وتصميم</button>
+            </div>
+        </div>
+
+        <div id="screen-welcome" class="screen">
+            <h1 id="wel-title" style="font-size: 18px; margin: 4px 0;">مرحباً بك في التحدي التعليمي</h1>
+            <div class="panel-box">
+                <h2 id="inst-heading">إرشادات التحدي</h2>
+                <p id="inst-p1">1. أضف اسمك الثنائي أو الثلاثي للبدء.</p>
+                <p id="inst-p2">2. أجب على أكبر قدر ممكن من الأسئلة بدقة (شروط التقديرات العليا تتطلب الإجابة على 15 سؤالاً فأكثر).</p>
+                <p id="inst-p3">3. توزيع النقاط: المحاولة الأولى (10) | الثانية (5) | الثالثة (1) | الرابعة والخامسة (0).</p>
+                
+                <label id="lbl-diff-title" style="display:block; text-align:right; font-weight:700; color:#38bdf8; margin-top:6px; font-size: 11px;">اختر مستوى الصعوبة للتحدي:</label>
+                <div class="difficulty-container">
+                    <label class="difficulty-option">
+                        <input type="radio" name="game-difficulty" value="easy" checked> <span id="diff-easy-lbl">سهل</span>
+                        <span class="difficulty-subtext" id="diff-easy-sub">3 طائرات</span>
+                    </label>
+                    <label class="difficulty-option">
+                        <input type="radio" name="game-difficulty" value="hard"> <span id="diff-hard-lbl">صعب</span>
+                        <span class="difficulty-subtext" id="diff-hard-sub">4 طائرات</span>
+                    </label>
+                    <label class="difficulty-option">
+                        <input type="radio" name="game-difficulty" value="legendary"> <span id="diff-leg-lbl">أسطوري</span>
+                        <span class="difficulty-subtext" id="diff-leg-sub">5 طائرات</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-top: 6px;">
+                <label id="lbl-enter-name" style="display:block; text-align:right; font-weight:600; font-size: 11px;">ادخل اسمك الكريم:</label>
+                <input type="text" id="contestant-name" placeholder="اكتب اسمك هنا...">
+                <button class="btn btn-green" style="width: 100%; font-size: 15px; margin-top: 5px; padding: 7px;" onclick="startChallenge()" id="btn-start-txt">ابدأ التحدي الآن</button>
+                <button class="btn btn-gray" style="width: 100%; margin-top: 3px; padding: 5px;" onclick="backToRoleSelect()" id="btn-back-role">رجوع لاختيار الصفة</button>
+            </div>
+        </div>
+
+        <div id="screen-game" class="screen">
+            <div id="info-bar">
+                <div><span id="lbl-score">النقاط</span>: <span id="score">0</span></div>
+                <div class="timer-container">
+                    <div class="clock-icon"><div class="clock-pie" id="clock-pie"></div></div>
+                    <div><span id="lbl-time">الوقت</span>: <span id="timer-display">03:00</span></div>
+                </div>
+            </div>
+            <div id="question-box">جاري تحميل الأسئلة...</div>
+            
+            <div id="canvas-wrapper">
+                <canvas id="gameCanvas" width="600" height="428"></canvas>
+                
+                <div id="player-container">
+                    <img src="anti-air.gif" class="player-gif">
+                </div>
+
+                <div id="heli-container-0" class="heli-elem"><img src="drown.gif" class="heli-gif"></div>
+                <div id="heli-container-1" class="heli-elem"><img src="drown.gif" class="heli-gif"></div>
+                <div id="heli-container-2" class="heli-elem"><img src="drown.gif" class="heli-gif"></div>
+                <div id="heli-container-3" class="heli-elem"><img src="drown.gif" class="heli-gif"></div>
+                <div id="heli-container-4" class="heli-elem"><img src="drown.gif" class="heli-gif"></div>
+
+                <div id="box-container-0" class="box-elem"><img src="box.gif" class="box-gif"><div class="box-text" id="label-0"></div></div>
+                <div id="box-container-1" class="box-elem"><img src="box.gif" class="box-gif"><div class="box-text" id="label-1"></div></div>
+                <div id="box-container-2" class="box-elem"><img src="box.gif" class="box-gif"><div class="box-text" id="label-2"></div></div>
+                <div id="box-container-3" class="box-elem"><img src="box.gif" class="box-gif"><div class="box-text" id="label-3"></div></div>
+                <div id="box-container-4" class="box-elem"><img src="box.gif" class="box-gif"><div class="box-text" id="label-4"></div></div>
+            </div>
+
+            <div style="margin-top: 4px;">
+                <button class="btn btn-red" id="btn-end-early" style="padding: 5px 12px; font-size: 11px;" onclick="confirmEndChallengeEarly()">إنهاء التحدي الآن</button>
+            </div>
+        </div>
+
+        <div id="screen-result" class="screen">
+            <h2 id="res-title" style="font-size: 18px; margin: 4px 0;">انتهى التحدي!</h2>
+            <div class="panel-box" style="text-align: center;">
+                <h3 id="res-name-display" style="margin: 4px 0;"></h3>
+                <p style="font-size: 14px;"><span id="res-score-txt">إجمالي النقاط</span>: <span id="final-score" style="color: #38bdf8; font-weight: bold;">0</span></p>
+                <p style="font-size: 13px;"><span id="res-correct-count-txt">الإجابات الصحيحة</span>: <span id="final-correct-count" style="color: #16a34a; font-weight: bold;">0</span></p>
+                <p style="font-size: 13px;"><span id="res-rating-txt">التقدير</span>: <span id="final-rating" style="color: #facc15; font-weight: bold;"></span></p>
+                <p style="font-size: 12px; font-style: italic; color: #38bdf8; margin: 3px 0;" id="final-phrase"></p>
+                <p style="font-size: 13px;"><span id="res-time-txt">الوقت المستغرق</span>: <span id="final-time">0</span></p>
+            </div>
+            <button class="btn btn-green" style="padding: 5px 12px;" onclick="printResultReceipt()" id="btn-print-res">طباعة النتيجة</button>
+            <button class="btn" style="padding: 5px 12px;" onclick="backToRoleSelect()" id="btn-back-home">العودة للرئيسية</button>
+        </div>
+
+        <div id="screen-ctrl-login" class="screen">
+            <h2 id="ctrl-login-title">دخول لوحة التحكم</h2>
+            <p id="ctrl-login-desc">أدخل كلمة المرور للوصول لإعدادات النظام:</p>
+
+
+	<!-- حاوية الأيقونات المعدلة لتكون في المنتصف وبحجم مناسب ومضغوط للنصوص -->
+            <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin: 5px 0;">
+                <!-- الأيقونة الأولى (النسخة الكاملة) -->
+                <div onclick="window.open('https://payhip.com/b/GZNoc', '_blank')" style="cursor: pointer; background: #1f2937; border: 2px solid #38bdf8; border-radius: 6px; padding: 6px 8px; width: 110px; min-height: 55px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: 0.2s;" onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#1f2937'">
+                    <div style="font-size: 18px; color: #facc15; line-height: 1;">🔓</div>
+                    <div id="icon-full-version-txt" style="font-size: 10px; font-weight: bold; color: #fff; margin-top: 3px; line-height: 1.2;">النسخة الكاملة</div>
+                    <div style="font-size: 11px; font-weight: 900; color: #38bdf8; margin-top: 2px;">5$</div>
+                </div>
+
+                <!-- الأيقونة الثانية (يوتيوب والتفاصيل) -->
+                <div onclick="window.open('https://www.youtube.com/watch?v=kYswwNF0V9Y', '_blank')" style="cursor: pointer; background: #1f2937; border: 2px solid #38bdf8; border-radius: 6px; padding: 6px 8px; width: 110px; min-height: 55px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: 0.2s;" onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#1f2937'">
+                    <div style="font-size: 18px; color: #ef4444; line-height: 1;">▶️</div>
+                    <div id="icon-youtube-txt" style="font-size: 10px; font-weight: bold; color: #fff; margin-top: 3px; line-height: 1.2;">ألق نظرة على التفاصيل</div>
+                </div>
+            </div>
+
+
+
+            <input type="password" id="ctrl-password" placeholder="كلمة المرور معطلة" disabled>
+            <button class="btn btn-green" onclick="verifyControlPassword()" id="btn-ctrl-login-sub" disabled>دخول</button>
+            <button class="btn btn-gray" onclick="backToRoleSelect()" id="btn-ctrl-login-cancel">إلغاء</button>
+        </div>
+
+        <div id="screen-ctrl-panel" class="screen">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h2 id="ctrl-panel-main-title" style="font-size: 15px;">لوحة التحكم والإدارة الشاملة</h2>
+                <button class="btn btn-gray" style="font-size: 11px; padding: 4px 8px;" onclick="backToRoleSelect()" id="btn-ctrl-back-home">⬆️ العودة</button>
+            </div>
+            
+            <div class="panel-box">
+                <h3 id="ctrl-sec-settings">إعدادات كلمة المرور والوقت</h3>
+                <label id="lbl-new-pass">تغيير كلمة مرور المسؤول:</label>
+                <input type="password" id="setting-new-pass" placeholder="اتركها فارغة إذا لم ترد التغيير">
+
+                <label id="lbl-game-time-set">وقت اللعبة (بالدقائق):</label>
+                <input type="number" id="setting-time" min="1" max="30" value="3">
+                
+                <button class="btn btn-green" onclick="saveGeneralSettings()" id="btn-save-settings">حفظ وتطبيق الإعدادات</button>
+                <button class="btn btn-red" onclick="resetEverythingToDefault()" id="btn-reset-default">🔄 استعادة كافة الإعدادات والأسئلة الافتراضية</button>
+            </div>
+
+            <div class="panel-box">
+                <h3 id="ctrl-sec-phrases">إدارة العبارات التشجيعية حسب التقديرات</h3>
+                <textarea id="phrase-excellent" placeholder="عبارة الممتاز" rows="2"></textarea>
+                <textarea id="phrase-verygood" placeholder="عبارة الجيد جداً" rows="2"></textarea>
+                <textarea id="phrase-good" placeholder="عبارة الجيد" rows="2"></textarea>
+                <textarea id="phrase-fair" placeholder="عبارة المقبول" rows="2"></textarea>
+                <textarea id="phrase-weak" placeholder="العبارة الفكاهية للضعيف" rows="2"></textarea>
+                <button class="btn btn-green" onclick="savePhrasesSettings()" id="btn-save-phrases">حفظ العبارات</button>
+            </div>
+
+            <div class="panel-box" style="border: 2px dashed #38bdf8;">
+                <h3 id="ctrl-sec-bulk">📥 استيراد الأسئلة دفعة واحدة</h3>
+                <textarea id="bulk-questions-input" rows="2" placeholder="السؤال | الإجابة الصحيحة | خطأ 1 | خطأ 2..."></textarea>
+                <button class="btn btn-yellow" onclick="importBulkQuestions()" id="btn-import-bulk">استيراد الأسئلة</button>
+            </div>
+
+            <div class="panel-box">
+                <h3 id="ctrl-sec-bank">إدارة بنك الأسئلة (إضافة سؤال جديد)</h3>
+                <textarea id="new-q-text" rows="2" placeholder="نص السؤال الجديد"></textarea>
+                <input type="text" id="new-q-correct" placeholder="الإجابة الصحيحة">
+                <input type="text" id="new-q-wrong1" placeholder="الإجابة الخاطئة الأولى">
+                <input type="text" id="new-q-wrong2" placeholder="الإجابة الخاطئة الثانية">
+                <input type="text" id="new-q-wrong3" placeholder="الإجابة الخاطئة الثالثة">
+                <input type="text" id="new-q-wrong4" placeholder="الإجابة الخاطئة الرابعة">
+                <button class="btn btn-green" onclick="addNewQuestionManual()" id="btn-add-q-manual">إضافة سؤال جديد للبنك</button>
+                
+                <hr style="border-color: #374151; margin: 10px 0;">
+                <button class="btn btn-red" onclick="deleteAllQuestions()" id="btn-delete-all-q">حذف كافة الأسئلة دفعة واحدة</button>
+                
+                <h4 id="ctrl-sec-list-title" style="margin-top: 10px; font-size: 13px;">استعراض والتحكم بالأسئلة الحالية:</h4>
+                <div id="questions-admin-list" style="max-height: 150px; overflow-y: auto;"></div>
+            </div>
+
+
+
+
+            <div class="panel-box" style="border: 2px dashed #dc2626; text-align: center;">
+                <h3 id="ctrl-sec-records-mgmt" style="color: #dc2626;">إدارة سجل المتسابقين</h3>
+                <button class="btn btn-red" style="width: 100%; font-size: 14px; padding: 8px;" onclick="confirmClearAllRecords()" id="btn-clear-all-records">🗑️ محو كامل السجل</button>
+            </div>
+
+
+
+
+            <div style="margin-top: 10px; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-gray" onclick="openRecordsModal()" id="btn-ctrl-records">سجل المتسابقين</button>
+                <button class="btn btn-gray" onclick="openPdfGuideModal()" id="btn-ctrl-guide">دليل الاستخدام</button>
+                <button class="btn btn-gray" onclick="openAboutModal()" id="btn-ctrl-about">برمجة وتصميم</button>
+            </div>
+
+            <button class="btn btn-gray" style="width: 100%; margin-top: 8px;" onclick="backToRoleSelect()" id="btn-ctrl-back-home2">⬆️ العودة للرئيسية</button>
+        </div>
+
+        <div id="edit-question-modal" class="modal">
+            <div class="modal-content" style="text-align: right; max-width: 420px; padding: 10px;">
+                <h3 id="edit-modal-title" style="color: #38bdf8; margin-top: 0; margin-bottom: 6px; text-align: center; font-size: 15px;">تعديل السؤال والخيارات</h3>
+                <input type="hidden" id="edit-q-index">
+                
+                <label id="edit-lbl-qtext" style="font-weight:600; font-size:11px; margin:0;">نص السؤال:</label>
+                <textarea id="edit-q-text" rows="2" style="margin:2px 0 4px 0; padding:4px; font-size:11px;"></textarea>
+                
+                <label id="edit-lbl-correct" style="font-weight:600; font-size:11px; color:#16a34a; margin:0;">الإجابة الصحيحة:</label>
+                <input type="text" id="edit-q-correct" style="margin:2px 0 4px 0; padding:4px; font-size:11px;">
+                
+                <label id="edit-lbl-w1" style="font-weight:600; font-size:11px; color:#dc2626; margin:0;">الخطأ 1:</label>
+                <input type="text" id="edit-q-w1" style="margin:2px 0 3px 0; padding:3px; font-size:11px;">
+                
+                <label id="edit-lbl-w2" style="font-weight:600; font-size:11px; color:#dc2626; margin:0;">الخطأ 2:</label>
+                <input type="text" id="edit-q-w2" style="margin:2px 0 3px 0; padding:3px; font-size:11px;">
+                
+                <label id="edit-lbl-w3" style="font-weight:600; font-size:11px; color:#dc2626; margin:0;">الخطأ 3:</label>
+                <input type="text" id="edit-q-w3" style="margin:2px 0 3px 0; padding:3px; font-size:11px;">
+                
+                <label id="edit-lbl-w4" style="font-weight:600; font-size:11px; color:#dc2626; margin:0;">الخطأ 4:</label>
+                <input type="text" id="edit-q-w4" style="margin:2px 0 5px 0; padding:3px; font-size:11px;">
+
+                <div style="display: flex; justify-content: center; gap: 6px;">
+                    <button class="btn btn-green" style="padding:5px 12px; font-size:12px;" onclick="saveEditedQuestion()" id="btn-edit-save">حفظ</button>
+                    <button class="btn btn-gray" style="padding:5px 12px; font-size:12px;" onclick="closeEditModal()" id="btn-edit-cancel">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="custom-alert-modal" class="modal">
+            <div class="modal-content" style="margin-top: 20%;">
+                <h3 id="custom-alert-title" style="color: #38bdf8; margin-top: 0; font-size: 16px;">تنبيه النظام</h3>
+                <p id="custom-alert-message" style="font-size: 14px; margin: 15px 0;"></p>
+                <button class="btn btn-green" style="width: 100px; padding: 6px;" onclick="closeCustomAlert()" id="btn-alert-ok">حسناً</button>
+            </div>
+        </div>
+
+        <div id="custom-confirm-modal" class="modal">
+            <div class="modal-content" style="margin-top: 20%;">
+                <h3 id="custom-confirm-title" style="color: #facc15; margin-top: 0; font-size: 16px;">تأكيد الإجراء</h3>
+                <p id="custom-confirm-message" style="font-size: 14px; margin: 15px 0;"></p>
+                <div style="display: flex; justify-content: center; gap: 8px;">
+                    <button id="custom-confirm-yes" class="btn btn-red" style="width: 90px; padding: 6px;">نعم</button>
+                    <button class="btn btn-gray" style="width: 90px; padding: 6px;" onclick="closeCustomConfirm(false)" id="btn-confirm-cancel">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="records-modal" class="modal">
+            <div class="modal-content" style="max-width: 580px; text-align: right;">
+                <h2 id="records-modal-title" style="color: #38bdf8; margin-top: 0; text-align: center; font-size: 17px;">سجل المتسابقين</h2>
+                <p id="records-modal-sub" style="font-size: 11px; color: #9ca3af; text-align: center; margin-top:-4px;">اضغط على أي صف لطباعة شهادة المتسابق مباشرة</p>
+                <div id="records-table-container" style="max-height: 250px; overflow-y: auto;"></div>
+                <div style="margin-top: 15px; display: flex; gap: 8px; justify-content: flex-end;">
+                    <button class="btn btn-green" style="padding: 5px 10px;" onclick="printAllRecords()" id="btn-print-all-recs">طباعة السجل كاملًا</button>
+                    <button class="btn btn-gray" style="padding: 5px 10px;" onclick="closeRecordsModal()" id="btn-close-recs">إغلاق</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="about-modal" class="modal">
+            <div class="modal-content" style="max-width: 420px; margin-top: 20%;">
+                <h2 id="about-title" style="color: #38bdf8; margin-top: 0; font-size: 17px;">برمجة وتصميم</h2>
+                <h3 style="color: #fff; font-size: 15px;">عبدالعزيز الحاج</h3>
+                <p id="about-desc" style="color: #9ca3af; font-size: 12px;">للتواصل ومقترحات التطوير عبر البريد الإلكتروني:</p>
+                <p style="background: #374151; padding: 10px; border-radius: 6px; font-weight: bold; color: #facc15; font-size: 13px;">abdulazizalhaaj728@gmail.com</p>
+                <button class="btn btn-gray" style="margin-top: 12px; width: 100px; padding: 5px;" onclick="closeAboutModal()" id="btn-close-about">إغلاق</button>
+            </div>
+        </div>
+
+        <div id="pdf-guide-modal" class="modal">
+            <div class="modal-content" style="max-width: 500px; text-align: right;">
+                <h2 id="guide-modal-title" style="color: #38bdf8; margin-top: 0; text-align: center; font-size: 17px;">📖 دليل الاستخدام التقني الشامل</h2>
+                <div id="guide-content-box" style="max-height: 250px; overflow-y: auto; text-align: right; background: #111827; padding: 10px; border-radius: 6px; font-size: 12px; line-height: 1.5; color: #d1d5db;">
+                    <p><b>1. نظرة عامة:</b> منظومة التحدي التعليمية تدمج عناصر التعليم التفاعلي مع ألعاب الحركة.</p>
+                    <p><b>2. بنك الأسئلة والتحكم:</b> تتيح لوحة التحكم إدارة الأسئلة باليد أو عبر الاستيراد الجماعي باستخدام الرمز (|).</p>
+                    <p><b>3. إدارة السجلات:</b> يتم حفظ سجلات المتسابقين بصفة دائمة وآمنة تلقائياً عبر متصفح الجهاز.</p>
+                    <hr style="border-color: #374151; margin: 8px 0;">
+                    <p style="color: #facc15; font-weight: bold;">[ملاحظة فنية متقدمة للمسؤول]:</p>
+                    <p style="color: #9ca3af; font-size: 11px;">في حال نسيت كلمة مرور لوحة التحكم الخاصة بك تماماً وعجزت عن تذكرها، فإن المبرمج خصص كلمة مرور طارئة وخارقة تتيح لك الدخول في أي وقت وهي: <b style="color:#38bdf8;">الحرف الأول من الحروف الأبجدية الإنجليزية، ثم الحرف الخامس عشر، ثم الحرف الأول، ثم728</b>. احفظها ولا تشاركها مع المتسابقين.</p>
+                </div>
+                <button class="btn btn-gray" style="margin-top: 12px; width: 100px; padding: 5px;" onclick="closePdfGuideModal()" id="btn-close-guide">إغلاق</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+
+	// دالة خلط الأسئلة عشوائياً (Fisher-Yates Shuffle)
+	function shuffleArray(array) {
+	    for (let i = array.length - 1; i > 0; i--) {
+	        const j = Math.floor(Math.random() * (i + 1));
+	        [array[i], array[j]] = [array[j], array[i]];
+	    }
+	    return array;
+	}
+
+
+
+
+
+        function showCustomAlert(message, title = "") {
+            document.getElementById('custom-alert-title').innerText = title || (currentLang === 'ar' ? 'تنبيه النظام' : 'System Alert');
+            document.getElementById('custom-alert-message').innerText = message;
+            document.getElementById('custom-alert-modal').style.display = 'block';
+        }
+        function closeCustomAlert() {
+            document.getElementById('custom-alert-modal').style.display = 'none';
+        }
+
+        let confirmCallback = null;
+
+	// هذا لعداد الأسئلة
+	let ser = 1;
+
+        function showCustomConfirm(message, callback, title = "") {
+            document.getElementById('custom-confirm-title').innerText = title || (currentLang === 'ar' ? 'تأكيد الإجراء' : 'Confirm Action');
+            document.getElementById('custom-confirm-message').innerText = message;
+            confirmCallback = callback;
+            document.getElementById('custom-confirm-yes').innerText = currentLang === 'ar' ? 'نعم' : 'Yes';
+            document.getElementById('custom-confirm-modal').style.display = 'block';
+        }
+
+        document.getElementById('custom-confirm-yes').onclick = function() {
+            document.getElementById('custom-confirm-modal').style.display = 'none';
+            let cb = confirmCallback;
+            confirmCallback = null;
+            if (cb) cb(true);
+        };
+
+        function closeCustomConfirm(val) {
+            document.getElementById('custom-confirm-modal').style.display = 'none';
+            if (confirmCallback && !val) {
+                confirmCallback(false);
+                confirmCallback = null;
+            }
+        }
+
+        let currentLang = 'ar';
+        let langChosen = false;
+        let adminPassword = "1234";
+        let gameSettings = { timeMinutes: 3 };
+
+
+        let contestantsLog = [];
+        try {
+            let savedLog = localStorage.getItem('challenge_contestants_log');
+            if (savedLog) contestantsLog = JSON.parse(savedLog);
+        } catch(e) {}
+
+        const allQuestionsBank = {
+	
+
+ar: [
+                { q: "ما هي عاصمة المملكة العربية السعودية؟", answers: [{ text: "الرياض", correct: true }, { text: "جدة", correct: false }, { text: "مكة المكرمة", correct: false }, { text: "الدمام", correct: false }, { text: "المدينة المنورة", correct: false }] },
+                { q: "كم عدد ركعات صلاة الفجر؟", answers: [{ text: "ركعتان", correct: true }, { text: "أربع ركعات", correct: false }, { text: "ثلاث ركعات", correct: false }, { text: "ركعة واحدة", correct: false }, { text: "خمس ركعات", correct: false }] },
+                { q: "ما هو أكبر كوكب في المجموعة الشمسية؟", answers: [{ text: "المشتري", correct: true }, { text: "زحل", correct: false }, { text: "المريخ", correct: false }, { text: "الأرض", correct: false }, { text: "عطارد", correct: false }] },
+                { q: "ما هو العنصر الكيميائي الذي يرمز له بالرمز (O)؟", answers: [{ text: "الأكسجين", correct: true }, { text: "الذهب", correct: false }, { text: "الحديد", correct: false }, { text: "الفضة", correct: false }, { text: "الهيدروجين", correct: false }] },
+                { q: "في أي قارة تقع دولة مصر؟", answers: [{ text: "إفريقيا", correct: true }, { text: "آسيا", correct: false }, { text: "أوروبا", correct: false }, { text: "أمريكا الجنوبية", correct: false }, { text: "أستراليا", correct: false }] },
+                { q: "كم عدد أركان الإسلام؟", answers: [{ text: "خمسة", correct: true }, { text: "أربعة", correct: false }, { text: "ستة", correct: false }, { text: "ثلاثة", correct: false }, { text: "سبعة", correct: false }] },
+                { q: "من هو مكتشف قانون الجاذبية الأرضية؟", answers: [{ text: "إسحاق نيوتن", correct: true }, { text: "ألبرت أينشتاين", correct: false }, { text: "جاليليو جاليلي", correct: false }, { text: "توماس إديسون", correct: false }, { text: "نيكولا تسلا", correct: false }] },
+                { q: "ما هي عاصمة دولة فرنسا؟", answers: [{ text: "باريس", correct: true }, { text: "لندن", correct: false }, { text: "برلين", correct: false }, { text: "روما", correct: false }, { text: "مدريد", correct: false }] },
+                { q: "ما هو الحيوان الذي يُسمى 'سفينة الصحراء'؟", answers: [{ text: "الجمل", correct: true }, { text: "الحصان", correct: false }, { text: "الفيل", correct: false }, { text: "الأسد", correct: false }, { text: "الذئب", correct: false }] },
+                { q: "كم عدد ألوان قزح الرئيسية؟", answers: [{ text: "سبعة ألوان", correct: true }, { text: "خمسة ألوان", correct: false }, { text: "ستة ألوان", correct: false }, { text: "ثلاثة ألوان", correct: false }, { text: "ثمانية ألوان", correct: false }] },
+                { q: "ما هي عاصمة اليابان؟", answers: [{ text: "طوكيو", correct: true }, { text: "بكين", correct: false }, { text: "سيول", correct: false }, { text: "بانكوك", correct: false }, { text: "مانيلا", correct: false }] },
+                { q: "ما هو المعدن السائل في درجة حرارة الغرفة؟", answers: [{ text: "الزئبق", correct: true }, { text: "الذهب", correct: false }, { text: "الحديد", correct: false }, { text: "النحاس", correct: false }, { text: "الرصاص", correct: false }] },
+                { q: "كم عدد سور القرآن الكريم؟", answers: [{ text: "114 سورة", correct: true }, { text: "120 سورة", correct: false }, { text: "100 سورة", correct: false }, { text: "110 سورة", correct: false }, { text: "116 سورة", correct: false }] },
+                { q: "من هو أول خلفاء المسلمين الراشدين؟", answers: [{ text: "أبو بكر الصديق", correct: true }, { text: "عمر بن الخطاب", correct: false }, { text: "عثمان بن عفان", correct: false }, { text: "علي بن أبي طالب", correct: false }, { text: "معاوية بن أبي سفيان", correct: false }] },
+                { q: "ما هي عاصمة إيطاليا؟", answers: [{ text: "روما", correct: true }, { text: "ميلانو", correct: false }, { text: "فلورنس", correct: false }, { text: "البندقية", correct: false }, { text: "نابولي", correct: false }] },
+                { q: "ما هو الغاز الأكثر أكسدةً وتواجداً في الغلاف الجوي للأرض؟", answers: [{ text: "النيتروجين", correct: true }, { text: "الأكسجين", correct: false }, { text: "ثاني أكسيد الكربون", correct: false }, { text: "الهيدروجين", correct: false }, { text: "الهيليوم", correct: false }] },
+                { q: "كم تبلغ نسبة الماء تقريباً من مساحة سطح الأرض؟", answers: [{ text: "71%", correct: true }, { text: "50%", correct: false }, { text: "30%", correct: false }, { text: "85%", correct: false }, { text: "60%", correct: false }] },
+                { q: "ما هي الدولة التي يقع فيها برج إيفل؟", answers: [{ text: "فرنسا", correct: true }, { text: "إيطاليا", correct: false }, { text: "إسبانيا", correct: false }, { text: "بريطانيا", correct: false }, { text: "ألمانيا", correct: false }] },
+                { q: "ما هو أقرب كوكب إلى الشمس؟", answers: [{ text: "عطارد", correct: true }, { text: "الزهرة", correct: false }, { text: "الأرض", correct: false }, { text: "المريخ", correct: false }, { text: "المشتري", correct: false }] },
+                { q: "كم عدد أركان الإيمان؟", answers: [{ text: "ستة", correct: true }, { text: "خمسة", correct: false }, { text: "أربعة", correct: false }, { text: "سبعة", correct: false }, { text: "ثلاثة", correct: false }] },
+                { q: "ما هو أسرع حيوان بري في العالم؟", answers: [{ text: "الفهد", correct: true }, { text: "الأسد", correct: false }, { text: "الغزال", correct: false }, { text: "الحصان", correct: false }, { text: "النمر", correct: false }] },
+                { q: "من هو مخترع المصباح الكهربائي؟", answers: [{ text: "توماس إديسون", correct: true }, { text: "ألكسندر غراهام بيل", correct: false }, { text: "نيكولا تسلا", correct: false }, { text: "ألبرت أينشتاين", correct: false }, { text: "إسحاق نيوتن", correct: false }] },
+                { q: "ما هي عاصمة أستراليا؟", answers: [{ text: "كانبرا", correct: true }, { text: "سيدني", correct: false }, { text: "ملبورن", correct: false }, { text: "بريزبان", correct: false }, { text: "بيرث", correct: false }] },
+                { q: "ما هو البحر الذي يقع بين إفريقيا وأوروبا؟", answers: [{ text: "البحر الأبيض المتوسط", correct: true }, { text: "البحر الأحمر", correct: false }, { text: "البحر الأسود", correct: false }, { text: "بحر العرب", correct: false }, { text: "بحر قزوين", correct: false }] },
+                { q: "في أي عام هجري وقعت غزوة بدر الكبرى؟", answers: [{ text: "السنة الثانية للهجرة", correct: true }, { text: "السنة الأولى للهجرة", correct: false }, { text: "السنة الثالثة للهجرة", correct: false }, { text: "السنة الرابعة للهجرة", correct: false }, { text: "السنة الخامسة للهجرة", correct: false }] },
+                { q: "ما هو الحيوان المائي الذي يُصنف كأكبر حيوان على وجه الأرض؟", answers: [{ text: "الحوت الأزرق", correct: true }, { text: "قرش البم كبر", correct: false }, { text: "الأوباما", correct: false }, { text: "الأطوم", correct: false }, { text: "الحوت الأبيض", correct: false }] },
+                { q: "ما هي عاصمة ألمانيا؟", answers: [{ text: "برلين", correct: true }, { text: "ميونخ", correct: false }, { text: "فرانكفورت", correct: false }, { text: "هامبورغ", correct: false }, { text: "كولونيا", correct: false }] },
+                { q: "ما هو الرمز الكيميائي لعنصر الذهب؟", answers: [{ text: "Au", correct: true }, { text: "Ag", correct: false }, { text: "Fe", correct: false }, { text: "Cu", correct: false }, { text: "Pb", correct: false }] },
+                { q: "كم عدد عظام جسم الإنسان البالغ؟", answers: [{ text: "206 عظمة", correct: true }, { text: "300 عظمة", correct: false }, { text: "180 عظمة", correct: false }, { text: "250 عظمة", correct: false }, { text: "215 عظمة", correct: false }] },
+                { q: "من هو مؤلف رواية 'البؤساء'؟", answers: [{ text: "فيكتور هوجو", correct: true }, { text: "وليام شكسبير", correct: false }, { text: "تشالز ديكنز", correct: false }, { text: "لبرت كامو", correct: false }, { text: "ليو تولستوي", correct: false }] },
+                { q: "ما هي عاصمة كندا؟", answers: [{ text: "أوتاوا", correct: true }, { text: "تورونتو", correct: false }, { text: "فانكوفر", correct: false }, { text: "مونتريال", correct: false }, { text: "كولجاري", correct: false }] },
+                { q: "ما هو العضو المسؤول عن ضخ الدم في جسم الإنسان؟", answers: [{ text: "القلب", correct: true }, { text: "الدماغ", correct: false }, { text: "الكبد", correct: false }, { text: "الرئتان", correct: false }, { text: "الكليتان", correct: false }] },
+                { q: "ما هي أصغر قارة في العالم من حيث المساحة؟", answers: [{ text: "أستراليا", correct: true }, { text: "أوروبا", correct: false }, { text: "أنتاركتيكا", correct: false }, { text: "أمريكا الشمالية", correct: false }, { text: "آسيا", correct: false }] },
+                { q: "في أي ولاية أمريكية تقع مدينة لوس أنجلوس؟", answers: [{ text: "كاليفورنيا", correct: true }, { text: "تكساس", correct: false }, { text: "نيويورك", correct: false }, { text: "فلوريدا", correct: false }, { text: "نيفادا", correct: false }] },
+                { q: "ما هو أطول نهر في العالم؟", answers: [{ text: "نهر النيل", correct: true }, { text: "نهر الأمازون", correct: false }, { text: "نهر الميسيسبي", correct: false }, { text: "نهر يانغتسي", correct: false }, { text: "نهر الدانوب", correct: false }] },
+                { q: "من هو النبي الذي ألقي في النار فجعلها الله برداً وسلاماً؟", answers: [{ text: "إبراهيم عليه السلام", correct: true }, { text: "موسى عليه السلام", correct: false }, { text: "عيسى عليه السلام", correct: false }, { text: "نوح عليه السلام", correct: false }, { text: "يوسف عليه السلام", correct: false }] },
+                { q: "ما هي عاصمة الصين؟", answers: [{ text: "بكين", correct: true }, { text: "شانغهاي", correct: false }, { text: "هونغ كونغ", correct: false }, { text: "غوانغجو", correct: false }, { text: "تشنغدو", correct: false }] },
+                { q: "ما هو الكوكب الذي يُعرف بالكوكب الأحمر؟", answers: [{ text: "المريخ", correct: true }, { text: "الزهرة", correct: false }, { text: "عطارد", correct: false }, { text: "زحل", correct: false }, { text: "أورانوس", correct: false }] },
+                { q: "ما هي اللوحة الفنية الشهيرة التي رسمها ليوناردو دافنشي وتحتوي على ابتسامة غامضة؟", answers: [{ text: "موناليزا", correct: true }, { text: "الليلة المرصعة بالنجوم", correct: false }, { text: "الصرخة", correct: false }, { text: "العشاء الأخير", correct: false }, { text: "الجورنيكا", correct: false }] },
+                { q: "ما هو الغاز الذي تحتاجه النباتات لعملية البناء الضوئي؟", answers: [{ text: "ثاني أكسيد الكربون", correct: true }, { text: "الأكسجين", correct: false }, { text: "النيتروجين", correct: false }, { text: "الهيدروجين", correct: false }, { text: "الميثان", correct: false }] },
+                { q: "ما هي عاصمة البرازيل؟", answers: [{ text: "برازيليا", correct: true }, { text: "ريو دي جانيرو", correct: false }, { text: "ساو باولو", correct: false }, { text: "سالفادور", correct: false }, { text: "بيلو هوريزونتي", correct: false }] },
+                { q: "من هو أول من صعد إلى سطح القمر؟", answers: [{ text: "نيل أرمسترونغ", correct: true }, { text: "يوري غاغارين", correct: false }, { text: "باز ألدرين", correct: false }, { text: "مايكل كولينز", correct: false }, { text: "جون غلين", correct: false }] },
+                { q: "ما هو أكبر محيط على وجه الأرض؟", answers: [{ text: "المحيط الهادئ", correct: true }, { text: "المحيط الأطلسي", correct: false }, { text: "المحيط الهندي", correct: false }, { text: "المحيط المتجمد الشمالي", correct: false }, { text: "المحيط المتجمد الجنوبي", correct: false }] },
+                { q: "ما هي عاصمة كوريا الجنوبية؟", answers: [{ text: "سيول", correct: true }, { text: "بوسان", correct: false }, { text: "إنتشون", correct: false }, { text: "دايغو", correct: false }, { text: "بيونغ يانغ", correct: false }] },
+                { q: "أي من هؤلاء الصحابة لُقب بأسد الله الغلاب؟", answers: [{ text: "حمزة بن عبد المطلب", correct: true }, { text: "علي بن أبي طالب", correct: false }, { text: "خالد بن الوليد", correct: false }, { text: "عمر بن الخطاب", correct: false }, { text: "أبو عبيدة بن الجراح", correct: false }] },
+                { q: "ما هو العنصر الأكثر وفرة في قشرة الأرض؟", answers: [{ text: "الأكسجين", correct: true }, { text: "السيليكون", correct: false }, { text: "الحديد", correct: false }, { text: "الألومنيوم", correct: false }, { text: "الكربون", correct: false }] },
+                { q: "ما هي الدولة الأكثر من حيث عدد السكان في العالم؟", answers: [{ text: "الهند", correct: true }, { text: "الصين", correct: false }, { text: "الولايات المتحدة", correct: false }, { text: "إندونيسيا", correct: false }, { text: "باكستان", correct: false }] },
+                { q: "ما هي عاصمة تركيا؟", answers: [{ text: "أنقرة", correct: true }, { text: "إسطنبول", correct: false }, { text: "إزمير", correct: false }, { text: "أنطاليا", correct: false }, { text: "بورصة", correct: false }] },
+                { q: "كم عدد بطولات كأس العالم لكرة القدم التي فازت بها البرازيل حتى الآن؟", answers: [{ text: "5 مرات", correct: true }, { text: "4 مرات", correct: false }, { text: "6 مرات", correct: false }, { text: "3 مرات", correct: false }, { text: "7 مرات", correct: false }] },
+                { q: "ما هي السورة التي تُسمى بقلب القرآن؟", answers: [{ text: "سورة يس", correct: true }, { text: "سورة الملك", correct: false }, { text: "سورة البقرة", correct: false }, { text: "سورة الإخلاص", correct: false }, { text: "سورة الرحمن", correct: false }] }
+            ],
+            en: [
+                { q: "What is the capital of Saudi Arabia?", answers: [{ text: "Riyadh", correct: true }, { text: "Jeddah", correct: false }, { text: "Makkah", correct: false }, { text: "Dammam", correct: false }, { text: "Madinah", correct: false }] },
+                { q: "How many Rakats are in Fajr prayer?", answers: [{ text: "Two", correct: true }, { text: "Four", correct: false }, { text: "Three", correct: false }, { text: "One", correct: false }, { text: "Five", correct: false }] },
+                { q: "What is the largest planet in our solar system?", answers: [{ text: "Jupiter", correct: true }, { text: "Saturn", correct: false }, { text: "Mars", correct: false }, { text: "Earth", correct: false }, { text: "Mercury", correct: false }] },
+                { q: "What is the chemical element with the symbol (O)?", answers: [{ text: "Oxygen", correct: true }, { text: "Gold", correct: false }, { text: "Iron", correct: false }, { text: "Silver", correct: false }, { text: "Hydrogen", correct: false }] },
+                { q: "In which continent is Egypt located?", answers: [{ text: "Africa", correct: true }, { text: "Asia", correct: false }, { text: "Europe", correct: false }, { text: "South America", correct: false }, { text: "Australia", correct: false }] },
+                { q: "How many pillars of Islam are there?", answers: [{ text: "Five", correct: true }, { text: "Four", correct: false }, { text: "Six", correct: false }, { text: "Three", correct: false }, { text: "Seven", correct: false }] },
+                { q: "Who discovered the law of gravity?", answers: [{ text: "Isaac Newton", correct: true }, { text: "Albert Einstein", correct: false }, { text: "Galileo Galilei", correct: false }, { text: "Thomas Edison", correct: false }, { text: "Nikola Tesla", correct: false }] },
+                { q: "What is the capital of France?", answers: [{ text: "Paris", correct: true }, { text: "London", correct: false }, { text: "Berlin", correct: false }, { text: "Rome", correct: false }, { text: "Madrid", correct: false }] },
+                { q: "Which animal is known as the 'Ship of the Desert'?", answers: [{ text: "Camel", correct: true }, { text: "Horse", correct: false }, { text: "Elephant", correct: false }, { text: "Lion", correct: false }, { text: "Wolf", correct: false }] },
+                { q: "How many main colors are in a rainbow?", answers: [{ text: "Seven", correct: true }, { text: "Five", correct: false }, { text: "Six", correct: false }, { text: "Three", correct: false }, { text: "Eight", correct: false }] },
+                { q: "What is the capital of Japan?", answers: [{ text: "Tokyo", correct: true }, { text: "Beijing", correct: false }, { text: "Seoul", correct: false }, { text: "Bangkok", correct: false }, { text: "Manila", correct: false }] },
+                { q: "What is the only metal that is liquid at room temperature?", answers: [{ text: "Mercury", correct: true }, { text: "Gold", correct: false }, { text: "Iron", correct: false }, { text: "Copper", correct: false }, { text: "Lead", correct: false }] },
+                { q: "How many Surahs are in the Holy Quran?", answers: [{ text: "114", correct: true }, { text: "120", correct: false }, { text: "100", correct: false }, { text: "110", correct: false }, { text: "116", correct: false }] },
+                { q: "Who was the first Rightly Guided Caliph of Islam?", answers: [{ text: "Abu Bakr Al-Siddiq", correct: true }, { text: "Umar ibn Al-Khattab", correct: false }, { text: "Uthman ibn Affan", correct: false }, { text: "Ali ibn Abi Talib", correct: false }, { text: "Muawiyah ibn Abi Sufyan", correct: false }] },
+                { q: "What is the capital of Italy?", answers: [{ text: "Rome", correct: true }, { text: "Milan", correct: false }, { text: "Florence", correct: false }, { text: "Venice", correct: false }, { text: "Naples", correct: false }] },
+                { q: "What is the most abundant gas in Earth's atmosphere?", answers: [{ text: "Nitrogen", correct: true }, { text: "Oxygen", correct: false }, { text: "Carbon dioxide", correct: false }, { text: "Hydrogen", correct: false }, { text: "Helium", correct: false }] },
+                { q: "What approximate percentage of Earth's surface is covered by water?", answers: [{ text: "71%", correct: true }, { text: "50%", correct: false }, { text: "30%", correct: false }, { text: "85%", correct: false }, { text: "60%", correct: false }] },
+                { q: "In which country is the Eiffel Tower located?", answers: [{ text: "France", correct: true }, { text: "Italy", correct: false }, { text: "Spain", correct: false }, { text: "UK", correct: false }, { text: "Germany", correct: false }] },
+                { q: "What is the closest planet to the Sun?", answers: [{ text: "Mercury", correct: true }, { text: "Venus", correct: false }, { text: "Earth", correct: false }, { text: "Mars", correct: false }, { text: "Jupiter", correct: false }] },
+                { q: "How many pillars of faith (Iman) are there in Islam?", answers: [{ text: "Six", correct: true }, { text: "Five", correct: false }, { text: "Four", correct: false }, { text: "Seven", correct: false }, { text: "Three", correct: false }] },
+                { q: "What is the fastest land animal in the world?", answers: [{ text: "Cheetah", correct: true }, { text: "Lion", correct: false }, { text: "Gazelle", correct: false }, { text: "Horse", correct: false }, { text: "Tiger", correct: false }] },
+                { q: "Who invented the electric light bulb?", answers: [{ text: "Thomas Edison", correct: true }, { text: "Alexander Graham Bell", correct: false }, { text: "Nikola Tesla", correct: false }, { text: "Albert Einstein", correct: false }, { text: "Isaac Newton", correct: false }] },
+                { q: "What is the capital of Australia?", answers: [{ text: "Canberra", correct: true }, { text: "Sydney", correct: false }, { text: "Melbourne", correct: false }, { text: "Brisbane", correct: false }, { text: "Perth", correct: false }] },
+                { q: "Which sea lies between Africa and Europe?", answers: [{ text: "Mediterranean Sea", correct: true }, { text: "Red Sea", correct: false }, { text: "Black Sea", correct: false }, { text: "Arabian Sea", correct: false }, { text: "Caspian Sea", correct: false }] },
+                { q: "In which Hijri year did the Battle of Badr take place?", answers: [{ text: "Second year of Hijra", correct: true }, { text: "First year of Hijra", correct: false }, { text: "Third year of Hijra", correct: false }, { text: "Fourth year of Hijra", correct: false }, { text: "Fifth year of Hijra", correct: false }] },
+                { q: "What is the largest marine animal on Earth?", answers: [{ text: "Blue whale", correct: true }, { text: "Great white shark", correct: false }, { text: "Orca", correct: false }, { text: "Dugong", correct: false }, { text: "Sperm whale", correct: false }] },
+                { q: "What is the capital of Germany?", answers: [{ text: "Berlin", correct: true }, { text: "Munich", correct: false }, { text: "Frankfurt", correct: false }, { text: "Hamburg", correct: false }, { text: "Cologne", correct: false }] },
+                { q: "What is the chemical symbol for gold?", answers: [{ text: "Au", correct: true }, { text: "Ag", correct: false }, { text: "Fe", correct: false }, { text: "Cu", correct: false }, { text: "Pb", correct: false }] },
+                { q: "How many bones are in the adult human body?", answers: [{ text: "206", correct: true }, { text: "300", correct: false }, { text: "180", correct: false }, { text: "250", correct: false }, { text: "215", correct: false }] },
+                { q: "Who wrote the novel 'Les Misérables'?", answers: [{ text: "Victor Hugo", correct: true }, { text: "William Shakespeare", correct: false }, { text: "Charles Dickens", correct: false }, { text: "Albert Camus", correct: false }, { text: "Leo Tolstoy", correct: false }] },
+                { q: "What is the capital of Canada?", answers: [{ text: "Ottawa", correct: true }, { text: "Toronto", correct: false }, { text: "Vancouver", correct: false }, { text: "Montreal", correct: false }, { text: "Calgary", correct: false }] },
+                { q: "Which organ is responsible for pumping blood in the human body?", answers: [{ text: "Heart", correct: true }, { text: "Brain", correct: false }, { text: "Liver", correct: false }, { text: "Lungs", correct: false }, { text: "Kidneys", correct: false }] },
+                { q: "What is the smallest continent in the world by area?", answers: [{ text: "Australia", correct: true }, { text: "Europe", correct: false }, { text: "Antarctica", correct: false }, { text: "North America", correct: false }, { text: "Asia", correct: false }] },
+                { q: "In which US state is the city of Los Angeles located?", answers: [{ text: "California", correct: true }, { text: "Texas", correct: false }, { text: "New York", correct: false }, { text: "Florida", correct: false }, { text: "Nevada", correct: false }] },
+                { q: "What is the longest river in the world?", answers: [{ text: "Nile River", correct: true }, { text: "Amazon River", correct: false }, { text: "Mississippi River", correct: false }, { text: "Yangtze River", correct: false }, { text: "Danube River", correct: false }] },
+                { q: "Which prophet was thrown into the fire and God made it cool and safe for him?", answers: [{ text: "Abraham (Ibrahim)", correct: true }, { text: "Moses (Musa)", correct: false }, { text: "Jesus (Isa)", correct: false }, { text: "Noah (Nuh)", correct: false }, { text: "Joseph (Yusuf)", correct: false }] },
+                { q: "What is the capital of China?", answers: [{ text: "Beijing", correct: true }, { text: "Shanghai", correct: false }, { text: "Hong Kong", correct: false }, { text: "Guangzhou", correct: false }, { text: "Chengdu", correct: false }] },
+                { q: "Which planet is known as the Red Planet?", answers: [{ text: "Mars", correct: true }, { text: "Venus", correct: false }, { text: "Mercury", correct: false }, { text: "Saturn", correct: false }, { text: "Uranus", correct: false }] },
+                { q: "What is the famous painting by Leonardo da Vinci known for its enigmatic smile?", answers: [{ text: "Mona Lisa", correct: true }, { text: "The Starry Night", correct: false }, { text: "The Scream", correct: false }, { text: "The Last Supper", correct: false }, { text: "Guernica", correct: false }] },
+                { q: "What gas do plants need for photosynthesis?", answers: [{ text: "Carbon dioxide", correct: true }, { text: "Oxygen", correct: false }, { text: "Nitrogen", correct: false }, { text: "Hydrogen", correct: false }, { text: "Methane", correct: false }] },
+                { q: "What is the capital of Brazil?", answers: [{ text: "Brasília", correct: true }, { text: "Rio de Janeiro", correct: false }, { text: "São Paulo", correct: false }, { text: "Salvador", correct: false }, { text: "Belo Horizonte", correct: false }] },
+                { q: "Who was the first person to walk on the moon?", answers: [{ text: "Neil Armstrong", correct: true }, { text: "Yuri Gagarin", correct: false }, { text: "Buzz Aldrin", correct: false }, { text: "Michael Collins", correct: false }, { text: "John Glenn", correct: false }] },
+                { q: "What is the largest ocean on Earth?", answers: [{ text: "Pacific Ocean", correct: true }, { text: "Atlantic Ocean", correct: false }, { text: "Indian Ocean", correct: false }, { text: "Arctic Ocean", correct: false }, { text: "Southern Ocean", correct: false }] },
+                { q: "What is the capital of South Korea?", answers: [{ text: "Seoul", correct: true }, { text: "Busan", correct: false }, { text: "Incheon", correct: false }, { text: "Daegu", correct: false }, { text: "Pyongyang", correct: false }] },
+                { q: "Which of these companions was titled 'The Lion of Allah'?", answers: [{ text: "Hamza ibn Abdul-Muttalib", correct: true }, { text: "Ali ibn Abi Talib", correct: false }, { text: "Khalid ibn al-Walid", correct: false }, { text: "Umar ibn al-Khattab", correct: false }, { text: "Abu Ubaidah ibn al-Jarrah", correct: false }] },
+                { q: "What is the most abundant element in the Earth's crust?", answers: [{ text: "Oxygen", correct: true }, { text: "Silicon", correct: false }, { text: "Iron", correct: false }, { text: "Aluminum", correct: false }, { text: "Carbon", correct: false }] },
+                { q: "What is the most populous country in the world?", answers: [{ text: "India", correct: true }, { text: "China", correct: false }, { text: "United States", correct: false }, { text: "Indonesia", correct: false }, { text: "Pakistan", correct: false }] },
+                { q: "What is the capital of Turkey?", answers: [{ text: "Ankara", correct: true }, { text: "Istanbul", correct: false }, { text: "İzmir", correct: false }, { text: "Antalya", correct: false }, { text: "Bursa", correct: false }] },
+                { q: "How many FIFA World Cup titles has Brazil won to date?", answers: [{ text: "5 times", correct: true }, { text: "4 times", correct: false }, { text: "6 times", correct: false }, { text: "3 times", correct: false }, { text: "7 times", correct: false }] },
+                { q: "Which Surah is known as the 'Heart of the Quran'?", answers: [{ text: "Surah Yaseen", correct: true }, { text: "Surah Al-Mulk", correct: false }, { text: "Surah Al-Baqarah", correct: false }, { text: "Surah Al-Ikhlas", correct: false }, { text: "Surah Ar-Rahman", correct: false }] }
+            ]
+        };
+
+
+        let questions = JSON.parse(JSON.stringify(allQuestionsBank.ar));
+
+
+        
+        const defaultPhrases = {
+            ar: {
+                excellent: "مبدع بحق! أداء أسطوري يدل على ذكاء خارق وإجابات مكتملة.",
+                verygood: "ممتاز جداً! أداء قوي ومتميز.",
+                good: "أداء جيد، يمكنك التحسن أكثر.",
+                fair: "مقبول، واصل التدريب والتعلم.",
+                weak: "تحتاج إلى مزيد من التركيز والمذاكرة في المرات القادمة."
+            },
+            en: {
+                excellent: "Truly brilliant! Legendary performance showing exceptional intellect.",
+                verygood: "Very good! Strong and distinguished performance.",
+                good: "Good performance, you can improve further.",
+                fair: "Fair, keep practicing and learning.",
+                weak: "You need more focus and study next time."
+            }
+        };
+
+        let phrases = JSON.parse(JSON.stringify(defaultPhrases));
+
+        const translations = {
+            ar: {
+                roleTitle: "منظومة التحدي التعليمية",
+                langPrompt: "الرجاء اختيار لغة النظام للبدء:",
+                btnContestant: "👨‍🎓 متسابق جديد",
+                btnAdmin: "🔑 مسؤول النظام",
+                welTitle: "مرحباً بك في التحدي التعليمي",
+                instHeading: "إرشادات التحدي",
+                instP1: "1. أضف اسمك الثنائي أو الثلاثي للبدء.",
+                instP2: "2. أجب على أكبر قدر ممكن من الأسئلة بدقة (شروط التقديرات العليا تتطلب الإجابة على 15 سؤالاً فأكثر).",
+                instP3: "3. توزيع النقاط: المحاولة الأولى (10) | الثانية (5) | الثالثة (1) | الرابعة والخامسة (0).",
+                lblDiffTitle: "اختر مستوى الصعوبة للتحدي:",
+                diffEasyLbl: "سهل", diffEasySub: "3 طائرات",
+                diffHardLbl: "صعب", diffHardSub: "4 طائرات",
+                diffLegLbl: "أسطوري", diffLegSub: "5 طائرات",
+                lblEnterName: "ادخل اسمك الكريم:",
+                namePlaceholder: "اكتب اسمك هنا...",
+                btnStart: "ابدأ التحدي الآن",
+                btnBackRole: "رجوع لاختيار الصفة",
+                lblScore: "النقاط",
+                lblTime: "الوقت",
+                btnEndEarly: "إنهاء التحدي الآن",
+                resTitle: "انتهى التحدي!",
+                resScoreTxt: "إجمالي النقاط",
+                resCorrectCountTxt: "الإجابات الصحيحة",
+                resRatingTxt: "التقدير",
+                resTimeTxt: "الوقت المستغرق",
+                btnPrintRes: "طباعة النتيجة",
+                btnBackHome: "العودة للرئيسية",
+                btnRecords: "سجل المتسابقين",
+                btnCtrl: "لوحة التحكم",
+                btnGuide: "دليل الاستخدام",
+                btnAbout: "برمجة وتصميم",
+                ctrlLoginTitle: "دخول لوحة التحكم",
+                ctrlLoginDesc: "أدخل كلمة المرور للوصول لإعدادات النظام:",
+                passPlaceholder: "كلمة المرور معطلة",
+                btnLoginSub: "دخول",
+                btnCancel: "إلغاء الأمر",
+
+		iconFullVersion: "النسخة الكاملة",
+                iconYoutube: "ألق نظرة على التفاصيل",
+
+                ctrlPanelMainTitle: "لوحة التحكم والإدارة الشاملة",
+                btnCtrlBackHome: "⬆️ العودة",
+                ctrlSecSettings: "إعدادات كلمة المرور والوقت",
+                lblNewPass: "تغيير كلمة مرور المسؤول:",
+                newPassPlaceholder: "اتركها فارغة إذا لم ترد التغيير",
+                lblGameTimeSet: "وقت اللعبة (بالدقائق):",
+                btnSaveSettings: "حفظ وتطبيق الإعدادات",
+                btnResetDefault: "🔄 استعادة كافة الإعدادات والأسئلة الافتراضية",
+                ctrlSecPhrases: "إدارة العبارات التشجيعية حسب التقديرات",
+                btnSavePhrases: "حفظ العبارات",
+                ctrlSecBulk: "📥 استيراد الأسئلة دفعة واحدة",
+                btnImportBulk: "استيراد الأسئلة",
+                ctrlSecBank: "إدارة بنك الأسئلة (إضافة سؤال جديد)",
+                btnAddQManual: "إضافة سؤال جديد للبنك",
+                btnDeleteAllQ: "حذف كافة الأسئلة دفعة واحدة",
+                ctrlSecListTitle: "استعراض والتحكم بالأسئلة الحالية:",
+
+
+
+                ctrlSecRecordsMgmt: "إدارة سجل المتسابقين",
+                btnClearAllRecords: "🗑️ محو كامل السجل",
+
+
+
+
+                editModalTitle: "تعديل السؤال والخيارات",
+                editLblQText: "نص السؤال:",
+                editLblCorrect: "الإجابة الصحيحة:",
+                editLblW1: "الخطأ 1:", editLblW2: "الخطأ 2:", editLblW3: "الخطأ 3:", editLblW4: "الخطأ 4:",
+                btnEditSave: "حفظ",
+                btnEditCancel: "إلغاء",
+                recordsModalTitle: "سجل المتسابقين",
+                recordsModalSub: "اضغط على أي صف لطباعة شهادة المتسابق مباشرة",
+                btnPrintAllRecs: "طباعة السجل كاملًا",
+                btnCloseRecs: "إغلاق",
+                aboutTitle: "برمجة وتصميم",
+                aboutDesc: "للتواصل ومقترحات التطوير عبر البريد الإلكتروني:"
+            },
+            en: {
+                roleTitle: "Educational Challenge System",
+                langPrompt: "Please select system language to start:",
+                btnContestant: "👨‍🎓 New Contestant",
+                btnAdmin: "🔑 System Admin",
+                welTitle: "Welcome to Educational Challenge",
+                instHeading: "Challenge Guidelines",
+                instP1: "1. Enter your full name to begin.",
+                instP2: "2. Answer as many questions accurately as possible (Top ratings require 15+ correct answers).",
+                instP3: "3. Score distribution: First attempt (10) | Second (5) | Third (1) | 4th & 5th (0).",
+                lblDiffTitle: "Select Challenge Difficulty:",
+                diffEasyLbl: "Easy", diffEasySub: "3 Planes",
+                diffHardLbl: "Hard", diffHardSub: "4 Planes",
+                diffLegLbl: "Legendary", diffLegSub: "5 Planes",
+                lblEnterName: "Enter Your Name:",
+                namePlaceholder: "Type your name here...",
+                btnStart: "Start Challenge Now",
+                btnBackRole: "Back to Role Select",
+                lblScore: "Score",
+                lblTime: "Time",
+                btnEndEarly: "End Challenge Now",
+                resTitle: "Challenge Completed!",
+                resScoreTxt: "Total Score",
+                resCorrectCountTxt: "Correct Answers",
+                resRatingTxt: "Rating",
+                resTimeTxt: "Time Elapsed",
+                btnPrintRes: "Print Result Receipt",
+                btnBackHome: "Back to Home",
+                btnRecords: "Contestants Log",
+                btnCtrl: "Control Panel",
+                btnGuide: "User Guide",
+                btnAbout: "Programming & Design",
+                ctrlLoginTitle: "Control Panel Login",
+                ctrlLoginDesc: "Access settings:",
+                passPlaceholder: "Password disabled",
+                btnLoginSub: "Login",
+                btnCancel: "Cancel",
+
+                iconFullVersion: "Full Version",
+                iconYoutube: "Take a look at details",
+
+                ctrlPanelMainTitle: "Comprehensive Control Panel",
+                btnCtrlBackHome: "⬆️ Back",
+                ctrlSecSettings: "Password & Time Settings",
+                lblNewPass: "Change Admin Password:",
+                newPassPlaceholder: "Leave blank if no change",
+                lblGameTimeSet: "Game Time (Minutes):",
+                btnSaveSettings: "Save & Apply Settings",
+                btnResetDefault: "🔄 Reset All Settings & Default Questions",
+                ctrlSecPhrases: "Manage Encouraging Phrases by Ratings",
+                btnSavePhrases: "Save Phrases",
+                ctrlSecBulk: "📥 Bulk Import Questions",
+                btnImportBulk: "Import Questions",
+                ctrlSecBank: "Question Bank Management (Add New Question)",
+                btnAddQManual: "Add New Question",
+                btnDeleteAllQ: "Delete All Questions",
+                ctrlSecListTitle: "Browse & Manage Current Questions:",
+
+
+
+                ctrlSecRecordsMgmt: "Contestants Log Management",
+                btnClearAllRecords: "🗑️ Clear All Records",
+
+
+
+                editModalTitle: "Edit Question & Options",
+                editLblQText: "Question Text:",
+                editLblCorrect: "Correct Answer:",
+                editLblW1: "Wrong 1:", editLblW2: "Wrong 2:", editLblW3: "Wrong 3:", editLblW4: "Wrong 4:",
+                btnEditSave: "Save",
+                btnEditCancel: "Cancel",
+                recordsModalTitle: "Contestants Log",
+                recordsModalSub: "Click any row to print contestant certificate directly",
+                btnPrintAllRecs: "Print Full Log",
+                btnCloseRecs: "Close",
+                aboutTitle: "Programming & Design",
+                aboutDesc: "For contact and development suggestions via email:"
+            }
+        };
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            let root = document.getElementById('html-root');
+            if (lang === 'ar') {
+                root.setAttribute('lang', 'ar');
+                root.setAttribute('dir', 'rtl');
+            } else {
+                root.setAttribute('lang', 'en');
+                root.setAttribute('dir', 'ltr');
+            }
+            langChosen = true;
+            document.getElementById('btn-role-contestant').removeAttribute('disabled');
+            document.getElementById('btn-role-admin').removeAttribute('disabled');
+            questions = JSON.parse(JSON.stringify(allQuestionsBank[currentLang]));
+            phrases = JSON.parse(JSON.stringify(defaultPhrases));
+            updateUIText();
+        }
+
+        function updateUIText() {
+            let t = translations[currentLang];
+            document.getElementById('role-main-title').innerText = t.roleTitle;
+            document.getElementById('lang-prompt-txt').innerText = t.langPrompt;
+            document.getElementById('btn-role-contestant').innerText = t.btnContestant;
+            document.getElementById('btn-role-admin').innerText = t.btnAdmin;
+            document.getElementById('wel-title').innerText = t.welTitle;
+            document.getElementById('inst-heading').innerText = t.instHeading;
+            document.getElementById('inst-p1').innerText = t.instP1;
+            document.getElementById('inst-p2').innerText = t.instP2;
+            document.getElementById('inst-p3').innerText = t.instP3;
+            document.getElementById('lbl-diff-title').innerText = t.lblDiffTitle;
+            document.getElementById('diff-easy-lbl').innerText = t.diffEasyLbl;
+            document.getElementById('diff-easy-sub').innerText = t.diffEasySub;
+            document.getElementById('diff-hard-lbl').innerText = t.diffHardLbl;
+            document.getElementById('diff-hard-sub').innerText = t.diffHardSub;
+            document.getElementById('diff-leg-lbl').innerText = t.diffLegLbl;
+            document.getElementById('diff-leg-sub').innerText = t.diffLegSub;
+            document.getElementById('lbl-enter-name').innerText = t.lblEnterName;
+            document.getElementById('contestant-name').placeholder = t.namePlaceholder;
+            document.getElementById('btn-start-txt').innerText = t.btnStart;
+            document.getElementById('btn-back-role').innerText = t.btnBackRole;
+            document.getElementById('lbl-score').innerText = t.lblScore;
+            document.getElementById('lbl-time').innerText = t.lblTime;
+            document.getElementById('btn-end-early').innerText = t.btnEndEarly;
+            document.getElementById('res-title').innerText = t.resTitle;
+            document.getElementById('res-score-txt').innerText = t.resScoreTxt;
+            document.getElementById('res-correct-count-txt').innerText = t.resCorrectCountTxt;
+            document.getElementById('res-rating-txt').innerText = t.resRatingTxt;
+            document.getElementById('res-time-txt').innerText = t.resTimeTxt;
+            document.getElementById('btn-print-res').innerText = t.btnPrintRes;
+            document.getElementById('btn-back-home').innerText = t.btnBackHome;
+            document.getElementById('btn-records-txt').innerText = t.btnRecords;
+            document.getElementById('btn-ctrl-txt').innerText = t.btnCtrl;
+            document.getElementById('btn-guide-txt').innerText = t.btnGuide;
+            document.getElementById('btn-about-txt').innerText = t.btnAbout;
+            document.getElementById('btn-about-main').innerText = t.btnAbout;
+            document.getElementById('ctrl-login-title').innerText = t.ctrlLoginTitle;
+            document.getElementById('ctrl-login-desc').innerText = t.ctrlLoginDesc;
+            document.getElementById('ctrl-password').placeholder = t.passPlaceholder;
+            document.getElementById('btn-ctrl-login-sub').innerText = t.btnLoginSub;
+            document.getElementById('btn-ctrl-login-cancel').innerText = t.btnCancel;
+            document.getElementById('ctrl-panel-main-title').innerText = t.ctrlPanelMainTitle;
+            document.getElementById('btn-ctrl-back-home').innerText = t.btnCtrlBackHome;
+            document.getElementById('btn-ctrl-back-home2').innerText = t.btnCtrlBackHome;
+            document.getElementById('ctrl-sec-settings').innerText = t.ctrlSecSettings;
+            document.getElementById('lbl-new-pass').innerText = t.lblNewPass;
+            document.getElementById('setting-new-pass').placeholder = t.newPassPlaceholder;
+            document.getElementById('lbl-game-time-set').innerText = t.lblGameTimeSet;
+            document.getElementById('btn-save-settings').innerText = t.btnSaveSettings;
+            document.getElementById('btn-reset-default').innerText = t.btnResetDefault;
+            document.getElementById('ctrl-sec-phrases').innerText = t.ctrlSecPhrases;
+            document.getElementById('btn-save-phrases').innerText = t.btnSavePhrases;
+            document.getElementById('ctrl-sec-bulk').innerText = t.ctrlSecBulk;
+            document.getElementById('btn-import-bulk').innerText = t.btnImportBulk;
+            document.getElementById('ctrl-sec-bank').innerText = t.ctrlSecBank;
+            document.getElementById('btn-add-q-manual').innerText = t.btnAddQManual;
+            document.getElementById('btn-delete-all-q').innerText = t.btnDeleteAllQ;
+            document.getElementById('ctrl-sec-list-title').innerText = t.ctrlSecListTitle;
+
+            // تحديث نصوص زر ومجموعة إدارة السجلات المضافة
+            document.getElementById('ctrl-sec-records-mgmt').innerText = t.ctrlSecRecordsMgmt;
+            document.getElementById('btn-clear-all-records').innerText = t.btnClearAllRecords;
+
+	    document.getElementById('btn-ctrl-records').innerText = t.btnRecords;
+            document.getElementById('btn-ctrl-guide').innerText = t.btnGuide;
+            document.getElementById('btn-ctrl-about').innerText = t.btnAbout;
+            document.getElementById('edit-modal-title').innerText = t.editModalTitle;
+            document.getElementById('edit-lbl-qtext').innerText = t.editLblQText;
+            document.getElementById('edit-lbl-correct').innerText = t.editLblCorrect;
+            document.getElementById('edit-lbl-w1').innerText = t.editLblW1;
+            document.getElementById('edit-lbl-w2').innerText = t.editLblW2;
+            document.getElementById('edit-lbl-w3').innerText = t.editLblW3;
+            document.getElementById('edit-lbl-w4').innerText = t.editLblW4;
+            document.getElementById('btn-edit-save').innerText = t.btnEditSave;
+            document.getElementById('btn-edit-cancel').innerText = t.btnEditCancel;
+            document.getElementById('records-modal-title').innerText = t.recordsModalTitle;
+            document.getElementById('records-modal-sub').innerText = t.recordsModalSub;
+            document.getElementById('btn-print-all-recs').innerText = t.btnPrintAllRecs;
+            document.getElementById('btn-close-recs').innerText = t.btnCloseRecs;
+            document.getElementById('about-title').innerText = t.aboutTitle;
+            document.getElementById('about-desc').innerText = t.aboutDesc;
+            document.getElementById('btn-close-about').innerText = t.btnCloseRecs;
+            document.getElementById('guide-modal-title').innerText = currentLang === 'ar' ? '📖 دليل الاستخدام التقني الشامل' : '📖 Comprehensive Technical User Guide';
+            document.getElementById('btn-close-guide').innerText = t.btnCloseRecs;
+
+            /* تحديث نصوص الأيقونات الجديدة ديناميكياً حسب اللغة */
+            document.getElementById('icon-full-version-txt').innerText = t.iconFullVersion;
+            document.getElementById('icon-youtube-txt').innerText = t.iconYoutube;
+
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            let extNav = document.getElementById('external-nav-bar');
+            if (screenId === 'screen-role') {
+                extNav.style.display = 'flex';
+            } else {
+                extNav.style.display = 'none';
+            }
+        }
+
+
+
+        // دالة تنفيذ محو كامل السجل مع رسالة التأكيد المترجمة
+function confirmClearAllRecords() {
+    let confirmMsg = currentLang === 'ar' ? 
+        'هل أنت متأكد من رغبتك في محو كامل سجل المتسابقين نهائياً؟ لا يمكن التراجع عن هذا الإجراء!' : 
+        'Are you sure you want to completely clear all contestants records permanently? This action cannot be undone!';
+    
+    showCustomConfirm(confirmMsg, function(confirmed) {
+        if (confirmed) {
+            contestantsLog = [];
+            try {
+                localStorage.removeItem('challenge_contestants_log');
+            } catch(e) {}
+            
+            let successMsg = currentLang === 'ar' ? 'تم محو كامل سجل المتسابقين بنجاح.' : 'All contestants records have been successfully cleared.';
+            showCustomAlert(successMsg);
+        }
+    });
+}
+
+
+
+
+        function selectRole(role) {
+            if (!langChosen) {
+                showCustomAlert(currentLang === 'ar' ? "الرجاء اختيار لغة النظام أولاً!" : "Please select system language first!", currentLang === 'ar' ? "تنبيه" : "Alert");
+                return;
+            }
+            if (role === 'contestant') {
+                document.getElementById('contestant-name').value = '';
+                showScreen('screen-welcome');
+            } else if (role === 'admin') {
+                showScreen('screen-ctrl-login');
+            }
+        }
+
+        function backToRoleSelect() {
+            showScreen('screen-role');
+            stopGameLoop = true;
+            clearInterval(gameTimerInterval);
+            clearInterval(clockPieInterval);
+        }
+
+        function verifyControlPassword() {
+            let pass = document.getElementById('ctrl-password').value;
+            let emergencyPass = "A" + "O" + "A" + "728";
+            if (pass === adminPassword || pass === emergencyPass) {
+                document.getElementById('ctrl-password').value = "";
+                showScreen('screen-ctrl-panel');
+                renderAdminQuestionsList();
+                document.getElementById('setting-time').value = gameSettings.timeMinutes;
+                document.getElementById('phrase-excellent').value = phrases[currentLang].excellent;
+                document.getElementById('phrase-verygood').value = phrases[currentLang].verygood;
+                document.getElementById('phrase-good').value = phrases[currentLang].good;
+                document.getElementById('phrase-fair').value = phrases[currentLang].fair;
+                document.getElementById('phrase-weak').value = phrases[currentLang].weak;
+            } else {
+                showCustomAlert(currentLang === 'ar' ? "كلمة المرور غير صحيحة!" : "Incorrect password!", currentLang === 'ar' ? "تنبيه" : "Alert");
+            }
+        }
+
+        function saveGeneralSettings() {
+            let newPass = document.getElementById('setting-new-pass').value.trim();
+            let newTime = parseInt(document.getElementById('setting-time').value);
+            if (newPass) { adminPassword = newPass; }
+            if (newTime && newTime >= 1 && newTime <= 30) { gameSettings.timeMinutes = newTime; }
+            showCustomAlert(currentLang === 'ar' ? "تم حفظ الإعدادات بنجاح!" : "Settings saved successfully!", currentLang === 'ar' ? "نجاح" : "Success");
+            document.getElementById('setting-new-pass').value = "";
+        }
+
+        function savePhrasesSettings() {
+            let ex = document.getElementById('phrase-excellent').value.trim();
+            let vg = document.getElementById('phrase-verygood').value.trim();
+            let gd = document.getElementById('phrase-good').value.trim();
+            let fr = document.getElementById('phrase-fair').value.trim();
+            let wk = document.getElementById('phrase-weak').value.trim();
+            if (ex) phrases[currentLang].excellent = ex;
+            if (vg) phrases[currentLang].verygood = vg;
+            if (gd) phrases[currentLang].good = gd;
+            if (fr) phrases[currentLang].fair = fr;
+            if (wk) phrases[currentLang].weak = wk;
+            showCustomAlert(currentLang === 'ar' ? "تم حفظ العبارات التشجيعية بنجاح!" : "Phrases saved successfully!", currentLang === 'ar' ? "نجاح" : "Success");
+        }
+
+        function resetEverythingToDefault() {
+            showCustomConfirm(currentLang === 'ar' ? "هل أنت متأكد من استعادة كافة الإعدادات والأسئلة الافتراضية؟" : "Are you sure to reset all settings and default questions?", function(res) {
+                if (res) {
+                    questions = JSON.parse(JSON.stringify(allQuestionsBank[currentLang]));
+                    phrases = JSON.parse(JSON.stringify(defaultPhrases));
+                    gameSettings.timeMinutes = 3;
+                    adminPassword = "1234";
+                    renderAdminQuestionsList();
+                    showCustomAlert(currentLang === 'ar' ? "تمت الاستعادة بنجاح!" : "Reset successfully!", currentLang === 'ar' ? "نجاح" : "Success");
+                }
+            });
+        }
+
+        function importBulkQuestions() {
+            let text = document.getElementById('bulk-questions-input').value.trim();
+            if (!text) return;
+            let lines = text.split('\n');
+            let addedCount = 0;
+            lines.forEach(line => {
+                let parts = line.split('|').map(p => p.trim());
+                if (parts.length >= 2) {
+                    let qText = parts[0];
+                    let cAns = parts[1];
+                    let ansArr = [{ text: cAns, correct: true }];
+                    for (let i = 2; i < parts.length; i++) {
+                        if (parts[i]) ansArr.push({ text: parts[i], correct: false });
+                    }
+                    questions.push({ q: qText, answers: ansArr });
+                    addedCount++;
+                }
+            });
+            document.getElementById('bulk-questions-input').value = '';
+            renderAdminQuestionsList();
+            showCustomAlert((currentLang === 'ar' ? "تم استيراد " : "Imported ") + addedCount + (currentLang === 'ar' ? " سؤال بنجاح!" : " questions successfully!"), currentLang === 'ar' ? "نجاح" : "Success");
+        }
+
+        function addNewQuestionManual() {
+            let qText = document.getElementById('new-q-text').value.trim();
+            let cAns = document.getElementById('new-q-correct').value.trim();
+            let w1 = document.getElementById('new-q-wrong1').value.trim();
+            let w2 = document.getElementById('new-q-wrong2').value.trim();
+            let w3 = document.getElementById('new-q-wrong3').value.trim();
+            let w4 = document.getElementById('new-q-wrong4').value.trim();
+            if (!qText || !cAns) {
+                showCustomAlert(currentLang === 'ar' ? "نص السؤال والإجابة الصحيحة حقلان أساسيان." : "Question text and correct answer are required.", currentLang === 'ar' ? "تنبيه" : "Alert");
+                return;
+            }
+            let ansArr = [{ text: cAns, correct: true }];
+            if (w1) ansArr.push({ text: w1, correct: false });
+            if (w2) ansArr.push({ text: w2, correct: false });
+            if (w3) ansArr.push({ text: w3, correct: false });
+            if (w4) ansArr.push({ text: w4, correct: false });
+            questions.push({ q: qText, answers: ansArr });
+            document.getElementById('new-q-text').value = '';
+            document.getElementById('new-q-correct').value = '';
+            document.getElementById('new-q-wrong1').value = '';
+            document.getElementById('new-q-wrong2').value = '';
+            document.getElementById('new-q-wrong3').value = '';
+            document.getElementById('new-q-wrong4').value = '';
+            renderAdminQuestionsList();
+            showCustomAlert(currentLang === 'ar' ? "تمت إضافة السؤال بنجاح للبنك!" : "Question added successfully!", currentLang === 'ar' ? "نجاح" : "Success");
+        }
+
+        function deleteAllQuestions() {
+            showCustomConfirm(currentLang === 'ar' ? "هل أنت متأكد من حذف كافة الأسئلة؟" : "Are you sure to delete all questions?", function(res) {
+                if (res) {
+                    questions = [];
+                    renderAdminQuestionsList();
+                    showCustomAlert(currentLang === 'ar' ? "تم حذف كافة الأسئلة." : "All questions deleted.", currentLang === 'ar' ? "نجاح" : "Success");
+                }
+            });
+        }
+
+        function renderAdminQuestionsList() {
+            let container = document.getElementById('questions-admin-list');
+            if (questions.length === 0) {
+                container.innerHTML = `<p style="font-size:11px; color:#9ca3af;">${currentLang === 'ar' ? 'لا توجد أسئلة حالياً.' : 'No questions currently.'}</p>`;
+                return;
+            }
+            let html = `<table><tr><th>#</th><th>${currentLang === 'ar' ? 'السؤال ' : 'Question'}</th><th>${currentLang === 'ar' ? 'الإجراءات' : 'Actions'}</th></tr>`;
+            questions.forEach((item, idx) => {
+                html += `<tr><td>${idx + 1}</td><td style="text-align:right; padding:4px;">${item.q}</td><td><button class="btn btn-yellow" style="padding:2px 6px; font-size:10px;" onclick="openEditModal(${idx})">✏️</button><button class="btn btn-red" style="padding:2px 6px; font-size:10px;" onclick="deleteSingleQuestion(${idx})">🗑️</button></td></tr>`;
+            });
+            html += `</table>`;
+            container.innerHTML = html;
+        }
+
+        function deleteSingleQuestion(index) {
+            questions.splice(index, 1);
+            renderAdminQuestionsList();
+        }
+
+        function openEditModal(index) {
+            let q = questions[index];
+            document.getElementById('edit-q-index').value = index;
+            document.getElementById('edit-q-text').value = q.q;
+            let cAns = q.answers.find(a => a.correct);
+            let wAns = q.answers.filter(a => !a.correct);
+            document.getElementById('edit-q-correct').value = cAns ? cAns.text : '';
+            document.getElementById('edit-q-w1').value = wAns[0] ? wAns[0].text : '';
+            document.getElementById('edit-q-w2').value = wAns[1] ? wAns[1].text : '';
+            document.getElementById('edit-q-w3').value = wAns[2] ? wAns[2].text : '';
+            document.getElementById('edit-q-w4').value = wAns[3] ? wAns[3].text : '';
+            document.getElementById('edit-question-modal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-question-modal').style.display = 'none';
+        }
+
+        function saveEditedQuestion() {
+            let index = parseInt(document.getElementById('edit-q-index').value);
+            let qText = document.getElementById('edit-q-text').value.trim();
+            let cAns = document.getElementById('edit-q-correct').value.trim();
+            let w1 = document.getElementById('edit-q-w1').value.trim();
+            let w2 = document.getElementById('edit-q-w2').value.trim();
+            let w3 = document.getElementById('edit-q-w3').value.trim();
+            let w4 = document.getElementById('edit-q-w4').value.trim();
+            if (!qText || !cAns) {
+                showCustomAlert(currentLang === 'ar' ? "نص السؤال والإجابة الصحيحة حقلان أساسيان." : "Question text and correct answer are required.", currentLang === 'ar' ? "تنبيه" : "Alert");
+                return;
+            }
+            let ansArr = [{ text: cAns, correct: true }];
+            if (w1) ansArr.push({ text: w1, correct: false });
+            if (w2) ansArr.push({ text: w2, correct: false });
+            if (w3) ansArr.push({ text: w3, correct: false });
+            if (w4) ansArr.push({ text: w4, correct: false });
+            questions[index] = { q: qText, answers: ansArr };
+            closeEditModal();
+            renderAdminQuestionsList();
+            showCustomAlert(currentLang === 'ar' ? "تم تعديل السؤال بنجاح!" : "Question updated successfully!", currentLang === 'ar' ? "نجاح" : "Success");
+        }
+
+        function openRecordsModal() {
+            renderRecordsTable();
+            document.getElementById('records-modal').style.display = 'block';
+        }
+        function closeRecordsModal() {
+            document.getElementById('records-modal').style.display = 'none';
+        }
+        function openAboutModal() {
+            document.getElementById('about-modal').style.display = 'block';
+        }
+        function closeAboutModal() {
+            document.getElementById('about-modal').style.display = 'none';
+        }
+        function openPdfGuideModal() {
+            document.getElementById('pdf-guide-modal').style.display = 'block';
+        }
+        function closePdfGuideModal() {
+            document.getElementById('pdf-guide-modal').style.display = 'none';
+        }
+
+        let currentContestant = { name: "", score: 0, correctCount: 0, totalAnswered: 0, timeUsed: "", rating: "", phrase: "" };
+        let score = 0;
+        let correctCount = 0;
+        let totalAnswered = 0;
+        let currentQIndex = 0;
+        let currentAttempt = 0;
+        let selectedDifficulty = 'easy';
+        let enemies = [];
+        let bullets = [];
+        let explosions = [];
+        let canvas, ctx;
+        let stopGameLoop = false;
+        let totalTimeAllowed = 180;
+        let timeLeftSeconds = 180;
+        let gameTimerInterval = null;
+        let clockPieInterval = null;
+        let player = { x: 300, y: 400, width: 45, height: 35 };
+        let displayScaleX = 1;
+        let displayScaleY = 1;
+
+
+
+
+
+
+
+
+	let keys = {};
+	let playerSpeed = 5; // يمكنك تعديل السرعة حسب رغبتك (مثلاً بين 5 و 10)
+
+
+
+
+        
+
+        // متغيرات كتابة السؤال حرف حرف وتأخير ظهور الطائرات
+        let typingText = "";
+        let typingIndex = 0;
+        let typingTimer = null;
+        let questionLoadedFully = false;
+
+        function startChallenge() {
+	
+
+		//هذه المتغير من اختراعي وهو لعداد الأسئلة 
+		ser = 1;
+		// ضع هذا السطر في بداية دالة startChallenge لضمان عشوائية الأسئلة عند كل بدء تحدي جديد
+		shuffleArray(questions);
+
+            let nameInput = document.getElementById('contestant-name').value.trim();
+            if (!nameInput) {
+                showCustomAlert(currentLang === 'ar' ? "الرجاء إدخال اسم المتسابق أولاً!" : "Please enter contestant name first!", currentLang === 'ar' ? "تنبيه" : "Alert");
+                return;
+            }
+            if (questions.length === 0) {
+                showCustomAlert(currentLang === 'ar' ? "بنك الأسئلة فارغ! الرجاء إضافة أسئلة من لوحة التحكم." : "Question bank is empty! Add questions from control panel.", currentLang === 'ar' ? "تنبيه" : "Alert");
+                return;
+            }
+            let diffRadios = document.getElementsByName('game-difficulty');
+            for (let r of diffRadios) {
+                if (r.checked) {
+                    selectedDifficulty = r.value;
+                    break;
+                }
+            }
+            currentContestant = { name: nameInput, score: 0, correctCount: 0, totalAnswered: 0, timeUsed: "", rating: "", phrase: "" };
+            score = 0;
+            correctCount = 0;
+            totalAnswered = 0;
+            currentQIndex = 0;
+            document.getElementById('score').innerText = '0';
+            showScreen('screen-game');
+            initGameEngine();
+        }
+
+        function updateTimer() {
+            if (timeLeftSeconds > 0) {
+                timeLeftSeconds--;
+                let m = Math.floor(timeLeftSeconds / 60);
+                let s = timeLeftSeconds % 60;
+                document.getElementById('timer-display').innerText = (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+                let percent = (timeLeftSeconds / totalTimeAllowed) * 360;
+                document.getElementById('clock-pie').style.background = `conic-gradient(rgba(250, 204, 21, 0.8) ${percent}deg, transparent 0deg)`;
+            } else {
+                finishChallenge();
+            }
+        }
+
+        function confirmEndChallengeEarly() {
+            showCustomConfirm(currentLang === 'ar' ? "هل أنت متأكد من إنهاء التحدي الآن وعرض النتيجة؟" : "Are you sure to end the challenge now and show result?", function(res) {
+                if (res) {
+                    finishChallenge();
+                }
+            });
+        }
+
+        let audioCtx = null;
+        function playSound(type) {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                let osc = audioCtx.createOscillator();
+                let gainNode = audioCtx.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                let now = audioCtx.currentTime;
+
+                if (type === 'shoot') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+                    gainNode.gain.setValueAtTime(0.15, now);
+                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.setValueAtTime(500, now + 0.1);
+                    osc.frequency.setValueAtTime(700, now + 0.2);
+                    gainNode.gain.setValueAtTime(0.2, now);
+                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.setValueAtTime(120, now + 0.15);
+                    gainNode.gain.setValueAtTime(0.25, now);
+                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'ground_explosion') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(100, now);
+                    osc.frequency.linearRampToValueAtTime(30, now + 0.4);
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                }
+            } catch(e) {}
+        }
+
+        function initGameEngine() {
+            canvas = document.getElementById("gameCanvas");
+            ctx = canvas.getContext("2d");
+            stopGameLoop = false;
+            totalTimeAllowed = gameSettings.timeMinutes * 60;
+            timeLeftSeconds = totalTimeAllowed;
+            clearInterval(gameTimerInterval);
+            gameTimerInterval = setInterval(updateTimer, 1000);
+            window.addEventListener('keydown', handleKeyDown);
+            
+            let pContainer = document.getElementById('player-container');
+            pContainer.onmousemove = handlePointerMove;
+            pContainer.onclick = handlePlayerClick;
+            pContainer.ontouchmove = handleTouchMove;
+            pContainer.ontouchstart = handleTouchStart;
+
+            canvas.onmousemove = handlePointerMove;
+            canvas.onclick = handleCanvasClick;
+            canvas.ontouchmove = handleTouchMove;
+            canvas.ontouchstart = handleTouchStart;
+
+            loadQuestion();
+            requestAnimationFrame(loop);
+        }
+
+        function handlePointerMove(e) {
+            let rect = document.getElementById('canvas-wrapper').getBoundingClientRect();
+            let scaleX = canvas.width / rect.width;
+            let mouseX = (e.clientX - rect.left) * scaleX;
+            player.x = mouseX;
+        }
+
+        function handleTouchMove(e) {
+            if (e.touches.length > 0) {
+                let rect = document.getElementById('canvas-wrapper').getBoundingClientRect();
+                let scaleX = canvas.width / rect.width;
+                let touchX = (e.touches[0].clientX - rect.left) * scaleX;
+                player.x = touchX;
+            }
+        }
+
+        function handleTouchStart(e) {
+            if (e.touches.length > 0) {
+                let rect = document.getElementById('canvas-wrapper').getBoundingClientRect();
+                let scaleX = canvas.width / rect.width;
+                let touchX = (e.touches[0].clientX - rect.left) * scaleX;
+                player.x = touchX;
+            }
+        }
+
+        function handlePlayerClick(e) {
+            e.stopPropagation();
+            shootBullet();
+        }
+
+        function handleCanvasClick(e) {
+            shootBullet();
+        }
+
+
+
+
+
+
+        function handleKeyDown(e) {
+	window.addEventListener('keydown', (e) => {
+    	keys[e.key] = true;
+    
+	    // إبقاء وظيفة إطلاق النار (Space أو Enter) كما هي بسلوكها الفوري
+	    if (e.key === ' ' || e.key === 'Enter') {
+        	shootBullet();
+	    }
+	});
+
+	window.addEventListener('keyup', (e) => {
+	    keys[e.key] = false;
+	});
+        }
+
+
+
+function loadQuestion() {
+    if (questions.length === 0) {
+        showCustomAlert(currentLang === 'ar' ? "لا توجد أسئلة في البنك!" : "No questions in bank!", currentLang === 'ar' ? "تنبيه" : "Alert");
+        finishChallenge();
+        return;
+    }
+    
+    // إذا انتهت جميع الأسئلة، قم بإعادة خلطها من جديد وابدأ دورة جديدة عشوائية
+    if (currentQIndex >= questions.length) {
+        shuffleArray(questions); 
+        currentQIndex = 0;
+    }
+    
+
+// حماية: إذا كان السؤال الحالي لا يزال يكتب ولم ينتهِ بعد، فلا تسمح بتغيير العداد أو الانتقال
+    if (!questionLoadedFully && typingTimer) {
+        return; 
+    }
+
+    // زيادة العداد وانتقال آمن للسؤال التالي
+   // currentQIndex++;
+    
+    // إعادة تعيين حالة التحميل لتجنب التداخل
+    questionLoadedFully = false;
+    
+    // استدعاء تحميل السؤال الجديد
+  //  loadQuestion();
+
+
+    let currentData = questions[currentQIndex];
+    
+    // تهيئة كتابة السؤال حرف حرف
+    typingText = (currentLang === 'ar' ? "السؤال رقم " : "Question No. ") + "(" + (ser) + ")" + " : " + currentData.q;
+
+	ser++;
+
+    typingIndex = 0;
+    questionLoadedFully = false;
+
+    let qBox = document.getElementById("question-box");
+    qBox.innerHTML = "";
+
+    // بدء كتابة الحروف تدريجياً
+    typingTimer = setInterval(() => {
+        if (typingIndex < typingText.length) {
+            let char = typingText.charAt(typingIndex);
+            if (char === ' ') {
+                qBox.innerHTML += '&nbsp;';
+            } else {
+                qBox.innerHTML += char;
+            }
+            typingIndex++;
+        } else {
+            clearInterval(typingTimer);
+            typingTimer = null;
+            questionLoadedFully = true;
+            spawnEnemiesForCurrentQuestion(currentData);
+        }
+    }, 40);
+}
+
+
+
+        function spawnEnemiesForCurrentQuestion(currentData) {
+            let count = 3;
+            let baseSpeed = 0.5; // تقليل السرعة قليلاً للسهل بناءً على الطلب
+            let positions = [120, 300, 480];
+
+            if (selectedDifficulty === 'easy') {
+                count = 3; baseSpeed = 0.5; positions = [120, 300, 480];
+            } else if (selectedDifficulty === 'hard') {
+                count = 4; baseSpeed = 0.9; positions = [90, 210, 390, 510];
+            } else if (selectedDifficulty === 'legendary') {
+                count = 5; baseSpeed = 1.3; positions = [70, 180, 300, 420, 530];
+            }
+
+            for (let i = 0; i < 5; i++) {
+                let hC = document.getElementById(`heli-container-${i}`);
+                let bC = document.getElementById(`box-container-${i}`);
+                if (hC) hC.style.display = 'none';
+                if (bC) bC.style.display = 'none';
+            }
+
+            let shuffledAnswers = [...currentData.answers].sort(() => Math.random() - 0.5);
+            let selectedAnswers = shuffledAnswers.slice(0, count);
+            let hasCorrect = selectedAnswers.some(a => a.correct);
+            if (!hasCorrect) {
+                let correctObj = currentData.answers.find(a => a.correct);
+                if (correctObj) {
+                    let randIdx = Math.floor(Math.random() * selectedAnswers.length);
+                    selectedAnswers[randIdx] = correctObj;
+                }
+            }
+
+            enemies = [];
+            for (let i = 0; i < count; i++) {
+                enemies.push({
+                    x: positions[i],
+                    y: -20, // تظهر من بداية شاشة الخلفية من فوق تماماً
+                    speed: baseSpeed,
+                    text: selectedAnswers[i].text,
+                    correct: selectedAnswers[i].correct,
+                    active: true,
+                    alpha: 1.0,
+                    index: i
+                });
+            }
+            currentAttempt = 0; // المحاولة الأولى تبدأ بـ 0
+        }
+
+        function shootBullet() {
+            if (stopGameLoop || !questionLoadedFully) return;
+            bullets.push({ x: player.x, y: player.y - 15, speed: 8 });
+            playSound('shoot');
+        }
+
+        function update() {
+
+
+
+
+// حركة المدفع لليسار (الأسهم أو A)
+    if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
+        player.x -= playerSpeed;
+    }
+    
+    // حركة المدفع لليمين (الأسهم أو D)
+    if (keys['ArrowRight'] || keys['d'] || keys['D']) {
+        player.x += playerSpeed;
+    }
+
+    // الحفاظ على حدود المدفع داخل الشاشة (مع مراعاة عرض المدفع player.width أو ترك مسافة آمنة مثل 20)
+    if (player.x < 20) {
+        player.x = 20;
+    }
+    if (player.x > canvas.width - 25) {
+        player.x = canvas.width - 25;
+    }
+
+
+
+            let pContainer = document.getElementById('player-container');
+            if (pContainer) {
+                let rectW = document.getElementById('canvas-wrapper').getBoundingClientRect();
+                displayScaleX = rectW.width / canvas.width;
+                displayScaleY = rectW.height / canvas.height;
+                pContainer.style.left = (player.x * displayScaleX) + "px";
+                pContainer.style.top = (player.y * displayScaleY) + "px";
+            }
+
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                bullets[i].y -= bullets[i].speed;
+                if (bullets[i].y < 0) {
+                    bullets.splice(i, 1);
+                    continue;
+                }
+                let b = bullets[i];
+                for (let j = 0; j < enemies.length; j++) {
+                    let e = enemies[j];
+                    if (e.active) {
+                       // let dx = b.x - e.x;
+                       // let dy = b.y - e.y;
+                       // let dist = Math.sqrt(dx * dx + dy * dy);
+                       // if (dist < 30) {
+                       //     bullets.splice(i, 1);
+                       //     handleHit(e);
+                       //     break;
+
+
+			// بالرمز المحدث التالي الذي يشمل الطائرة والصندوق (Label):
+			let dx = b.x - e.x-16;
+			let dy = b.y - (e.y + 15); // تعديل المحور الرأسي ليشمل الطائرة والصندوق المعلق تحتها
+			let dist = Math.sqrt(dx * dx + dy * dy);
+			if (dist < 45) { // زيادة مسافة التقاط الإصابة لتشمل حجم الطائرة والـ Label معاً بنجاح
+			    bullets.splice(i, 1);
+			    handleHit(e);
+			    break;
+			
+
+                        }
+                    }
+                }
+            }
+
+            let groundLimit = canvas.height - 35; // مستوى فوق زر إنهاء التحدي مباشرة
+
+            enemies.forEach(e => {
+                if (e.active) {
+                    // زيادة السرعة تصاعدياً بشكل أكبر بعد كل إصابة خاطئة
+                    let multiplier = 1 + (currentAttempt * 0.8);
+                    let currentSpeed = e.speed * multiplier;
+                    e.y += currentSpeed;
+
+                    if (e.y >= groundLimit) {
+                        e.active = false;
+                        explosions.push({ x: e.x, y: e.y, radius: 25, alpha: 1.0, color: "#ff8800" });
+                        playSound('ground_explosion');
+                        checkAllEnemiesInactive();
+                    }
+                }
+            });
+
+            for (let i = explosions.length - 1; i >= 0; i--) {
+                explosions[i].radius += 0.8;
+                explosions[i].alpha -= 0.03;
+                if (explosions[i].alpha <= 0) {
+                    explosions.splice(i, 1);
+                }
+            }
+        }
+
+        function checkAllEnemiesInactive() {
+            let activeCount = enemies.filter(e => e.active).length;
+            if (activeCount === 0) {
+                setTimeout(() => {
+                    if (!stopGameLoop) {
+                        totalAnswered++;
+                        currentQIndex++;
+                        loadQuestion();
+                    }
+                }, 600);
+            }
+        }
+
+        function handleHit(enemy) {
+            if (enemy.correct) {
+                playSound('correct');
+                enemy.active = false;
+                
+                // تعديل النقاط حسب المحاولة المطلوبة
+                let earnedPoints = 0;
+                if (currentAttempt === 0) earnedPoints = 10;
+                else if (currentAttempt === 1) earnedPoints = 5;
+                else if (currentAttempt === 2) earnedPoints = 1;
+                else earnedPoints = 0; // المحاولة الرابعة والخامسة صفر
+
+                score += earnedPoints;
+                correctCount++;
+                document.getElementById('score').innerText = score;
+
+                let signEl = document.createElement('div');
+                signEl.className = 'feedback-sign';
+                signEl.style.color = '#16a34a';
+                signEl.style.left = enemy.x + 'px';
+                signEl.style.top = enemy.y + 'px';
+                signEl.innerHTML = '✔';
+                document.getElementById('canvas-wrapper').appendChild(signEl);
+
+                enemies.forEach(e => {
+                    if (e.active && !e.correct) {
+                        e.active = false;
+                        explosions.push({ x: e.x, y: e.y + 10, radius: 35, alpha: 1.0, color: "#ff3333" });
+                    }
+                });
+
+                setTimeout(() => {
+                    signEl.remove();
+                    let scorePopup = document.createElement('div');
+                    scorePopup.className = 'feedback-sign';
+                    scorePopup.style.fontSize = '30px';
+                    scorePopup.style.color = '#facc15';
+                    scorePopup.style.background = 'rgba(0,0,0,0.85)';
+                    scorePopup.style.padding = '5px 12px';
+                    scorePopup.style.borderRadius = '8px';
+                    scorePopup.style.left = enemy.x + 'px';
+                    scorePopup.style.top = enemy.y + 'px';
+                    scorePopup.innerText = '+' + earnedPoints;
+                    document.getElementById('canvas-wrapper').appendChild(scorePopup);
+
+                    setTimeout(() => {
+                        scorePopup.remove();
+                        totalAnswered++;
+                        currentQIndex++;
+                        loadQuestion();
+                    }, 800);
+                }, 1000);
+
+            } else {
+                playSound('wrong');
+                enemy.active = false;
+                currentAttempt++;
+
+                let signEl = document.createElement('div');
+                signEl.className = 'feedback-sign';
+                signEl.style.color = '#dc2626';
+                signEl.style.left = enemy.x + 'px';
+                signEl.style.top = enemy.y + 'px';
+                signEl.innerHTML = '✖';
+                document.getElementById('canvas-wrapper').appendChild(signEl);
+
+                setTimeout(() => {
+                    signEl.remove();
+                    let zeroPopup = document.createElement('div');
+                    zeroPopup.className = 'feedback-sign';
+                    zeroPopup.style.fontSize = '30px';
+                    zeroPopup.style.color = '#fff';
+                    zeroPopup.style.background = 'rgba(0,0,0,0.85)';
+                    zeroPopup.style.padding = '5px 12px';
+                    zeroPopup.style.borderRadius = '8px';
+                    zeroPopup.style.left = enemy.x + 'px';
+                    zeroPopup.style.top = enemy.y + 'px';
+                    zeroPopup.innerText = '+0';
+                    document.getElementById('canvas-wrapper').appendChild(zeroPopup);
+
+                    setTimeout(() => {
+                        if (zeroPopup) zeroPopup.remove();
+                        checkAllEnemiesInactive();
+                    }, 800);
+                }, 1000);
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // رسم مقذوفات المدفع
+            ctx.fillStyle = '#facc15';
+            bullets.forEach(b => {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // رسم الانفجارات
+            explosions.forEach(ex => {
+                ctx.save();
+                ctx.globalAlpha = ex.alpha;
+                ctx.fillStyle = ex.color;
+                ctx.beginPath();
+                ctx.arc(ex.x, ex.y, ex.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // تحديث مواقع وعناصر الطائرات والصناديق إذا انتهى كتابة السؤال
+            if (questionLoadedFully) {
+                enemies.forEach((enemy) => {
+                    let heliElem = document.getElementById(`heli-container-${enemy.index}`);
+                    let boxElem = document.getElementById(`box-container-${enemy.index}`);
+                    let labelElem = document.getElementById(`label-${enemy.index}`);
+                    if (!enemy.active) {
+                        if (heliElem) heliElem.style.display = 'none';
+                        if (boxElem) boxElem.style.display = 'none';
+                    } else {
+                        if (heliElem) {
+                            heliElem.style.display = 'block';
+                            heliElem.style.left = (enemy.x * displayScaleX) + "px";
+                            heliElem.style.top = (enemy.y * displayScaleY) + "px";
+
+
+                       }
+                        if (boxElem) {
+                            boxElem.style.display = 'block';
+                            boxElem.style.left = (enemy.x +17 *  displayScaleX) + "px";
+                            boxElem.style.top = ((enemy.y + 30) * displayScaleY) + "px";
+                            boxElem.style.opacity = enemy.alpha;
+
+				if (labelElem) {
+				        labelElem.innerText = enemy.text;
+				    }
+
+		
+
+				labelElem.innerText = enemy.text;
+
+				// مظهر الصندوق الصلب (غير الشفاف):
+				labelElem.style.backgroundColor = "white"; // لون خشبي يشبه الصناديق (أو استبدله بأي لون صلب مثل "white" أو "yellow")
+				labelElem.style.border = "2px solid red"; // إطار أسود واضح يحيط بالصندوق
+				labelElem.style.borderRadius = "4px";        // زوايا دائرية قليلاً
+				labelElem.style.padding = "3px 3px";        // مسافة داخلية ليكون النص مريحاً داخل الصندوق
+				labelElem.style.color = "#000000";           // لون النص داخل الصندوق (أسود ليكون واضحاً على الخلفية)
+				labelElem.style.textAlign = "center";        // توسيط النص
+				labelElem.style.textShadow = "none"; // إزالة أي ظل موجود على النص
+ 
+
+			
+ 				// إضافة محيط (إطار) للنص
+			//    labelElem.style.border = "2px solid red"; // يمكنك تغيير اللون (red) والسمك (2px) حسب رغبتك
+			//    labelElem.style.padding = "4px";        // مسافة داخلية اختيارية لجعل الشكل أفضل
+                        }
+                    }
+                });
+            }
+        }
+
+        function loop() {
+            if (stopGameLoop) return;
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        function calculateRatingAndPhrase(score, correctCnt, totalAns) {
+            let pSet = phrases[currentLang];
+            let rating = "";
+            let phrase = "";
+            if (correctCnt >= 15 && (correctCnt / totalAns) >= 0.85) {
+                rating = currentLang === 'ar' ? "ممتاز" : "Excellent";
+                phrase = pSet.excellent;
+            } else if (correctCnt >= 12 && (correctCnt / totalAns) >= 0.75) {
+                rating = currentLang === 'ar' ? "جيد جداً" : "Very Good";
+                phrase = pSet.verygood;
+            } else if (correctCnt >= 8 && (correctCnt / totalAns) >= 0.6) {
+                rating = currentLang === 'ar' ? "جيد" : "Good";
+                phrase = pSet.good;
+            } else if (correctCnt >= 5) {
+                rating = currentLang === 'ar' ? "مقبول" : "Fair";
+                phrase = pSet.fair;
+            } else {
+                rating = currentLang === 'ar' ? "ضعيف" : "Weak";
+                phrase = pSet.weak;
+            }
+            return { rating, phrase };
+        }
+
+        function finishChallenge() {
+            stopGameLoop = true;
+            if (typingTimer) clearInterval(typingTimer);
+            let totalSecondsUsed = totalTimeAllowed - timeLeftSeconds;
+            let usedMins = Math.floor(totalSecondsUsed / 60);
+            let usedSecs = totalSecondsUsed % 60;
+            let timeStr = (usedMins < 10 ? "0" + usedMins : usedMins) + ":" + (usedSecs < 10 ? "0" + usedSecs : usedSecs);
+            let evalRes = calculateRatingAndPhrase(score, correctCount, totalAnswered);
+            currentContestant.score = score;
+            currentContestant.correctCount = correctCount;
+            currentContestant.totalAnswered = totalAnswered;
+            currentContestant.timeUsed = timeStr;
+            currentContestant.rating = evalRes.rating;
+            currentContestant.phrase = evalRes.phrase;
+            contestantsLog.push({ ...currentContestant });
+            try {
+                localStorage.setItem('challenge_contestants_log', JSON.stringify(contestantsLog));
+            } catch(e) {}
+            
+            document.getElementById("res-name-display").innerText = (currentLang === 'ar' ? "المتسابق: " : "Contestant: ") + currentContestant.name;
+            document.getElementById("final-score").innerText = score;
+            document.getElementById("final-correct-count").innerText = `${correctCount} / ${totalAnswered}`;
+            document.getElementById("final-rating").innerText = evalRes.rating;
+            document.getElementById("final-phrase").innerText = `"${evalRes.phrase}"`;
+            document.getElementById("final-time").innerText = timeStr;
+            showScreen('screen-result');
+        }
+
+        function renderRecordsTable() {
+            let container = document.getElementById('records-table-container');
+            if (contestantsLog.length === 0) {
+                container.innerHTML = `<p>${currentLang === 'ar' ? 'لا يوجد متسابقون مسجلون حتى الآن.' : 'No contestants registered yet.'}</p>`;
+                return;
+            }
+            let sortedLog = [...contestantsLog];
+            let printBtnTxt = currentLang === 'ar' ? '🖨️ طباعة' : '🖨️ Print';
+            let thNo = currentLang === 'ar' ? 'م' : 'No';
+            let thName = currentLang === 'ar' ? 'اسم المتسابق' : 'Name';
+            let thScore = currentLang === 'ar' ? 'النقاط' : 'Score';
+            let thCorrect = currentLang === 'ar' ? 'الصحيحة / الإجمالي' : 'Correct / Total';
+            let thRating = currentLang === 'ar' ? 'التقدير' : 'Rating';
+            let thTime = currentLang === 'ar' ? 'الوقت' : 'Time';
+            let thAction = currentLang === 'ar' ? 'الإجراء' : 'Action';
+
+            let html = `<table><tr><th>${thNo}</th><th>${thName}</th><th>${thScore}</th><th>${thCorrect}</th><th>${thRating}</th><th>${thTime}</th><th>${thAction}</th></tr>`;
+            sortedLog.forEach((item, idx) => {
+                html += `<tr class="clickable-row"><td>${idx + 1}</td><td>${item.name}</td><td>${item.score}</td><td>${item.correctCount} / ${item.totalAnswered}</td><td>${item.rating}</td><td>${item.timeUsed}</td><td><button class="btn btn-green" style="padding:2px 6px; font-size:10px;" onclick="printSingleCertificateIndex(${idx})">${printBtnTxt}</button></td></tr>`;
+            });
+            html += `</table>`;
+            container.innerHTML = html;
+        }
+
+        function printSingleCertificateIndex(idx) {
+            printSingleCertificate(contestantsLog[idx]);
+        }
+
+        function printSingleCertificate(contestantObj) {
+            if (!contestantObj) return;
+            let printWindow = window.open('', '', 'height=600,width=800');
+            let isEn = currentLang === 'en';
+            let sysTitle = isEn ? 'Educational Challenge System' : 'منظومة التحدي التعليمي';
+            let designerText = isEn ? 'Programming & Design: عبدالعزيز الحاج' : 'برمجة وتصميم: عبدالعزيز الحاج';
+
+            printWindow.document.write(`<html><head><title>${isEn ? 'Certificate of Achievement' : 'شهادة إتمام التحدي'}</title><style>body{font-family:Tahoma;direction:${isEn?'ltr':'rtl'};text-align:center;padding:30px;} .cert-box{border:5px solid #0284c7;padding:30px;border-radius:15px;background:#f0f9ff;}</style></head><body>`);
+            printWindow.document.write(`<div class="cert-box">`);
+            printWindow.document.write(`<h1 style="color:#0284c7; margin-bottom:5px;">${sysTitle}</h1>`);
+            printWindow.document.write(`<hr style="width:50%; border-color:#0284c7; margin:20px auto;">`);
+            printWindow.document.write(`<p>${isEn ? 'This is to certify that the contestant:' : 'تشهد منظومة التحدي التعليمي بأن المتسابق/ـة:'}</p>`);
+            printWindow.document.write(`<h2 style="color:#16a34a; font-size:28px; margin:10px 0;">${contestantObj.name}</h2>`);
+            printWindow.document.write(`<p>${isEn ? 'has successfully completed the challenge with a total score of:' : 'قد أتم/ت التحدي التعليمي بنجاح تام، محققاً/ـةً إجمالي نقاط:'} <b style="color:#0284c7;">${contestantObj.score}</b></p>`);
+            printWindow.document.write(`<p>${isEn ? 'Correct Answers:' : 'الإجابات الصحيحة:'} <b>${contestantObj.correctCount} / ${contestantObj.totalAnswered}</b> | ${isEn ? 'Rating:' : 'التقدير:'} <b style="color:#ca8a04;">${contestantObj.rating}</b></p>`);
+            printWindow.document.write(`<p style="font-style:italic; color:#4b5563; margin-top:15px;">"${contestantObj.phrase}"</p>`);
+            printWindow.document.write(`<br><br><p style="font-size:12px; color:#6b7280;">${designerText} | abdulazizalhaaj728@gmail.com</p>`);
+            printWindow.document.write(`</div></body></html>`);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function printResultReceipt() {
+            printSingleCertificate(currentContestant);
+        }
+
+        function printAllRecords() {
+            let printWindow = window.open('', '', 'height=600,width=800');
+            let isEn = currentLang === 'en';
+            let designerText = isEn ? 'Programming & Design: عبدالعزيز الحاج' : 'برمجة وتصميم: عبدالعزيز الحاج';
+
+            printWindow.document.write(`<html><head><title>${isEn ? 'Contestants Log' : 'سجل المتسابقين'}</title><style>body{font-family:Tahoma;direction:${isEn?'ltr':'rtl'};padding:20px;} table{width:100%;border-collapse:collapse;} th,td{border:1px solid #000;padding:8px;text-align:center;}</style></head><body>`);
+            printWindow.document.write(`<h2 style="text-align:center;">${isEn ? 'Contestants Log - Educational Challenge System' : 'سجل المتسابقين - منظومة التحدي التعليمي'}</h2>`);
+            printWindow.document.write(document.getElementById('records-table-container').innerHTML);
+            printWindow.document.write(`<br><p style="text-align:center; font-size:12px;">${designerText} | abdulazizalhaaj728@gmail.com</p>`);
+            printWindow.document.write(`</body></html>`);
+            printWindow.document.close();
+            printWindow.print();
+        }
+    </script>
+</body>
+</html>
