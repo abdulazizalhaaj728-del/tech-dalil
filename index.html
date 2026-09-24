@@ -125,8 +125,11 @@
         @media (max-width: 950px) { .three-columns-grid { grid-template-columns: 1fr; } }
 
         .right-scrollable-section { width: 100%; }
-        .top-right-row { display: grid; grid-template-columns: 1fr 320px; gap: 20px; margin-bottom: 20px; }
-        @media(max-width: 768px) { .top-right-row { grid-template-columns: 1fr; } }
+     
+        //.top-right-row { display: grid; grid-template-columns: 1fr 320px; gap: 20px; margin-bottom: 20px; }
+        //@media(max-width: 768px) { .top-right-row { grid-template-columns: 1fr; } }
+
+        .top-right-row { display: flex; gap: 15px; align-items: stretch; margin-bottom: 15px; }
 
         .square-slider-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; height: 310px; position: relative; }
         .square-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.6s ease; background-size: cover; background-position: center; display: flex; align-items: flex-end; }
@@ -134,6 +137,15 @@
         .square-caption { background: linear-gradient(to top, rgba(15,23,42,0.95), transparent); width: 100%; padding: 15px; z-index: 2; }
         .square-title { font-size: 1.05rem; color: var(--accent-color); font-weight: 700; margin-bottom: 5px; cursor: pointer; }
         .square-desc { font-size: 0.75rem; color: #cbd5e1; }
+
+        /* تخصيص السلايدر ليأخذ المساحة المناسبة */
+        .square-slider-box {
+            flex: 1.6; /* يأخذ مساحة أوسع قليلاً */
+            height: 310px; /* ارتفاع ثابت ليتطابق مع صندوق المنتجات */
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+        }
 
         .slider-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
@@ -145,11 +157,13 @@
         .slider-prev { right: 10px; }
         .slider-next { left: 10px; }
 
-.news-mini-container { 
+/* صندوق المنتجات الرقمية بجانبه */
+    .news-mini-container { 
+        flex: 1; /* يأخذ المساحة المتبقية */
         background: var(--card-bg); 
         border: 2px dashed var(--border-color); 
         border-radius: 12px; 
-        height: 310px; 
+        height: 310px; /* نفس ارتفاع السلايدر تماماً */
         padding: 15px; 
         display: flex; 
         flex-direction: column; 
@@ -162,21 +176,21 @@
     .section-title {
         text-align: center;
         color: #ffffff;
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: bold;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         background-color: #1b4d3e;
-        padding: 6px;
+        padding: 5px;
         border-radius: 6px;
     }
     
     .products-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr); /* عمودان متساويان */
-        grid-template-rows: repeat(2, 1fr);     /* صفان متساويان */
-        gap: 8px; /* المسافة بين المربعات */
-        flex: 1;  /* ليأخذ باقي المساحة المتاحة داخل الحاوية */
-        min-height: 0; /* مهم جداً لمنع تمدد الشبكة خارج الحاوية */
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 6px;
+        flex: 1;
+        min-height: 0;
     }
     
     .product-card {
@@ -187,10 +201,10 @@
         align-items: center;
         justify-content: center;
         text-decoration: none;
-        overflow: hidden; /* يحصر المحتوى داخل حدود المربع تماماً */
+        overflow: hidden;
         position: relative;
         transition: all 0.3s ease;
-        height: 100%; /* الالتزام باركام المربع المتساوي */
+        height: 100%;
     }
     
     .product-card:not(.empty):hover {
@@ -199,27 +213,26 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
-    /* تنسيق حاوية الصورة لتملأ المربع تقريباً مع هامش بسيط وتتساوى الأبعاد */
     .product-content {
         width: 100%;
         height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 6px; /* هامش بسيط يجعل الصورة أصغر قليلاً من المربع */
+        padding: 4px;
         box-sizing: border-box;
     }
     
     .ad-game-thumb {
         width: 100%;
         height: 100%;
-        object-fit: cover; /* تغطية المساحة المخصصة بشكل متناسق ودون تشوه */
+        object-fit: cover;
         border-radius: 6px;
     }
     
     .product-card span {
         color: #ffffff;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         text-align: center;
         padding: 5px;
     }
@@ -227,8 +240,7 @@
     .product-card.empty {
         opacity: 0.4;
         cursor: default;
-    }
-       
+    }       
         
 
         .left-sticky-sidebar { 
@@ -329,10 +341,14 @@
         </div>
 
         <div id="site-ad-mid" style="width: 100%; margin: 15px auto; text-align: center;"></div>
-
+        
         <div class="three-columns-grid" id="top-three-section">
             <div class="right-scrollable-section">
+                
+                <!-- صف يضم السلايدر وبجانبه صندوق المنتجات الرقمية -->
                 <div class="top-right-row">
+                    
+                    <!-- 1. السلايدر (تم تقليل عرضه ليناسب المساحة) -->
                     <div class="square-slider-box" id="square-slider-wrapper">
                         <div class="square-slide active" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80');">
                             <div class="square-caption">
@@ -343,46 +359,49 @@
                         <button class="slider-arrow slider-prev" id="slider-prev-btn"><i class="fa-solid fa-chevron-right"></i></button>
                         <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
                     </div>
-
-                                        
+        
+                    <!-- 2. صندوق المنتجات الرقمية (بجانب السلايدر مباشرة وبنفس الارتفاع) -->
                     <div class="news-mini-container" id="side-news-summaries">
                         <div class="section-title">منتجات رقمية</div>
                         <div class="products-grid">
-                            <!-- المربع الأول: اللعبة (تم تصحيح الوسوم والصورة) -->
+                            <!-- المربع الأول: اللعبة -->
                             <a href="game.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
                                 <div class="product-content">
                                     <img src="https://tech-dalil.com/4.png" alt="لعبة تحدي الثقافة التعليمية" class="ad-game-thumb">
                                 </div>
                             </a>
-                    
+        
                             <!-- المربع الثاني: الاختبار -->
                             <a href="test.html" class="product-card">
                                 <div class="product-content">
                                     <span>اختبار الذكاء</span>
                                 </div>
                             </a>
-                    
+        
                             <!-- مربعات فارغة للاستخدام المستقبلي -->
                             <div class="product-card empty"></div>
                             <div class="product-card empty"></div>
                         </div>
                     </div>
-                                        
+        
+                </div>
+        
                 <div class="tags-filter-section">
                     <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 10px;">🏷️ تصفية حسب التسميات:</h3>
                     <div class="tags-bar" id="tags-filter-bar"></div>
                 </div>
-
+        
                 <div class="main-posts-section" id="posts-list-section">
                     <div id="posts-container"></div>
                 </div>
             </div>
-
+        
             <div class="left-sticky-sidebar">
                 <div class="left-content-area" id="left-widgets-area"></div>
             </div>
         </div>
 
+        
         <div id="site-ad-bot" style="width: 100%; margin: 15px auto; text-align: center;"></div>
 
         <footer class="site-footer">
