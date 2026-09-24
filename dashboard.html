@@ -64,6 +64,68 @@
             animation: fq-pulse 0.8s ease-in-out;
             border: 2px solid #ff5722 !important;
         }
+
+        /* تنسيقات المحرر والشريط العائم */
+        .sticky-editor-header {
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            margin-bottom: 10px;
+        }
+        .custom-font-bar {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-top: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        .font-tag-btn {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .font-tag-btn:hover { background: var(--primary-color); border-color: var(--primary-color); }
+
+        .ql-toolbar.ql-snow { 
+            background: var(--bg-dark) !important; 
+            border-color: var(--border-color) !important; 
+            border-radius: 6px; 
+            direction: ltr; 
+            margin-top: 6px;
+            border-top: none !important;
+        }
+        .ql-container.ql-snow { 
+            background: var(--bg-dark); 
+            color: var(--text-main); 
+            border-color: var(--border-color); 
+            border-bottom-left-radius: 6px; 
+            border-bottom-right-radius: 6px; 
+            min-height: 350px; 
+            font-size: 1.05rem; 
+            direction: rtl; 
+            text-align: right; 
+        }
+        .ql-editor { direction: rtl; text-align: right; }
+        .ql-snow .ql-stroke { stroke: var(--text-main); }
+        .ql-snow .ql-fill { fill: var(--text-main); }
+        .ql-snow .ql-picker { color: var(--text-main); }
+        .ql-font-cairo { font-family: 'Cairo', sans-serif !important; }
+        .ql-font-tajawal { font-family: 'Tajawal', sans-serif !important; }
+        .ql-font-amiri { font-family: 'Amiri', serif !important; }
+
+        
     </style>
 </head>
 <body>
@@ -179,7 +241,268 @@
             </div>
             <button class="btn" onclick="saveAdsSettings()">حفظ إعدادات الإعلانات للسيرفر</button>
         </div>
+
+
+<!-- إدارة ونشر المقالات والصفحات (محرر Quill المتقدم) -->
+<div class="section-box">
+    <h3>📝 إدارة ونشر المقالات والصفحات</h3>
+
+    <!-- 1. زر الإدارة الوحيد الظاهر افتراضياً -->
+<div id="manager-trigger-wrapper" style="margin: 15px 0;">
+    <button type="button" class="btn" id="toggle-manager-btn" style="padding: 8px 16px; font-size: 0.9rem;">
+        <i class="fa-solid fa-pen-to-square"></i> إدارة مقالة / صفحة
+    </button>
+</div>
+
+    <!-- 2. حاوية الفورم الكاملة (تحتوي كل الحقول والمحرر وتكون مخفية بالكامل افتراضياً) -->
+    <div id="article-manager-form-container" style="display: none; margin-top: 15px; background: var(--card-bg, #fff); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color, #e2e8f0);">
+        
+        <div class="form-group">
+            <label>نوع المحتوى:</label>
+            <select id="content-type-selector">
+                <option value="post">مقالة (تظهر في المدونة والصفحة الرئيسية)</option>
+                <option value="page">صفحة مستقلة (تظهر ضمن الصفحات العلوية ولا تنشر كمقالة)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>العنوان:</label>
+            <input type="text" id="post-title" placeholder="عنوان المقال أو الصفحة">
+        </div>
+        
+        <div class="form-group">
+            <label>التسمية أو التصنيف:</label>
+            <input type="text" id="post-cat" placeholder="مثال: شبكات، برمجة">
+        </div>
+        
+        <div class="form-group">
+            <label>وصف مختصر:</label>
+            <input type="text" id="post-desc" placeholder="نبذة قصيرة">
+        </div>
+        
+        <div class="form-group">
+            <label>رابط الصورة البارزة:</label>
+            <input type="text" id="post-img" placeholder="https://...">
+        </div>
+        
+        <div class="form-group">
+            <label>تاريخ النشر:</label>
+            <input type="text" id="post-date">
+        </div>
+
+        <!-- حاوية المحرر وشريط الأدوات (أصبحت محتواة بالكامل هنا داخل الفورم المخفي) -->
+        <div class="form-group">
+            <label>المحتوى:</label>
+            <div class="sticky-editor-header">
+                
+                <!-- شريط أزرار الخطوط السريعة والثابتة -->
+                <div class="custom-font-bar">
+                    <span style="font-size: 0.8rem; color: var(--accent-color); margin-left: 5px;"><i class="fa-solid fa-font"></i> تغيير الخط للنص المظلل:</span>
+                    <button type="button" class="font-tag-btn" style="font-family: 'Cairo', sans-serif;" onclick="applyCustomFont('cairo')">خط كايرو</button>
+                    <button type="button" class="font-tag-btn" style="font-family: 'Tajawal', sans-serif;" onclick="applyCustomFont('tajawal')">خط تجوال</button>
+                    <button type="button" class="font-tag-btn" style="font-family: 'Amiri', serif;" onclick="applyCustomFont('amiri')">خط أميري</button>
+                    <button type="button" class="font-tag-btn" style="color: #94a3b8;" onclick="applyCustomFont(false)">إزالة الخط</button>
+                </div>
+
+                <div id="editor-toolbar"></div>
+            </div>
+            <div id="editor-container"></div>
+        </div>
+
+        <!-- 3. شريط الأزرار السفلي -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border-color, #eee); padding-top: 15px;">
+            
+            <!-- الجهة اليمنى: حفظ ونشر + إلغاء الأمر -->
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <!-- 2. زر الحفظ ونشر (داخل الفورم) -->
+                <button class="btn" id="publish-btn" style="padding: 6px 14px; font-size: 0.85rem;" disabled>
+                    <i class="fa-solid fa-floppy-disk"></i> حفظ ونشر
+                </button>
+
+                <!-- 3. زر إلغاء الأمر (داخل الفورم) -->
+                <button type="button" class="btn" id="cancel-manager-btn" style="background:#ef4444; color:#fff; padding: 6px 14px; font-size: 0.85rem;">
+                    <i class="fa-solid fa-xmark"></i> إلغاء الأمر
+                </button>
+            </div>
+            
+            <!-- الجهة اليسرى: زر المعاينة -->
+            <div>
+                <button class="btn btn-preview" onclick="previewPost()" style="padding: 6px 14px; font-size: 0.85rem; background:#6366f1; color:#fff;">
+                    <i class="fa-solid fa-eye"></i> معاينة
+                </button>
+            </div>
+            
+        </div>
+
     </div>
+</div>
+
+            <hr style="border:0; border-top:1px solid var(--border-color); margin: 20px 0;">
+            <h4>المقالات والصفحات المنشورة حالياً (تعديل أو حذف):</h4>
+            <div id="posts-admin-management-list" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+
+    <!-- مكتبة Quill.js الجافاسكريبت -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script>
+        
+        let menuHasChanges = false;
+        
+        let currentEditingPostId = null;
+        let editingMenuIndex = null;
+
+        function getData(key, def) { 
+            const v = localStorage.getItem(key); 
+            return v ? JSON.parse(v) : def; 
+        }
+
+
+            // مثال للربط البرمجي لإخفاء/إظهار الشريط المتحرك بناءً على علامة الصح
+    const tickerCheckbox = document.getElementById('toggleTicker'); // اسم الـ id للـ checkbox لديك
+    const tickerElement = document.querySelector('.breaking-ticker'); // كلاس الشريط المتحرك في المدونة
+
+    function handleTickerVisibility() {
+        if (tickerCheckbox && tickerElement) {
+            if (tickerCheckbox.checked) {
+                tickerElement.style.display = 'block'; // أو flex حسب تصميمه
+            } else {
+                tickerElement.style.display = 'none';
+            }
+        }
+    }
+
+    // تشغيل الدالة عند تغيير الحالة وعند تحميل الصفحة
+    if (tickerCheckbox) {
+        tickerCheckbox.addEventListener('change', handleTickerVisibility);
+    }
+
+
+let originalEditorContent = ""; // لتخزين النص الأصلي عند فتح الفورم
+
+// فتح الفورم وإخفاء زر الإدارة
+function openArticleManager() {
+    document.getElementById('manager-trigger-wrapper').style.display = 'none';
+    document.getElementById('article-manager-form-container').style.display = 'block';
+    
+    // احصل على محتوى المحرر الحالي كمرجع أساسي للمقارنة
+    // استبدل 'articleContentInput' بـ id حقل الإدخال أو المحرر لديك
+    const editorField = document.getElementById('articleContentInput'); 
+    if (editorField) {
+        originalEditorContent = editorField.value;
+    }
+    
+    // إبقاء زر الحفظ معطلاً عند الفتح لأول مرة
+    document.getElementById('publish-btn').disabled = true;
+}
+
+// إلغاء الأمر وإخفاء الفورم وإعادة زر الإدارة
+function closeArticleManager() {
+    document.getElementById('article-manager-form-container').style.display = 'none';
+    document.getElementById('manager-trigger-wrapper').style.display = 'block';
+    
+    // استدعاء دالتك القديمة إذا أردت تصفير الفورم
+    if (typeof resetPostForm === 'function') {
+        resetPostForm();
+    }
+}
+
+// مراقبة التغييرات النصية الحقيقية في المحرر لتنشيط زر الحفظ
+document.addEventListener('DOMContentLoaded', function() {
+    const editorField = document.getElementById('articleContentInput');
+    const publishBtn = document.getElementById('publish-btn');
+    
+    if (editorField && publishBtn) {
+        editorField.addEventListener('input', function() {
+            let currentText = editorField.value;
+            
+            // تنشيط الزر فقط إذا حدث تغيير فعلي في الحروف مقارنة بالنص الأصلي
+            if (currentText !== originalEditorContent) {
+                publishBtn.disabled = false; // تفعيل الزر
+            } else {
+                publishBtn.disabled = true;  // تعطيله إذا تطابق النص تماماً
+            }
+        });
+    }
+});
+
+
+
+        // إعدادات محرر النصوص Quill وتخصيص الخطوط
+        var Font = Quill.import('formats/font');
+        Font.whitelist = ['cairo', 'tajawal', 'amiri', false];
+        Quill.register(Font, true);
+
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: {
+                    container: [
+                        [{ header: [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ color: [] }, { background: [] }],
+                        [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        ['link', 'blockquote', 'code-block'],
+                        ['clean']
+                    ]
+                }
+            }
+        });
+
+        const toolbarElement = quill.getModule('toolbar').container;
+        document.getElementById('editor-toolbar').appendChild(toolbarElement);
+
+        function applyCustomFont(fontName) {
+            const range = quill.getSelection();
+            if (range) {
+                quill.formatText(range.index, range.length, 'font', fontName);
+            } else {
+                
+                showCustomAlert("الرجاء تظليل النص المراد تغيير خطه أولاً.", "نجاح");
+            }
+        }
+
+        // نافذة التحميل الموحدة
+        window.addEventListener('DOMContentLoaded', () => {
+
+            // الشعار
+            const savedSize = localStorage.getItem('tech_logo_height');
+            const selector = document.getElementById('logo-size-selector');
+            if (selector && savedSize) selector.value = savedSize;
+
+            // الشريط المتحرك
+            const tickerToggle = document.getElementById('ticker-visible-toggle');
+            if(tickerToggle) tickerToggle.checked = getData('tech_ticker_visible', true);
+            
+            // التاريخ التلقائي
+            const postDateEl = document.getElementById('post-date');
+            if(postDateEl) postDateEl.value = new Date().toLocaleDateString('ar-SA');
+
+            // محتوى الودجت المخصص
+            const customTextEl = document.getElementById('widget-custom-text');
+            if(customTextEl) customTextEl.value = localStorage.getItem('tech_sidebar_custom_text') || '';
+
+            loadSidebarWidgetsAdmin();
+            loadFooterWidgetsAdmin();
+            renderStructuredMenuAdmin();
+            loadPagesAdmin();
+            loadAdsAdmin();
+            loadPostsAdminList();
+
+        });
+        
+
+
+        
+    </div>
+
+
+
+
+
+
+    
 
     <!-- نافذة منبثقة للتنبيهات -->
     <div id="custom-modal-container" class="custom-modal-overlay">
