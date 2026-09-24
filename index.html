@@ -208,6 +208,24 @@
         }
 
 
+        /* حاوية بانر الإعلان في الترويسة */
+        .header-ad-banner {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 6px 10px;
+            max-width: 320px; /* حجم مناسب ومدروس لمساحة الترويسة */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .header-ad-banner:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-color, #3b82f6);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.25);
+        }
         
         /* حاوية مصغرة لصورة اللعبة */
         .ad-image-container {
@@ -227,9 +245,9 @@
             transition: transform 0.3s ease;
         }
         
-        //.header-ad-banner:hover .ad-game-thumb {
-        //    transform: scale(1.1);
-        //}
+        .header-ad-banner:hover .ad-game-thumb {
+            transform: scale(1.1);
+        }
         
         /* شارة مصغرة فوق الصورة لإضافة طابع حيوي */
         .ad-live-badge {
@@ -242,29 +260,6 @@
             padding: 1px 4px;
             border-radius: 4px;
             font-weight: bold;
-        }
-        
-        /* النصوص والجملة التشويقية */
-        .ad-text-content {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            text-align: right;
-        }
-        
-        .ad-tagline {
-            color: #f8fafc;
-            font-size: 11.5px;
-            font-weight: 700;
-            line-height: 1.2;
-            font-family: 'Cairo', sans-serif;
-        }
-        
-        .ad-cta-text {
-            color: var(--accent-color, #3b82f6);
-            font-size: 10px;
-            font-weight: 600;
-            transition: color 0.2s;
         }
         
         .header-ad-banner:hover .ad-cta-text {
@@ -399,9 +394,9 @@
                                     <!--<a href="test.html" class="ad-banner-link" -->
                                     <a href="game.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
                                         <div class="product-content">
-                                           <!-- <div class="ad-image-container"> -->
+                                           <div class="ad-image-container">
                                                 <img src="https://tech-dalil.com/4.png"> alt="لعبة تحدي الثقافة التعليمية" class="ad-game-thumb">
-                                           <!-- </div> -->
+                                           </div>
                                             <span> </span>
                                             
                                         </div>
