@@ -499,8 +499,255 @@ document.addEventListener('DOMContentLoaded', function() {
         
 
 
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. ربط زر فتح الفورم
+    const toggleBtn = document.getElementById('toggle-manager-btn');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', openArticleManager);
+    }
+
+    // 2. ربط زر إغلاق الفورم (إلغاء الأمر)
+    const cancelBtn = document.getElementById('cancel-manager-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeArticleManager);
+    }
+
+    // 3. ربط زر الحفظ ونشر
+    const publishBtn = document.getElementById('publish-btn');
+    if (publishBtn) {
+        publishBtn.addEventListener('click', saveOrUpdatePost);
+    }
+
+    // 4. مراقبة التغييرات في محرر Quill لتفعيل زر الحفظ تلقائياً
+    setTimeout(() => {
+        if (typeof quill !== 'undefined') {
+            let originalContent = quill.root.innerHTML;
+            quill.on('text-change', function() {
+                let currentContent = quill.root.innerHTML;
+                if (publishBtn) {
+                    publishBtn.disabled = (currentContent === originalContent);
+                }
+            });
+        }
+    }, 1000);
+});
+
+// --- الدوال التشغيلية ---
+
+function openArticleManager() {
+    const triggerWrapper = document.getElementById('manager-trigger-wrapper');
+    const formContainer = document.getElementById('article-manager-form-container');
+    
+    if (triggerWrapper) triggerWrapper.style.display = 'none';
+    if (formContainer) formContainer.style.display = 'block';
+    
+    const publishBtn = document.getElementById('publish-btn');
+    if (publishBtn) publishBtn.disabled = true;
+}
+
+function closeArticleManager() {
+    const triggerWrapper = document.getElementById('manager-trigger-wrapper');
+    const formContainer = document.getElementById('article-manager-form-container');
+    
+    if (formContainer) formContainer.style.display = 'none';
+    if (triggerWrapper) triggerWrapper.style.display = 'block';
+    
+    resetPostForm();
+}
+
+function saveOrUpdatePost() {
+    const contentType = document.getElementById('content-type-selector').value;
+    const title = document.getElementById('post-title').value.trim();
+    const category = document.getElementById('post-cat').value.trim() || "عام";
+    const description = document.getElementById('post-desc').value.trim();
+    const image = document.getElementById('post-img').value.trim();
+    const date = document.getElementById('post-date').value.trim() || new Date().toLocaleDateString('ar-SA');
+    const content = typeof quill !== 'undefined' ? quill.root.innerHTML : '';
+
+    if (!title || content === '<p><br></p>' || !content.trim()) { 
+        
+        showCustomAlert("أدخل عنوان ومحتوى المحتوى بشكل صحيح!", "نجاح");
+        return; 
+    }
+
+    if (contentType === 'page') {
+        let pages = getData('tech_static_pages', []);
+        if (typeof currentEditingPostId !== 'undefined' && currentEditingPostId) {
+            pages = pages.map(p => p.id === currentEditingPostId ? { ...p, title, content } : p);
+            
+            showCustomAlert("تم تحديث الصفحة المستقلة بنجاح!", "نجاح");
+        } else {
+            pages.push({ id: 'page_' + Date.now(), title, content });
+            
+            showCustomAlert("تم نشر الصفحة المستقلة ضمن الصفحات العلوية بنجاح!", "نجاح");
+        }
+        localStorage.setItem('tech_static_pages', JSON.stringify(pages));
+        if (typeof loadPagesAdmin === 'function') loadPagesAdmin();
+    } else {
+        let posts = getData('tech_dalil_posts', []);
+
+        if (typeof currentEditingPostId !== 'undefined' && currentEditingPostId) {
+            posts = posts.map(p => {
+                if (p.id === currentEditingPostId) {
+                    return { ...p, title, category, description: description || title, image, date, content };
+                }
+                return p;
+            });
+
+            showCustomAlert("تم تحديث المقال بنجاح!", "نجاح");
+        } else {
+            const newPost = {
+                id: 'post_' + Date.now(),
+                title, category, description: description || title, image, date, content
+            };
+            posts.unshift(newPost);
+            
+            showCustomAlert("تم نشر المقال الجديد بنجاح!", "نجاح");
+        }
+
+        localStorage.setItem('tech_dalil_posts', JSON.stringify(posts));
+    }
+
+    if (typeof loadPostsAdminList === 'function') loadPostsAdminList();
+    
+    // إغلاق الفورم بعد الحفظ مباشرة
+    closeArticleManager();
+}
+
+function resetPostForm() {
+    if (typeof currentEditingPostId !== 'undefined') currentEditingPostId = null;
+    document.getElementById('content-type-selector').value = "post";
+    document.getElementById('post-title').value = "";
+    document.getElementById('post-cat').value = "";
+    document.getElementById('post-desc').value = "";
+    document.getElementById('post-img').value = "";
+    document.getElementById('post-date').value = new Date().toLocaleDateString('ar-SA');
+    if (typeof quill !== 'undefined') {
+        quill.setText("");
+    }
+    
+    const publishBtn = document.getElementById('publish-btn');
+    if (publishBtn) {
+        publishBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> حفظ ونشر';
+        publishBtn.disabled = true;
+    }
+}
 
 
+
+        function loadPostsAdminList() {
+            const posts = getData('tech_dalil_posts', []);
+            const pages = getData('tech_static_pages', []);
+            const container = document.getElementById('posts-admin-management-list');
+            if(!container) return;
+            container.innerHTML = "";
+            
+            if(posts.length === 0 && pages.length === 0) { 
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>لا توجد مقالات أو صفحات منشورة.</p>"; 
+                return; 
+            }
+
+            posts.forEach((p) => {
+                container.innerHTML += `
+                    <div class="item-row">
+                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title} (${p.date})</span>
+                        <button class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'post')">تعديل</button>
+                        <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'post')">حذف</button>
+                    </div>`;
+            });
+
+            pages.forEach((p, idx) => {
+                container.innerHTML += `
+                    <div class="item-row">
+                        <span style="flex:1; font-size:0.9rem; color:var(--accent-color);"><b>[صفحة علوية]</b> ${p.title}</span>
+                        <button class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'page')">تعديل</button>
+                        <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'page')">حذف</button>
+                    </div>`;
+            });
+        }
+
+        function deletePost(id, type) {
+            if(!confirm("هل أنت متأكد من الحذف؟")) return;
+            if(type === 'page') {
+                let pages = getData('tech_static_pages', []);
+                pages = pages.filter(p => p.id !== id);
+                localStorage.setItem('tech_static_pages', JSON.stringify(pages));
+                loadPagesAdmin();
+            } else {
+                let posts = getData('tech_dalil_posts', []);
+                posts = posts.filter(p => p.id !== id);
+                localStorage.setItem('tech_dalil_posts', JSON.stringify(posts));
+            }
+            if (currentEditingPostId === id) {
+                resetPostForm();
+            }
+            loadPostsAdminList();
+            
+            showCustomAlert("تم الحذف بنجاح!", "نجاح");
+        }
+
+        function editPost(id, type) {
+            currentEditingPostId = id;
+            if(type === 'page') {
+                const pages = getData('tech_static_pages', []);
+                const p = pages.find(item => item.id === id);
+                if(!p) return;
+                document.getElementById('content-type-selector').value = "page";
+                document.getElementById('post-title').value = p.title;
+                document.getElementById('post-cat').value = "";
+                document.getElementById('post-desc').value = "";
+                document.getElementById('post-img').value = "";
+                quill.root.innerHTML = p.content || "";
+            } else {
+                const posts = getData('tech_dalil_posts', []);
+                const p = posts.find(item => item.id === id);
+                if(!p) return;
+                document.getElementById('content-type-selector').value = "post";
+                document.getElementById('post-title').value = p.title;
+                document.getElementById('post-cat').value = p.category || "";
+                document.getElementById('post-desc').value = p.description || "";
+                document.getElementById('post-img').value = p.image || "";
+                document.getElementById('post-date').value = p.date || "";
+                quill.root.innerHTML = p.content || "";
+            }
+            
+            const cancelBtn = document.getElementById('cancel-edit-btn');
+            const publishBtn = document.getElementById('publish-btn');
+            if(cancelBtn) cancelBtn.style.display = 'inline-block';
+            if(publishBtn) publishBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تحديث المحتوى';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            showCustomAlert("تم تحميل البيانات في الأعلى لتعديلها.", "نجاح");
+        }
+
+        function previewPost() {
+            const title = document.getElementById('post-title').value.trim() || "عنوان تجريبي للمحتوى";
+            const content = quill.root.innerHTML;
+            const previewWin = window.open('', '_blank');
+            previewWin.document.write(`
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>معاينة: ${title}</title>
+                    <style>
+                        body { font-family: 'Cairo', sans-serif; padding: 40px; background: #0f172a; color: #f8fafc; line-height: 1.8; }
+                        .container { max-width: 800px; margin: auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; }
+                        h1 { color: #f59e0b; border-bottom: 2px solid #0284c7; padding-bottom: 15px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h1>${title}</h1>
+                        <div>${content}</div>
+                    </div>
+                </body>
+                </html>
+            `);
+            previewWin.document.close();
+        }
+//-------------------------------------------------------------------------------------
+    </script>
 
 
 
