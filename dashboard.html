@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>    
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم الشاملة | تكنو-دليل</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة Quill CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
     <style>
         .custom-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -66,7 +68,7 @@
             border: 2px solid #ff5722 !important;
         }
 
-        /* تنسيقات المحرر والشريط العائم */
+        /* تنسيقات المحرر النظيف */
         .sticky-editor-header {
             position: sticky;
             top: 10px;
@@ -82,7 +84,7 @@
             display: flex;
             gap: 6px;
             align-items: center;
-            margin-top: 8px;
+            margin-bottom: 8px;
             padding-bottom: 8px;
             border-bottom: 1px solid var(--border-color);
             flex-wrap: wrap;
@@ -104,8 +106,6 @@
             border-color: var(--border-color) !important; 
             border-radius: 6px; 
             direction: ltr; 
-            margin-top: 6px;
-            border-top: none !important;
         }
         .ql-container.ql-snow { 
             background: var(--bg-dark); 
@@ -118,7 +118,7 @@
             direction: rtl; 
             text-align: right; 
         }
-        .ql-editor { direction: rtl; text-align: right; }
+        .ql-editor { direction: rtl; text-align: right; min-height: 330px; }
         .ql-snow .ql-stroke { stroke: var(--text-main); }
         .ql-snow .ql-fill { fill: var(--text-main); }
         .ql-snow .ql-picker { color: var(--text-main); }
@@ -298,8 +298,8 @@
                             <button type="button" class="font-tag-btn" style="font-family: 'Amiri', serif;" onclick="applyCustomFont('amiri')">خط أميري</button>
                             <button type="button" class="font-tag-btn" style="color: #94a3b8;" onclick="applyCustomFont(false)">إزالة الخط</button>
                         </div>
-                        <div id="editor-toolbar"></div>
                     </div>
+                    <!-- حقل المحرر الصافي -->
                     <div id="editor-container"></div>
                 </div>
 
@@ -374,7 +374,6 @@
             };
         }
 
-        // جلب البيانات من ملف data.json والـ SHA من GitHub
         async function loadServerData() {
             try {
                 const response = await fetch('data.json?t=' + Date.now());
@@ -382,7 +381,6 @@
                     const data = await response.json();
                     if (data) {
                         globalData = data;
-                        // مزامنة البيانات مع LocalStorage لضمان توافق النظامين
                         if (data.posts) localStorage.setItem('tech_dalil_posts', JSON.stringify(data.posts));
                         if (data.pages) localStorage.setItem('tech_static_pages', JSON.stringify(data.pages));
                         if (data.menu) localStorage.setItem('tech_menu', JSON.stringify(data.menu));
@@ -390,7 +388,7 @@
                     }
                 }
             } catch (err) {
-                console.log("لم يتم العثور على ملف data.json على السيرفر، يتم الاعتماد على الذاكرة المحلية.");
+                console.log("لم يتم العثور على ملف data.json على السيرفر.");
             }
 
             try {
@@ -402,13 +400,12 @@
                     globalFileSha = fileData.sha;
                 }
             } catch (e) {
-                console.log("تعذر جلب ملف الـ SHA من جيت هب تلقائياً.");
+                console.log("تعذر جلب ملف الـ SHA.");
             }
 
             initAdminUI();
         }
 
-        // دالة الحفظ الموحدة عبر GitHub API
         async function saveServerData(successMsg) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
@@ -421,7 +418,6 @@
                 const repo = "tech-dalil";
                 const path = "data.json";
                 
-                // تحديث مصفوفات المقالات والصفحات داخل الكائن العام قبل الإرسال
                 globalData.posts = getData('tech_dalil_posts', []);
                 globalData.pages = getData('tech_static_pages', []);
 
@@ -450,12 +446,12 @@
                     showCustomAlert("خطأ في الحفظ", "فشل الحفظ: تأكد من صحة الـ Token. (" + (result.message || "") + ")");
                 }
             } catch (err) {
-                showCustomAlert("خطأ اتصال", "تعذر الاتصال بخوادم GitHub. تأكد من اتصالك بالإنترنت.");
+                showCustomAlert("خطأ اتصال", "تعذر الاتصال بخوادم GitHub.");
                 console.error(err);
             }
         }
 
-        // إعداد محرر Quill
+        // إعداد محرر Quill السليم
         var Font = Quill.import('formats/font');
         Font.whitelist = ['cairo', 'tajawal', 'amiri', false];
         Quill.register(Font, true);
@@ -463,22 +459,17 @@
         var quill = new Quill('#editor-container', {
             theme: 'snow',
             modules: {
-                toolbar: {
-                    container: [
-                        [{ header: [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ color: [] }, { background: [] }],
-                        [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                        [{ list: 'ordered' }, { list: 'bullet' }],
-                        ['link', 'blockquote', 'code-block'],
-                        ['clean']
-                    ]
-                }
+                toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ color: [] }, { background: [] }],
+                    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['link', 'blockquote', 'code-block'],
+                    ['clean']
+                ]
             }
         });
-
-        const toolbarElement = quill.getModule('toolbar').container;
-        document.getElementById('editor-toolbar').appendChild(toolbarElement);
 
         function applyCustomFont(fontName) {
             const range = quill.getSelection();
@@ -489,7 +480,6 @@
             }
         }
 
-        // التهيئة عند التحميل
         window.addEventListener('DOMContentLoaded', () => {
             const savedSize = localStorage.getItem('tech_logo_height');
             const selector = document.getElementById('logo-size-selector');
@@ -504,7 +494,6 @@
             const customTextEl = document.getElementById('widget-custom-text');
             if(customTextEl) customTextEl.value = localStorage.getItem('tech_sidebar_custom_text') || '';
 
-            // ربط أزرار الفورم والمحرر
             const toggleBtn = document.getElementById('toggle-manager-btn');
             if (toggleBtn) toggleBtn.addEventListener('click', openArticleManager);
 
@@ -514,7 +503,6 @@
             const publishBtn = document.getElementById('publish-btn');
             if (publishBtn) publishBtn.addEventListener('click', saveOrUpdatePost);
 
-            // تفعيل زر الحفظ عند التعديل في Quill
             setTimeout(() => {
                 if (typeof quill !== 'undefined') {
                     let originalContent = quill.root.innerHTML;
@@ -563,7 +551,6 @@
             loadPostsAdminList();
         }
 
-        // إدارة المقالات والصفحات والربط السحابي
         function openArticleManager() {
             document.getElementById('manager-trigger-wrapper').style.display = 'none';
             document.getElementById('article-manager-form-container').style.display = 'block';
@@ -614,8 +601,6 @@
 
             loadPostsAdminList();
             closeArticleManager();
-
-            // حفظ التغييرات مباشرة على السحابة (GitHub JSON)
             saveServerData("تم حفظ ونشر المقال/الصفحة وتحديث السحابة بنجاح!");
         }
 
@@ -746,7 +731,6 @@
             previewWin.document.close();
         }
 
-        // إدارة الشعار
         function uploadLogoFile(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -768,10 +752,9 @@
             if (!selector) return;
             if(!globalData.settings) globalData.settings = {};
             globalData.settings.logoHeight = selector.value;
-            saveServerData("تم حفظ حجم الشعار (" + selector.value + ") على السحابة بنجاح!");
+            saveServerData("تم حفظ حجم الشعار على السحابة بنجاح!");
         }
 
-        // الشريط المتحرك
         function saveTickerSetting() {
             const tickerToggle = document.getElementById('ticker-visible-toggle');
             if (!tickerToggle) return;
@@ -780,7 +763,6 @@
             saveServerData("تم حفظ إعداد الشريط المتحرك على السحابة بنجاح!");
         }
 
-        // إدارة الودجات
         function loadSidebarWidgetsAdmin() {
             if (!globalData.widgets) globalData.widgets = [];
             const widgets = globalData.widgets;
@@ -914,7 +896,6 @@
             });
         }
 
-        // القوائم الهرمية
         function addOrUpdateStructuredMenuItem() {
             const rawInput = document.getElementById('menu-raw-input');
             const urlInput = document.getElementById('menu-url-input');
@@ -1105,7 +1086,6 @@
             draggedIndices = [];
         }
 
-        // إعلانات
         function saveAdsSettings() {
             if(!globalData.ads) globalData.ads = {};
             globalData.ads.topOn = document.getElementById('ad-top-on').checked;
