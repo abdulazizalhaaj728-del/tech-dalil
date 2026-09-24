@@ -606,6 +606,81 @@
             }
         });
 
+
+
+        // 1. دالة لجلب أحدث المقالات وبناء السلايدر ديناميكياً
+function loadAndRenderSlider(data) {
+    if (!data.posts || data.posts.length === 0) return;
+
+    // استبدل '.slider-container' بالـ ID أو الكلاس الحقيقي لحاوية السلايدر في ملف الـ HTML لديك
+    const sliderContainer = document.querySelector('.slider-container') || document.getElementById('square-slider');
+    if (!sliderContainer) return;
+
+    // اختر أحدث 4 أو 5 مقالات لعرضها في السلايدر
+    const latestPosts = data.posts.slice(0, 5);
+
+    let slidesHtml = '';
+    latestPosts.forEach((post, index) => {
+        // بناء هيكل السلايدر لكل مقال (تأكد من مطابقة الكلاسات لتصميم موقعك)
+        slidesHtml += `
+            <div class="square-slide ${index === 0 ? 'active' : ''}" style="background-image: url('${post.image || ''}')">
+                <div class="slide-content">
+                    <span class="post-category">${post.category || 'تقنية'}</span>
+                    <h2><a href="post.html?id=${post.id}">${post.title}</a></h2>
+                </div>
+            </div>
+        `;
+    });
+
+    // وضع المقالات داخل حاوية السلايدر في الصفحة
+    sliderContainer.innerHTML = slidesHtml;
+
+    // 2. تشغيل كود التحكم والحركة بعد أن أصبحت العناصر موجودة في الصفحة
+    initSliderLogic();
+}
+
+// دالة التحكم بالحركة التي أرسلتها أنت مسبقاً
+function initSliderLogic() {
+    const slides = document.querySelectorAll('.square-slide');
+    if(slides.length === 0) return;
+    let currentSlide = 0;
+    let sliderTimer = setInterval(nextSlide, 4000);
+
+    function showSlide(index) {
+        slides.forEach(s => s.classList.remove('active'));
+        slides[index].classList.add('active');
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    const nextBtn = document.getElementById('slider-next-btn');
+    const prevBtn = document.getElementById('slider-prev-btn');
+
+    if(nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            clearInterval(sliderTimer);
+            nextSlide();
+            sliderTimer = setInterval(nextSlide, 4000);
+        });
+    }
+
+    if(prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            clearInterval(sliderTimer);
+            prevSlide();
+            sliderTimer = setInterval(nextSlide, 4000);
+        });
+    }
+}
+        
         function initSliderLogic() {
             const slides = document.querySelectorAll('.square-slide');
             if(slides.length === 0) return;
