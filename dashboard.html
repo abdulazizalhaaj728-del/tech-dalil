@@ -248,15 +248,14 @@
     <h3>📝 إدارة ونشر المقالات والصفحات</h3>
 
     <!-- 1. زر الإدارة الوحيد الظاهر افتراضياً -->
-<div id="manager-trigger-wrapper" style="margin: 15px 0;">
-    <button type="button" class="btn" id="toggle-manager-btn" style="padding: 8px 16px; font-size: 0.9rem;">
-        <i class="fa-solid fa-pen-to-square"></i> إدارة مقالة / صفحة
-    </button>
-</div>
+    <div id="manager-trigger-wrapper" style="margin: 15px 0;">
+        <button type="button" class="btn" id="toggle-manager-btn" style="padding: 8px 16px; font-size: 0.9rem;">
+            <i class="fa-solid fa-pen-to-square"></i> إدارة مقالة / صفحة
+        </button>
+    </div>
 
     <!-- 2. حاوية الفورم الكاملة (تحتوي كل الحقول والمحرر وتكون مخفية بالكامل افتراضياً) -->
     <div id="article-manager-form-container" style="display: none; margin-top: 15px; background: var(--card-bg, #fff); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color, #e2e8f0);">
-        
         <div class="form-group">
             <label>نوع المحتوى:</label>
             <select id="content-type-selector">
@@ -334,7 +333,7 @@
             
         </div>
 
-    </div>
+
 </div>
 
             <hr style="border:0; border-top:1px solid var(--border-color); margin: 20px 0;">
@@ -389,10 +388,10 @@ function openArticleManager() {
     
     // احصل على محتوى المحرر الحالي كمرجع أساسي للمقارنة
     // استبدل 'articleContentInput' بـ id حقل الإدخال أو المحرر لديك
-    const editorField = document.getElementById('articleContentInput'); 
-    if (editorField) {
-        originalEditorContent = editorField.value;
-    }
+    //const editorField = document.getElementById('articleContentInput'); 
+    //if (editorField) {
+    //    originalEditorContent = editorField.value;
+    //}
     
     // إبقاء زر الحفظ معطلاً عند الفتح لأول مرة
     document.getElementById('publish-btn').disabled = true;
