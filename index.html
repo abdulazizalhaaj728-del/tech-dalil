@@ -608,48 +608,54 @@
 if (data.menu && data.menu.length > 0) {
                     const menuContainer = document.getElementById('site-main-menu');
                     if (menuContainer) {
-                        let menuHtml = '';
-                        let i = 0;
-                        
-                        while (i < data.menu.length) {
-                            let item = data.menu[i];
-                            let itemUrl = item.url || item.link || 'index.html';
+                        // 1. دالة لتحويل القائمة المسطحة إلى شجرة عناصر (Tree) بناءً على الـ level
+                        function buildTree(items) {
+                            let root = [];
+                            let stack = [{ level: 0, children: root }];
                             
-                            // جمع العناصر الفرعية (الأبناء) التي تلي العنصر الرئيسي
-                            let childrenHtml = '';
-                            let nextIdx = i + 1;
-                            while (nextIdx < data.menu.length && (data.menu[nextIdx].level || 1) > (item.level || 1)) {
-                                let subItem = data.menu[nextIdx];
-                                let subUrl = subItem.url || subItem.link || 'index.html';
-                                childrenHtml += `<li><a href="${subUrl}">${subItem.title}</a></li>`;
-                                nextIdx++;
-                            }
-
-                            if (childrenHtml !== '') {
-                                // عنصر رئيسي يمتلك قائمة منسدلة
-                                menuHtml += `
-                                    <li>
-                                        <a href="${itemUrl}">${item.title} ▾</a>
-                                        <ul class="dropdown-menu">
-                                            ${childrenHtml}
-                                        </ul>
-                                    </li>
-                                `;
-                                i = nextIdx; // تخطي الأبناء الذين تمت معالجتهم
-                            } else {
-                                // عنصر رئيسي عادي بدون قائمة منسدلة
-                                menuHtml += `
-                                    <li>
-                                        <a href="${itemUrl}">${item.title}</a>
-                                    </li>
-                                `;
-                                i++;
-                            }
+                            items.forEach(item => {
+                                let node = { ...item, children: [] };
+                                let lvl = item.level || 1;
+                                
+                                // العودة للأب المناسب في الهيكل التدريجي
+                                while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
+                                    stack.pop();
+                                }
+                                
+                                stack[stack.length - 1].children.push(node);
+                                stack.push({ level: lvl, children: node.children });
+                            });
+                            
+                            return root;
                         }
-                        menuContainer.innerHTML = menuHtml;
+
+                        // 2. دالة لتوليد الـ HTML بشكل متداخل يدعم الأبناء والأحفاد مهما بلغ عمقهم
+                        function generateMenuHtml(nodes, isRoot = false) {
+                            let html = isRoot ? '' : '<ul class="dropdown-menu">';
+                            
+                            nodes.forEach(node => {
+                                let itemUrl = node.url || node.link || 'index.html';
+                                let hasChildren = node.children && node.children.length > 0;
+                                let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+                                
+                                html += `<li><a href="${itemUrl}">${node.title}${arrow}</a>`;
+                                
+                                if (hasChildren) {
+                                    html += generateMenuHtml(node.children, false); // استدعاء ذاتي للأحفاد
+                                }
+                                
+                                html += `</li>`;
+                            });
+                            
+                            if (!isRoot) html += '</ul>';
+                            return html;
+                        }
+
+                        // تشغيل الدوال وبناء القائمة داخل العنصر
+                        let menuTree = buildTree(data.menu);
+                        menuContainer.innerHTML = generateMenuHtml(menuTree, true);
                     }
-                }
-                
+                }                
 
                 if (data.widgets && data.widgets.length > 0) {
                     const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
