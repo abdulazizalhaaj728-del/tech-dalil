@@ -626,7 +626,7 @@ function loadAndRenderSlider(data) {
             <div class="square-slide ${index === 0 ? 'active' : ''}" style="background-image: url('${post.image || ''}')">
                 <div class="slide-content">
                     <span class="post-category">${post.category || 'تقنية'}</span>
-                    <h2><a href="post.html?id=${post.id}">${post.title}</a></h2>
+                    `<h2><a href="posts/${post.id}.html">${post.title}</a></h2>`
                 </div>
             </div>
         `;
