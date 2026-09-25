@@ -366,6 +366,28 @@
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
 
+        /* تنسيق منطقة التذييل لتصبح شبكة من 4 أعمدة متساوية أفقياً */
+        .site-footer-widgets, .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 أعمدة متساوية تماماً */
+            gap: 20px; /* مسافة متساوية بين المربعات */
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* للتجاوب مع الهواتف والأجهزة الصغيرة لكي تصبح عموداً واحداً أو اثنين عند الضيق */
+        @media (max-width: 900px) {
+            .site-footer-widgets, .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .site-footer-widgets, .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
     </style>
 </head>
     
