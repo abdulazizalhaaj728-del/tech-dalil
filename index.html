@@ -547,37 +547,23 @@
                     }
                 }
 
-if (data.menu && data.menu.length > 0) {
+                if (data.menu && data.menu.length > 0) {
                     const menuContainer = document.getElementById('site-main-menu');
                     if (menuContainer) {
                         let menuHtml = '';
                         data.menu.forEach(item => {
-                            let itemUrl = item.url || item.link || 'index.html';
-                            let hasChildren = item.children && item.children.length > 0;
+                            let lvl = item.level || 1;
+                            let paddingRight = (lvl - 1) * 20; // مسافة إزاحة للعناصر الفرعية
+                            let subIcon = lvl > 1 ? '<i class="fa-solid fa-angle-left" style="margin-left: 5px; font-size: 10px;"></i>' : '';
                             
-                            if (hasChildren) {
-                                menuHtml += `<div class="dropdown-parent" style="position:relative; display:inline-block;">
-                                    <a href="${itemUrl}">${item.title} <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i></a>
-                                    <div class="dropdown-content" style="display:none; position:absolute; right:0; background:var(--card-bg); border:1px solid var(--border-color); border-radius:6px; min-width:150px; z-index:1000; box-shadow:0 4px 10px rgba(0,0,0,0.3);">`;
-                                item.children.forEach(sub => {
-                                    let subUrl = sub.url || sub.link || '#';
-                                    menuHtml += `<a href="${subUrl}" style="display:block; padding:8px 12px; color:var(--text-main); text-decoration:none; font-size:12px; border-bottom:1px solid var(--border-color);">${sub.title}</a>`;
-                                });
-                                menuHtml += `</div></div>`;
-                            } else {
-                                menuHtml += `<a href="${itemUrl}">${item.title}</a>`;
-                            }
+                            menuHtml += `<a href="${item.url || 'index.html'}" style="padding-right: ${paddingRight}px; display: flex; align-items: center;" class="menu-level-${lvl}">${subIcon}${item.title}</a>`;
                         });
                         menuContainer.innerHTML = menuHtml;
-
-                        // إضافة تفاعل ظهور القائمة المنسدلة عند المرور بالماوس
-                        document.querySelectorAll('.dropdown-parent').forEach(parent => {
-                            const dropdown = parent.querySelector('.dropdown-content');
-                            parent.addEventListener('mouseenter', () => { dropdown.style.display = 'block'; });
-                            parent.addEventListener('mouseleave', () => { dropdown.style.display = 'none'; });
-                        });
                     }
                 }
+                
+                
+                
                 if (data.widgets && data.widgets.length > 0) {
                     const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
                     const footerWidgetsContainer = document.getElementById('site-footer-widgets');
