@@ -240,7 +240,16 @@
             "url": "#"
         }
     ],
-    "widgets": [],
+    "widgets": [
+        {
+            "id": "w_1790359605074",
+            "title": "أحدث المواضيع",
+            "type": "recent",
+            "content": "",
+            "active": true,
+            "location": "sidebar"
+        }
+    ],
     "ads": {
         "topOn": false,
         "topCode": "",
