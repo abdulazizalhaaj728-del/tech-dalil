@@ -438,7 +438,7 @@
 
     </div><!-- نهاية الإطار الخارجي الشامل -->
 
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const postId = urlParams.get('id');
@@ -478,23 +478,22 @@
                     }
                 } else {
                     if (data.posts && data.posts.length > 0) {
-                            container.innerHTML = data.posts.map(post => `
-                                <div class="post-card">
-                                    <div class="post-title">
-                                        <a href="posts/${post.id}.html">${post.title}</a>
-                                    </div>
-                                    <div class="post-meta">
-                                        <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
-                                    </div>
-                                    <div class="post-excerpt">${post.description || ''}</div>
-                                    <a href="posts/${post.id}.html" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                        container.innerHTML = data.posts.map(post => `
+                            <div class="post-card">
+                                <div class="post-title">
+                                    <a href="posts/${post.id}.html">${post.title}</a>
                                 </div>
-                            `).join('');
-                        }        
+                                <div class="post-meta">
+                                    <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
+                                </div>
+                                <div class="post-excerpt">${post.description || ''}</div>
+                                <a href="posts/${post.id}.html" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                            </div>
+                        `).join('');
 
                         const sliderWrapper = document.getElementById('square-slider-wrapper');
                         const sliderPosts = data.posts.slice(0, 4);
-                        if(sliderPosts.length > 0) {
+                        if(sliderWrapper && sliderPosts.length > 0) {
                             let sliderHtml = sliderPosts.map((p, idx) => `
                                 <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
                                     <div class="square-caption">
@@ -607,81 +606,7 @@
             }
         });
 
-
-
-        // 1. دالة لجلب أحدث المقالات وبناء السلايدر ديناميكياً
-function loadAndRenderSlider(data) {
-    if (!data.posts || data.posts.length === 0) return;
-
-    // استبدل '.slider-container' بالـ ID أو الكلاس الحقيقي لحاوية السلايدر في ملف الـ HTML لديك
-    const sliderContainer = document.querySelector('.slider-container') || document.getElementById('square-slider');
-    if (!sliderContainer) return;
-
-    // اختر أحدث 4 أو 5 مقالات لعرضها في السلايدر
-    const latestPosts = data.posts.slice(0, 5);
-
-    let slidesHtml = '';
-    latestPosts.forEach((post, index) => {
-        // بناء هيكل السلايدر لكل مقال (تأكد من مطابقة الكلاسات لتصميم موقعك)
-        slidesHtml += `
-            <div class="square-slide ${index === 0 ? 'active' : ''}" style="background-image: url('${post.image || ''}')">
-                <div class="slide-content">
-                    <span class="post-category">${post.category || 'تقنية'}</span>
-                    `<h2><a href="posts/${post.id}.html">${post.title}</a></h2>`
-                </div>
-            </div>
-        `;
-    });
-
-    // وضع المقالات داخل حاوية السلايدر في الصفحة
-    sliderContainer.innerHTML = slidesHtml;
-
-    // 2. تشغيل كود التحكم والحركة بعد أن أصبحت العناصر موجودة في الصفحة
-    initSliderLogic();
-}
-
-// دالة التحكم بالحركة التي أرسلتها أنت مسبقاً
-function initSliderLogic() {
-    const slides = document.querySelectorAll('.square-slide');
-    if(slides.length === 0) return;
-    let currentSlide = 0;
-    let sliderTimer = setInterval(nextSlide, 4000);
-
-    function showSlide(index) {
-        slides.forEach(s => s.classList.remove('active'));
-        slides[index].classList.add('active');
-    }
-
-    function nextSlide() {
-        currentSlide = (currentSlide + 1) % slides.length;
-        showSlide(currentSlide);
-    }
-
-    function prevSlide() {
-        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-        showSlide(currentSlide);
-    }
-
-    const nextBtn = document.getElementById('slider-next-btn');
-    const prevBtn = document.getElementById('slider-prev-btn');
-
-    if(nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            clearInterval(sliderTimer);
-            nextSlide();
-            sliderTimer = setInterval(nextSlide, 4000);
-        });
-    }
-
-    if(prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            clearInterval(sliderTimer);
-            prevSlide();
-            sliderTimer = setInterval(nextSlide, 4000);
-        });
-    }
-}
-        
+        // دالة موحدة ومنظفة للتحكم بالحركة (السلايدر)
         function initSliderLogic() {
             const slides = document.querySelectorAll('.square-slide');
             if(slides.length === 0) return;
@@ -723,13 +648,18 @@ function initSliderLogic() {
             }
         }
 
+        // إعدادات الخطوط والسمات (Themes) والوضع الليلي ولوحة التحكم
         const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
         let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
-        document.getElementById('font-toggle-btn').addEventListener('click', () => {
-            currentFontIdx = (currentFontIdx + 1) % fontsList.length;
-            document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
-            localStorage.setItem('tech_font_idx', currentFontIdx);
-        });
+        
+        const fontToggleBtn = document.getElementById('font-toggle-btn');
+        if(fontToggleBtn) {
+            fontToggleBtn.addEventListener('click', () => {
+                currentFontIdx = (currentFontIdx + 1) % fontsList.length;
+                document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
+                localStorage.setItem('tech_font_idx', currentFontIdx);
+            });
+        }
         document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
 
         const themesList = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
@@ -742,37 +672,49 @@ function initSliderLogic() {
             localStorage.setItem('tech_theme_idx', idx);
         }
 
-        document.getElementById('next-theme-btn').addEventListener('click', () => {
-            currentThemeIdx = (currentThemeIdx + 1) % themesList.length;
-            applyTheme(currentThemeIdx);
-        });
-        document.getElementById('prev-theme-btn').addEventListener('click', () => {
-            currentThemeIdx = (currentThemeIdx - 1 + themesList.length) % themesList.length;
-            applyTheme(currentThemeIdx);
-        });
+        const nextThemeBtn = document.getElementById('next-theme-btn');
+        const prevThemeBtn = document.getElementById('prev-theme-btn');
+
+        if(nextThemeBtn) {
+            nextThemeBtn.addEventListener('click', () => {
+                currentThemeIdx = (currentThemeIdx + 1) % themesList.length;
+                applyTheme(currentThemeIdx);
+            });
+        }
+        if(prevThemeBtn) {
+            prevThemeBtn.addEventListener('click', () => {
+                currentThemeIdx = (currentThemeIdx - 1 + themesList.length) % themesList.length;
+                applyTheme(currentThemeIdx);
+            });
+        }
         applyTheme(currentThemeIdx);
 
         const darkModeBtn = document.getElementById('dark-mode-btn');
-        darkModeBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
-            darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-        });
+        if(darkModeBtn) {
+            darkModeBtn.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                const isLight = document.body.classList.contains('light-mode');
+                localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
+                darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+            });
 
-        if(localStorage.getItem('tech_light_mode') === '1') {
-            document.body.classList.add('light-mode');
-            darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            if(localStorage.getItem('tech_light_mode') === '1') {
+                document.body.classList.add('light-mode');
+                darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            }
         }
 
-        document.getElementById('secret-trigger').addEventListener('click', () => {
-            const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
-            if(pass === "aziz728") {
-                window.location.href = "dashboard.html";
-            } else if(pass !== null) {
-                alert("كلمة المرور غير صحيحة!");
-            }
-        });
+        const secretTrigger = document.getElementById('secret-trigger');
+        if(secretTrigger) {
+            secretTrigger.addEventListener('click', () => {
+                const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
+                if(pass === "aziz728") {
+                    window.location.href = "dashboard.html";
+                } else if(pass !== null) {
+                    alert("كلمة المرور غير صحيحة!");
+                }
+            });
+        }
     </script>
 </body>
 </html>
