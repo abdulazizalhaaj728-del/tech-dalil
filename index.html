@@ -117,12 +117,13 @@
             100% { transform: translateX(100%); opacity: 0; } 
         }
 
-        /* القائمة الرئيسية */
+        /* القائمة الرئيسية 
         .main-menu-bar { width: 100%; margin: 10px auto 0; padding: 0; position: sticky; top: 0; z-index: 999; }
         .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; }
         .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
-
+        */
+        
         .three-columns-grid { 
             width: 100%; margin: 20px auto 0; padding: 0; 
             display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; position: relative; 
@@ -304,30 +305,59 @@
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
 
 
-                /* تنسيق العناصر الرئيسية في القائمة */
-        .main-menu-bar ul {
-            list-style: none;
+        /* شريط القائمة الرئيسية */
+        .main-menu-bar { 
+            width: 100%; 
+            margin: 10px auto 0; 
+            padding: 0; 
+            position: sticky; 
+            top: 0; 
+            z-index: 999; 
+        }
+        
+        /* حاوية القائمة */
+        .mega-menu { 
+            background: var(--card-bg); 
+            border: 2px solid var(--primary-color); 
+            border-radius: 10px; 
+            list-style: none; 
+            padding: 5px 10px; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 5px; 
             margin: 0;
-            padding: 0;
-            display: flex;
             align-items: center;
         }
         
-        .main-menu-bar li {
-            position: relative;
+        /* عناصر القائمة الرئيسية */
+        .mega-menu li {
+            position: relative; /* مهم جداً لتجعل القائمة الفرعية تمركزها تحته مباشرة */
         }
         
-        .main-menu-bar li a {
-            display: block;
-            padding: 10px 15px;
-            text-decoration: none;
-            color: inherit;
-            transition: color 0.3s;
+        /* تنسيق الروابط داخل القائمة */
+        .mega-menu li a, 
+        .mega-menu > a { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            padding: 8px 16px; 
+            color: var(--text-main); 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 13px; 
+            border-radius: 6px; 
+            transition: color 0.3s, background 0.3s;
         }
         
-        /* إضافة سهم تلقائي للعناصر التي تحتوي على قوائم فرعية */
-        .main-menu-bar li.has-dropdown > a::after {
-            content: " \f107"; /* كود السهم من أيقونات FontAwesome */
+        .mega-menu li a:hover, 
+        .mega-menu > a:hover { 
+            background: rgba(2, 132, 199, 0.2); 
+            color: var(--accent-color); 
+        }
+        
+        /* إضافة السهم للعناصر التي تحتوي على قوائم فرعية */
+        .mega-menu li.has-dropdown > a::after {
+            content: " \f107"; 
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
             margin-right: 6px;
@@ -336,43 +366,46 @@
             transition: transform 0.3s;
         }
         
-        /* تدوير السهم عند الوقوف على القائمة */
-        .main-menu-bar li.has-dropdown:hover > a::after {
+        /* تدوير السهم عند المرور */
+        .mega-menu li.has-dropdown:hover > a::after {
             transform: rotate(180deg);
         }
         
-        /* إعدادات القائمة الفرعية (مخفية افتراضياً) */
-        .main-menu-bar .submenu {
+        /* تصميم القائمة الفرعية لتظهر تحت العنصر تماماً */
+        .mega-menu .submenu {
             display: none;
             position: absolute;
-            top: 100%;
-            right: 0;
-            background: var(--card-bg, #1e1e2f); /* لون خلفية مناسب لموقعك */
+            top: 100%; /* تحت العنصر الأب مباشرة */
+            right: 0;  /* محاذاة لليمين لأن الموقع عربي */
+            background: var(--card-bg, #1e1e2f); 
+            border: 1px solid var(--primary-color);
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             min-width: 180px;
             border-radius: 6px;
             flex-direction: column;
             padding: 5px 0;
             z-index: 999;
+            list-style: none;
         }
         
-        /* إظهار القائمة الفرعية عند مرور الماوس */
-        .main-menu-bar li.has-dropdown:hover .submenu {
+        /* إظهار القائمة الفرعية عند المرور بالماوس */
+        .mega-menu li.has-dropdown:hover .submenu {
             display: flex;
         }
         
         /* تنسيق روابط القائمة الفرعية */
-        .main-menu-bar .submenu li {
+        .mega-menu .submenu li {
             width: 100%;
         }
         
-        .main-menu-bar .submenu li a {
+        .mega-menu .submenu li a {
             padding: 8px 15px;
             font-size: 0.9rem;
             white-space: nowrap;
+            width: 100%;
         }
         
-        .main-menu-bar .submenu li a:hover {
+        .mega-menu .submenu li a:hover {
             background: rgba(255, 255, 255, 0.05);
             color: var(--accent-color);
         }
