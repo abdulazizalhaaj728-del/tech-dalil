@@ -151,6 +151,18 @@
             transition: 0.2s;
         }
         .mega-menu > li > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
+
+        /* دعم ظهور القوائم الفرعية والمتداخلة عند تمرير الماوس */
+        .dropdown-menu li {
+            position: relative;
+        }
+        
+        .dropdown-menu li:hover > .dropdown-menu {
+            display: block;
+            position: absolute;
+            right: 100%; /* تفتح القائمة الفرعية إلى الجانب الصحيح */
+            top: 0;
+        }
         
         .dropdown-menu {
             position: absolute;
