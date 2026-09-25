@@ -466,11 +466,20 @@
 
         <div class="main-menu-bar">
             <nav id="site-main-menu" class="mega-menu">
-                <a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
-                <a href="blog.html"><i class="fa-solid fa-book-open"></i> المدونة</a>
+                <!-- عنصر عادي -->
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a></li>
+                <li><a href="blog.html"><i class="fa-solid fa-book-open"></i> المدونة</a></li>
+        
+                <!-- عنصر يحتوي على قائمة فرعية (منسدلة) -->
+                <li class="has-dropdown">
+                    <a href="#"><i class="fa-solid fa-computer"></i> حاسب آلي 1</a>
+                    <ul class="submenu">
+                        <li><a href="#">حاسب آلي 2</a></li>
+                        <!-- أضف بقية الأقسام الفرعية هنا -->
+                    </ul>
+                </li>
             </nav>
         </div>
-
         <div id="site-ad-mid" style="width: 100%; margin: 15px auto; text-align: center;"></div>
         
         <div class="three-columns-grid" id="top-three-section">
