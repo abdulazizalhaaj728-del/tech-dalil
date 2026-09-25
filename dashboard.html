@@ -1146,6 +1146,18 @@ async function saveServerData(successMsg, postToSave = null) {
             renderStructuredMenuAdmin();
         }
 
+// مصفوفة لحفظ مؤشرات العناصر المطوية (التي تحتوي على علامة زائد)
+        let collapsedMenuIndices = new Set();
+
+        function toggleMenuCollapse(index) {
+            if (collapsedMenuIndices.has(index)) {
+                collapsedMenuIndices.delete(index);
+            } else {
+                collapsedMenuIndices.add(index);
+            }
+            renderStructuredMenuAdmin();
+        }
+
         function renderStructuredMenuAdmin() {
             const container = document.getElementById('admin-menu-structured-list');
             if (!container) return;
@@ -1156,17 +1168,61 @@ async function saveServerData(successMsg, postToSave = null) {
                 return;
             }
 
+            // فحص العناصر المخفية بسبب طي عنصر أب أعلى منها
+            let hideStackLevel = 999;
+
             globalData.menu.forEach((item, index) => {
+                let currentLevel = item.level || 1;
+
+                // إذا كان المستوى الحالي أقل من أو يساوي مستوى الإخفاء، نلغي الإخفاء
+                if (currentLevel <= hideStackLevel) {
+                    hideStackLevel = 999;
+                }
+
+                // هل هذا العنصر مخفي لأن أحد أبنائه/أبائه مطوي؟
+                const isHiddenByParent = currentLevel > hideStackLevel;
+
+                // هل هذا العنصر يمتلك أهالي/أبناء تلي مباشرة ومستواها أكبر؟
+                let hasChildren = false;
+                if (index + 1 < globalData.menu.length) {
+                    if ((globalData.menu[index + 1].level || 1) > currentLevel) {
+                        hasChildren = true;
+                    }
+                }
+
+                if (hasChildren && collapsedMenuIndices.has(index)) {
+                    hideStackLevel = Math.min(hideStackLevel, currentLevel);
+                }
+
                 const row = document.createElement('div');
                 row.className = 'drag-item';
                 row.setAttribute('draggable', 'true');
                 row.dataset.index = index;
-                row.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem; transition: all 0.2s;";
                 
-                let indent = (item.level - 1) * 25; 
+                // إذا كان مخفياً بواسطة أب مطوي، نجعل عرضه مختفياً تماماً
+                if (isHiddenByParent) {
+                    row.style.cssText = "display: none; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;";
+                } else {
+                    row.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem; transition: all 0.2s;";
+                }
+                
+                let indent = (currentLevel - 1) * 25; 
+                
+                // زر الزائد والناقص إذا كان العنصر يمتلك فروعاً
+                let collapseBtnHtml = '';
+                if (hasChildren) {
+                    let isCollapsed = collapsedMenuIndices.has(index);
+                    let iconSymbol = isCollapsed ? '+' : '-';
+                    let btnBg = isCollapsed ? '#0284c7' : '#64748b';
+                    collapseBtnHtml = `<button type="button" onclick="toggleMenuCollapse(${index})" style="background: ${btnBg}; color: #fff; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;" title="${isCollapsed ? 'إظهار الفروع' : 'إخفاء الفروع'}">${iconSymbol}</button>`;
+                } else {
+                    collapseBtnHtml = `<span style="width: 20px; display: inline-block;"></span>`;
+                }
+
                 row.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; margin-right: ${indent}px; flex: 1;">
                         <input type="checkbox" class="menu-item-checkbox" data-index="${index}" style="width: 16px; height: 16px; cursor: pointer;">
+                        ${collapseBtnHtml}
                         <span style="color: var(--text-muted); cursor: grab;"><i class="fa-solid fa-grip-vertical"></i></span>
                         <span style="color: var(--accent-color); font-weight: bold;">${item.rawText}</span>
                         <span style="color: var(--text-muted); font-size: 0.75rem;">(رابط: ${item.url})</span>
@@ -1186,8 +1242,9 @@ async function saveServerData(successMsg, postToSave = null) {
                 container.appendChild(row);
             });
         }
+
         
-        let draggedIndices = [];
+let draggedIndices = [];
 
         function handleDragStart(e) {
             const currentIndex = parseInt(this.dataset.index);
@@ -1195,10 +1252,30 @@ async function saveServerData(successMsg, postToSave = null) {
             let selected = [];
             checkboxes.forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
 
+            // تحديد العنصر مع كافة أفرعه وأحفاده التابعين له تلقائياً إذا تم سحبه
+            let subItemsIndices = [currentIndex];
+            let baseLevel = globalData.menu[currentIndex].level || 1;
+            let idx = currentIndex + 1;
+            while (idx < globalData.menu.length && (globalData.menu[idx].level || 1) > baseLevel) {
+                subItemsIndices.push(idx);
+                idx++;
+            }
+
             if (selected.includes(currentIndex) && selected.length > 0) {
-                draggedIndices = selected.sort((a, b) => a - b);
+                // إذا كان هناك عناصر محددة بالمربع، نجمعها مع أفرعها
+                let allSelectedWithChildren = [];
+                selected.forEach(selIdx => {
+                    allSelectedWithChildren.push(selIdx);
+                    let sLevel = globalData.menu[selIdx].level || 1;
+                    let next = selIdx + 1;
+                    while (next < globalData.menu.length && (globalData.menu[next].level || 1) > sLevel) {
+                        allSelectedWithChildren.push(next);
+                        next++;
+                    }
+                });
+                draggedIndices = [...new Set(allSelectedWithChildren)].sort((a, b) => a - b);
             } else {
-                draggedIndices = [currentIndex];
+                draggedIndices = subItemsIndices;
                 const chk = this.querySelector('.menu-item-checkbox');
                 if (chk) chk.checked = true;
             }
@@ -1206,6 +1283,62 @@ async function saveServerData(successMsg, postToSave = null) {
             e.dataTransfer.effectAllowed = 'move';
         }
 
+        function handleDrop(e) {
+            e.preventDefault();
+            const targetRow = this;
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+
+            const targetIndex = parseInt(targetRow.dataset.index);
+            if (draggedIndices.includes(targetIndex)) return;
+
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            let dropMode = 'after';
+            if (yClick < threshold) dropMode = 'top';
+            else if (yClick > rect.height - threshold) dropMode = 'bottom';
+            else dropMode = 'child';
+
+            // استخراج العناصر المسحوبة بكامل أفرعها وأحفادها بنفس الترتيب تماماً
+            let itemsToMove = draggedIndices.map(i => globalData.menu[i]);
+            let remainingItems = globalData.menu.filter((_, idx) => !draggedIndices.includes(idx));
+            
+            let targetItemInRemaining = globalData.menu[targetIndex];
+            let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
+            if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
+
+            if (dropMode === 'top') {
+                remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
+            } else if (dropMode === 'bottom') {
+                // إذا كان الهدف يمتلك أفرعاً، نتجاوز أفرعه ونضع العنصر بعد نهايتهم لكي لا نفصل الأب عن ابنه بالخطأ
+                let insertPos = newTargetIdx + 1;
+                while (insertPos < remainingItems.length && (remainingItems[insertPos].level || 1) > (targetItemInRemaining.level || 1)) {
+                    insertPos++;
+                }
+                remainingItems.splice(insertPos, 0, ...itemsToMove);
+            } else if (dropMode === 'child') {
+                let parentItem = targetItemInRemaining;
+                if (parentItem) {
+                    let levelDiff = (parentItem.level + 1) - itemsToMove[0].level;
+                    itemsToMove.forEach(it => {
+                        it.level = Math.max(1, it.level + levelDiff);
+                        it.rawText = '_'.repeat(it.level) + (it.title || 'عنصر');
+                    });
+                    remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+                    targetRow.classList.add('pulse-highlight');
+                    setTimeout(() => targetRow.classList.remove('pulse-highlight'), 800);
+                }
+            }
+
+            menuHasChanges = true;
+            globalData.menu = remainingItems;
+            collapsedMenuIndices.clear(); // إعادة تعيين الطي لتجنب اختلاف الفهارس المؤقتة بعد الترتيب
+            renderStructuredMenuAdmin();
+        }
+
+
+        
         function handleDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
