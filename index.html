@@ -367,7 +367,7 @@
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
 
         /* تنسيق منطقة التذييل لتصبح شبكة من 4 أعمدة متساوية أفقياً */
-        .site-footer-widgets, .footer-grid {
+        .site-footer, .container {
             display: grid;
             grid-template-columns: repeat(4, 1fr); /* 4 أعمدة متساوية تماماً */
             gap: 20px; /* مسافة متساوية بين المربعات */
@@ -377,13 +377,13 @@
         
         /* للتجاوب مع الهواتف والأجهزة الصغيرة لكي تصبح عموداً واحداً أو اثنين عند الضيق */
         @media (max-width: 900px) {
-            .site-footer-widgets, .footer-grid {
+            .site-footer, .container {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
         
         @media (max-width: 600px) {
-            .site-footer-widgets, .footer-grid {
+            .site-footer, .container {
                 grid-template-columns: 1fr;
             }
         }
