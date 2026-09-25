@@ -302,27 +302,8 @@
         .footer-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
-
-        .mega-menu a {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 13px;
-            border-radius: 6px;
-        }
-        .mega-menu a:hover {
-            background: rgba(2, 132, 199, 0.2);
-            color: var(--accent-color);
-        }
-        
     </style>
-    
 </head>
-    
 <body class="theme-default">
 
     <!-- بداية الإطار الخارجي الثخين الشامل لكل المدونة -->
@@ -546,26 +527,21 @@
                         tickerWrapper.style.display = data.settings.tickerVisible !== false ? 'block' : 'none';
                     }
                 }
-                
 
                 if (data.menu && data.menu.length > 0) {
                     const menuContainer = document.getElementById('site-main-menu');
                     if (menuContainer) {
                         let menuHtml = '';
                         data.menu.forEach(item => {
-                            let itemUrl = item.url || item.link || 'index.html';
-                            let lvl = item.level || 1;
-                            let paddingRight = (lvl - 1) * 15;
-                            let subIcon = lvl > 1 ? '<i class="fa-solid fa-angle-left" style="margin-left: 5px; font-size: 10px;"></i>' : '';
-                            
-                            menuHtml += `<a href="${itemUrl}" style="padding-right: ${paddingRight}px; display: inline-flex; align-items: center;" class="menu-level-${lvl}">${subIcon}${item.title}</a>`;
+                            let paddingRight = (item.level - 1) * 15;
+                            menuHtml += `<a href="${item.url || 'index.html'}" style="padding-right: ${paddingRight}px;" class="menu-level-${item.level}">${item.title}</a>`;
                         });
                         menuContainer.innerHTML = menuHtml;
                     }
-                }                
-                
-                
-                const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
+                }
+
+                if (data.widgets && data.widgets.length > 0) {
+                    const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
                     const footerWidgetsContainer = document.getElementById('site-footer-widgets');
                     
                     let sidebarHtml = '';
