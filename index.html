@@ -546,25 +546,57 @@
                         tickerWrapper.style.display = data.settings.tickerVisible !== false ? 'block' : 'none';
                     }
                 }
+                
 
-                if (data.menu && data.menu.length > 0) {
-                    const menuContainer = document.getElementById('site-main-menu');
-                    if (menuContainer) {
+                
+                    if (data.menu && data.menu.length > 0) {
+                        const menuContainer = document.getElementById('site-main-menu');
+                        if (menuContainer) {
                         let menuHtml = '';
-                        data.menu.forEach((item, index) => {
-                            let isSub = item.level && item.level > 1;
-                            let subStyle = isSub ? 'margin-right: 15px; font-size: 0.9em; opacity: 0.9;' : '';
-                            let icon = isSub ? '<i class="fa-solid fa-angle-left" style="font-size: 10px; margin-left: 4px;"></i>' : '';
+                        let i = 0;
+                        while (i < data.menu.length) {
+                            let item = data.menu[i];
+                            let itemUrl = item.url || 'index.html';
                             
-                            menuHtml += `<a href="${item.url || 'index.html'}" style="${subStyle}" class="menu-level-${item.level || 1}">${icon}${item.title}</a>`;
-                        });
+                            // تحقق إذا كان العنصر التالي هو ابن له (level أكبر)
+                            let childrenHtml = '';
+                            let nextIdx = i + 1;
+                            while (nextIdx < data.menu.length && data.menu[nextIdx].level > (item.level || 1)) {
+                                let subItem = data.menu[nextIdx];
+                                let subUrl = subItem.url || 'index.html';
+                                childrenHtml += `<a href="${subUrl}" style="display: block; padding: 8px 15px; color: var(--text-main); text-decoration: none; font-size: 12px; border-bottom: 1px solid var(--border-color); white-space: nowrap;">${subItem.title}</a>`;
+                                nextIdx++;
+                            }
+
+                            if (childrenHtml !== '') {
+                                // عنصر رئيسي لديه أبناء (قائمة منسدلة)
+                                menuHtml += `<div class="menu-dropdown-parent" style="position: relative; display: inline-block;">
+                                    <a href="${itemUrl}" style="display: flex; align-items: center; gap: 5px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px;">${item.title} <i class="fa-solid fa-chevron-down" style="font-size: 9px;"></i></a>
+                                    <div class="menu-dropdown-content" style="display: none; position: absolute; right: 0; top: 100%; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; min-width: 160px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.4); padding: 5px 0;">
+                                        ${childrenHtml}
+                                    </div>
+                                </div>`;
+                                i = nextIdx; // تخطي الأبناء الذين تم استعراضهم
+                            } else {
+                                // عنصر عادي ليس لديه أبناء
+                                menuHtml += `<a href="${itemUrl}" style="display: inline-flex; align-items: center; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px;">${item.title}</a>`;
+                                i++;
+                            }
+                        }
                         menuContainer.innerHTML = menuHtml;
+
+                        // تفاعل ظهور وإخفاء القائمة المنسدلة عند مرور الماوس
+                        document.querySelectorAll('.menu-dropdown-parent').forEach(parent => {
+                            const dropdown = parent.querySelector('.menu-dropdown-content');
+                            parent.addEventListener('mouseenter', () => { dropdown.style.display = 'block'; });
+                            parent.addEventListener('mouseleave', () => { dropdown.style.display = 'none'; });
+                        });
                     }
-                }                
+                }
                 
                 
-                if (data.widgets && data.widgets.length > 0) {
-                    const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
+                
+                const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
                     const footerWidgetsContainer = document.getElementById('site-footer-widgets');
                     
                     let sidebarHtml = '';
