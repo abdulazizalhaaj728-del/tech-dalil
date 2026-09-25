@@ -469,7 +469,7 @@
                                 </div>
                                 ${botAd}
                                 <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                                    <a href="index.html" style="display: inline-block; background: var(--primary-color); color: #fff; padding: 6px 15px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← العودة إلى الصفحة الرئيسية</a>
+                                    <a href="../index.html" style="display: inline-block; background: var(--primary-color); color: #fff; padding: 6px 15px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← العودة إلى الصفحة الرئيسية</a>
                                 </div>
                             </div>
                         `;
@@ -478,18 +478,19 @@
                     }
                 } else {
                     if (data.posts && data.posts.length > 0) {
-                        container.innerHTML = data.posts.map(post => `
-                            <div class="post-card">
-                                <div class="post-title">
-                                    <a href="index.html?id=${post.id}">${post.title}</a>
+                            container.innerHTML = data.posts.map(post => `
+                                <div class="post-card">
+                                    <div class="post-title">
+                                        <a href="posts/${post.id}.html">${post.title}</a>
+                                    </div>
+                                    <div class="post-meta">
+                                        <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
+                                    </div>
+                                    <div class="post-excerpt">${post.description || ''}</div>
+                                    <a href="posts/${post.id}.html" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                                 </div>
-                                <div class="post-meta">
-                                    <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
-                                </div>
-                                <div class="post-excerpt">${post.description || ''}</div>
-                                <a href="index.html?id=${post.id}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
-                            </div>
-                        `).join('');
+                            `).join('');
+                        }        
 
                         const sliderWrapper = document.getElementById('square-slider-wrapper');
                         const sliderPosts = data.posts.slice(0, 4);
