@@ -1079,24 +1079,13 @@ async function saveServerData(successMsg, postToSave = null) {
 
         // تفعيل زر الحفظ اليدوي للودجات
         document.getElementById('save-widgets-btn').addEventListener('click', () => {
-            // جمع حالة الودجات الحالية (مثال: قراءة مربعات الاختيار أو الترتيب الحالي)
-            let widgetsState = {};
-            document.querySelectorAll('.widget-checkbox-class').forEach((checkbox, index) => {
-                widgetsState['widget_' + index] = {
-                    id: checkbox.id || index,
-                    enabled: checkbox.checked
-                };
-            });
-        
-            // إرسال البيانات وحفظها للسحابة مرة واحدة عند الضغط
-            // استبدل الدالة التالية بدالة الحفظ السحابي الخاصة بك
-            saveWidgetsToCloud(widgetsState).then(() => {
-                alert('تم حفظ إعدادات الودجات بنجاح!');
-            }).catch(err => {
-                console.error('حدث خطأ أثناء الحفظ:', err);
-            });
+            // استدعاء دالة الحفظ المعتادة لديك مباشرة
+            if (typeof saveServerData === 'function') {
+                saveServerData("تم حفظ إعدادات الودجات بنجاح!");
+            } else {
+                console.error("دالة الحفظ saveServerData غير متوفرة.");
+            }
         });
-
         
 
         function addOrUpdateStructuredMenuItem() {
