@@ -422,7 +422,7 @@
 
     <!-- القائمة الرئيسية الأفقية -->
     <div class="main-menu-bar">
-        <ul class="mega-menu">
+        <ul id="site-main-menu" class="mega-menu">
             <li><a href="index.html">الرئيسية</a></li>
             <li>
                 <a href="blog.html">المدونة ▾</a>
@@ -605,14 +605,47 @@
                     }
                 }
 
-                if (data.menu && data.menu.length > 0) {
+if (data.menu && data.menu.length > 0) {
                     const menuContainer = document.getElementById('site-main-menu');
                     if (menuContainer) {
                         let menuHtml = '';
-                        data.menu.forEach(item => {
-                            let paddingRight = (item.level - 1) * 15;
-                            menuHtml += `<a href="${item.url || 'index.html'}" style="padding-right: ${paddingRight}px;" class="menu-level-${item.level}">${item.title}</a>`;
-                        });
+                        let i = 0;
+                        
+                        while (i < data.menu.length) {
+                            let item = data.menu[i];
+                            let itemUrl = item.url || item.link || 'index.html';
+                            
+                            // جمع العناصر الفرعية (الأبناء) التي تلي العنصر الرئيسي
+                            let childrenHtml = '';
+                            let nextIdx = i + 1;
+                            while (nextIdx < data.menu.length && (data.menu[nextIdx].level || 1) > (item.level || 1)) {
+                                let subItem = data.menu[nextIdx];
+                                let subUrl = subItem.url || subItem.link || 'index.html';
+                                childrenHtml += `<li><a href="${subUrl}">${subItem.title}</a></li>`;
+                                nextIdx++;
+                            }
+
+                            if (childrenHtml !== '') {
+                                // عنصر رئيسي يمتلك قائمة منسدلة
+                                menuHtml += `
+                                    <li>
+                                        <a href="${itemUrl}">${item.title} ▾</a>
+                                        <ul class="dropdown-menu">
+                                            ${childrenHtml}
+                                        </ul>
+                                    </li>
+                                `;
+                                i = nextIdx; // تخطي الأبناء الذين تمت معالجتهم
+                            } else {
+                                // عنصر رئيسي عادي بدون قائمة منسدلة
+                                menuHtml += `
+                                    <li>
+                                        <a href="${itemUrl}">${item.title}</a>
+                                    </li>
+                                `;
+                                i++;
+                            }
+                        }
                         menuContainer.innerHTML = menuHtml;
                     }
                 }
