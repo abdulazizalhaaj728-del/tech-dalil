@@ -406,7 +406,7 @@
             initAdminUI();
         }
 
-        async function saveServerData(successMsg) {
+async function saveServerData(successMsg, postToSave = null) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
                 showCustomAlert("تنبيه هامة", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
@@ -424,6 +424,7 @@
                 const contentString = JSON.stringify(globalData, null, 4);
                 const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
 
+                // 1. حفظ ملف data.json الأساسي
                 const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
                     method: 'PUT',
                     headers: {
@@ -440,7 +441,36 @@
                 const result = await response.json();
                 if (response.ok) {
                     globalFileSha = result.content.sha;
-                    showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر بنجاح على السحابة!");
+
+                    // 2. إذا تم تمرير مقال، قم بتوليد ورفع ملف الـ HTML المستقل الخاص به في مجلد posts/
+                    if (postToSave) {
+                        const fileName = `posts/${postToSave.id}.html`;
+                        const htmlContent = generateArticleHtml(postToSave);
+                        const encodedHtml = btoa(unescape(encodeURIComponent(htmlContent)));
+
+                        // التحقق مما إذا كان الملف موجوداً مسبقاً لجلب الـ SHA الخاص به للتحديث
+                        let htmlSha = "";
+                        const resHtml = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`);
+                        if (resHtml.ok) {
+                            const hData = await resHtml.json();
+                            htmlSha = hData.sha;
+                        }
+
+                        await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `token ${token}`,
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                message: `Generate/Update static HTML page for: ${postToSave.title}`,
+                                content: encodedHtml,
+                                sha: htmlSha || undefined
+                            })
+                        });
+                    }
+
+                    showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر وتوليد صفحة المقال المستقلة بنجاح على السحابة!");
                     menuHasChanges = false;
                 } else {
                     showCustomAlert("خطأ في الحفظ", "فشل الحفظ: تأكد من صحة الـ Token. (" + (result.message || "") + ")");
@@ -451,6 +481,46 @@
             }
         }
 
+
+
+        function generateArticleHtml(post) {
+            return `<!DOCTYPE html>
+            <html lang="ar" dir="rtl">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>${post.title} | تكنو-دليل</title>
+                <meta name="description" content="${post.description || post.title}">
+                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <link rel="stylesheet" href="../style.css">
+                <style>
+                    body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; line-height: 1.8; }
+                    .article-container { max-width: 800px; margin: 40px auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+                    h1 { color: #f59e0b; margin-bottom: 15px; }
+                    .meta-info { font-size: 0.85rem; color: #94a3b8; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+                    .featured-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; }
+                    .content-body { font-size: 1.05rem; color: #f8fafc; }
+                    .back-btn { display: inline-block; margin-bottom: 20px; color: #0284c7; text-decoration: none; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <div class="article-container">
+                    <a href="../index.html" class="back-btn">← العودة للرئيسية</a>
+                    <span style="background: #0284c7; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem;">${post.category || 'تقنية'}</span>
+                    <h1>${post.title}</h1>
+                    <div class="meta-info">تاريخ النشر: ${post.date}</div>
+                    ${post.image ? `<img src="${post.image}" alt="${post.title}" class="featured-img">` : ''}
+                    <div class="content-body">
+                        ${post.content}
+                    </div>
+                </div>
+            </body>
+            </html>`;
+            }
+
+
+        
         // إعداد محرر Quill السليم
         var Font = Quill.import('formats/font');
         Font.whitelist = ['cairo', 'tajawal', 'amiri', false];
@@ -601,7 +671,9 @@
 
             loadPostsAdminList();
             closeArticleManager();
-            saveServerData("تم حفظ ونشر المقال/الصفحة وتحديث السحابة بنجاح!");
+            // مثال داخل دالة نشر المقال لديك:
+            const currentPost = posts.find(p => p.id === currentEditingPostId); 
+            saveServerData("تم نشر المقال وتوليد صفحته الثابتة بنجاح!", currentPost);
         }
 
         function resetPostForm() {
@@ -1104,6 +1176,44 @@
                 e.returnValue = ''; 
             }
         });
+
+
+                    // دالة لتوليد كود صفحة HTML المستقلة للمقال
+            function generateArticleHtml(post) {
+                return `<!DOCTYPE html>
+            <html lang="ar" dir="rtl">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>${post.title} | تكنو-دليل</title>
+                <meta name="description" content="${post.description || post.title}">
+                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <link rel="stylesheet" href="../style.css"> <!-- اربطه بملف التصميم الرئيسي لديك -->
+                <style>
+                    body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; line-height: 1.8; }
+                    .article-container { max-width: 800px; margin: 40px auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+                    h1 { color: #f59e0b; margin-bottom: 15px; }
+                    .meta-info { font-size: 0.85rem; color: #94a3b8; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+                    .featured-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; }
+                    .content-body { font-size: 1.05rem; color: #f8fafc; }
+                    .back-btn { display: inline-block; margin-bottom: 20px; color: #0284c7; text-decoration: none; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <div class="article-container">
+                    <a href="../index.html" class="back-btn">← العودة للرئيسية</a>
+                    <span style="background: #0284c7; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem;">${post.category || 'تقنية'}</span>
+                    <h1>${post.title}</h1>
+                    <div class="meta-info">تاريخ النشر: ${post.date}</div>
+                    ${post.image ? `<img src="${post.image}" alt="${post.title}" class="featured-img">` : ''}
+                    <div class="content-body">
+                        ${post.content}
+                    </div>
+                </div>
+            </body>
+            </html>`;
+            }
     </script>
 </body>
 </html>
