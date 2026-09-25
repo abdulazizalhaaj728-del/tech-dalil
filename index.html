@@ -551,17 +551,16 @@
                     const menuContainer = document.getElementById('site-main-menu');
                     if (menuContainer) {
                         let menuHtml = '';
-                        data.menu.forEach(item => {
-                            let lvl = item.level || 1;
-                            let paddingRight = (lvl - 1) * 20; // مسافة إزاحة للعناصر الفرعية
-                            let subIcon = lvl > 1 ? '<i class="fa-solid fa-angle-left" style="margin-left: 5px; font-size: 10px;"></i>' : '';
+                        data.menu.forEach((item, index) => {
+                            let isSub = item.level && item.level > 1;
+                            let subStyle = isSub ? 'margin-right: 15px; font-size: 0.9em; opacity: 0.9;' : '';
+                            let icon = isSub ? '<i class="fa-solid fa-angle-left" style="font-size: 10px; margin-left: 4px;"></i>' : '';
                             
-                            menuHtml += `<a href="${item.url || 'index.html'}" style="padding-right: ${paddingRight}px; display: flex; align-items: center;" class="menu-level-${lvl}">${subIcon}${item.title}</a>`;
+                            menuHtml += `<a href="${item.url || 'index.html'}" style="${subStyle}" class="menu-level-${item.level || 1}">${icon}${item.title}</a>`;
                         });
                         menuContainer.innerHTML = menuHtml;
                     }
-                }
-                
+                }                
                 
                 
                 if (data.widgets && data.widgets.length > 0) {
