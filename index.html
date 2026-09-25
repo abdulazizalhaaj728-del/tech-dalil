@@ -302,8 +302,83 @@
         .footer-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
+
+
+                /* تنسيق العناصر الرئيسية في القائمة */
+        .main-menu-bar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .main-menu-bar li {
+            position: relative;
+        }
+        
+        .main-menu-bar li a {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s;
+        }
+        
+        /* إضافة سهم تلقائي للعناصر التي تحتوي على قوائم فرعية */
+        .main-menu-bar li.has-dropdown > a::after {
+            content: " \f107"; /* كود السهم من أيقونات FontAwesome */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 6px;
+            font-size: 0.8rem;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+        
+        /* تدوير السهم عند الوقوف على القائمة */
+        .main-menu-bar li.has-dropdown:hover > a::after {
+            transform: rotate(180deg);
+        }
+        
+        /* إعدادات القائمة الفرعية (مخفية افتراضياً) */
+        .main-menu-bar .submenu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card-bg, #1e1e2f); /* لون خلفية مناسب لموقعك */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            min-width: 180px;
+            border-radius: 6px;
+            flex-direction: column;
+            padding: 5px 0;
+            z-index: 999;
+        }
+        
+        /* إظهار القائمة الفرعية عند مرور الماوس */
+        .main-menu-bar li.has-dropdown:hover .submenu {
+            display: flex;
+        }
+        
+        /* تنسيق روابط القائمة الفرعية */
+        .main-menu-bar .submenu li {
+            width: 100%;
+        }
+        
+        .main-menu-bar .submenu li a {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .main-menu-bar .submenu li a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-color);
+        }
     </style>
 </head>
+    
 <body class="theme-default">
 
     <!-- بداية الإطار الخارجي الثخين الشامل لكل المدونة -->
