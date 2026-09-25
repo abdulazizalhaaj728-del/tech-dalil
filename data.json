@@ -248,6 +248,14 @@
             "content": "",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1790359649844",
+            "title": "روابط سريعة",
+            "type": "links",
+            "content": "",
+            "active": true,
+            "location": "sidebar"
         }
     ],
     "ads": {
