@@ -634,132 +634,151 @@ async function saveServerData(successMsg, postToSave = null) {
             resetPostForm();
         }
 
-// --- دالة حفظ أو تحديث المقالة بصيغة HTML على GitHub مباشرة ---
-async function saveOrUpdatePost() {
-    const contentType = document.getElementById('content-type-selector').value;
-    const title = document.getElementById('post-title').value.trim();
-    const category = document.getElementById('post-cat').value.trim() || "عام";
-    const description = document.getElementById('post-desc').value.trim();
-    const image = document.getElementById('post-img').value.trim();
-    const date = document.getElementById('post-date').value.trim() || new Date().toLocaleDateString('ar-SA');
-    const content = typeof quill !== 'undefined' ? quill.root.innerHTML : '';
-
-    if (!title || content === '<p><br></p>' || !content.trim()) { 
-        showCustomAlert("تنبيه", "الرجاء إدخال عنوان ومحتوى المقال بشكل صحيح!");
-        return; 
-    }
-
-    const token = document.getElementById('gh-token-input').value.trim();
-    if (!token) {
-        showCustomAlert("تنبيه هام", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين حفظ ونشر المقالات!");
-        return;
-    }
-
-    // تجهيز هيكل ملف الـ HTML المستقل للمقالة
-    const articleHtmlContent = `<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title} | تكنو-دليل</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root { --primary-color: #0284c7; --accent-color: #f59e0b; --bg-dark: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: #334155; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-main); padding: 20px; line-height: 1.8; }
-        .container { max-width: 850px; margin: 40px auto; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1 { color: var(--accent-color); margin-bottom: 15px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
-        .meta-info { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
-        .post-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; }
-        .content { font-size: 1.05rem; }
-        .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-color); text-decoration: none; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <a href="index.html" class="back-link">← العودة للموقع الرئيسي</a>
-        <h1>${title}</h1>
-        <div class="meta-info"><i class="fa-solid fa-calendar"></i> ${date} | <i class="fa-solid fa-tag"></i> ${category}</div>
-        ${image ? `<img src="${image}" alt="${title}" class="post-img">` : ''}
-        <div class="content">${content}</div>
-    </div>
-</body>
-</html>`;
-
-    // تحديد اسم الملف الفريد بناءً على الوقت أو المعرف
-    const fileId = currentEditingPostId ? currentEditingPostId : ('post_' + Date.now());
-    const fileName = `${fileId}.html`;
-    const owner = "abdulazizalhaaj728-del";
-    const repo = "tech-dalil";
-    const path = `articles/${fileName}`; // حفظ المقالات داخل مجلد مستقل articles لتنظيم الموقع
-
-    try {
-        showCustomAlert("جاري الحفظ", "يتم الآن رفع وحفظ ملف المقال بصيغة HTML على السحابة...");
-
-        // فحص ما إذا كان الملف موجوداً مسبقاً (للحصول على الـ SHA في حال التعديل)
-        let fileSha = "";
-        try {
-            const checkRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`);
-            if (checkRes.ok) {
-                const fileData = await checkRes.json();
-                fileSha = fileData.sha;
+        // --- دالة حفظ أو تحديث المقالة بصيغة HTML على GitHub مباشرة ---
+        async function saveOrUpdatePost() {
+            const title = document.getElementById('post-title').value.trim();
+            const category = document.getElementById('post-cat').value.trim() || "عام";
+            const description = document.getElementById('post-desc').value.trim();
+            const image = document.getElementById('post-img').value.trim();
+            const date = document.getElementById('post-date').value.trim() || new Date().toLocaleDateString('ar-SA');
+            const content = typeof quill !== 'undefined' ? quill.root.innerHTML : '';
+        
+            if (!title || content === '<p><br></p>' || !content.trim()) { 
+                showCustomAlert("تنبيه", "الرجاء إدخال عنوان ومحتوى المقال بشكل صحيح!");
+                return; 
             }
-        } catch (e) {
-            // الملف جديد تماماً ولا يوجد SHA سابقة
-        }
-
-        // تشفير محتوى الـ HTML لدعم اللغة العربية بشكل كامل
-        const encodedContent = btoa(unescape(encodeURIComponent(articleHtmlContent)));
-
-        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${token}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                message: `Publish/Update article: ${title} via Admin Panel`,
-                content: encodedContent,
-                sha: fileSha || undefined
-            })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            // حفظ بيانات مختصرة للمقال في المصفوفة العامة لتحديث القائمة الرئيسية للمدونة أو لوحة التحكم إن أردت
-            if (contentType === 'page') {
-                let pages = getData('tech_static_pages', []);
-                if (currentEditingPostId) {
-                    pages = pages.map(p => p.id === currentEditingPostId ? { ...p, title, content: path } : p);
-                } else {
-                    pages.push({ id: fileId, title, content: path });
-                }
-                localStorage.setItem('tech_static_pages', JSON.stringify(pages));
-            } else {
-                let posts = getData('tech_dalil_posts', []);
-                if (currentEditingPostId) {
-                    posts = posts.map(p => p.id === currentEditingPostId ? { ...p, title, category, description: description || title, image, date, url: path } : p);
-                } else {
-                    posts.unshift({ id: fileId, title, category, description: description || title, image, date, url: path });
-                }
-                localStorage.setItem('tech_dalil_posts', JSON.stringify(posts));
+        
+            const token = document.getElementById('gh-token-input').value.trim();
+            if (!token) {
+                showCustomAlert("تنبيه هام", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً!");
+                return;
             }
-
-            if (typeof loadPostsAdminList === 'function') loadPostsAdminList();
-            
-            showCustomAlert("نجاح النشر", "تم حفظ ونشر ملف المقال (HTML) على السيرفر بنجاح تام!", () => {
-                closeArticleManager();
-            });
-        } else {
-            showCustomAlert("خطأ في الحفظ", "فشل رفع الملف إلى GitHub: " + (result.message || "تأكد من صلاحيات الـ Token"));
+        
+            const owner = "abdulazizalhaaj728-del";
+            const repo = "tech-dalil";
+            const fileId = currentEditingPostId ? currentEditingPostId : ('post_' + Date.now());
+            const fileName = `${fileId}.html`;
+            const htmlPath = `articles/${fileName}`;
+            const jsonPath = "data.json";
+        
+            // 1. بناء هيكل ملف الـ HTML المستقل للمقالة
+            const articleHtmlContent = `<!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${title} | تكنو-دليل</title>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <style>
+                :root { --primary-color: #0284c7; --accent-color: #f59e0b; --bg-dark: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: #334155; }
+                * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+                body { background-color: var(--bg-dark); color: var(--text-main); padding: 20px; line-height: 1.8; }
+                .container { max-width: 850px; margin: 40px auto; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+                h1 { color: var(--accent-color); margin-bottom: 15px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+                .meta-info { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
+                .post-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; }
+                .content { font-size: 1.05rem; }
+                .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-color); text-decoration: none; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <a href="index.html" class="back-link">← العودة للموقع الرئيسي</a>
+                <h1>${title}</h1>
+                <div class="meta-info"><i class="fa-solid fa-calendar"></i> ${date} | <i class="fa-solid fa-tag"></i> ${category}</div>
+                ${image ? `<img src="${image}" alt="${title}" class="post-img">` : ''}
+                <div class="content">${content}</div>
+            </div>
+        </body>
+        </html>`;
+        
+            try {
+                showCustomAlert("جاري النشر", "يتم رفع صفحة HTML وتحديث السلايدر في قاعدة البيانات...");
+        
+                // الخطوة أ: رفع ملف الـ HTML المستقل للمجلد articles/
+                let htmlSha = "";
+                try {
+                    const checkRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${htmlPath}`);
+                    if (checkRes.ok) {
+                        const fileData = await checkRes.json();
+                        htmlSha = fileData.sha;
+                    }
+                } catch (e) {}
+        
+                const encodedHtml = btoa(unescape(encodeURIComponent(articleHtmlContent)));
+                const htmlResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${htmlPath}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: `Publish article HTML page: ${title}`,
+                        content: encodedHtml,
+                        sha: htmlSha || undefined
+                    })
+                });
+        
+                if (!htmlResponse.ok) throw new Error("فشل رفع ملف الـ HTML الخاص بالمقال.");
+        
+                // الخطوة ب: جلب ملف data.json وتحديثه برابط المقال الجديد ليظهر في السلايدر
+                let jsonSha = "";
+                let siteData = { posts: [], pages: [] };
+        
+                try {
+                    const jsonRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${jsonPath}`);
+                    if (jsonRes.ok) {
+                        const jsonFileData = await jsonRes.json();
+                        jsonSha = jsonFileData.sha;
+                        siteData = JSON.parse(decodeURIComponent(escape(atob(jsonFileData.content))));
+                    }
+                } catch (e) {}
+        
+                if (!siteData.posts) siteData.posts = [];
+        
+                const newPostEntry = {
+                    id: fileId,
+                    title,
+                    category,
+                    description: description || title,
+                    image,
+                    date,
+                    url: htmlPath // هذا هو الرابط الذي سيستخدمه السلايدر والواجهة لتوجيه الزوار لملف الـ HTML
+                };
+        
+                if (currentEditingPostId) {
+                    siteData.posts = siteData.posts.map(p => p.id === currentEditingPostId ? newPostEntry : p);
+                } else {
+                    siteData.posts.unshift(newPostEntry); // إضافته في المقدمة ليظهر أولاً في السلايدر
+                }
+        
+                // الخطوة ج: رفع ملف data.json المحدث إلى GitHub
+                const updatedJsonContent = btoa(unescape(encodeURIComponent(JSON.stringify(siteData, null, 2))));
+                const jsonUpdateRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${jsonPath}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: `Update data.json slider reference for: ${title}`,
+                        content: updatedJsonContent,
+                        sha: jsonSha || undefined
+                    })
+                });
+        
+                if (jsonUpdateRes.ok) {
+                    showCustomAlert("نجاح النشر", "تم حفظ ملف الـ HTML وتحديث السلايدر والواجهة بنجاح تام!", () => {
+                        closeArticleManager();
+                        if (typeof loadPostsAdminList === 'function') loadPostsAdminList();
+                    });
+                } else {
+                    throw new Error("فشل تحديث ملف البيانات الرئيسي data.json.");
+                }
+        
+            } catch (err) {
+                console.error(err);
+                showCustomAlert("خطأ", "حدث خطأ أثناء النشر: " + err.message);
+            }
         }
-    } catch (err) {
-        console.error(err);
-        showCustomAlert("خطأ اتصال", "حدث خطأ أثناء الاتصال بشفرة السحابة، تأكد من اتصالك بالإنترنت.");
-    }
-}
+                
+        
+        
         function resetPostForm() {
             currentEditingPostId = null;
             document.getElementById('content-type-selector').value = "post";
