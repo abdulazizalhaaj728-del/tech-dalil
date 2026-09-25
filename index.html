@@ -122,8 +122,7 @@
         .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; }
         .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
-        
-        
+
         .three-columns-grid { 
             width: 100%; margin: 20px auto 0; padding: 0; 
             display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; position: relative; 
@@ -303,74 +302,8 @@
         .footer-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
-
-
-        /* القائمة الرئيسية */
-        .main-menu-bar { width: 100%; margin: 10px auto 0; padding: 0; position: sticky; top: 0; z-index: 999; }
-        .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; margin: 0; }
-        
-        .mega-menu li {
-            position: relative;
-        }
-        
-        .mega-menu li a { 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            padding: 8px 16px; 
-            color: var(--text-main); 
-            text-decoration: none; 
-            font-weight: 700; 
-            font-size: 13px; 
-            border-radius: 6px; 
-            white-space: nowrap;
-        }
-        
-        .mega-menu li a:hover { 
-            background: rgba(2, 132, 199, 0.2); 
-            color: var(--accent-color); 
-        }
-        
-        /* القائمة الفرعية المنسدلة */
-        .mega-menu .dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            min-width: 180px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            list-style: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 999;
-            flex-direction: column;
-            padding: 5px 0;
-            margin: 0;
-        }
-        
-        .mega-menu li:hover .dropdown-menu {
-            display: flex;
-        }
-        
-        .mega-menu .dropdown-menu li {
-            width: 100%;
-        }
-        
-        .mega-menu .dropdown-menu li a {
-            padding: 8px 15px;
-            font-size: 0.9rem;
-            width: 100%;
-            border-radius: 0;
-        }
-        
-        .mega-menu .dropdown-menu li a:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--accent-color);
-        }
     </style>
 </head>
-    
 <body class="theme-default">
 
     <!-- بداية الإطار الخارجي الثخين الشامل لكل المدونة -->
@@ -423,13 +356,13 @@
             </div>
         </div>
 
-    
-        <!-- القائمة الرئيسية الديناميكية -->
         <div class="main-menu-bar">
-            <ul class="mega-menu" id="dynamic-menu-bar"></ul>
+            <nav id="site-main-menu" class="mega-menu">
+                <a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
+                <a href="blog.html"><i class="fa-solid fa-book-open"></i> المدونة</a>
+            </nav>
         </div>
 
-        
         <div id="site-ad-mid" style="width: 100%; margin: 15px auto; text-align: center;"></div>
         
         <div class="three-columns-grid" id="top-three-section">
@@ -548,28 +481,27 @@
                         container.innerHTML = data.posts.map(post => `
                             <div class="post-card">
                                 <div class="post-title">
-                                    <a href="${post.url || ('articles/' + post.id + '.html')}">${post.title}</a>
+                                    <a href="posts/${post.id}.html">${post.title}</a>
                                 </div>
                                 <div class="post-meta">
                                     <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
                                 </div>
                                 <div class="post-excerpt">${post.description || ''}</div>
-                                <a href="${post.url || ('articles/' + post.id + '.html')}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                                <a href="posts/${post.id}.html" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                             </div>
                         `).join('');
-                        
+
                         const sliderWrapper = document.getElementById('square-slider-wrapper');
                         const sliderPosts = data.posts.slice(0, 4);
                         if(sliderWrapper && sliderPosts.length > 0) {
                             let sliderHtml = sliderPosts.map((p, idx) => `
-                            <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
-                                <div class="square-caption">
-                                    <div class="square-title" onclick="location.href='${p.url || ('articles/' + p.id + '.html')}'" style="cursor: pointer;">${p.title}</div>
-                                    <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
+                                <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
+                                    <div class="square-caption">
+                                        <div class="square-title" onclick="location.href='index.html?id=${p.id}'">${p.title}</div>
+                                        <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        `).join('');
-                            
+                            `).join('');
                             sliderHtml += `
                                 <button class="slider-arrow slider-prev" id="slider-prev-btn"><i class="fa-solid fa-chevron-right"></i></button>
                                 <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
@@ -620,7 +552,7 @@
 
                         let contentBox = '';
                         if (w.type === 'recent') {
-                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="${p.url || ('articles/' + p.id + '.html')}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
+                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="index.html?id=${p.id}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
                         } else if (w.type === 'links') {
                             contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
                         } else {
@@ -783,48 +715,6 @@
                 }
             });
         }
-
-
-        // بناء القائمة الرئيسية الديناميكية مع الوميض
-function renderMenu() {
-            // جلب البيانات من ملف JSON أو استخدام القائمة الافتراضية كاحتياط
-            const menuData = getData('tech_menu_items', [
-                { title: "الرئيسية", link: "index.html", blinking: false, children: [] },
-                { title: "البرمجيات", link: "#", blinking: false, children: [{ title: "أنظمة الويب", link: "#" }] }
-            ]);
-            
-            const menuBar = document.getElementById('dynamic-menu-bar');
-            if (!menuBar) return; // تأكد من وجود العنصر في الصفحة تفادياً للأخطاء
-            
-            menuBar.innerHTML = "";
-
-            menuData.forEach(item => {
-                let li = document.createElement('li');
-                let blinkClass = item.blinking ? 'blinking-item' : '';
-                let hasChildren = item.children && item.children.length > 0;
-                
-                // بناء رابط العنصر الرئيسي مع دعم الوميض وأيقونة السهم للفرعي
-                li.innerHTML = `<a href="${item.link || '#'}" class="${blinkClass}">${item.title} ${hasChildren ? '<span class="arrow">▾</span>' : ''}</a>`;
-                
-                // إذا كانت هناك عناصر فرعية، قم ببناء القائمة المنسدلة لها
-                if (hasChildren) {
-                    let ul = document.createElement('ul');
-                    ul.className = 'dropdown-menu';
-                    
-                    item.children.forEach(sub => {
-                        let subLi = document.createElement('li');
-                        subLi.innerHTML = `<a href="${sub.link || '#'}">${sub.title}</a>`;
-                        ul.appendChild(subLi);
-                    });
-                    
-                    li.appendChild(ul);
-                }
-                
-                menuBar.appendChild(li);
-            });
-        }
-    
     </script>
-    
 </body>
 </html>
