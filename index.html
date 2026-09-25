@@ -481,27 +481,28 @@
                         container.innerHTML = data.posts.map(post => `
                             <div class="post-card">
                                 <div class="post-title">
-                                    <a href="posts/${post.id}.html">${post.title}</a>
+                                    <a href="${post.url || ('articles/' + post.id + '.html')}">${post.title}</a>
                                 </div>
                                 <div class="post-meta">
                                     <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
                                 </div>
                                 <div class="post-excerpt">${post.description || ''}</div>
-                                <a href="posts/${post.id}.html" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                                <a href="${post.url || ('articles/' + post.id + '.html')}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                             </div>
                         `).join('');
-
+                        
                         const sliderWrapper = document.getElementById('square-slider-wrapper');
                         const sliderPosts = data.posts.slice(0, 4);
                         if(sliderWrapper && sliderPosts.length > 0) {
                             let sliderHtml = sliderPosts.map((p, idx) => `
-                                <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
-                                    <div class="square-caption">
-                                        <div class="square-title" onclick="location.href='index.html?id=${p.id}'">${p.title}</div>
-                                        <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
-                                    </div>
+                            <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
+                                <div class="square-caption">
+                                    <div class="square-title" onclick="location.href='${p.url || ('articles/' + p.id + '.html')}'" style="cursor: pointer;">${p.title}</div>
+                                    <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                                 </div>
-                            `).join('');
+                            </div>
+                        `).join('');
+                            
                             sliderHtml += `
                                 <button class="slider-arrow slider-prev" id="slider-prev-btn"><i class="fa-solid fa-chevron-right"></i></button>
                                 <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
@@ -552,7 +553,7 @@
 
                         let contentBox = '';
                         if (w.type === 'recent') {
-                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="index.html?id=${p.id}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
+                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="${p.url || ('articles/' + p.id + '.html')}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
                         } else if (w.type === 'links') {
                             contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
                         } else {
