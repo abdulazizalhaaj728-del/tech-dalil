@@ -122,7 +122,8 @@
         .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; }
         .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
-
+        
+        
         .three-columns-grid { 
             width: 100%; margin: 20px auto 0; padding: 0; 
             display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; position: relative; 
@@ -302,8 +303,59 @@
         .footer-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
+
+
+        /* القائمة الرئيسية الديناميكية مع خاصية الوميض
+        .main-menu-bar {
+            max-width: 1200px;
+            width: 100%;
+            margin: 15px auto 0;
+            padding: 0 15px; 
+        }*/
+        .mega-menu {
+            background: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            display: flex;
+            list-style: none;
+            padding: 0 10px;
+            box-shadow: 0 5px 15px rgba(2, 132, 199, 0.2);
+        }
+        .mega-menu > li { position: relative; flex: 1; text-align: center; }
+        .mega-menu > li > a {
+            display: block;
+            padding: 14px 10px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .mega-menu > li > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
+        
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 200px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            list-style: none;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 99;
+            text-align: right;
+        }
+        .mega-menu > li:hover .dropdown-menu { display: block; }
+        .dropdown-menu li { position: relative; border-bottom: 1px solid var(--border-color); }
+        .dropdown-menu li a { display: block; padding: 10px 15px; color: var(--text-main); text-decoration: none; font-size: 0.9rem; transition: 0.2s; }
+        .dropdown-menu li a:hover { background: var(--primary-color); color: #fff; padding-right: 20px; }
+
     </style>
 </head>
+    
 <body class="theme-default">
 
     <!-- بداية الإطار الخارجي الثخين الشامل لكل المدونة -->
@@ -356,13 +408,13 @@
             </div>
         </div>
 
+    
+        <!-- القائمة الرئيسية الديناميكية -->
         <div class="main-menu-bar">
-            <nav id="site-main-menu" class="mega-menu">
-                <a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
-                <a href="blog.html"><i class="fa-solid fa-book-open"></i> المدونة</a>
-            </nav>
+            <ul class="mega-menu" id="dynamic-menu-bar"></ul>
         </div>
 
+        
         <div id="site-ad-mid" style="width: 100%; margin: 15px auto; text-align: center;"></div>
         
         <div class="three-columns-grid" id="top-three-section">
@@ -481,27 +533,28 @@
                         container.innerHTML = data.posts.map(post => `
                             <div class="post-card">
                                 <div class="post-title">
-                                    <a href="posts/${post.id}.html">${post.title}</a>
+                                    <a href="${post.url || ('articles/' + post.id + '.html')}">${post.title}</a>
                                 </div>
                                 <div class="post-meta">
                                     <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
                                 </div>
                                 <div class="post-excerpt">${post.description || ''}</div>
-                                <a href="posts/${post.id}.html" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                                <a href="${post.url || ('articles/' + post.id + '.html')}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                             </div>
                         `).join('');
-
+                        
                         const sliderWrapper = document.getElementById('square-slider-wrapper');
                         const sliderPosts = data.posts.slice(0, 4);
                         if(sliderWrapper && sliderPosts.length > 0) {
                             let sliderHtml = sliderPosts.map((p, idx) => `
-                                <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
-                                    <div class="square-caption">
-                                        <div class="square-title" onclick="location.href='index.html?id=${p.id}'">${p.title}</div>
-                                        <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
-                                    </div>
+                            <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
+                                <div class="square-caption">
+                                    <div class="square-title" onclick="location.href='${p.url || ('articles/' + p.id + '.html')}'" style="cursor: pointer;">${p.title}</div>
+                                    <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                                 </div>
-                            `).join('');
+                            </div>
+                        `).join('');
+                            
                             sliderHtml += `
                                 <button class="slider-arrow slider-prev" id="slider-prev-btn"><i class="fa-solid fa-chevron-right"></i></button>
                                 <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
@@ -552,7 +605,7 @@
 
                         let contentBox = '';
                         if (w.type === 'recent') {
-                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="index.html?id=${p.id}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
+                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="${p.url || ('articles/' + p.id + '.html')}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
                         } else if (w.type === 'links') {
                             contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
                         } else {
@@ -715,6 +768,37 @@
                 }
             });
         }
+
+
+        // بناء القائمة الرئيسية الديناميكية مع الوميض
+        function renderMenu() {
+            const menuData = getData('tech_menu_items', [
+                { title: "الرئيسية", link: "index.html", blinking: false, children: [] },
+                { title: "البرمجيات", link: "#", blinking: false, children: [{title: "أنظمة الويب", link:"#"}] }
+            ]);
+            const menuBar = document.getElementById('dynamic-menu-bar');
+            menuBar.innerHTML = "";
+
+            menuData.forEach(item => {
+                let li = document.createElement('li');
+                let blinkClass = item.blinking ? 'blinking-item' : '';
+                let hasChildren = item.children && item.children.length > 0;
+                
+                li.innerHTML = `<a href="${item.link}" class="${blinkClass}">${item.title} ${hasChildren ? '▾' : ''}</a>`;
+                
+                if(hasChildren) {
+                    let ul = document.createElement('ul');
+                    ul.className = 'dropdown-menu';
+                    item.children.forEach(sub => {
+                        ul.innerHTML += `<li><a href="${sub.link}">${sub.title}</a></li>`;
+                    });
+                    li.appendChild(ul);
+                }
+                menuBar.appendChild(li);
+            });
+        }
+    
     </script>
+    
 </body>
 </html>
