@@ -4,59 +4,8 @@
         "logoHeight": "100px",
         "tickerVisible": true
     },
-    "menu": [
-        {
-            "rawText": "_الرئيسية",
-            "title": "الرئيسية",
-            "level": 1,
-            "url": "index.html"
-        },
-        {
-            "rawText": "__شروحات تقنية",
-            "title": "شروحات تقنية",
-            "level": 2,
-            "url": "#"
-        },
-        {
-            "rawText": "___مقالات عامة",
-            "title": "مقالات عامة",
-            "level": 3,
-            "url": "#"
-        },
-        {
-            "rawText": "____ذكاء اصطناعي",
-            "title": "ذكاء اصطناعي",
-            "level": 4,
-            "url": "#"
-        },
-        {
-            "rawText": "علوم الحاسب الآلي",
-            "title": "علوم الحاسب الآلي",
-            "level": 1,
-            "url": "#"
-        },
-        {
-            "rawText": "__حاسب آلي1",
-            "title": "حاسب آلي1",
-            "level": 2,
-            "url": "#"
-        },
-        {
-            "rawText": "__حاسب آلي 2",
-            "title": "حاسب آلي 2",
-            "level": 2,
-            "url": "#"
-        }
-    ],
+    "menu": [],
     "widgets": [
-        {
-            "id": "w_1",
-            "title": "أحدث المواضيع",
-            "type": "recent",
-            "content": "",
-            "active": true,
-            "location": "sidebar"
-        },
         {
             "id": "w_1790149828222",
             "title": "ودجت تذييل 1",
