@@ -305,54 +305,69 @@
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
 
 
-        /* القائمة الرئيسية الديناميكية مع خاصية الوميض
-        .main-menu-bar {
-            max-width: 1200px;
-            width: 100%;
-            margin: 15px auto 0;
-            padding: 0 15px; 
-        }*/
-        .mega-menu {
-            background: var(--card-bg);
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
-            display: flex;
-            list-style: none;
-            padding: 0 10px;
-            box-shadow: 0 5px 15px rgba(2, 132, 199, 0.2);
-        }
-        .mega-menu > li { position: relative; flex: 1; text-align: center; }
-        .mega-menu > li > a {
-            display: block;
-            padding: 14px 10px;
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: 0.2s;
-        }
-        .mega-menu > li > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
+        /* القائمة الرئيسية */
+        .main-menu-bar { width: 100%; margin: 10px auto 0; padding: 0; position: sticky; top: 0; z-index: 999; }
+        .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; margin: 0; }
         
-
-        .dropdown-menu {
+        .mega-menu li {
+            position: relative;
+        }
+        
+        .mega-menu li a { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            padding: 8px 16px; 
+            color: var(--text-main); 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 13px; 
+            border-radius: 6px; 
+            white-space: nowrap;
+        }
+        
+        .mega-menu li a:hover { 
+            background: rgba(2, 132, 199, 0.2); 
+            color: var(--accent-color); 
+        }
+        
+        /* القائمة الفرعية المنسدلة */
+        .mega-menu .dropdown-menu {
+            display: none;
             position: absolute;
             top: 100%;
             right: 0;
-            width: 200px;
+            min-width: 180px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             list-style: none;
-            display: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            z-index: 99;
-            text-align: right;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 999;
+            flex-direction: column;
+            padding: 5px 0;
+            margin: 0;
         }
-        .mega-menu > li:hover .dropdown-menu { display: block; }
-        .dropdown-menu li { position: relative; border-bottom: 1px solid var(--border-color); }
-        .dropdown-menu li a { display: block; padding: 10px 15px; color: var(--text-main); text-decoration: none; font-size: 0.9rem; transition: 0.2s; }
-        .dropdown-menu li a:hover { background: var(--primary-color); color: #fff; padding-right: 20px; }
-
+        
+        .mega-menu li:hover .dropdown-menu {
+            display: flex;
+        }
+        
+        .mega-menu .dropdown-menu li {
+            width: 100%;
+        }
+        
+        .mega-menu .dropdown-menu li a {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            width: 100%;
+            border-radius: 0;
+        }
+        
+        .mega-menu .dropdown-menu li a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-color);
+        }
     </style>
 </head>
     
@@ -771,12 +786,16 @@
 
 
         // بناء القائمة الرئيسية الديناميكية مع الوميض
-        function renderMenu() {
+function renderMenu() {
+            // جلب البيانات من ملف JSON أو استخدام القائمة الافتراضية كاحتياط
             const menuData = getData('tech_menu_items', [
                 { title: "الرئيسية", link: "index.html", blinking: false, children: [] },
-                { title: "البرمجيات", link: "#", blinking: false, children: [{title: "أنظمة الويب", link:"#"}] }
+                { title: "البرمجيات", link: "#", blinking: false, children: [{ title: "أنظمة الويب", link: "#" }] }
             ]);
+            
             const menuBar = document.getElementById('dynamic-menu-bar');
+            if (!menuBar) return; // تأكد من وجود العنصر في الصفحة تفادياً للأخطاء
+            
             menuBar.innerHTML = "";
 
             menuData.forEach(item => {
@@ -784,16 +803,23 @@
                 let blinkClass = item.blinking ? 'blinking-item' : '';
                 let hasChildren = item.children && item.children.length > 0;
                 
-                li.innerHTML = `<a href="${item.link}" class="${blinkClass}">${item.title} ${hasChildren ? '▾' : ''}</a>`;
+                // بناء رابط العنصر الرئيسي مع دعم الوميض وأيقونة السهم للفرعي
+                li.innerHTML = `<a href="${item.link || '#'}" class="${blinkClass}">${item.title} ${hasChildren ? '<span class="arrow">▾</span>' : ''}</a>`;
                 
-                if(hasChildren) {
+                // إذا كانت هناك عناصر فرعية، قم ببناء القائمة المنسدلة لها
+                if (hasChildren) {
                     let ul = document.createElement('ul');
                     ul.className = 'dropdown-menu';
+                    
                     item.children.forEach(sub => {
-                        ul.innerHTML += `<li><a href="${sub.link}">${sub.title}</a></li>`;
+                        let subLi = document.createElement('li');
+                        subLi.innerHTML = `<a href="${sub.link || '#'}">${sub.title}</a>`;
+                        ul.appendChild(subLi);
                     });
+                    
                     li.appendChild(ul);
                 }
+                
                 menuBar.appendChild(li);
             });
         }
