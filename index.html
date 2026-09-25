@@ -306,108 +306,61 @@
 
 
         /* شريط القائمة الرئيسية */
-        .main-menu-bar { 
-            width: 100%; 
-            margin: 10px auto 0; 
-            padding: 0; 
-            position: sticky; 
-            top: 0; 
-            z-index: 999; 
+        /* ضبط حاوية القائمة الرئيسية */
+        .main-menu-bar {
+            position: relative !important;
+            z-index: 9999 !important;
         }
         
-        /* حاوية القائمة */
-        .mega-menu { 
-            background: var(--card-bg); 
-            border: 2px solid var(--primary-color); 
-            border-radius: 10px; 
-            list-style: none; 
-            padding: 5px 10px; 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 5px; 
-            margin: 0;
-            align-items: center;
+        /* تنسيق القائمة لتسمح بتمركز العناصر وعمل المنسدلة */
+        .main-menu-bar ul, 
+        .main-menu-bar .mega-menu {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
         }
         
-        /* عناصر القائمة الرئيسية */
-        .mega-menu li {
-            position: relative; /* مهم جداً لتجعل القائمة الفرعية تمركزها تحته مباشرة */
+        /* كل عنصر رئيسي يجب أن يكون نسبي ليحمل القائمة تحته */
+        .main-menu-bar li {
+            position: relative !important;
         }
         
-        /* تنسيق الروابط داخل القائمة */
-        .mega-menu li a, 
-        .mega-menu > a { 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            padding: 8px 16px; 
-            color: var(--text-main); 
-            text-decoration: none; 
-            font-weight: 700; 
-            font-size: 13px; 
-            border-radius: 6px; 
-            transition: color 0.3s, background 0.3s;
+        /* القائمة الفرعية (المنسدلة) مخفية افتراضياً وتظهر عمودياً تحت العنصر */
+        .main-menu-bar .submenu {
+            display: none !important;
+            position: absolute !important;
+            top: 100% !important;
+            right: 0 !important;
+            min-width: 180px !important;
+            background: var(--card-bg, #1e1e2f) !important;
+            border: 1px solid var(--primary-color, #0284c7) !important;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4) !important;
+            z-index: 10000 !important;
+            flex-direction: column !important;
+            padding: 5px 0 !important;
+            list-style: none !important;
         }
         
-        .mega-menu li a:hover, 
-        .mega-menu > a:hover { 
-            background: rgba(2, 132, 199, 0.2); 
-            color: var(--accent-color); 
+        /* إظهار القائمة الفرعية عند تمرير الماوس عمودياً */
+        .main-menu-bar li:hover > .submenu,
+        .main-menu-bar li.has-dropdown:hover .submenu {
+            display: flex !important;
         }
         
-        /* إضافة السهم للعناصر التي تحتوي على قوائم فرعية */
-        .mega-menu li.has-dropdown > a::after {
-            content: " \f107"; 
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            margin-right: 6px;
-            font-size: 0.8rem;
-            display: inline-block;
-            transition: transform 0.3s;
+        /* تنسيق عناصر وروابط القائمة الفرعية */
+        .main-menu-bar .submenu li {
+            width: 100% !important;
+            display: block !important;
         }
         
-        /* تدوير السهم عند المرور */
-        .mega-menu li.has-dropdown:hover > a::after {
-            transform: rotate(180deg);
-        }
-        
-        /* تصميم القائمة الفرعية لتظهر تحت العنصر تماماً */
-        .mega-menu .submenu {
-            display: none;
-            position: absolute;
-            top: 100%; /* تحت العنصر الأب مباشرة */
-            right: 0;  /* محاذاة لليمين لأن الموقع عربي */
-            background: var(--card-bg, #1e1e2f); 
-            border: 1px solid var(--primary-color);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            min-width: 180px;
-            border-radius: 6px;
-            flex-direction: column;
-            padding: 5px 0;
-            z-index: 999;
-            list-style: none;
-        }
-        
-        /* إظهار القائمة الفرعية عند المرور بالماوس */
-        .mega-menu li.has-dropdown:hover .submenu {
-            display: flex;
-        }
-        
-        /* تنسيق روابط القائمة الفرعية */
-        .mega-menu .submenu li {
-            width: 100%;
-        }
-        
-        .mega-menu .submenu li a {
-            padding: 8px 15px;
-            font-size: 0.9rem;
-            white-space: nowrap;
-            width: 100%;
-        }
-        
-        .mega-menu .submenu li a:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--accent-color);
+        .main-menu-bar .submenu li a {
+            display: block !important;
+            padding: 10px 15px !important;
+            width: 100% !important;
+            white-space: nowrap !important;
+            text-align: right !important;
         }
     </style>
 </head>
