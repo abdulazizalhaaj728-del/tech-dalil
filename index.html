@@ -786,6 +786,23 @@
                 }
             });
         }
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // البحث عن أي عنصر فرعي أو تداخل في القائمة وتصحيح الكلاسات تلقائياً
+            const menuItems = document.querySelectorAll('.mega-menu li, .main-menu-bar li');
+            
+            menuItems.forEach(item => {
+                // إذا كان العنصر يحتوي بداخله على قائمة أخرى، امنحه كلاس الـ has-dropdown تلقائياً
+                const subMenu = item.querySelector('ul, ol');
+                if (subMenu) {
+                    item.classList.add('has-dropdown');
+                    subMenu.classList.add('submenu');
+                }
+            });
+        });
+    
     </script>
+    
 </body>
 </html>
