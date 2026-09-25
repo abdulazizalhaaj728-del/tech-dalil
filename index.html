@@ -779,19 +779,33 @@
         }
 
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // البحث عن أي عنصر فرعي أو تداخل في القائمة وتصحيح الكلاسات تلقائياً
-            const menuItems = document.querySelectorAll('.mega-menu li, .main-menu-bar li');
-            
-            menuItems.forEach(item => {
-                // إذا كان العنصر يحتوي بداخله على قائمة أخرى، امنحه كلاس الـ has-dropdown تلقائياً
-                const subMenu = item.querySelector('ul, ol');
-                if (subMenu) {
-                    item.classList.add('has-dropdown');
-                    subMenu.classList.add('submenu');
+        // بناء القائمة الرئيسية الديناميكية مع الوميض
+        function renderMenu() {
+            const menuData = getData('tech_menu_items', [
+                { title: "الرئيسية", link: "index.html", blinking: false, children: [] },
+                { title: "البرمجيات", link: "#", blinking: false, children: [{title: "أنظمة الويب", link:"#"}] }
+            ]);
+            const menuBar = document.getElementById('dynamic-menu-bar');
+            menuBar.innerHTML = "";
+
+            menuData.forEach(item => {
+                let li = document.createElement('li');
+                let blinkClass = item.blinking ? 'blinking-item' : '';
+                let hasChildren = item.children && item.children.length > 0;
+                
+                li.innerHTML = `<a href="${item.link}" class="${blinkClass}">${item.title} ${hasChildren ? '▾' : ''}</a>`;
+                
+                if(hasChildren) {
+                    let ul = document.createElement('ul');
+                    ul.className = 'dropdown-menu';
+                    item.children.forEach(sub => {
+                        ul.innerHTML += `<li><a href="${sub.link}">${sub.title}</a></li>`;
+                    });
+                    li.appendChild(ul);
                 }
+                menuBar.appendChild(li);
             });
-        });
+        }
     
     </script>
     
