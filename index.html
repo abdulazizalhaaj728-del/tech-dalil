@@ -362,32 +362,40 @@
         .recent-posts-list li a:hover { color: var(--accent-color); }
 
         .site-footer { width: 100%; margin: 15px auto 0; padding: 0; }
-        .footer-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
 
         /* تنسيق منطقة التذييل لتصبح شبكة من 4 أعمدة متساوية أفقياً */
-        .site-footer, .container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 أعمدة متساوية تماماً */
-            gap: 20px; /* مسافة متساوية بين المربعات */
-            width: 100%;
-            box-sizing: border-box;
-        }
+        .site-footer { width: 100%; margin: 15px auto 0; padding: 0; }
         
-        /* للتجاوب مع الهواتف والأجهزة الصغيرة لكي تصبح عموداً واحداً أو اثنين عند الضيق */
+        /* جعل حاوية التذييل شبكة ثابتة من 4 أعمدة متساوية تماماً */
+        .footer-container { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 15px; 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); /* 4 أعمدة أفقية متساوية دائماً */
+            gap: 20px; 
+        }
+
+        .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
+        .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
+
+        /* التجاوب مع الشاشات الصغيرة والهواتف */
         @media (max-width: 900px) {
-            .site-footer, .container {
-                grid-template-columns: repeat(2, 1fr);
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr); /* عمودان في الأجهزة المتوسطة */
             }
         }
         
         @media (max-width: 600px) {
-            .site-footer, .container {
-                grid-template-columns: 1fr;
+            .footer-container {
+                grid-template-columns: 1fr; /* عمود واحد في الهواتف الضيقة */
             }
         }
-
+        
     </style>
 </head>
     
