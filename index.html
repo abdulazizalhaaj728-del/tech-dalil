@@ -590,6 +590,9 @@ function initSliderLogic() {
             sliderTimer = setInterval(nextSlide, 4000);
         });
     }
+    document.getElementById('secret-trigger')?.addEventListener('click', () => {
+        if (prompt("كلمة المرور:") === "aziz728") window.location.href = "dashboard.html";
+    });
 
     
         const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
