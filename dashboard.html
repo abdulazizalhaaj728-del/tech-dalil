@@ -309,11 +309,27 @@
                     <div id="editor-container"></div>
                 </div>
 
+
+<!-- حقل الرابط المتوقع وزر النسخ -->
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="flex: 1; display: flex; align-items: center; gap: 5px;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">رابط المقال:</span>
+                        <input type="text" id="article-slug-input" placeholder="slug-name" style="flex: 1; padding: 6px 10px; font-size: 0.85rem; background: var(--bg-dark); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 4px;" title="يمكنك تعديل اسم الرابط هنا، الرقم التسلسلي ثابت">
+                        <span id="article-id-badge" style="font-size: 0.75rem; color: var(--accent-color); background: rgba(2,132,199,0.1); padding: 4px 8px; border-radius: 4px; font-weight: bold;"></span>
+                    </div>
+                    <button type="button" class="btn" onclick="copyArticleLink()" style="background: #3b82f6; color: #fff; padding: 6px 12px; font-size: 0.8rem; white-space: nowrap;">
+                        <i class="fa-solid fa-copy"></i> نسخ الرابط
+                    </button>
+                </div>
+
                 <!-- 3. شريط الأزرار السفلي للفورم -->
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                    <div style="display: flex; gap: 12px; align-items: center;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                         <button type="button" class="btn" id="publish-btn" style="padding: 6px 14px; font-size: 0.85rem;" disabled>
                             <i class="fa-solid fa-floppy-disk"></i> حفظ ونشر
+                        </button>
+                        <button type="button" class="btn" id="draft-toggle-btn" onclick="toggleArticleDraftStatus()" style="background: #f59e0b; color: #fff; padding: 6px 14px; font-size: 0.85rem;">
+                            <i class="fa-solid fa-file-lines"></i> مسودة
                         </button>
                         <button type="button" class="btn" id="cancel-manager-btn" style="background:#ef4444; color:#fff; padding: 6px 14px; font-size: 0.85rem;">
                             <i class="fa-solid fa-xmark"></i> إلغاء الأمر
@@ -325,7 +341,9 @@
                         </button>
                     </div>
                 </div>
-            </div>
+                
+
+                
 
             <hr style="border:0; border-top:1px solid var(--border-color); margin: 20px 0;">
             <h4>المقالات والصفحات المنشورة حالياً (تعديل أو حذف):</h4>
@@ -1467,6 +1485,81 @@ let draggedIndices = [];
             </body>
             </html>`;
             }
+
+            // متغير لتتبع حالة المسودة الحالية للمقال المفتوح
+            let currentArticleIsDraft = false;
+            
+            // دالة تهيئة حقل الرابط عند فتح المقال للتعديل أو الإنشاء
+            function initArticleSlugField(post) {
+                const slugInput = document.getElementById('article-slug-input');
+                const idBadge = document.getElementById('article-id-badge');
+                const draftBtn = document.getElementById('draft-toggle-btn');
+            
+                if (!slugInput) return;
+            
+                // إذا كان المقال جديداً كلياً ولم يُنشر من قبل
+                if (!post || !post.isPublished) {
+                    slugInput.disabled = false;
+                    idBadge.innerText = `#${post ? post.id : 'جديد'}`;
+                    currentArticleIsDraft = false;
+                    if (draftBtn) {
+                        draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+                        draftBtn.style.background = '#f59e0b';
+                    }
+                } else {
+                    // إذا كان مقالاً قديماً ومنشوراً من قبل (يمنع تعديل الرابط نهائياً للثبات)
+                    slugInput.disabled = true;
+                    slugInput.title = "عذراً، لا يمكن تعديل رابط مقال تم نشره مسبقاً للحفاظ على الروابط";
+                    idBadge.innerText = `#${post.id}`;
+                    
+                    currentArticleIsDraft = post.isDraft || false;
+                    if (draftBtn) {
+                        if (currentArticleIsDraft) {
+                            draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
+                            draftBtn.style.background = '#10b981';
+                        } else {
+                            draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+                            draftBtn.style.background = '#f59e0b';
+                        }
+                    }
+                }
+                
+                // تعيين القيمة الحالية في الحقل
+                slugInput.value = post && post.slug ? post.slug : (post ? post.title.replace(/\s+/g, '-') : '');
+            }
+            
+            // دالة تبديل حالة مسودة / نشر
+            function toggleArticleDraftStatus() {
+                currentArticleIsDraft = !currentArticleIsDraft;
+                const draftBtn = document.getElementById('draft-toggle-btn');
+                
+                if (currentArticleIsDraft) {
+                    draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
+                    draftBtn.style.background = '#10b981'; // أخضر للنشر
+                    showCustomAlert("تنبيه", "تم تحويل المقال إلى وضع (مسودة). لن يظهر للعامة حتى تقوم بنشره.");
+                } else {
+                    draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+                    draftBtn.style.background = '#f59e0b'; // برتقالي للمسودة
+                    showCustomAlert("تنبيه", "تم تغيير الوضع إلى (نشر). سيصبح متاحاً للعامة عند الضغط على حفظ ونشر.");
+                }
+            }
+            
+            // دالة نسخ رابط المقالة
+            function copyArticleLink() {
+                const slugInput = document.getElementById('article-slug-input');
+                const idBadge = document.getElementById('article-id-badge');
+                if (!slugInput) return;
+            
+                let fullLink = `${window.location.origin}/posts/${slugInput.value.trim()}-${idBadge.innerText.replace('#', '')}.html`;
+                
+                navigator.clipboard.writeText(fullLink).then(() => {
+                    showCustomAlert("تم النسخ", "تم نسخ رابط المقالة بنجاح إلى الحافظة!");
+                }).catch(err => {
+                    console.error('فشل النسخ:', err);
+                });
+            }
+
+        
     </script>
 </body>
 </html>
