@@ -691,7 +691,7 @@
             resetPostForm();
         }
 
-        async function saveOrUpdatePost() {
+async function saveOrUpdatePost() {
             const title = document.getElementById('post-title').value.trim();
             const category = document.getElementById('post-cat').value.trim() || "عام";
             const description = document.getElementById('post-desc').value.trim();
@@ -699,7 +699,10 @@
             const date = document.getElementById('post-date').value.trim() || new Date().toLocaleDateString('ar-SA');
             const content = typeof quill !== 'undefined' ? quill.root.innerHTML : '';
             const slugInput = document.getElementById('article-slug-input');
-            const slug = slugInput ? slugInput.value.trim() : (title ? generateSlug(title) : 'post');
+            
+            // جلب الـ slug وتنسيقه ليكون صالحاً كاسم ملف (إزالة أي إمتداد مكرر وضمان وجود .html)
+            let slug = slugInput ? slugInput.value.trim() : (title ? generateSlug(title) : 'post');
+            slug = slug.endsWith('.html') ? slug : slug + '.html';
         
             if (!title || content === '<p><br></p>' || !content.trim()) { 
                 showCustomAlert("تنبيه", "الرجاء إدخال عنوان ومحتوى المقال بشكل صحيح!");
@@ -712,7 +715,10 @@
                 return;
             }
         
+            // استخدام الـ slug (بدون .html كمعرف فريد داخلي إذا لزم، أو حفظه)
             const fileId = currentEditingPostId ? currentEditingPostId : ('post_' + Date.now());
+            
+            // اعتماد اسم ملف الـ HTML بناءً على الـ slug الذي أدخله المستخدم
             const postObj = {
                 id: fileId,
                 title,
@@ -724,14 +730,13 @@
                 slug,
                 isDraft: currentArticleIsDraft,
                 isPublished: true,
-                url: `articles/${fileId}.html`
+                url: `articles/${slug}` // هنا يتم اعتماد الـ slug كاسم للملف والرابط
             };
-
+        
             await saveServerData("تم الحفظ والنشر وتوليد صفحة المقال المستقلة بنجاح على السحابة!", postObj);
             closeArticleManager();
             loadPostsAdminList();
-        }
-        
+        }        
         function resetPostForm() {
             currentEditingPostId = null;
             currentArticleIsDraft = false;
