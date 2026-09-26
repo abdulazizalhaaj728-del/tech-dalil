@@ -824,24 +824,17 @@ async function saveOrUpdatePost() {
         }
 
 // 2. دالة عرض المقالات والصفحات في لوحة التحكم (محسنة لتقرأ من الـ LocalStorage والـ globalData معاً)
-        function loadPostsAdminList() {
-            // جلب المقالات والصفحات بمرونة تامة من localStorage أو globalData
-            let posts = getData('tech_dalil_posts', []);
-            if (posts.length === 0 && globalData.posts && globalData.posts.length > 0) {
-                posts = globalData.posts;
-            }
-
-            let pages = getData('tech_static_pages', []);
-            if (pages.length === 0 && globalData.pages && globalData.pages.length > 0) {
-                pages = globalData.pages;
-            }
+function loadPostsAdminList() {
+            // الاعتماد المباشر على البيانات القادمة من ملف data.json على السيرفر (globalData)
+            let posts = (globalData.posts && globalData.posts.length > 0) ? globalData.posts : getData('tech_dalil_posts', []);
+            let pages = (globalData.pages && globalData.pages.length > 0) ? globalData.pages : getData('tech_static_pages', []);
 
             const container = document.getElementById('posts-admin-management-list');
             if(!container) return;
             container.innerHTML = "";
             
             if(posts.length === 0 && pages.length === 0) { 
-                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>لا توجد مقالات أو صفحات منشورة.</p>"; 
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>لا توجد مقالات أو صفحات منشورة حالياً على السيرفر.</p>"; 
                 return; 
             }
 
@@ -871,6 +864,7 @@ async function saveOrUpdatePost() {
             });
         }
 
+        
         // 3. دالة الحذف وتحديث التخزين
         function deletePost(id, type) {
             showCustomAlert("تأكيد", "هل أنت متأكد من الحذف؟", () => {
