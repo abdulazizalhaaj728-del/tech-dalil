@@ -422,7 +422,7 @@
                 baseSlug = "tech-post";
             }
             const uniqueId = Date.now().toString().slice(-5);
-            return `${baseSlug}-${uniqueId}`;
+            return `${baseSlug}-${uniqueId}.html`;
         }
 
         async function loadServerData() {
@@ -799,8 +799,11 @@
             const slugInput = document.getElementById('article-slug-input');
             if (!slugInput) return;
         
-            const slugValue = slugInput.value.trim() || 'post';
-            let fullLink = `${window.location.origin}/articles/${slugValue}.html`;
+            const slugValue = slugInput.value.trim() || 'post.html';
+            
+            // التأكد من عدم تكرار الـ .html لو كانت موجودة مسبقاً أو غير موجودة
+            let fileName = slugValue.endsWith('.html') ? slugValue : slugValue + '.html';
+            let fullLink = `${window.location.origin}/articles/${fileName}`;
         
             navigator.clipboard.writeText(fullLink).then(() => {
                 showCustomAlert("تم النسخ", "تم نسخ رابط المقالة بنجاح إلى الحافظة!");
