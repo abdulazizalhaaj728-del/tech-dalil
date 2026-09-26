@@ -585,18 +585,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const postId = urlParams.get('id');
 
-            // استخراج اسم الملف الحالي (الـ slug) من مسار الصفحة لضمان المطابقة الدقيقة في صفحات المقالات المستقلة
+            // اكتشاف ما إذا كنا داخل مجلد articles أو في الصفحة الرئيسية
+            const isInsideArticles = window.location.pathname.includes('/articles/');
+            const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
+            const homeLink = isInsideArticles ? '../index.html' : 'index.html';
+
+            // استخراج اسم الملف الحالي (الـ slug)
             const pathSegments = window.location.pathname.split('/');
-            const currentFileName = pathSegments[pathSegments.length - 1]; // مثال: my-post.html
+            const currentFileName = pathSegments[pathSegments.length - 1];
 
             try {
-                // استخدام مسار نسبى صحيح (../data.json) لأن صفحة المقال داخل مجلد articles/
-                const response = await fetch('../data.json?t=' + Date.now());
+                const response = await fetch(jsonPath);
                 const data = await response.json();
                 const container = document.getElementById('posts-container');
                 
-                if (postId || (currentFileName && currentFileName !== 'index.html' && currentFileName !== '')) {
-                    // البحث الذكي عن المقال: إما عن طريق الـ id أو مطابقة الـ slug / اسم الملف الحالي / رابط الـ url
+                // إذا كنا في صفحة مقال فردي
+                if (postId || (isInsideArticles && currentFileName && currentFileName !== 'index.html')) {
                     const postsList = data.posts || [];
                     const post = postId 
                         ? postsList.find(p => p.id == postId) 
@@ -623,29 +627,30 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     </div>
                                     ${botAd}
                                     <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                                        <a href="../index.html" style="display: inline-block; background: var(--primary-color); color: #fff; padding: 6px 15px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← العودة إلى الصفحة الرئيسية</a>
+                                        <a href="${homeLink}" style="display: inline-block; background: var(--primary-color); color: #fff; padding: 6px 15px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← العودة إلى الصفحة الرئيسية</a>
                                     </div>
                                 </div>
                             `;
                         }
                     } else {
                         if (container) {
-                            container.innerHTML = `<div class="post-card"><h2>عذراً</h2><p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود أو تم تغيير رابطه.</p><a href="../index.html" style="color: var(--accent-color); text-decoration: none; font-weight: bold;">العودة للرئيسية</a></div>`;
+                            container.innerHTML = `<div class="post-card"><h2>عذراً</h2><p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود أو تم تغيير رابطه.</p><a href="${homeLink}" style="color: var(--accent-color); text-decoration: none; font-weight: bold;">العودة للرئيسية</a></div>`;
                         }
                     }
                 } else {
+                    // عرض الصفحة الرئيسية (قائمة المقالات + السلايدر)
                     if (data.posts && data.posts.length > 0) {
                         if (container) {
                             container.innerHTML = data.posts.map(post => `
                                 <div class="post-card">
                                     <div class="post-title">
-                                        <a href="${post.url || ('articles/' + post.slug)}">${post.title}</a>
+                                        <a href="${isInsideArticles ? post.url : ('articles/' + post.slug)}">${post.title}</a>
                                     </div>
                                     <div class="post-meta">
                                         <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
                                     </div>
                                     <div class="post-excerpt">${post.description || ''}</div>
-                                    <a href="${post.url || ('articles/' + post.slug)}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                                    <a href="${isInsideArticles ? post.url : ('articles/' + post.slug)}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                                 </div>
                             `).join('');
                         }
@@ -656,7 +661,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             let sliderHtml = sliderPosts.map((p, idx) => `
                             <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
                                 <div class="square-caption">
-                                    <div class="square-title" onclick="location.href='${p.url || ('articles/' + p.slug)}'" style="cursor: pointer;">${p.title}</div>
+                                    <div class="square-title" onclick="location.href='${isInsideArticles ? p.url : ('articles/' + p.slug)}'" style="cursor: pointer;">${p.title}</div>
                                     <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                                 </div>
                             </div>
@@ -681,7 +686,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const logoContainer = document.getElementById('site-logo-container');
                         if (logoContainer) {
                             let h = data.settings.logoHeight || '50px';
-                            logoContainer.innerHTML = `<a href="index.html"><img src="${data.settings.logoUrl}" alt="الشعار" style="height: ${h}; max-height: 60px; object-fit: contain;"></a>`;
+                            logoContainer.innerHTML = `<a href="${homeLink}"><img src="${data.settings.logoUrl}" alt="الشعار" style="height: ${h}; max-height: 60px; object-fit: contain;"></a>`;
                         }
                     }
                     const tickerWrapper = document.getElementById('site-ticker-wrapper');
@@ -717,6 +722,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                             
                             nodes.forEach(node => {
                                 let itemUrl = node.url || node.link || 'index.html';
+                                // ضبط مسار القائمة إذا كان داخلياً
+                                if (isInsideArticles && !itemUrl.startsWith('http') && !itemUrl.startsWith('../')) {
+                                    itemUrl = '../' + itemUrl;
+                                }
                                 let hasChildren = node.children && node.children.length > 0;
                                 let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
                                 
@@ -750,7 +759,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                         let contentBox = '';
                         if (w.type === 'recent') {
-                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="${p.url || ('articles/' + p.slug)}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
+                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="${isInsideArticles ? p.url : ('articles/' + p.slug)}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
                         } else if (w.type === 'links') {
                             contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
                         } else {
@@ -772,7 +781,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     });
 
                     if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
-                    if (footerWidgetsContainer) footerWidgetsContainer.html = footerHtml;
+                    if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml; // تم تصحيح الخطأ هنا (innerHTML بدل html)
                 }
 
                 if (data.ads) {
@@ -799,7 +808,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (customLogo) {
                 const logoContainer = document.getElementById('site-logo-container');
                 if(logoContainer && !logoContainer.innerHTML.trim()) {
-                    logoContainer.innerHTML = `<a href="index.html"><img src="${customLogo}" alt="الشعار" style="height: ${customLogoHeight}; max-height: 60px; object-fit: contain;"></a>`;
+                    logoContainer.innerHTML = `<a href="${homeLink}"><img src="${customLogo}" alt="الشعار" style="height: ${customLogoHeight}; max-height: 60px; object-fit: contain;"></a>`;
                 }
             }
         });
@@ -907,12 +916,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             secretTrigger.addEventListener('click', () => {
                 const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
                 if(pass === "aziz728") {
-                    window.location.href = "dashboard.html";
+                    window.location.href = isInsideArticles ? "../dashboard.html" : "dashboard.html";
                 } else if(pass !== null) {
                     alert("كلمة المرور غير صحيحة!");
                 }
             });
-        }  
+        }
+
 </script>
 </body>
 </html>
