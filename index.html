@@ -580,58 +580,74 @@
 
     </div><!-- نهاية الإطار الخارجي الشامل -->
 
-<script>
-        document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const postId = urlParams.get('id');
 
+            // استخراج اسم الملف الحالي (الـ slug) من مسار الصفحة لضمان المطابقة الدقيقة في صفحات المقالات المستقلة
+            const pathSegments = window.location.pathname.split('/');
+            const currentFileName = pathSegments[pathSegments.length - 1]; // مثال: my-post.html
+
             try {
-                const response = await fetch('data.json?t=' + Date.now());
+                // استخدام مسار نسبى صحيح (../data.json) لأن صفحة المقال داخل مجلد articles/
+                const response = await fetch('../data.json?t=' + Date.now());
                 const data = await response.json();
                 const container = document.getElementById('posts-container');
                 
-                if (postId) {
-                    const post = (data.posts || []).find(p => p.id == postId);
+                if (postId || (currentFileName && currentFileName !== 'index.html' && currentFileName !== '')) {
+                    // البحث الذكي عن المقال: إما عن طريق الـ id أو مطابقة الـ slug / اسم الملف الحالي / رابط الـ url
+                    const postsList = data.posts || [];
+                    const post = postId 
+                        ? postsList.find(p => p.id == postId) 
+                        : postsList.find(p => p.slug === currentFileName || (p.url && p.url.includes(currentFileName)));
+
                     if (post) {
-                        document.getElementById('site-title').innerText = post.title + " | تكنو-دليل";
+                        const siteTitleEl = document.getElementById('site-title');
+                        if (siteTitleEl) siteTitleEl.innerText = post.title + " | تكنو-دليل";
                         
                         let ads = data.ads || {};
                         let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
                         let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
 
-                        container.innerHTML = `
-                            <div class="post-card">
-                                <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--accent-color); margin-bottom: 10px;">${post.title}</h1>
-                                <div class="post-meta">
-                                    <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
+                        if (container) {
+                            container.innerHTML = `
+                                <div class="post-card">
+                                    <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--accent-color); margin-bottom: 10px;">${post.title}</h1>
+                                    <div class="post-meta">
+                                        <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
+                                    </div>
+                                    ${topAd}
+                                    <div class="single-post-content">
+                                        ${post.content || ''}
+                                    </div>
+                                    ${botAd}
+                                    <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                                        <a href="../index.html" style="display: inline-block; background: var(--primary-color); color: #fff; padding: 6px 15px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← العودة إلى الصفحة الرئيسية</a>
+                                    </div>
                                 </div>
-                                ${topAd}
-                                <div class="single-post-content">
-                                    ${post.content || ''}
-                                </div>
-                                ${botAd}
-                                <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                                    <a href="../index.html" style="display: inline-block; background: var(--primary-color); color: #fff; padding: 6px 15px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← العودة إلى الصفحة الرئيسية</a>
-                                </div>
-                            </div>
-                        `;
+                            `;
+                        }
                     } else {
-                        container.innerHTML = `<div class="post-card"><h2>عذراً</h2><p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود.</p><a href="index.html" style="color: var(--accent-color); text-decoration: none; font-weight: bold;">العودة للرئيسية</a></div>`;
+                        if (container) {
+                            container.innerHTML = `<div class="post-card"><h2>عذراً</h2><p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود أو تم تغيير رابطه.</p><a href="../index.html" style="color: var(--accent-color); text-decoration: none; font-weight: bold;">العودة للرئيسية</a></div>`;
+                        }
                     }
                 } else {
                     if (data.posts && data.posts.length > 0) {
-                        container.innerHTML = data.posts.map(post => `
-                            <div class="post-card">
-                                <div class="post-title">
-                                    <a href="${post.url || ('articles/' + post.id + '.html')}">${post.title}</a>
+                        if (container) {
+                            container.innerHTML = data.posts.map(post => `
+                                <div class="post-card">
+                                    <div class="post-title">
+                                        <a href="${post.url || ('articles/' + post.slug)}">${post.title}</a>
+                                    </div>
+                                    <div class="post-meta">
+                                        <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
+                                    </div>
+                                    <div class="post-excerpt">${post.description || ''}</div>
+                                    <a href="${post.url || ('articles/' + post.slug)}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                                 </div>
-                                <div class="post-meta">
-                                    <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
-                                </div>
-                                <div class="post-excerpt">${post.description || ''}</div>
-                                <a href="${post.url || ('articles/' + post.id + '.html')}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
-                            </div>
-                        `).join('');
+                            `).join('');
+                        }
                         
                         const sliderWrapper = document.getElementById('square-slider-wrapper');
                         const sliderPosts = data.posts.slice(0, 4);
@@ -639,7 +655,7 @@
                             let sliderHtml = sliderPosts.map((p, idx) => `
                             <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
                                 <div class="square-caption">
-                                    <div class="square-title" onclick="location.href='${p.url || ('articles/' + p.id + '.html')}'" style="cursor: pointer;">${p.title}</div>
+                                    <div class="square-title" onclick="location.href='${p.url || ('articles/' + p.slug)}'" style="cursor: pointer;">${p.title}</div>
                                     <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                                 </div>
                             </div>
@@ -653,7 +669,9 @@
                             initSliderLogic();
                         }
                     } else {
-                        container.innerHTML = `<div class="post-card"><p>لا توجد مقالات منشورة حالياً.</p></div>`;
+                        if (container) {
+                            container.innerHTML = `<div class="post-card"><p>لا توجد مقالات منشورة حالياً.</p></div>`;
+                        }
                     }
                 }
 
@@ -671,10 +689,9 @@
                     }
                 }
 
-if (data.menu && data.menu.length > 0) {
+                if (data.menu && data.menu.length > 0) {
                     const menuContainer = document.getElementById('site-main-menu');
                     if (menuContainer) {
-                        // 1. دالة لتحويل القائمة المسطحة إلى شجرة عناصر (Tree) بناءً على الـ level
                         function buildTree(items) {
                             let root = [];
                             let stack = [{ level: 0, children: root }];
@@ -683,7 +700,6 @@ if (data.menu && data.menu.length > 0) {
                                 let node = { ...item, children: [] };
                                 let lvl = item.level || 1;
                                 
-                                // العودة للأب المناسب في الهيكل التدريجي
                                 while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
                                     stack.pop();
                                 }
@@ -695,7 +711,6 @@ if (data.menu && data.menu.length > 0) {
                             return root;
                         }
 
-                        // 2. دالة لتوليد الـ HTML بشكل متداخل يدعم الأبناء والأحفاد مهما بلغ عمقهم
                         function generateMenuHtml(nodes, isRoot = false) {
                             let html = isRoot ? '' : '<ul class="dropdown-menu">';
                             
@@ -707,7 +722,7 @@ if (data.menu && data.menu.length > 0) {
                                 html += `<li><a href="${itemUrl}">${node.title}${arrow}</a>`;
                                 
                                 if (hasChildren) {
-                                    html += generateMenuHtml(node.children, false); // استدعاء ذاتي للأحفاد
+                                    html += generateMenuHtml(node.children, false);
                                 }
                                 
                                 html += `</li>`;
@@ -717,7 +732,6 @@ if (data.menu && data.menu.length > 0) {
                             return html;
                         }
 
-                        // تشغيل الدوال وبناء القائمة داخل العنصر
                         let menuTree = buildTree(data.menu);
                         menuContainer.innerHTML = generateMenuHtml(menuTree, true);
                     }
@@ -735,7 +749,7 @@ if (data.menu && data.menu.length > 0) {
 
                         let contentBox = '';
                         if (w.type === 'recent') {
-                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="${p.url || ('articles/' + p.id + '.html')}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
+                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="${p.url || ('articles/' + p.slug)}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
                         } else if (w.type === 'links') {
                             contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
                         } else {
@@ -757,7 +771,7 @@ if (data.menu && data.menu.length > 0) {
                     });
 
                     if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
-                    if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml;
+                    if (footerWidgetsContainer) footerWidgetsContainer.html = footerHtml;
                 }
 
                 if (data.ads) {
@@ -897,9 +911,6 @@ if (data.menu && data.menu.length > 0) {
                     alert("كلمة المرور غير صحيحة!");
                 }
             });
-        }
-
-    </script>
-    
+        }    
 </body>
 </html>
