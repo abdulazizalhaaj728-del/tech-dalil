@@ -751,25 +751,21 @@
                     draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
                     draftBtn.style.background = '#f59e0b';
                 }
+                // إذا كان مقالاً جديداً، نفرغ الحقل بانتظار كتابة العنوان
+                if (!post) {
+                    slugInput.value = "";
+                    return;
+                }
             } else {
                 slugInput.disabled = true;
                 slugInput.title = "عذراً، لا يمكن تعديل رابط مقال تم نشره مسبقاً للحفاظ على الروابط";
                 idBadge.innerText = `#${post.id}`;
-                
-                currentArticleIsDraft = post.isDraft || false;
-                if (draftBtn) {
-                    if (currentArticleIsDraft) {
-                        draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
-                        draftBtn.style.background = '#10b981';
-                    } else {
-                        draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
-                        draftBtn.style.background = '#f59e0b';
-                    }
-                }
             }
-            slugInput.value = post && post.slug ? post.slug : (post ? generateSlug(post.title) : '');
+            slugInput.value = post && post.slug ? post.slug : '';
         }
 
+
+        
         function toggleArticleDraftStatus() {
             currentArticleIsDraft = !currentArticleIsDraft;
             const draftBtn = document.getElementById('draft-toggle-btn');
@@ -1370,6 +1366,54 @@
             .replace(/^-+|-+$/g, '');
     }
 });
+
+
+
+        // قاموس مبسط للكلمات العربية الشائعة لترجمتها أو تحويلها لدلالة إنجليزية صحيحة في الروابط
+const arabicToEngKeywords = {
+    "مستقبل": "future", "التكنولوجيا": "technology", "تقنية": "tech",
+    "ذكاء": "ai", "اصطناعي": "artificial", "برمجة": "programming",
+    "شبكات": "networks", "تطوير": "development", "دليل": "guide",
+    "مدونة": "blog", "أحدث": "latest", "شرح": "tutorial", "كيف": "how-to"
+};
+
+document.getElementById('post-title').addEventListener('input', function() {
+    const titleVal = this.value.trim();
+    const slugInput = document.getElementById('article-slug-input');
+
+    if (slugInput && !slugInput.disabled) {
+        if (!titleVal) {
+            slugInput.value = "";
+            return;
+        }
+
+        // استخلاص وتحويل الكلمات العربية إلى الإنجليزية بناءً على القاموس أو دمج الحروف اللاتينية
+        let words = titleVal.split(/\s+/);
+        let translatedWords = words.map(word => {
+            // إزالة ال التعريف والتشكيل البسيط للمقارنة
+            let cleanWord = word.replace(/^[ال]+/, "").trim();
+            if (arabicToEngKeywords[cleanWord]) {
+                return arabicToEngKeywords[cleanWord];
+            }
+            // إذا كانت الكلمة إنجليزية أصلًا أو غير موجودة بالقاموس، نقوم بتنظيفها
+            return word.replace(/[^\w]/g, '').toLowerCase();
+        }).filter(w => w.length > 0);
+
+        // أخذ أول 3 كلمات كحد حدا أقصى للاختصار المناسب
+        let baseSlug = translatedWords.slice(0, 3).join('-');
+
+        // إذا لم ينتج أي كلمة بالإنجليزية، نستخدم كلمة افتراضية
+        if (!baseSlug) {
+            baseSlug = "tech-post";
+        }
+
+        // إضافة رقم فريد لا يتكرر أبداً (يعتمد على جزء من الوقت الحالي)
+        const uniqueId = Date.now().toString().slice(-5);
+
+        slugInput.value = `${baseSlug}-${uniqueId}`;
+    }
+});
+        
     </script>
 </body>
 </html>
