@@ -270,4 +270,18 @@
     },
     "posts": [],
     "pages": []
+
+    "posts": [
+    {
+        "id": "post_1",
+        "title": "عنوان المقال التجريبي الأول",
+        "category": "شروحات تعليمية",
+        "description": "هذا ملخص بسيط للمقال يظهر في الصفحة الرئيسية.",
+        "image": "",
+        "date": "2026-09-26",
+        "content": "<p>هذا هو محتوى المقال التجريبي الكامل.</p>",
+        "slug": "first-post.html",
+        "url": "articles/first-post.html"
+    }
+    
 }
