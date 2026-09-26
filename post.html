@@ -165,7 +165,7 @@
     <script>
         async function loadFullTemplatePost() {
             const urlParams = new URLSearchParams(window.location.search);
-            const articlePath = urlParams.get('article'); // مثال: post.html?article=articles/post-slug.html
+            const articlePath = urlParams.get('article'); // مثال: post.html?article=articles/post-name.html
 
             try {
                 // 1. جلب بيانات المدونة العامة (data.json) لتعبئة السايدبار، الشعار، والقوائم
@@ -203,7 +203,6 @@
                         if (w.type === 'recent') {
                             widgetBody = '<ul style="list-style: none; padding: 0;">';
                             (data.posts || []).forEach(p => {
-                                // توجيه المقالات الحديثة في السايدبار أيضاً لتعمل بنفس النظام إذا أردت
                                 let targetLink = p.slug ? `post.html?article=articles/${p.slug}.html` : `post.html?id=${p.id}`;
                                 widgetBody += `<li style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;"><a href="${targetLink}" style="color: var(--text-main); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">${p.title}</a></li>`;
                             });
@@ -214,7 +213,7 @@
                 }
                 sidebarContainer.innerHTML = widgetsHtml || '<div class="widget-box"><p style="color:var(--text-muted)">لا توجد ودجات مفعلة.</p></div>';
 
-                // 2. جلب محتوى ملف الـ HTML الخاص بالمقال وعرضه داخل القالب
+                // 2. جلب ملف الـ HTML المستقل وعرضه
                 const container = document.getElementById('post-content-box');
 
                 if (!articlePath) {
@@ -224,18 +223,26 @@
 
                 const articleResponse = await fetch(articlePath);
                 if (!articleResponse.ok) {
-                    throw new Error("ملف المقال غير موجود.");
+                    throw new Error("ملف المقال غير موجود في المسار المحدد.");
                 }
 
-                const articleHtmlText = await articleResponse.text();
+                const htmlText = await articleResponse.text();
 
-                // استخراج العنوان من ملف المقال أو وضع عنوان افتراضي
+                // استخراج محتوى الجسم إذا كان الملف يحتوي على html/body كاملاً، أو عرضه مباشرة
+                let finalContent = htmlText;
+                if (htmlText.includes("<body")) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlText, 'text/html');
+                    // محاولة أخذ محتوى الـ article أو الـ body لتجنب تداخل التنسيقات
+                    const articleEl = doc.querySelector('article') || doc.body;
+                    if (articleEl) finalContent = articleEl.innerHTML;
+                }
+
                 document.getElementById('page-title').innerText = "تكنو-دليل | مقال تقني";
 
-                // وضع محتوى ملف المقال المستقل داخل القالب الموحد
                 container.innerHTML = `
                     <div class="post-body">
-                        ${articleHtmlText}
+                        ${finalContent}
                     </div>
                     <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px;">
                         <a href="index.html" class="back-btn">← العودة إلى الصفحة الرئيسية</a>
@@ -243,13 +250,12 @@
                 `;
 
             } catch (err) {
-                console.log(err);
-                document.getElementById('post-content-box').innerHTML = `<h2>خطأ</h2><p style="color:var(--text-muted);">تعذر تحميل المقال المطلوب من الخادم.</p><a href="index.html" class="back-btn">العودة للرئيسية</a>`;
+                console.error(err);
+                document.getElementById('post-content-box').innerHTML = `<h2>خطأ في التحميل</h2><p style="color:var(--text-muted);">تعذر جلب ملف المقال (${articlePath}). تأكد من صحة مسار الملف.</p><a href="index.html" class="back-btn" style="margin-top:15px; display:inline-block;">العودة للرئيسية</a>`;
             }
         }
 
         window.addEventListener('DOMContentLoaded', loadFullTemplatePost);
     </script>
-
 </body>
 </html>
