@@ -492,8 +492,11 @@
                 if (response.ok) {
                     globalFileSha = result.content.sha;
 
-                    if (postToSave) {
-                        const fileName = `articles/${postToSave.id}.html`;
+if (postToSave) {
+                        // استخدام الـ slug كاسم للملف إذا كان موجوداً، وإلا فالاعتماد على الـ id القديم
+                        const articleFileName = postToSave.slug || `${postToSave.id}.html`;
+                        const fileName = `articles/${articleFileName}`;
+                        
                         const htmlContent = generateArticleHtml(postToSave);
                         const encodedHtml = btoa(unescape(encodeURIComponent(htmlContent)));
 
@@ -517,7 +520,6 @@
                             })
                         });
                     }
-
                     showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر وتوليد صفحة المقال المستقلة بنجاح على السحابة!");
                     menuHasChanges = false;
                 } else {
