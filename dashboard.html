@@ -700,7 +700,7 @@ if (postToSave) {
             resetPostForm();
         }
 
-async function saveOrUpdatePost() {
+        async function saveOrUpdatePost() {
             const title = document.getElementById('post-title').value.trim();
             const category = document.getElementById('post-cat').value.trim() || "عام";
             const description = document.getElementById('post-desc').value.trim();
@@ -746,6 +746,8 @@ async function saveOrUpdatePost() {
             closeArticleManager();
             loadPostsAdminList();
         }        
+
+        
         function resetPostForm() {
             currentEditingPostId = null;
             currentArticleIsDraft = false;
