@@ -268,11 +268,8 @@
         "botOn": false,
         "botCode": ""
     },
-    "posts": [],
-    "pages": []
-
     "posts": [
-    {
+            {
         "id": "post_1",
         "title": "عنوان المقال التجريبي الأول",
         "category": "شروحات تعليمية",
@@ -283,5 +280,7 @@
         "slug": "first-post.html",
         "url": "articles/first-post.html"
     }
+    ],
+    "pages": []
     
 }
