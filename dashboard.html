@@ -397,15 +397,32 @@
             };
         }
 
-        // دالة توليد Slug صالح للرابط يدعم الحروف العربية والإنجليزية والشرطات
+        // قاموس الكلمات الشائعة لترجمتها أو تحويلها لدلالة إنجليزية مناسبة في الروابط
+        const arabicToEngKeywords = {
+            "مستقبل": "future", "التكنولوجيا": "technology", "تقنية": "tech",
+            "ذكاء": "ai", "اصطناعي": "artificial", "برمجة": "programming",
+            "شبكات": "networks", "تطوير": "development", "دليل": "guide",
+            "مدونة": "blog", "أحدث": "latest", "شرح": "tutorial", "كيف": "how-to"
+        };
+
+        // دالة توليد Slug باللغة الإنجليزية، مختصر، متبوع برقم فريد
         function generateSlug(text) {
             if (!text) return '';
-            return text
-                .trim()
-                .toLowerCase()
-                .replace(/\s+/g, '-')          // استبدال المسافات بشرطات
-                .replace(/[^\w\u0600-\u06FF\-]+/g, '') // السماح بالحروف العربية والإنجليزية والشرطات
-                .replace(/\-\-+/g, '-');       // إزالة الشرطات المتكررة
+            let words = text.trim().split(/\s+/);
+            let translatedWords = words.map(word => {
+                let cleanWord = word.replace(/^[ال]+/, "").trim();
+                if (arabicToEngKeywords[cleanWord]) {
+                    return arabicToEngKeywords[cleanWord];
+                }
+                return word.replace(/[^\w]/g, '').toLowerCase();
+            }).filter(w => w.length > 0);
+
+            let baseSlug = translatedWords.slice(0, 3).join('-');
+            if (!baseSlug) {
+                baseSlug = "tech-post";
+            }
+            const uniqueId = Date.now().toString().slice(-5);
+            return `${baseSlug}-${uniqueId}`;
         }
 
         async function loadServerData() {
@@ -597,7 +614,7 @@
             const publishBtn = document.getElementById('publish-btn');
             if (publishBtn) publishBtn.addEventListener('click', saveOrUpdatePost);
 
-            // تفعيل التحديث التلقائي للرابط عند الكتابة في حقل العنوان
+            // تفعيل التحديث التلقائي للرابط بالإنجليزية عند الكتابة في حقل العنوان
             const titleInputEl = document.getElementById('post-title');
             if (titleInputEl) {
                 titleInputEl.addEventListener('input', function() {
@@ -751,7 +768,6 @@
                     draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
                     draftBtn.style.background = '#f59e0b';
                 }
-                // إذا كان مقالاً جديداً، نفرغ الحقل بانتظار كتابة العنوان
                 if (!post) {
                     slugInput.value = "";
                     return;
@@ -764,8 +780,6 @@
             slugInput.value = post && post.slug ? post.slug : '';
         }
 
-
-        
         function toggleArticleDraftStatus() {
             currentArticleIsDraft = !currentArticleIsDraft;
             const draftBtn = document.getElementById('draft-toggle-btn');
@@ -1353,67 +1367,6 @@
                 e.returnValue = ''; 
             }
         });
-
-
-    document.getElementById('post-title').addEventListener('input', function() {
-    const titleVal = this.value.trim();
-    const slugInput = document.getElementById('article-slug-input');
-    // توليد الـ slug فقط إذا لم يكن المقال منشوراً مسبقاً أو الحقل غير مقفل
-    if (slugInput && !slugInput.disabled) {
-        slugInput.value = titleVal
-            .toLowerCase()
-            .replace(/[^\w\u0600-\u06FF]+/g, '-') // دعم الحروف العربية والإنجليزية والشرطات
-            .replace(/^-+|-+$/g, '');
-    }
-});
-
-
-
-        // قاموس مبسط للكلمات العربية الشائعة لترجمتها أو تحويلها لدلالة إنجليزية صحيحة في الروابط
-const arabicToEngKeywords = {
-    "مستقبل": "future", "التكنولوجيا": "technology", "تقنية": "tech",
-    "ذكاء": "ai", "اصطناعي": "artificial", "برمجة": "programming",
-    "شبكات": "networks", "تطوير": "development", "دليل": "guide",
-    "مدونة": "blog", "أحدث": "latest", "شرح": "tutorial", "كيف": "how-to"
-};
-
-document.getElementById('post-title').addEventListener('input', function() {
-    const titleVal = this.value.trim();
-    const slugInput = document.getElementById('article-slug-input');
-
-    if (slugInput && !slugInput.disabled) {
-        if (!titleVal) {
-            slugInput.value = "";
-            return;
-        }
-
-        // استخلاص وتحويل الكلمات العربية إلى الإنجليزية بناءً على القاموس أو دمج الحروف اللاتينية
-        let words = titleVal.split(/\s+/);
-        let translatedWords = words.map(word => {
-            // إزالة ال التعريف والتشكيل البسيط للمقارنة
-            let cleanWord = word.replace(/^[ال]+/, "").trim();
-            if (arabicToEngKeywords[cleanWord]) {
-                return arabicToEngKeywords[cleanWord];
-            }
-            // إذا كانت الكلمة إنجليزية أصلًا أو غير موجودة بالقاموس، نقوم بتنظيفها
-            return word.replace(/[^\w]/g, '').toLowerCase();
-        }).filter(w => w.length > 0);
-
-        // أخذ أول 3 كلمات كحد حدا أقصى للاختصار المناسب
-        let baseSlug = translatedWords.slice(0, 3).join('-');
-
-        // إذا لم ينتج أي كلمة بالإنجليزية، نستخدم كلمة افتراضية
-        if (!baseSlug) {
-            baseSlug = "tech-post";
-        }
-
-        // إضافة رقم فريد لا يتكرر أبداً (يعتمد على جزء من الوقت الحالي)
-        const uniqueId = Date.now().toString().slice(-5);
-
-        slugInput.value = `${baseSlug}-${uniqueId}`;
-    }
-});
-        
     </script>
 </body>
 </html>
