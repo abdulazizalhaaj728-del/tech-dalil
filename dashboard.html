@@ -425,7 +425,7 @@
             return `${baseSlug}-${uniqueId}.html`;
         }
 
-async function loadServerData() {
+        async function loadServerData() {
             try {
                 const response = await fetch('data.json?t=' + Date.now());
                 if (response.ok) {
@@ -439,7 +439,7 @@ async function loadServerData() {
                     }
                 }
             } catch (err) {
-                console.log("لم يتم العثور على ملف data.json على السيرفر، سيتم الاعتماد على التخزين المحلي.");
+                console.log("لم يتم العثور على ملف data.json على السيرفر.");
             }
 
             try {
@@ -451,19 +451,16 @@ async function loadServerData() {
                     globalFileSha = fileData.sha;
                 }
             } catch (e) {
-                console.log("تعذر جلب ملف الـ SHA من GitHub.");
+                console.log("تعذر جلب ملف الـ SHA.");
             }
 
-            // إعادة تهيئة الواجهة وتحديث القوائم بعد جلب البيانات تماماً
             initAdminUI();
-            loadPostsAdminList();
         }
 
-        
-async function saveServerData(successMsg, postToSave = null) {
+        async function saveServerData(successMsg, postToSave = null) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
-                showCustomAlert("تنبيه هام", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
+                showCustomAlert("تنبيه هامة", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
                 return;
             }
 
@@ -472,26 +469,8 @@ async function saveServerData(successMsg, postToSave = null) {
                 const repo = "tech-dalil";
                 const path = "data.json";
                 
-                // جلب المقالات والصفحات الحالية
                 globalData.posts = getData('tech_dalil_posts', []);
                 globalData.pages = getData('tech_static_pages', []);
-
-                // إذا كان هناك مقال مراد حفظه، نقوم بدمجه أو إضافته إلى مصفوفة posts في globalData
-                if (postToSave) {
-                    if (!globalData.posts) globalData.posts = [];
-                    const existingIndex = globalData.posts.findIndex(p => p.id == postToSave.id);
-                    
-                    if (existingIndex !== -1) {
-                        // تحديث المقال إذا كان موجوداً مسبقاً
-                        globalData.posts[existingIndex] = postToSave;
-                    } else {
-                        // إضافة المقال الجديد في بداية القائمة (أو نهايتها)
-                        globalData.posts.unshift(postToSave);
-                    }
-                    
-                    // تحديث التخزين المحلي أيضاً لضمان التزامن
-                    saveData('tech_dalil_posts', globalData.posts);
-                }
 
                 const contentString = JSON.stringify(globalData, null, 4);
                 const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
@@ -503,7 +482,7 @@ async function saveServerData(successMsg, postToSave = null) {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        message: postToSave ? `Add/Update post: ${postToSave.title}` : "Update data.json via Techno-Guide Admin Panel",
+                        message: "Update data.json via Techno-Guide Admin Panel",
                         content: encodedContent,
                         sha: globalFileSha
                     })
@@ -513,8 +492,8 @@ async function saveServerData(successMsg, postToSave = null) {
                 if (response.ok) {
                     globalFileSha = result.content.sha;
 
-                    // حفظ صفحة الـ HTML المستقلة للمقال داخل مجلد articles/
-                    if (postToSave) {
+if (postToSave) {
+                        // استخدام الـ slug كاسم للملف إذا كان موجوداً، وإلا فالاعتماد على الـ id القديم
                         const articleFileName = postToSave.slug || `${postToSave.id}.html`;
                         const fileName = `articles/${articleFileName}`;
                         
@@ -541,8 +520,7 @@ async function saveServerData(successMsg, postToSave = null) {
                             })
                         });
                     }
-
-                    showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر وتوليد صفحة المقال المستقلة وتحديث data.json بنجاح على السحابة!");
+                    showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر وتوليد صفحة المقال المستقلة بنجاح على السحابة!");
                     menuHasChanges = false;
                 } else {
                     showCustomAlert("خطأ في الحفظ", "فشل الحفظ: تأكد من صحة الـ Token. (" + (result.message || "") + ")");
@@ -552,6 +530,7 @@ async function saveServerData(successMsg, postToSave = null) {
                 console.error(err);
             }
         }
+
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
             <html lang="ar" dir="rtl">
@@ -668,7 +647,6 @@ async function saveServerData(successMsg, postToSave = null) {
             loadServerData();
         });
 
-// 1. دالة جلب البيانات العامة وضمان تخزينها في localStorage لعرضها في القائمة
         function initAdminUI() {
             if (globalData.settings && globalData.settings.logoHeight) {
                 document.getElementById('logo-size-selector').value = globalData.settings.logoHeight;
@@ -684,8 +662,6 @@ async function saveServerData(successMsg, postToSave = null) {
                 document.getElementById('ad-bot-on').checked = globalData.ads.botOn || false;
                 document.getElementById('ad-bot-code').value = globalData.ads.botCode || '';
             }
-
-            // تحديث التخزين المحلي مباشرة من الكائن العام أو جلبها كـ احتياطي
             if (globalData.posts && globalData.posts.length > 0) {
                 localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
             }
@@ -699,12 +675,11 @@ async function saveServerData(successMsg, postToSave = null) {
                 localStorage.setItem('tech_widgets', JSON.stringify(globalData.widgets));
             }
 
-            if (typeof loadSidebarWidgetsAdmin === 'function') loadSidebarWidgetsAdmin();
-            if (typeof renderStructuredMenuAdmin === 'function') renderStructuredMenuAdmin();
+            loadSidebarWidgetsAdmin();
+            renderStructuredMenuAdmin();
             loadPostsAdminList();
         }
 
-        
         function openArticleManager() {
             document.getElementById('manager-trigger-wrapper').style.display = 'none';
             document.getElementById('article-manager-form-container').style.display = 'block';
@@ -718,7 +693,7 @@ async function saveServerData(successMsg, postToSave = null) {
             resetPostForm();
         }
 
-        async function saveOrUpdatePost() {
+async function saveOrUpdatePost() {
             const title = document.getElementById('post-title').value.trim();
             const category = document.getElementById('post-cat').value.trim() || "عام";
             const description = document.getElementById('post-desc').value.trim();
@@ -764,8 +739,6 @@ async function saveServerData(successMsg, postToSave = null) {
             closeArticleManager();
             loadPostsAdminList();
         }        
-
-        
         function resetPostForm() {
             currentEditingPostId = null;
             currentArticleIsDraft = false;
@@ -846,59 +819,48 @@ async function saveServerData(successMsg, postToSave = null) {
             });
         }
 
-// 2. دالة عرض المقالات والصفحات في لوحة التحكم (محسنة لتقرأ من الـ LocalStorage والـ globalData معاً)
-function loadPostsAdminList() {
-            // الاعتماد المباشر على البيانات القادمة من ملف data.json على السيرفر (globalData)
-            let posts = (globalData.posts && globalData.posts.length > 0) ? globalData.posts : getData('tech_dalil_posts', []);
-            let pages = (globalData.pages && globalData.pages.length > 0) ? globalData.pages : getData('tech_static_pages', []);
-
+        function loadPostsAdminList() {
+            const posts = getData('tech_dalil_posts', []);
+            const pages = getData('tech_static_pages', []);
             const container = document.getElementById('posts-admin-management-list');
             if(!container) return;
             container.innerHTML = "";
             
             if(posts.length === 0 && pages.length === 0) { 
-                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>لا توجد مقالات أو صفحات منشورة حالياً على السيرفر.</p>"; 
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>لا توجد مقالات أو صفحات منشورة.</p>"; 
                 return; 
             }
 
             posts.forEach((p) => {
                 let statusBadge = p.isDraft ? '<span style="color:#f59e0b; font-size:0.75rem;">(مسودة)</span>' : '<span style="color:#10b981; font-size:0.75rem;">(منشور)</span>';
-                let identifier = p.slug || p.id;
                 container.innerHTML += `
-                    <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02); margin-bottom: 5px; border-radius: 6px;">
-                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title || 'بدون عنوان'} ${statusBadge} (${p.date || 'حديث'})</span>
-                        <div style="display: flex; gap: 5px;">
-                            <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="editPost('${identifier}', 'post')">تعديل</button>
-                            <button type="button" class="btn btn-danger" style="background:#ef4444; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="deletePost('${identifier}', 'post')">حذف</button>
-                        </div>
+                    <div class="item-row">
+                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title} ${statusBadge} (${p.date})</span>
+                        <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'post')">تعديل</button>
+                        <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'post')">حذف</button>
                     </div>`;
             });
 
             pages.forEach((p) => {
-                let identifier = p.slug || p.id;
                 container.innerHTML += `
-                    <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02); margin-bottom: 5px; border-radius: 6px;">
-                        <span style="flex:1; font-size:0.9rem; color:var(--accent-color);"><b>[صفحة علوية]</b> ${p.title || 'بدون عنوان'}</span>
-                        <div style="display: flex; gap: 5px;">
-                            <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="editPost('${identifier}', 'page')">تعديل</button>
-                            <button type="button" class="btn btn-danger" style="background:#ef4444; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="deletePost('${identifier}', 'page')">حذف</button>
-                        </div>
+                    <div class="item-row">
+                        <span style="flex:1; font-size:0.9rem; color:var(--accent-color);"><b>[صفحة علوية]</b> ${p.title}</span>
+                        <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'page')">تعديل</button>
+                        <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'page')">حذف</button>
                     </div>`;
             });
         }
 
-        
-        // 3. دالة الحذف وتحديث التخزين
         function deletePost(id, type) {
             showCustomAlert("تأكيد", "هل أنت متأكد من الحذف؟", () => {
                 if(type === 'page') {
                     let pages = getData('tech_static_pages', []);
-                    pages = pages.filter(p => p.slug !== id && p.id != id);
+                    pages = pages.filter(p => p.id !== id);
                     localStorage.setItem('tech_static_pages', JSON.stringify(pages));
                     globalData.pages = pages;
                 } else {
                     let posts = getData('tech_dalil_posts', []);
-                    posts = posts.filter(p => p.slug !== id && p.id != id);
+                    posts = posts.filter(p => p.id !== id);
                     localStorage.setItem('tech_dalil_posts', JSON.stringify(posts));
                     globalData.posts = posts;
                 }
@@ -908,34 +870,32 @@ function loadPostsAdminList() {
             });
         }
 
-        // 4. دالة التعديل واسترجاع البيانات للنموذج
         function editPost(id, type) {
             currentEditingPostId = id;
-            if(typeof openArticleManager === 'function') openArticleManager();
-            
+            openArticleManager();
             if(type === 'page') {
                 const pages = getData('tech_static_pages', []);
-                const p = pages.find(item => item.slug === id || item.id == id);
+                const p = pages.find(item => item.id === id);
                 if(!p) return;
                 document.getElementById('content-type-selector').value = "page";
-                document.getElementById('post-title').value = p.title || "";
+                document.getElementById('post-title').value = p.title;
                 document.getElementById('post-cat').value = "";
                 document.getElementById('post-desc').value = "";
                 document.getElementById('post-img').value = "";
-                if(window.quill) quill.root.innerHTML = p.content || "";
-                if(typeof initArticleSlugField === 'function') initArticleSlugField(p);
+                quill.root.innerHTML = p.content || "";
+                initArticleSlugField(p);
             } else {
                 const posts = getData('tech_dalil_posts', []);
-                const p = posts.find(item => item.slug === id || item.id == id);
+                const p = posts.find(item => item.id === id);
                 if(!p) return;
                 document.getElementById('content-type-selector').value = "post";
-                document.getElementById('post-title').value = p.title || "";
+                document.getElementById('post-title').value = p.title;
                 document.getElementById('post-cat').value = p.category || "";
                 document.getElementById('post-desc').value = p.description || "";
                 document.getElementById('post-img').value = p.image || "";
                 document.getElementById('post-date').value = p.date || "";
-                if(window.quill) quill.root.innerHTML = p.content || "";
-                if(typeof initArticleSlugField === 'function') initArticleSlugField(p);
+                quill.root.innerHTML = p.content || "";
+                initArticleSlugField(p);
             }
             
             const publishBtn = document.getElementById('publish-btn');
@@ -946,7 +906,6 @@ function loadPostsAdminList() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        
         function previewPost() {
             const title = document.getElementById('post-title').value.trim() || "عنوان تجريبي للمحتوى";
             const content = quill.root.innerHTML;
@@ -960,8 +919,6 @@ function loadPostsAdminList() {
                         body { font-family: 'Cairo', sans-serif; padding: 40px; background: #0f172a; color: #f8fafc; line-height: 1.8; }
                         .container { max-width: 800px; margin: auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; }
                         h1 { color: #f59e0b; border-bottom: 2px solid #0284c7; padding-bottom: 15px; }
-                        p { text-align: justify; text-justify: inter-word; margin-bottom: 15px; }
-                        img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 20px auto; }
                     </style>
                 </head>
                 <body>
@@ -975,7 +932,6 @@ function loadPostsAdminList() {
             previewWin.document.close();
         }
 
-        
         function uploadLogoFile(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
