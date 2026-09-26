@@ -472,8 +472,10 @@ async function saveServerData(successMsg, postToSave = null) {
                 const repo = "tech-dalil";
                 const path = "data.json";
 
-                // 1. جلب أحدث SHA لملف data.json من جيت هب لضمان نجاح التحديث دون تعارض
+                // 1. جلب أحدث محتوى لملف data.json مباشرة من GitHub لضمان العمل على أحدث نسخة سحابية
                 let currentSha = globalFileSha;
+                let serverJsonData = { posts: [], pages: [], menu: [], widgets: [] };
+
                 try {
                     const checkRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
                         headers: { 'Authorization': `token ${token}` }
@@ -481,31 +483,35 @@ async function saveServerData(successMsg, postToSave = null) {
                     if (checkRes.ok) {
                         const checkData = await checkRes.json();
                         currentSha = checkData.sha;
+                        // فك تشفير محتوى ملف data.json القادم من السحابة
+                        const decodedString = decodeURIComponent(escape(atob(checkData.content)));
+                        serverJsonData = JSON.parse(decodedString);
                     }
                 } catch (e) {
-                    console.warn("تعذر جلب SHA الحالي، سيتم المحاولة بالـ SHA المحفوظ.");
+                    console.warn("تعذر جلب البيانات من السحابة، سيتم الاعتماد على البيانات الحالية.");
+                    serverJsonData = globalData || { posts: [], pages: [] };
                 }
                 
-                // جلب المقالات والصفحات المحلية وتحديثها
-                globalData.posts = getData('tech_dalil_posts', []);
-                globalData.pages = getData('tech_static_pages', []);
+                // التأكد من وجود مصفوفة المقالات والصفحات سحابياً
+                if (!Array.isArray(serverJsonData.posts)) serverJsonData.posts = [];
+                if (!Array.isArray(serverJsonData.pages)) serverJsonData.pages = [];
 
+                // 2. دمج المقال الجديد أو المحدث مباشرة داخل مصفوفة posts الخاصة بملف data.json السحابي
                 if (postToSave) {
-                    if (!Array.isArray(globalData.posts)) globalData.posts = [];
-                    const existingIndex = globalData.posts.findIndex(p => p.id == postToSave.id);
+                    const existingIndex = serverJsonData.posts.findIndex(p => p.id == postToSave.id);
                     
                     if (existingIndex !== -1) {
-                        globalData.posts[existingIndex] = postToSave;
+                        serverJsonData.posts[existingIndex] = postToSave;
                     } else {
-                        globalData.posts.unshift(postToSave);
+                        serverJsonData.posts.unshift(postToSave);
                     }
-                    saveData('tech_dalil_posts', globalData.posts);
                 }
 
-                const contentString = JSON.stringify(globalData, null, 4);
+                // تجهيز النص الجديد لملف data.json لرفعه للسحابة
+                const contentString = JSON.stringify(serverJsonData, null, 4);
                 const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
 
-                // 2. تحديث ملف data.json على جيت هب
+                // 3. رفع ملف data.json المحدث إلى GitHub
                 const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
                     method: 'PUT',
                     headers: {
@@ -521,13 +527,14 @@ async function saveServerData(successMsg, postToSave = null) {
 
                 const result = await response.json();
                 if (!response.ok) {
-                    showCustomAlert("خطأ في الحفظ", "فشل حفظ data.json: " + (result.message || ""));
+                    showCustomAlert("خطأ في الحفظ", "فشل حفظ data.json على السحابة: " + (result.message || ""));
                     return;
                 }
 
                 globalFileSha = result.content.sha;
+                globalData = serverJsonData; // تحديث البيانات العامة في الذاكرة
 
-                // 3. رفع صفحة الـ HTML المستقلة للمقال داخل مجلد articles/
+                // 4. رفع صفحة الـ HTML المستقلة للمقال داخل مجلد articles/
                 if (postToSave) {
                     const articleFileName = postToSave.slug || `${postToSave.id}.html`;
                     const fileName = `articles/${articleFileName}`;
@@ -560,15 +567,14 @@ async function saveServerData(successMsg, postToSave = null) {
                     });
                 }
 
-                showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر وتوليد صفحة المقال وتحديث السحابة بنجاح!");
+                showCustomAlert("نجاح", successMsg || "تم حفظ ونشر المقال وتحديث ملف data.json على السحابة بنجاح!");
                 menuHasChanges = false;
 
             } catch (err) {
                 showCustomAlert("خطأ اتصال", "تعذر الاتصال بخوادم GitHub. تأكد من اتصال الإنترنت أو صحة الـ Token.");
                 console.error(err);
             }
-        }
-        
+        }        
         
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
