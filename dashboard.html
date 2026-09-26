@@ -460,10 +460,10 @@ async function loadServerData() {
         }
 
         
-        async function saveServerData(successMsg, postToSave = null) {
+async function saveServerData(successMsg, postToSave = null) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
-                showCustomAlert("تنبيه هامة", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
+                showCustomAlert("تنبيه هام", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
                 return;
             }
 
@@ -472,8 +472,26 @@ async function loadServerData() {
                 const repo = "tech-dalil";
                 const path = "data.json";
                 
+                // جلب المقالات والصفحات الحالية
                 globalData.posts = getData('tech_dalil_posts', []);
                 globalData.pages = getData('tech_static_pages', []);
+
+                // إذا كان هناك مقال مراد حفظه، نقوم بدمجه أو إضافته إلى مصفوفة posts في globalData
+                if (postToSave) {
+                    if (!globalData.posts) globalData.posts = [];
+                    const existingIndex = globalData.posts.findIndex(p => p.id == postToSave.id);
+                    
+                    if (existingIndex !== -1) {
+                        // تحديث المقال إذا كان موجوداً مسبقاً
+                        globalData.posts[existingIndex] = postToSave;
+                    } else {
+                        // إضافة المقال الجديد في بداية القائمة (أو نهايتها)
+                        globalData.posts.unshift(postToSave);
+                    }
+                    
+                    // تحديث التخزين المحلي أيضاً لضمان التزامن
+                    saveData('tech_dalil_posts', globalData.posts);
+                }
 
                 const contentString = JSON.stringify(globalData, null, 4);
                 const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
@@ -485,7 +503,7 @@ async function loadServerData() {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        message: "Update data.json via Techno-Guide Admin Panel",
+                        message: postToSave ? `Add/Update post: ${postToSave.title}` : "Update data.json via Techno-Guide Admin Panel",
                         content: encodedContent,
                         sha: globalFileSha
                     })
@@ -495,8 +513,8 @@ async function loadServerData() {
                 if (response.ok) {
                     globalFileSha = result.content.sha;
 
-if (postToSave) {
-                        // استخدام الـ slug كاسم للملف إذا كان موجوداً، وإلا فالاعتماد على الـ id القديم
+                    // حفظ صفحة الـ HTML المستقلة للمقال داخل مجلد articles/
+                    if (postToSave) {
                         const articleFileName = postToSave.slug || `${postToSave.id}.html`;
                         const fileName = `articles/${articleFileName}`;
                         
@@ -523,7 +541,8 @@ if (postToSave) {
                             })
                         });
                     }
-                    showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر وتوليد صفحة المقال المستقلة بنجاح على السحابة!");
+
+                    showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر وتوليد صفحة المقال المستقلة وتحديث data.json بنجاح على السحابة!");
                     menuHasChanges = false;
                 } else {
                     showCustomAlert("خطأ في الحفظ", "فشل الحفظ: تأكد من صحة الـ Token. (" + (result.message || "") + ")");
@@ -533,7 +552,6 @@ if (postToSave) {
                 console.error(err);
             }
         }
-
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
             <html lang="ar" dir="rtl">
