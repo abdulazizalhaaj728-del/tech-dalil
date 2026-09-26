@@ -639,18 +639,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 } else {
                     // عرض الصفحة الرئيسية (قائمة المقالات + السلايدر)
+                    // عرض الصفحة الرئيسية (قائمة المقالات)
                     if (data.posts && data.posts.length > 0) {
                         if (container) {
                             container.innerHTML = data.posts.map(post => `
                                 <div class="post-card">
                                     <div class="post-title">
-                                        <a href="${isInsideArticles ? post.url : ('articles/' + post.slug)}">${post.title}</a>
+                                        <a href="post.html?article=articles/${post.slug}.html">${post.title}</a>
                                     </div>
                                     <div class="post-meta">
                                         <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
                                     </div>
                                     <div class="post-excerpt">${post.description || ''}</div>
-                                    <a href="${isInsideArticles ? post.url : ('articles/' + post.slug)}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                                    <a href="post.html?article=articles/${post.slug}.html" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                                 </div>
                             `).join('');
                         }
