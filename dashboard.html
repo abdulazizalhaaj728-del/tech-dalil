@@ -789,8 +789,9 @@
             const slugInput = document.getElementById('article-slug-input');
             if (!slugInput) return;
         
-            let fullLink = `${window.location.origin}/articles/${slugInput.value.trim() || 'post'}.html`;
-            
+            const slugValue = slugInput.value.trim() || 'post';
+            let fullLink = `${window.location.origin}/articles/${slugValue}.html`;
+        
             navigator.clipboard.writeText(fullLink).then(() => {
                 showCustomAlert("تم النسخ", "تم نسخ رابط المقالة بنجاح إلى الحافظة!");
             }).catch(err => {
@@ -1356,6 +1357,19 @@
                 e.returnValue = ''; 
             }
         });
+
+
+    document.getElementById('post-title').addEventListener('input', function() {
+    const titleVal = this.value.trim();
+    const slugInput = document.getElementById('article-slug-input');
+    // توليد الـ slug فقط إذا لم يكن المقال منشوراً مسبقاً أو الحقل غير مقفل
+    if (slugInput && !slugInput.disabled) {
+        slugInput.value = titleVal
+            .toLowerCase()
+            .replace(/[^\w\u0600-\u06FF]+/g, '-') // دعم الحروف العربية والإنجليزية والشرطات
+            .replace(/^-+|-+$/g, '');
+    }
+});
     </script>
 </body>
 </html>
