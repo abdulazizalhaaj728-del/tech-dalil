@@ -407,114 +407,82 @@
     </div>
 
 <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const postId = urlParams.get('id');
+document.addEventListener('DOMContentLoaded', async () => {
+        const container = document.getElementById('posts-container');
+        const sliderWrapper = document.getElementById('square-slider-wrapper');
+        const recentList = document.getElementById('sidebar-recent-list');
 
-            try {
-                const response = await fetch('data.json?t=' + Date.now());
-                const data = await response.json();
-                const container = document.getElementById('posts-container');
+        try {
+            const response = await fetch('data.json?t=' + Date.now());
+            
+            if (!response.ok) {
+                throw new Error(`خطأ في الاتصال بملف البيانات (رمز الاستجابة: ${response.status})`);
+            }
+
+            const jsonData = await response.json();
+
+            // دعم مرن للشكلين: سواء كان الـ JSON مصفوفة مباشرة [...] أو كائن بداخله { posts: [...] }
+            const posts = Array.isArray(jsonData) ? jsonData : (jsonData.posts || []);
+
+            if (posts.length === 0) {
+                if (container) container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted);">ملف البيانات (`data.json`) فارغ أو لا يحتوي على مقالات.</p>';
+                return;
+            }
+
+            // 1. عرض المقالات الأساسية في الصفحة الرئيسية
+            container.innerHTML = posts.map(post => `
+                <div class="post-card">
+                    <div class="post-title"><a href="index.html?id=${post.id}">${post.title}</a></div>
+                    <div class="post-meta"><span>📅 ${post.date || ''}</span> | <span>📁 ${post.category || 'عام'}</span></div>
+                    <div class="post-excerpt">${post.description || ''}</div>
+                    <a href="index.html?id=${post.id}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                </div>
+            `).join('');
+
+            // 2. إعداد السلايدر (يأخذ أول 4 مقالات كحد أقصى)
+            if (sliderWrapper) {
+                const sliderPosts = posts.slice(0, 4);
+                let sliderHtml = sliderPosts.map((p, idx) => `
+                    <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.75)), url('${p.image || ''}');">
+                        <div class="square-caption">
+                            <div class="square-title" onclick="location.href='index.html?id=${p.id}'">${p.title}</div>
+                            <div class="square-desc">${p.description ? p.description.substring(0, 75) + '...' : ''}</div>
+                        </div>
+                    </div>
+                `).join('');
                 
-                if (postId) {
-                    const post = (data.posts || []).find(p => p.id == postId);
-                    if (post) {
-                        document.getElementById('site-title').innerText = post.title + " | تكنو-دليل";
-                        
-                        let ads = data.ads || {};
-                        let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
-                        let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
+                sliderHtml += `
+                    <button class="slider-arrow slider-prev" id="slider-prev-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                `;
+                sliderWrapper.innerHTML = sliderHtml;
+                initSliderLogic();
+            }
 
-                        container.innerHTML = `
-                            <div class="post-card">
-                                <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--accent-color); margin-bottom: 10px;">${post.title}</h1>
-                                <div class="post-meta">
-                                    <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
-                                </div>
-                                ${topAd}
-                                <div class="single-post-content">
-                                    ${post.content || ''}
-                                </div>
-                                ${botAd}
-                                <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                                    <a href="index.html" style="display: inline-block; background: var(--primary-color); color: #fff; padding: 6px 15px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← العودة إلى الصفحة الرئيسية</a>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        container.innerHTML = `<div class="post-card"><h2>عذراً</h2><p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود.</p><a href="index.html" style="color: var(--accent-color); text-decoration: none; font-weight: bold;">العودة للرئيسية</a></div>`;
-                    }
-                } else {
-                    if (data.posts && data.posts.length > 0) {
-                        container.innerHTML = data.posts.map(post => `
-                            <div class="post-card">
-                                <div class="post-title">
-                                    <a href="${post.url || ('index.html?id=' + post.id)}">${post.title}</a>
-                                </div>
-                                <div class="post-meta">
-                                    <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
-                                </div>
-                                <div class="post-excerpt">${post.description || ''}</div>
-                                <a href="${post.url || ('index.html?id=' + post.id)}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
-                            </div>
-                        `).join('');
-                        
-                        const sliderWrapper = document.getElementById('square-slider-wrapper');
-                        const sliderPosts = data.posts.slice(0, 4);
-                        if(sliderWrapper && sliderPosts.length > 0) {
-                            let sliderHtml = sliderPosts.map((p, idx) => `
-                            <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
-                                <div class="square-caption">
-                                    <div class="square-title" onclick="location.href='${p.url || ('index.html?id=' + p.id)}'" style="cursor: pointer;">${p.title}</div>
-                                    <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
-                                </div>
-                            </div>
-                        `).join('');
-                            
-                            sliderHtml += `
-                                <button class="slider-arrow slider-prev" id="slider-prev-btn"><i class="fa-solid fa-chevron-right"></i></button>
-                                <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
-                            `;
-                            sliderWrapper.innerHTML = sliderHtml;
-                            initSliderLogic();
-                        }
-                    } else {
-                        container.innerHTML = `<div class="post-card"><p>لا توجد مقالات منشورة حالياً.</p></div>`;
-                    }
-                }
+            // 3. قائمة المقالات الأخيرة في الشريط الجانبي
+            if (recentList) {
+                recentList.innerHTML = posts.map(p => `
+                    <li>
+                        <a href="index.html?id=${p.id}">
+                            <i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}
+                        </a>
+                    </li>
+                `).join('');
+            }
 
-                if (data.settings) {
-                    if (data.settings.logoUrl) {
-                        const logoContainer = document.getElementById('site-logo-container');
-                        if (logoContainer) {
-                            let h = data.settings.logoHeight || '50px';
-                            logoContainer.innerHTML = `<a href="index.html"><img src="${data.settings.logoUrl}" alt="الشعار" style="height: ${h}; max-height: 60px; object-fit: contain;"></a>`;
-                        }
-                    }
-                    const tickerWrapper = document.getElementById('site-ticker-wrapper');
-                    if (tickerWrapper) {
-                        tickerWrapper.style.display = data.settings.tickerVisible !== false ? 'block' : 'none';
-                    }
-                }
+        } catch (error) {
+            console.error("فشل تحميل البيانات:", error);
+            if (container) {
+                container.innerHTML = `<div style="background:var(--card-bg); border:1px solid #ef4444; padding:15px; border-radius:8px; text-align:center; color:#ef4444;">
+                    تعذر معالجة ملف البيانات.<br>
+                    <small style="color:var(--text-muted); direction: ltr; display: block; margin-top: 5px;">${error.message}</small>
+                </div>`;
+            }
+        }
+    });
 
-                if (data.menu && data.menu.length > 0) {
-                    const menuContainer = document.getElementById('site-main-menu');
-                    if (menuContainer) {
-                        function buildTree(items) {
-                            let root = [];
-                            let stack = [{ level: 0, children: root }];
-                            items.forEach(item => {
-                                let node = { ...item, children: [] };
-                                let lvl = item.level || 1;
-                                while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
-                                    stack.pop();
-                                }
-                                stack[stack.length - 1].children.push(node);
-                                stack.push({ level: lvl, children: node.children });
-                            });
-                            return root;
-                        }
 
+    
                         function generateMenuHtml(nodes, isRoot = false) {
                             let html = isRoot ? '' : '<ul class="dropdown-menu">';
                             nodes.forEach(node => {
@@ -592,47 +560,38 @@
             }
         });
 
-        function initSliderLogic() {
-            const slides = document.querySelectorAll('.square-slide');
-            if(slides.length === 0) return;
-            let currentSlide = 0;
-            let sliderTimer = setInterval(nextSlide, 4000);
+function initSliderLogic() {
+        const slides = document.querySelectorAll('.square-slide');
+        if(slides.length === 0) return;
+        let currentSlide = 0;
+        let sliderTimer = setInterval(nextSlide, 4000);
 
-            function showSlide(index) {
-                slides.forEach(s => s.classList.remove('active'));
-                slides[index].classList.add('active');
-            }
-
-            function nextSlide() {
-                currentSlide = (currentSlide + 1) % slides.length;
-                showSlide(currentSlide);
-            }
-
-            function prevSlide() {
-                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-                showSlide(currentSlide);
-            }
-
-            const nextBtn = document.getElementById('slider-next-btn');
-            const prevBtn = document.getElementById('slider-prev-btn');
-
-            if(nextBtn) {
-                nextBtn.addEventListener('click', () => {
-                    clearInterval(sliderTimer);
-                    nextSlide();
-                    sliderTimer = setInterval(nextSlide, 4000);
-                });
-            }
-
-            if(prevBtn) {
-                prevBtn.addEventListener('click', () => {
-                    clearInterval(sliderTimer);
-                    prevSlide();
-                    sliderTimer = setInterval(nextSlide, 4000);
-                });
-            }
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
         }
 
+        document.getElementById('slider-next-btn')?.addEventListener('click', () => {
+            clearInterval(sliderTimer);
+            nextSlide();
+            sliderTimer = setInterval(nextSlide, 4000);
+        });
+        document.getElementById('slider-prev-btn')?.addEventListener('click', () => {
+            clearInterval(sliderTimer);
+            prevSlide();
+            sliderTimer = setInterval(nextSlide, 4000);
+        });
+    }
+
+    
         const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
         let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
         
