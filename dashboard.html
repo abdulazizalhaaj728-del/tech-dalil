@@ -425,7 +425,7 @@
             return `${baseSlug}-${uniqueId}.html`;
         }
 
-        async function loadServerData() {
+async function loadServerData() {
             try {
                 const response = await fetch('data.json?t=' + Date.now());
                 if (response.ok) {
@@ -439,7 +439,7 @@
                     }
                 }
             } catch (err) {
-                console.log("لم يتم العثور على ملف data.json على السيرفر.");
+                console.log("لم يتم العثور على ملف data.json على السيرفر، سيتم الاعتماد على التخزين المحلي.");
             }
 
             try {
@@ -451,12 +451,15 @@
                     globalFileSha = fileData.sha;
                 }
             } catch (e) {
-                console.log("تعذر جلب ملف الـ SHA.");
+                console.log("تعذر جلب ملف الـ SHA من GitHub.");
             }
 
+            // إعادة تهيئة الواجهة وتحديث القوائم بعد جلب البيانات تماماً
             initAdminUI();
+            loadPostsAdminList();
         }
 
+        
         async function saveServerData(successMsg, postToSave = null) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
