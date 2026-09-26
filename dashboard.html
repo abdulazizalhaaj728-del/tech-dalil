@@ -647,6 +647,7 @@ if (postToSave) {
             loadServerData();
         });
 
+// 1. دالة جلب البيانات العامة وضمان تخزينها في localStorage لعرضها في القائمة
         function initAdminUI() {
             if (globalData.settings && globalData.settings.logoHeight) {
                 document.getElementById('logo-size-selector').value = globalData.settings.logoHeight;
@@ -662,6 +663,8 @@ if (postToSave) {
                 document.getElementById('ad-bot-on').checked = globalData.ads.botOn || false;
                 document.getElementById('ad-bot-code').value = globalData.ads.botCode || '';
             }
+
+            // تحديث التخزين المحلي مباشرة من الكائن العام أو جلبها كـ احتياطي
             if (globalData.posts && globalData.posts.length > 0) {
                 localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
             }
@@ -675,11 +678,12 @@ if (postToSave) {
                 localStorage.setItem('tech_widgets', JSON.stringify(globalData.widgets));
             }
 
-            loadSidebarWidgetsAdmin();
-            renderStructuredMenuAdmin();
+            if (typeof loadSidebarWidgetsAdmin === 'function') loadSidebarWidgetsAdmin();
+            if (typeof renderStructuredMenuAdmin === 'function') renderStructuredMenuAdmin();
             loadPostsAdminList();
         }
 
+        
         function openArticleManager() {
             document.getElementById('manager-trigger-wrapper').style.display = 'none';
             document.getElementById('article-manager-form-container').style.display = 'block';
@@ -819,9 +823,19 @@ async function saveOrUpdatePost() {
             });
         }
 
-function loadPostsAdminList() {
-            const posts = getData('tech_dalil_posts', []);
-            const pages = getData('tech_static_pages', []);
+// 2. دالة عرض المقالات والصفحات في لوحة التحكم (محسنة لتقرأ من الـ LocalStorage والـ globalData معاً)
+        function loadPostsAdminList() {
+            // جلب المقالات والصفحات بمرونة تامة من localStorage أو globalData
+            let posts = getData('tech_dalil_posts', []);
+            if (posts.length === 0 && globalData.posts && globalData.posts.length > 0) {
+                posts = globalData.posts;
+            }
+
+            let pages = getData('tech_static_pages', []);
+            if (pages.length === 0 && globalData.pages && globalData.pages.length > 0) {
+                pages = globalData.pages;
+            }
+
             const container = document.getElementById('posts-admin-management-list');
             if(!container) return;
             container.innerHTML = "";
@@ -833,11 +847,10 @@ function loadPostsAdminList() {
 
             posts.forEach((p) => {
                 let statusBadge = p.isDraft ? '<span style="color:#f59e0b; font-size:0.75rem;">(مسودة)</span>' : '<span style="color:#10b981; font-size:0.75rem;">(منشور)</span>';
-                // استخدام الـ slug كمعرف في التعديل والحذف إن وجد، وإلا فالاعتماد على الـ id
                 let identifier = p.slug || p.id;
                 container.innerHTML += `
-                    <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color);">
-                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title} ${statusBadge} (${p.date || 'حديث'})</span>
+                    <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02); margin-bottom: 5px; border-radius: 6px;">
+                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title || 'بدون عنوان'} ${statusBadge} (${p.date || 'حديث'})</span>
                         <div style="display: flex; gap: 5px;">
                             <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="editPost('${identifier}', 'post')">تعديل</button>
                             <button type="button" class="btn btn-danger" style="background:#ef4444; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="deletePost('${identifier}', 'post')">حذف</button>
@@ -848,8 +861,8 @@ function loadPostsAdminList() {
             pages.forEach((p) => {
                 let identifier = p.slug || p.id;
                 container.innerHTML += `
-                    <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color);">
-                        <span style="flex:1; font-size:0.9rem; color:var(--accent-color);"><b>[صفحة علوية]</b> ${p.title}</span>
+                    <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02); margin-bottom: 5px; border-radius: 6px;">
+                        <span style="flex:1; font-size:0.9rem; color:var(--accent-color);"><b>[صفحة علوية]</b> ${p.title || 'بدون عنوان'}</span>
                         <div style="display: flex; gap: 5px;">
                             <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="editPost('${identifier}', 'page')">تعديل</button>
                             <button type="button" class="btn btn-danger" style="background:#ef4444; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="deletePost('${identifier}', 'page')">حذف</button>
@@ -858,16 +871,17 @@ function loadPostsAdminList() {
             });
         }
 
+        // 3. دالة الحذف وتحديث التخزين
         function deletePost(id, type) {
             showCustomAlert("تأكيد", "هل أنت متأكد من الحذف؟", () => {
                 if(type === 'page') {
                     let pages = getData('tech_static_pages', []);
-                    pages = pages.filter(p => p.slug !== id && p.id !== id);
+                    pages = pages.filter(p => p.slug !== id && p.id != id);
                     localStorage.setItem('tech_static_pages', JSON.stringify(pages));
                     globalData.pages = pages;
                 } else {
                     let posts = getData('tech_dalil_posts', []);
-                    posts = posts.filter(p => p.slug !== id && p.id !== id);
+                    posts = posts.filter(p => p.slug !== id && p.id != id);
                     localStorage.setItem('tech_dalil_posts', JSON.stringify(posts));
                     globalData.posts = posts;
                 }
@@ -877,31 +891,33 @@ function loadPostsAdminList() {
             });
         }
 
+        // 4. دالة التعديل واسترجاع البيانات للنموذج
         function editPost(id, type) {
             currentEditingPostId = id;
-            openArticleManager();
+            if(typeof openArticleManager === 'function') openArticleManager();
+            
             if(type === 'page') {
                 const pages = getData('tech_static_pages', []);
-                const p = pages.find(item => item.slug === id || item.id === id);
+                const p = pages.find(item => item.slug === id || item.id == id);
                 if(!p) return;
                 document.getElementById('content-type-selector').value = "page";
-                document.getElementById('post-title').value = p.title;
+                document.getElementById('post-title').value = p.title || "";
                 document.getElementById('post-cat').value = "";
                 document.getElementById('post-desc').value = "";
                 document.getElementById('post-img').value = "";
-                quill.root.innerHTML = p.content || "";
+                if(window.quill) quill.root.innerHTML = p.content || "";
                 if(typeof initArticleSlugField === 'function') initArticleSlugField(p);
             } else {
                 const posts = getData('tech_dalil_posts', []);
-                const p = posts.find(item => item.slug === id || item.id === id);
+                const p = posts.find(item => item.slug === id || item.id == id);
                 if(!p) return;
                 document.getElementById('content-type-selector').value = "post";
-                document.getElementById('post-title').value = p.title;
+                document.getElementById('post-title').value = p.title || "";
                 document.getElementById('post-cat').value = p.category || "";
                 document.getElementById('post-desc').value = p.description || "";
                 document.getElementById('post-img').value = p.image || "";
                 document.getElementById('post-date').value = p.date || "";
-                quill.root.innerHTML = p.content || "";
+                if(window.quill) quill.root.innerHTML = p.content || "";
                 if(typeof initArticleSlugField === 'function') initArticleSlugField(p);
             }
             
@@ -913,6 +929,7 @@ function loadPostsAdminList() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        
         function previewPost() {
             const title = document.getElementById('post-title').value.trim() || "عنوان تجريبي للمحتوى";
             const content = quill.root.innerHTML;
