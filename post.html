@@ -165,16 +165,15 @@
     <script>
         async function loadFullTemplatePost() {
             const urlParams = new URLSearchParams(window.location.search);
-            const articlePath = urlParams.get('article'); // مثال: post.html?article=articles/post-name.html
+            const postId = urlParams.get('id');
 
             try {
-                // 1. جلب بيانات المدونة العامة (data.json) لتعبئة السايدبار، الشعار، والقوائم
                 const response = await fetch('data.json?t=' + Date.now());
-                if (!response.ok) throw new Error("تعذر جلب بيانات المدونة.");
+                if (!response.ok) throw new Error("تعذر جلب البيانات.");
                 
                 const data = await response.json();
                 
-                // الشعار والإعدادات
+                // 1. الشعار والإعدادات
                 if (data.settings) {
                     if (data.settings.logoUrl) {
                         document.getElementById('header-logo-box').innerHTML = `<img src="${data.settings.logoUrl}" style="height: ${data.settings.logoHeight || '55px'};" alt="شعار المدونة">`;
@@ -184,7 +183,7 @@
                     }
                 }
 
-                // بناء القوائم الهرمية العلوية
+                // 2. بناء القوائم الهرمية العلوية تماماً مثل الرئيسية
                 const navContainer = document.getElementById('nav-menu-container');
                 if (data.menu && data.menu.length > 0) {
                     let navHtml = '';
@@ -194,7 +193,7 @@
                     navContainer.innerHTML = navHtml;
                 }
 
-                // بناء الشريط الجانبي والودجات
+                // 3. بناء الشريط الجانبي والودجات
                 const sidebarContainer = document.getElementById('sidebar-widgets-container');
                 let widgetsHtml = '';
                 if (data.widgets && data.widgets.length > 0) {
@@ -203,8 +202,7 @@
                         if (w.type === 'recent') {
                             widgetBody = '<ul style="list-style: none; padding: 0;">';
                             (data.posts || []).forEach(p => {
-                                let targetLink = p.slug ? `post.html?article=articles/${p.slug}.html` : `post.html?id=${p.id}`;
-                                widgetBody += `<li style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;"><a href="${targetLink}" style="color: var(--text-main); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">${p.title}</a></li>`;
+                                widgetBody += `<li style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;"><a href="post.html?id=${p.id}" style="color: var(--text-main); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">${p.title}</a></li>`;
                             });
                             widgetBody += '</ul>';
                         }
@@ -213,45 +211,43 @@
                 }
                 sidebarContainer.innerHTML = widgetsHtml || '<div class="widget-box"><p style="color:var(--text-muted)">لا توجد ودجات مفعلة.</p></div>';
 
-                // 2. جلب ملف الـ HTML المستقل وعرضه
+                // 4. جلب المقال وعرضه
+                let posts = data.posts || [];
+                let post = posts.find(p => p.id == postId) || posts[0];
                 const container = document.getElementById('post-content-box');
 
-                if (!articlePath) {
-                    container.innerHTML = `<h2>عذراً</h2><p style="color:var(--text-muted); margin: 15px 0;">لم يتم تحديد المقال المطلوب.</p><a href="index.html" class="back-btn">العودة للرئيسية</a>`;
+                if (!post) {
+                    container.innerHTML = `<h2>عذراً</h2><p style="color:var(--text-muted); margin: 15px 0;">المقال المطلوب غير موجود.</p><a href="index.html" class="back-btn">العودة للرئيسية</a>`;
                     return;
                 }
 
-                const articleResponse = await fetch(articlePath);
-                if (!articleResponse.ok) {
-                    throw new Error("ملف المقال غير موجود في المسار المحدد.");
-                }
+                document.getElementById('page-title').innerText = post.title + " | تكنو-دليل";
 
-                const htmlText = await articleResponse.text();
-
-                // استخراج محتوى الجسم إذا كان الملف يحتوي على html/body كاملاً، أو عرضه مباشرة
-                let finalContent = htmlText;
-                if (htmlText.includes("<body")) {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(htmlText, 'text/html');
-                    // محاولة أخذ محتوى الـ article أو الـ body لتجنب تداخل التنسيقات
-                    const articleEl = doc.querySelector('article') || doc.body;
-                    if (articleEl) finalContent = articleEl.innerHTML;
-                }
-
-                document.getElementById('page-title').innerText = "تكنو-دليل | مقال تقني";
+                let ads = data.ads || {};
+                let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:20px 0; text-align:center;">${ads.topCode}</div>` : '';
+                let midAd = (ads.midOn && ads.midCode) ? `<div style="margin:20px 0; text-align:center;">${ads.midCode}</div>` : '';
+                let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:20px 0; text-align:center;">${ads.botCode}</div>` : '';
 
                 container.innerHTML = `
-                    <div class="post-body">
-                        ${finalContent}
+                    <h1 class="post-title">${post.title}</h1>
+                    <div class="post-meta">
+                        <span><i class="fa-regular fa-calendar"></i> ${post.date || 'حديث'}</span>
+                        <span><i class="fa-regular fa-user"></i> ${post.author || 'إدارة المدونة'}</span>
                     </div>
+                    ${topAd}
+                    <div class="post-body">
+                        ${post.content || ''}
+                    </div>
+                    ${midAd}
+                    ${botAd}
                     <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px;">
                         <a href="index.html" class="back-btn">← العودة إلى الصفحة الرئيسية</a>
                     </div>
                 `;
 
             } catch (err) {
-                console.error(err);
-                document.getElementById('post-content-box').innerHTML = `<h2>خطأ في التحميل</h2><p style="color:var(--text-muted);">تعذر جلب ملف المقال (${articlePath}). تأكد من صحة مسار الملف.</p><a href="index.html" class="back-btn" style="margin-top:15px; display:inline-block;">العودة للرئيسية</a>`;
+                console.log(err);
+                document.getElementById('post-content-box').innerHTML = `<h2>خطأ</h2><p style="color:var(--text-muted);">تعذر تحميل المقال من الخادم.</p>`;
             }
         }
 
