@@ -425,7 +425,7 @@
             return `${baseSlug}-${uniqueId}.html`;
         }
 
-        async function loadServerData() {
+async function loadServerData() {
             try {
                 const response = await fetch('data.json?t=' + Date.now());
                 if (response.ok) {
@@ -439,7 +439,7 @@
                     }
                 }
             } catch (err) {
-                console.log("لم يتم العثور على ملف data.json على السيرفر.");
+                console.log("لم يتم العثور على ملف data.json على السيرفر، سيتم الاعتماد على التخزين المحلي.");
             }
 
             try {
@@ -451,16 +451,19 @@
                     globalFileSha = fileData.sha;
                 }
             } catch (e) {
-                console.log("تعذر جلب ملف الـ SHA.");
+                console.log("تعذر جلب ملف الـ SHA من GitHub.");
             }
 
+            // إعادة تهيئة الواجهة وتحديث القوائم بعد جلب البيانات تماماً
             initAdminUI();
+            loadPostsAdminList();
         }
 
-        async function saveServerData(successMsg, postToSave = null) {
+        
+async function saveServerData(successMsg, postToSave = null) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
-                showCustomAlert("تنبيه هامة", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
+                showCustomAlert("تنبيه هام", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
                 return;
             }
 
@@ -468,13 +471,41 @@
                 const owner = "abdulazizalhaaj728-del";
                 const repo = "tech-dalil";
                 const path = "data.json";
+
+                // 1. جلب أحدث SHA لملف data.json من جيت هب لضمان نجاح التحديث دون تعارض
+                let currentSha = globalFileSha;
+                try {
+                    const checkRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    if (checkRes.ok) {
+                        const checkData = await checkRes.json();
+                        currentSha = checkData.sha;
+                    }
+                } catch (e) {
+                    console.warn("تعذر جلب SHA الحالي، سيتم المحاولة بالـ SHA المحفوظ.");
+                }
                 
+                // جلب المقالات والصفحات المحلية وتحديثها
                 globalData.posts = getData('tech_dalil_posts', []);
                 globalData.pages = getData('tech_static_pages', []);
+
+                if (postToSave) {
+                    if (!Array.isArray(globalData.posts)) globalData.posts = [];
+                    const existingIndex = globalData.posts.findIndex(p => p.id == postToSave.id);
+                    
+                    if (existingIndex !== -1) {
+                        globalData.posts[existingIndex] = postToSave;
+                    } else {
+                        globalData.posts.unshift(postToSave);
+                    }
+                    saveData('tech_dalil_posts', globalData.posts);
+                }
 
                 const contentString = JSON.stringify(globalData, null, 4);
                 const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
 
+                // 2. تحديث ملف data.json على جيت هب
                 const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
                     method: 'PUT',
                     headers: {
@@ -482,55 +513,63 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        message: "Update data.json via Techno-Guide Admin Panel",
+                        message: postToSave ? `Add/Update post: ${postToSave.title}` : "Update data.json via Techno-Guide Admin Panel",
                         content: encodedContent,
-                        sha: globalFileSha
+                        sha: currentSha
                     })
                 });
 
                 const result = await response.json();
-                if (response.ok) {
-                    globalFileSha = result.content.sha;
+                if (!response.ok) {
+                    showCustomAlert("خطأ في الحفظ", "فشل حفظ data.json: " + (result.message || ""));
+                    return;
+                }
 
-if (postToSave) {
-                        // استخدام الـ slug كاسم للملف إذا كان موجوداً، وإلا فالاعتماد على الـ id القديم
-                        const articleFileName = postToSave.slug || `${postToSave.id}.html`;
-                        const fileName = `articles/${articleFileName}`;
-                        
-                        const htmlContent = generateArticleHtml(postToSave);
-                        const encodedHtml = btoa(unescape(encodeURIComponent(htmlContent)));
+                globalFileSha = result.content.sha;
 
-                        let htmlSha = "";
-                        const resHtml = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`);
+                // 3. رفع صفحة الـ HTML المستقلة للمقال داخل مجلد articles/
+                if (postToSave) {
+                    const articleFileName = postToSave.slug || `${postToSave.id}.html`;
+                    const fileName = `articles/${articleFileName}`;
+                    
+                    const htmlContent = generateArticleHtml(postToSave);
+                    const encodedHtml = btoa(unescape(encodeURIComponent(htmlContent)));
+
+                    let htmlSha = undefined;
+                    try {
+                        const resHtml = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+                            headers: { 'Authorization': `token ${token}` }
+                        });
                         if (resHtml.ok) {
                             const hData = await resHtml.json();
                             htmlSha = hData.sha;
                         }
+                    } catch (e) {}
 
-                        await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Authorization': `token ${token}`,
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                message: `Generate/Update static HTML page for: ${postToSave.title}`,
-                                content: encodedHtml,
-                                sha: htmlSha || undefined
-                            })
-                        });
-                    }
-                    showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر وتوليد صفحة المقال المستقلة بنجاح على السحابة!");
-                    menuHasChanges = false;
-                } else {
-                    showCustomAlert("خطأ في الحفظ", "فشل الحفظ: تأكد من صحة الـ Token. (" + (result.message || "") + ")");
+                    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: `Generate/Update static HTML page for: ${postToSave.title}`,
+                            content: encodedHtml,
+                            sha: htmlSha
+                        })
+                    });
                 }
+
+                showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر وتوليد صفحة المقال وتحديث السحابة بنجاح!");
+                menuHasChanges = false;
+
             } catch (err) {
-                showCustomAlert("خطأ اتصال", "تعذر الاتصال بخوادم GitHub.");
+                showCustomAlert("خطأ اتصال", "تعذر الاتصال بخوادم GitHub. تأكد من اتصال الإنترنت أو صحة الـ Token.");
                 console.error(err);
             }
         }
-
+        
+        
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
             <html lang="ar" dir="rtl">
@@ -647,6 +686,7 @@ if (postToSave) {
             loadServerData();
         });
 
+// 1. دالة جلب البيانات العامة وضمان تخزينها في localStorage لعرضها في القائمة
         function initAdminUI() {
             if (globalData.settings && globalData.settings.logoHeight) {
                 document.getElementById('logo-size-selector').value = globalData.settings.logoHeight;
@@ -662,6 +702,8 @@ if (postToSave) {
                 document.getElementById('ad-bot-on').checked = globalData.ads.botOn || false;
                 document.getElementById('ad-bot-code').value = globalData.ads.botCode || '';
             }
+
+            // تحديث التخزين المحلي مباشرة من الكائن العام أو جلبها كـ احتياطي
             if (globalData.posts && globalData.posts.length > 0) {
                 localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
             }
@@ -675,11 +717,12 @@ if (postToSave) {
                 localStorage.setItem('tech_widgets', JSON.stringify(globalData.widgets));
             }
 
-            loadSidebarWidgetsAdmin();
-            renderStructuredMenuAdmin();
+            if (typeof loadSidebarWidgetsAdmin === 'function') loadSidebarWidgetsAdmin();
+            if (typeof renderStructuredMenuAdmin === 'function') renderStructuredMenuAdmin();
             loadPostsAdminList();
         }
 
+        
         function openArticleManager() {
             document.getElementById('manager-trigger-wrapper').style.display = 'none';
             document.getElementById('article-manager-form-container').style.display = 'block';
@@ -693,7 +736,7 @@ if (postToSave) {
             resetPostForm();
         }
 
-async function saveOrUpdatePost() {
+        async function saveOrUpdatePost() {
             const title = document.getElementById('post-title').value.trim();
             const category = document.getElementById('post-cat').value.trim() || "عام";
             const description = document.getElementById('post-desc').value.trim();
@@ -739,6 +782,8 @@ async function saveOrUpdatePost() {
             closeArticleManager();
             loadPostsAdminList();
         }        
+
+        
         function resetPostForm() {
             currentEditingPostId = null;
             currentArticleIsDraft = false;
@@ -819,48 +864,59 @@ async function saveOrUpdatePost() {
             });
         }
 
-        function loadPostsAdminList() {
-            const posts = getData('tech_dalil_posts', []);
-            const pages = getData('tech_static_pages', []);
+// 2. دالة عرض المقالات والصفحات في لوحة التحكم (محسنة لتقرأ من الـ LocalStorage والـ globalData معاً)
+function loadPostsAdminList() {
+            // الاعتماد المباشر على البيانات القادمة من ملف data.json على السيرفر (globalData)
+            let posts = (globalData.posts && globalData.posts.length > 0) ? globalData.posts : getData('tech_dalil_posts', []);
+            let pages = (globalData.pages && globalData.pages.length > 0) ? globalData.pages : getData('tech_static_pages', []);
+
             const container = document.getElementById('posts-admin-management-list');
             if(!container) return;
             container.innerHTML = "";
             
             if(posts.length === 0 && pages.length === 0) { 
-                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>لا توجد مقالات أو صفحات منشورة.</p>"; 
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>لا توجد مقالات أو صفحات منشورة حالياً على السيرفر.</p>"; 
                 return; 
             }
 
             posts.forEach((p) => {
                 let statusBadge = p.isDraft ? '<span style="color:#f59e0b; font-size:0.75rem;">(مسودة)</span>' : '<span style="color:#10b981; font-size:0.75rem;">(منشور)</span>';
+                let identifier = p.slug || p.id;
                 container.innerHTML += `
-                    <div class="item-row">
-                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title} ${statusBadge} (${p.date})</span>
-                        <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'post')">تعديل</button>
-                        <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'post')">حذف</button>
+                    <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02); margin-bottom: 5px; border-radius: 6px;">
+                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title || 'بدون عنوان'} ${statusBadge} (${p.date || 'حديث'})</span>
+                        <div style="display: flex; gap: 5px;">
+                            <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="editPost('${identifier}', 'post')">تعديل</button>
+                            <button type="button" class="btn btn-danger" style="background:#ef4444; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="deletePost('${identifier}', 'post')">حذف</button>
+                        </div>
                     </div>`;
             });
 
             pages.forEach((p) => {
+                let identifier = p.slug || p.id;
                 container.innerHTML += `
-                    <div class="item-row">
-                        <span style="flex:1; font-size:0.9rem; color:var(--accent-color);"><b>[صفحة علوية]</b> ${p.title}</span>
-                        <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'page')">تعديل</button>
-                        <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'page')">حذف</button>
+                    <div class="item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02); margin-bottom: 5px; border-radius: 6px;">
+                        <span style="flex:1; font-size:0.9rem; color:var(--accent-color);"><b>[صفحة علوية]</b> ${p.title || 'بدون عنوان'}</span>
+                        <div style="display: flex; gap: 5px;">
+                            <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="editPost('${identifier}', 'page')">تعديل</button>
+                            <button type="button" class="btn btn-danger" style="background:#ef4444; padding:5px 10px; font-size:0.8rem; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="deletePost('${identifier}', 'page')">حذف</button>
+                        </div>
                     </div>`;
             });
         }
 
+        
+        // 3. دالة الحذف وتحديث التخزين
         function deletePost(id, type) {
             showCustomAlert("تأكيد", "هل أنت متأكد من الحذف؟", () => {
                 if(type === 'page') {
                     let pages = getData('tech_static_pages', []);
-                    pages = pages.filter(p => p.id !== id);
+                    pages = pages.filter(p => p.slug !== id && p.id != id);
                     localStorage.setItem('tech_static_pages', JSON.stringify(pages));
                     globalData.pages = pages;
                 } else {
                     let posts = getData('tech_dalil_posts', []);
-                    posts = posts.filter(p => p.id !== id);
+                    posts = posts.filter(p => p.slug !== id && p.id != id);
                     localStorage.setItem('tech_dalil_posts', JSON.stringify(posts));
                     globalData.posts = posts;
                 }
@@ -870,32 +926,34 @@ async function saveOrUpdatePost() {
             });
         }
 
+        // 4. دالة التعديل واسترجاع البيانات للنموذج
         function editPost(id, type) {
             currentEditingPostId = id;
-            openArticleManager();
+            if(typeof openArticleManager === 'function') openArticleManager();
+            
             if(type === 'page') {
                 const pages = getData('tech_static_pages', []);
-                const p = pages.find(item => item.id === id);
+                const p = pages.find(item => item.slug === id || item.id == id);
                 if(!p) return;
                 document.getElementById('content-type-selector').value = "page";
-                document.getElementById('post-title').value = p.title;
+                document.getElementById('post-title').value = p.title || "";
                 document.getElementById('post-cat').value = "";
                 document.getElementById('post-desc').value = "";
                 document.getElementById('post-img').value = "";
-                quill.root.innerHTML = p.content || "";
-                initArticleSlugField(p);
+                if(window.quill) quill.root.innerHTML = p.content || "";
+                if(typeof initArticleSlugField === 'function') initArticleSlugField(p);
             } else {
                 const posts = getData('tech_dalil_posts', []);
-                const p = posts.find(item => item.id === id);
+                const p = posts.find(item => item.slug === id || item.id == id);
                 if(!p) return;
                 document.getElementById('content-type-selector').value = "post";
-                document.getElementById('post-title').value = p.title;
+                document.getElementById('post-title').value = p.title || "";
                 document.getElementById('post-cat').value = p.category || "";
                 document.getElementById('post-desc').value = p.description || "";
                 document.getElementById('post-img').value = p.image || "";
                 document.getElementById('post-date').value = p.date || "";
-                quill.root.innerHTML = p.content || "";
-                initArticleSlugField(p);
+                if(window.quill) quill.root.innerHTML = p.content || "";
+                if(typeof initArticleSlugField === 'function') initArticleSlugField(p);
             }
             
             const publishBtn = document.getElementById('publish-btn');
@@ -906,6 +964,7 @@ async function saveOrUpdatePost() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        
         function previewPost() {
             const title = document.getElementById('post-title').value.trim() || "عنوان تجريبي للمحتوى";
             const content = quill.root.innerHTML;
@@ -919,6 +978,8 @@ async function saveOrUpdatePost() {
                         body { font-family: 'Cairo', sans-serif; padding: 40px; background: #0f172a; color: #f8fafc; line-height: 1.8; }
                         .container { max-width: 800px; margin: auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; }
                         h1 { color: #f59e0b; border-bottom: 2px solid #0284c7; padding-bottom: 15px; }
+                        p { text-align: justify; text-justify: inter-word; margin-bottom: 15px; }
+                        img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 20px auto; }
                     </style>
                 </head>
                 <body>
@@ -932,6 +993,7 @@ async function saveOrUpdatePost() {
             previewWin.document.close();
         }
 
+        
         function uploadLogoFile(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
