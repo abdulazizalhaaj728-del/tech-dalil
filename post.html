@@ -668,7 +668,7 @@
 
         window.addEventListener('DOMContentLoaded', loadFullTemplatePost);
 
-            /* اكتشاف ما إذا كنا داخل مجلد articles أو في الصفحة الرئيسية
+            /* اكتشاف ما إذا كنا داخل مجلد articles أو في الصفحة الرئيسية*/
             const isInsideArticles = window.location.pathname.includes('/articles/');
             const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
             const homeLink = isInsideArticles ? '../index.html' : 'index.html';
@@ -737,7 +737,7 @@
                                 </div>
                             `).join('');
                         }
-                        
+                        /*
                         const sliderWrapper = document.getElementById('square-slider-wrapper');
                         const sliderPosts = data.posts.slice(0, 4);
                         if(sliderWrapper && sliderPosts.length > 0) {
@@ -756,6 +756,7 @@
                             `;
                             sliderWrapper.innerHTML = sliderHtml;
                             initSliderLogic();
+                            */
                         }
                     } else {
                         if (container) {
@@ -764,6 +765,7 @@
                     }
                 }
 
+                /*
                 if (data.settings) {
                     if (data.settings.logoUrl) {
                         const logoContainer = document.getElementById('site-logo-container');
