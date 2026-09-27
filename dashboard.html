@@ -179,9 +179,12 @@
                 <button type="button" class="btn" id="menu-cancel-edit-btn" onclick="resetMenuForm()" style="display:none; background:#64748b;">إلغاء</button>
             </div>
             <div id="admin-menu-structured-list" style="max-height: 300px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
-            <div style="margin-top: 15px;">
-                <button type="button" class="btn" onclick="saveServerData('تم حفظ وتحديث القوائم بنجاح على السيرفر!')" style="background: #28a745;">حفظ التغييرات النهائية للسيرفر</button>
-            </div>
+                <div style="margin-top: 15px;">
+                    <button type="button" class="btn" 
+                        onclick="(async () => { await saveServerData('تم حفظ وتحديث القوائم بنجاح على السيرفر!'); menuHasChanges = false; })();" style="background: #28a745;">
+                        حفظ التغييرات النهائية للسيرفر
+                    </button>
+                </div>
         </div>
 
         <!-- ودجات الشريط الأيسر والتذييل -->
@@ -1173,6 +1176,8 @@ function loadPostsAdminList() {
             } else {
                 console.error("دالة الحفظ saveServerData غير متوفرة.");
             }
+            // داخل زر حفظ الودجات أو بعد التعديل
+            await saveServerData("تم تحديث وحفظ الودجات على السحابة بنجاح!");
         });
 
         function addOrUpdateStructuredMenuItem() {
@@ -1517,6 +1522,13 @@ let draggedIndices = [];
                 e.returnValue = ''; 
             }
         });
+
+        // دالة جديدة لحفظ اعدادات الشعاروالشريط الاخباري
+        async function saveSettingsToCloud(successMsg) {
+            globalData.settings.logoHeight = document.getElementById('logo-size-selector').value;
+            globalData.settings.tickerVisible = document.getElementById('ticker-visible-toggle').checked;
+            await saveServerData(successMsg); // دمجها مع دالة الرفع السحابي الشاملة
+        }
 
     </script>
 </body>
