@@ -558,6 +558,13 @@ async function saveServerData(successMsg, postToSave = null) {
                 const repo = "tech-dalil";
                 const path = "data.json";
 
+                globalData.posts = getData('tech_dalil_posts', []);
+                globalData.pages = getData('tech_static_pages', []);
+
+
+                
+                
+               
                 // 1. جلب أحدث محتوى لملف data.json مباشرة من GitHub لضمان العمل على أحدث نسخة سحابية
                 let currentSha = globalFileSha;
                 let serverJsonData = { posts: [], pages: [], menu: [], widgets: [] };
