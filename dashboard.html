@@ -1003,7 +1003,7 @@ function loadPostsAdminList() {
         }
 
         
-        function uploadLogoFile(input) {
+function uploadLogoFile(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -1156,7 +1156,6 @@ function loadPostsAdminList() {
         function toggleWidgetActive(index) {
             if (globalData.widgets && globalData.widgets[index]) {
                 globalData.widgets[index].active = !globalData.widgets[index].active;
-                //saveServerData("تم تحديث حالة الودجت على السحابة!");
             }
         }
 
@@ -1164,20 +1163,16 @@ function loadPostsAdminList() {
             showCustomAlert("تأكيد", "هل أنت متأكد من رغبتك في حذف هذا الودجت؟", () => {
                 globalData.widgets.splice(index, 1);
                 loadSidebarWidgetsAdmin();
-               // saveServerData("تم حذف الودجت وتحديث السحابة بنجاح!");
             });
         }
 
-        // تفعيل زر الحفظ اليدوي للودجات
-        document.getElementById('save-widgets-btn').addEventListener('click', () => {
-            // استدعاء دالة الحفظ المعتادة لديك مباشرة
+        // تفعيل زر الحفظ اليدوي للودجات بشكل صحيح (async)
+        document.getElementById('save-widgets-btn').addEventListener('click', async () => {
             if (typeof saveServerData === 'function') {
-                saveServerData("تم حفظ إعدادات الودجات بنجاح!");
+                await saveServerData("تم تحديث وحفظ الودجات على السحابة بنجاح!");
             } else {
                 console.error("دالة الحفظ saveServerData غير متوفرة.");
             }
-            // داخل زر حفظ الودجات أو بعد التعديل
-            await saveServerData("تم تحديث وحفظ الودجات على السحابة بنجاح!");
         });
 
         function addOrUpdateStructuredMenuItem() {
@@ -1238,7 +1233,6 @@ function loadPostsAdminList() {
             renderStructuredMenuAdmin();
         }
 
-// مصفوفة لحفظ مؤشرات العناصر المطوية (التي تحتوي على علامة زائد)
         let collapsedMenuIndices = new Set();
 
         function toggleMenuCollapse(index) {
@@ -1260,21 +1254,17 @@ function loadPostsAdminList() {
                 return;
             }
 
-            // فحص العناصر المخفية بسبب طي عنصر أب أعلى منها
             let hideStackLevel = 999;
 
             globalData.menu.forEach((item, index) => {
                 let currentLevel = item.level || 1;
 
-                // إذا كان المستوى الحالي أقل من أو يساوي مستوى الإخفاء، نلغي الإخفاء
                 if (currentLevel <= hideStackLevel) {
                     hideStackLevel = 999;
                 }
 
-                // هل هذا العنصر مخفي لأن أحد أبنائه/أبائه مطوي؟
                 const isHiddenByParent = currentLevel > hideStackLevel;
 
-                // هل هذا العنصر يمتلك أهالي/أبناء تلي مباشرة ومستواها أكبر؟
                 let hasChildren = false;
                 if (index + 1 < globalData.menu.length) {
                     if ((globalData.menu[index + 1].level || 1) > currentLevel) {
@@ -1291,7 +1281,6 @@ function loadPostsAdminList() {
                 row.setAttribute('draggable', 'true');
                 row.dataset.index = index;
                 
-                // إذا كان مخفياً بواسطة أب مطوي، نجعل عرضه مختفياً تماماً
                 if (isHiddenByParent) {
                     row.style.cssText = "display: none; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;";
                 } else {
@@ -1300,7 +1289,6 @@ function loadPostsAdminList() {
                 
                 let indent = (currentLevel - 1) * 25; 
                 
-                // زر الزائد والناقص إذا كان العنصر يمتلك فروعاً
                 let collapseBtnHtml = '';
                 if (hasChildren) {
                     let isCollapsed = collapsedMenuIndices.has(index);
@@ -1335,8 +1323,7 @@ function loadPostsAdminList() {
             });
         }
 
-        
-let draggedIndices = [];
+        let draggedIndices = [];
 
         function handleDragStart(e) {
             const currentIndex = parseInt(this.dataset.index);
@@ -1344,7 +1331,6 @@ let draggedIndices = [];
             let selected = [];
             checkboxes.forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
 
-            // تحديد العنصر مع كافة أفرعه وأحفاده التابعين له تلقائياً إذا تم سحبه
             let subItemsIndices = [currentIndex];
             let baseLevel = globalData.menu[currentIndex].level || 1;
             let idx = currentIndex + 1;
@@ -1354,7 +1340,6 @@ let draggedIndices = [];
             }
 
             if (selected.includes(currentIndex) && selected.length > 0) {
-                // إذا كان هناك عناصر محددة بالمربع، نجمعها مع أفرعها
                 let allSelectedWithChildren = [];
                 selected.forEach(selIdx => {
                     allSelectedWithChildren.push(selIdx);
@@ -1375,6 +1360,25 @@ let draggedIndices = [];
             e.dataTransfer.effectAllowed = 'move';
         }
 
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const targetRow = this;
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            if (yClick < threshold) targetRow.classList.add('drop-indicator-top');
+            else if (yClick > rect.height - threshold) targetRow.classList.add('drop-indicator-bottom');
+            else targetRow.classList.add('drag-over-parent');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+        }
+
+        // دالة Drop واحدة موحدة وخالية من التكرار
         function handleDrop(e) {
             e.preventDefault();
             const targetRow = this;
@@ -1392,7 +1396,6 @@ let draggedIndices = [];
             else if (yClick > rect.height - threshold) dropMode = 'bottom';
             else dropMode = 'child';
 
-            // استخراج العناصر المسحوبة بكامل أفرعها وأحفادها بنفس الترتيب تماماً
             let itemsToMove = draggedIndices.map(i => globalData.menu[i]);
             let remainingItems = globalData.menu.filter((_, idx) => !draggedIndices.includes(idx));
             
@@ -1403,7 +1406,6 @@ let draggedIndices = [];
             if (dropMode === 'top') {
                 remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
             } else if (dropMode === 'bottom') {
-                // إذا كان الهدف يمتلك أفرعاً، نتجاوز أفرعه ونضع العنصر بعد نهايتهم لكي لا نفصل الأب عن ابنه بالخطأ
                 let insertPos = newTargetIdx + 1;
                 while (insertPos < remainingItems.length && (remainingItems[insertPos].level || 1) > (targetItemInRemaining.level || 1)) {
                     insertPos++;
@@ -1425,74 +1427,7 @@ let draggedIndices = [];
 
             menuHasChanges = true;
             globalData.menu = remainingItems;
-            collapsedMenuIndices.clear(); // إعادة تعيين الطي لتجنب اختلاف الفهارس المؤقتة بعد الترتيب
-            renderStructuredMenuAdmin();
-        }
-
-
-        
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            const targetRow = this;
-            const rect = targetRow.getBoundingClientRect();
-            const threshold = rect.height / 3;
-            const yClick = e.clientY - rect.top;
-
-            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
-            if (yClick < threshold) targetRow.classList.add('drop-indicator-top');
-            else if (yClick > rect.height - threshold) targetRow.classList.add('drop-indicator-bottom');
-            else targetRow.classList.add('drag-over-parent');
-        }
-
-        function handleDragLeave(e) {
-            this.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const targetRow = this;
-            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
-
-            const targetIndex = parseInt(targetRow.dataset.index);
-            if (draggedIndices.includes(targetIndex)) return;
-
-            const rect = targetRow.getBoundingClientRect();
-            const threshold = rect.height / 3;
-            const yClick = e.clientY - rect.top;
-
-            let dropMode = 'after';
-            if (yClick < threshold) dropMode = 'top';
-            else if (yClick > rect.height - threshold) dropMode = 'bottom';
-            else dropMode = 'child';
-
-            let itemsToMove = draggedIndices.map(i => globalData.menu[i]);
-            let remainingItems = globalData.menu.filter((_, idx) => !draggedIndices.includes(idx));
-            
-            let targetItemInRemaining = globalData.menu[targetIndex];
-            let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
-            if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
-
-            if (dropMode === 'top') {
-                remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
-            } else if (dropMode === 'bottom') {
-                remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
-            } else if (dropMode === 'child') {
-                let parentItem = targetItemInRemaining;
-                if (parentItem) {
-                    let levelDiff = (parentItem.level + 1) - itemsToMove[0].level;
-                    itemsToMove.forEach(it => {
-                        it.level = Math.max(1, it.level + levelDiff);
-                        it.rawText = '_'.repeat(it.level) + (it.title || 'عنصر');
-                    });
-                    remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
-                    targetRow.classList.add('pulse-highlight');
-                    setTimeout(() => targetRow.classList.remove('pulse-highlight'), 800);
-                }
-            }
-
-            menuHasChanges = true;
-            globalData.menu = remainingItems;
+            collapsedMenuIndices.clear();
             renderStructuredMenuAdmin();
         }
 
@@ -1502,7 +1437,6 @@ let draggedIndices = [];
             });
             draggedIndices = [];
         }
-
 
         function saveAdsSettings() {
             if(!globalData.ads) globalData.ads = {};
@@ -1523,13 +1457,12 @@ let draggedIndices = [];
             }
         });
 
-        // دالة جديدة لحفظ اعدادات الشعاروالشريط الاخباري
         async function saveSettingsToCloud(successMsg) {
             globalData.settings.logoHeight = document.getElementById('logo-size-selector').value;
             globalData.settings.tickerVisible = document.getElementById('ticker-visible-toggle').checked;
-            await saveServerData(successMsg); // دمجها مع دالة الرفع السحابي الشاملة
+            await saveServerData(successMsg);
         }
-
+        
     </script>
 </body>
 </html>
