@@ -206,10 +206,10 @@
         .square-title { font-size: 1.05rem; color: var(--accent-color); font-weight: 700; margin-bottom: 5px; cursor: pointer; }
         .square-desc { font-size: 0.75rem; color: #cbd5e1; }
 
-        /* تخصيص السلايدر ليأخذ المساحة المناسبة */
+        /* تخصيص السلايدر ليأخذ المساحة المناسبة 
         .square-slider-box {
-            flex: 1.6; /* يأخذ مساحة أوسع قليلاً */
-            height: 310px; /* ارتفاع ثابت ليتطابق مع صندوق المنتجات */
+            flex: 1.6; /* يأخذ مساحة أوسع قليلاً 
+            height: 310px; /* ارتفاع ثابت ليتطابق مع صندوق المنتجات 
             position: relative;
             border-radius: 12px;
             overflow: hidden;
@@ -225,13 +225,13 @@
         .slider-prev { right: 10px; }
         .slider-next { left: 10px; }
 
-/* صندوق المنتجات الرقمية بجانبه */
+/* صندوق المنتجات الرقمية بجانبه 
     .news-mini-container { 
-        flex: 1; /* يأخذ المساحة المتبقية */
+        flex: 1; /* يأخذ المساحة المتبقية 
         background: var(--card-bg); 
         border: 2px dashed var(--border-color); 
         border-radius: 12px; 
-        height: 310px; /* نفس ارتفاع السلايدر تماماً */
+        height: 310px; /* نفس ارتفاع السلايدر تماماً 
         padding: 15px; 
         display: flex; 
         flex-direction: column; 
@@ -240,7 +240,7 @@
         font-size: 0.9rem; 
         box-sizing: border-box;
     }
-
+*/
         /* تنسيق حاوية الشريط الإخباري لضمان استقلاليته وعدم تداخله */
 .news-ticker-wrapper {
     width: 100%;
@@ -685,7 +685,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         tickerWrapper.style.display = data.settings.tickerVisible !== false ? 'block' : 'none';
                     }
                 }
-
+            */
                 if (data.menu && data.menu.length > 0) {
                     const menuContainer = document.getElementById('site-main-menu');
                     if (menuContainer) {
@@ -707,7 +707,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             
                             return root;
                         }
-                        */
+              
 
                         function generateMenuHtml(nodes, isRoot = false) {
                             let html = isRoot ? '' : '<ul class="dropdown-menu">';
