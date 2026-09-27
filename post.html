@@ -192,6 +192,23 @@
 
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
+
+
+        /* تخصيص خلفية مريحة لصفحة عرض المقال */
+        body {
+        background-color: #F7F4EF !important; /* لون بيج دافئ وهادئ غير مؤذي للعين */
+        background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png'); /* أو يمكنك استبدالها برابط صورتك الخشبية الخفيفة */
+        color: #2C3E50 !important;
+        }
+        
+        /* تنسيق إطار المقال ليكون أبيض ناصعاً وبارزاً بشكل جمالي فوق الخلفية الهادئة */
+        .site-outer-frame {
+        background-color: #FFFFFF !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        border: 1px solid #E2D8C5;
+        }
+        
     </style>
 </head>
 <body class="theme-default">
