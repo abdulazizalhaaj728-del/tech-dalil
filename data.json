@@ -284,6 +284,19 @@
     },
     "posts": [
         {
+            "id": "post_1790518668071",
+            "title": "مقال تجريبي",
+            "category": "Artical html",
+            "description": "Artical html",
+            "image": "",
+            "date": "٢٧‏/٩‏/٢٠٢٦",
+            "content": "<p>تجربة جديدة بعد الدمج</p>",
+            "slug": "tech-post-24466.html",
+            "isDraft": false,
+            "isPublished": true,
+            "url": "articles/tech-post-24466.html"
+        },
+        {
             "id": "post_1790496334764",
             "title": "مستقبل التكنولوجيا 2035: كيف سيبدو شكل العالم في العشر سنوات القادمة؟",
             "category": "الذكاء الاصطناعي",
