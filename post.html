@@ -451,16 +451,7 @@
             </div>
         </div>
 
-        <!--    
-        <div class="main-menu-bar">
-            <nav id="site-main-menu" class="mega-menu">
-                <a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
-                <a href="blog.html"><i class="fa-solid fa-book-open"></i> المدونة</a>
-            </nav>
-        </div> 
--->
-
-        
+       
 
     <!-- القائمة الرئيسية الأفقية -->
     <div class="main-menu-bar">
@@ -510,10 +501,10 @@
         <div class="three-columns-grid" id="top-three-section">
             <div class="right-scrollable-section">
                 
-                <!-- صف يضم السلايدر وبجانبه صندوق المنتجات الرقمية -->
+                <!-- صف يضم السلايدر وبجانبه صندوق المنتجات الرقمية 
                 <div class="top-right-row">
                     
-                    <!-- 1. السلايدر (تم تقليل عرضه ليناسب المساحة) -->
+                    <!-- 1. السلايدر (تم تقليل عرضه ليناسب المساحة) 
                     <div class="square-slider-box" id="square-slider-wrapper">
                         <div class="square-slide active" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80');">
                             <div class="square-caption">
@@ -525,11 +516,11 @@
                         <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
                     </div>
         
-                    <!-- 2. صندوق المنتجات الرقمية (بجانب السلايدر مباشرة وبنفس الارتفاع) -->
+                    <!-- 2. صندوق المنتجات الرقمية (بجانب السلايدر مباشرة وبنفس الارتفاع) 
                     <div class="news-mini-container" id="side-news-summaries">
                         <div class="section-title">منتجات رقمية</div>
                         <div class="products-grid">
-                            <!-- المربع الأول: اللعبة -->
+                            <!-- المربع الأول: اللعبة 
                             <a href="game.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
                                 <div class="product-content">
                                     <img src="https://tech-dalil.com/4.png" alt="لعبة تحدي الثقافة التعليمية" class="ad-game-thumb">
@@ -537,7 +528,7 @@
                                 </div>
                             </a>
         
-                            <!-- المربع الثاني: الاختبار -->
+                            <!-- المربع الثاني: الاختبار 
                             <a href="test.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
                                 <div class="product-content">
                                     <img src="https://tech-dalil.com/6.png" alt="اختبار تحدي الثقافة" class="ad-game-thumb">
@@ -545,14 +536,14 @@
                                 </div>
                             </a>
         
-                            <!-- مربعات فارغة للاستخدام المستقبلي -->
+                            <!-- مربعات فارغة للاستخدام المستقبلي 
                             <div class="product-card empty"></div>
                             <div class="product-card empty"></div>
                         </div>
                     </div>
         
                 </div>
-        
+        -->
                 <div class="tags-filter-section">
                     <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 10px;">🏷️ تصفية حسب التسميات:</h3>
                     <div class="tags-bar" id="tags-filter-bar"></div>
@@ -585,7 +576,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const postId = urlParams.get('id');
 
-            // اكتشاف ما إذا كنا داخل مجلد articles أو في الصفحة الرئيسية
+            /* اكتشاف ما إذا كنا داخل مجلد articles أو في الصفحة الرئيسية
             const isInsideArticles = window.location.pathname.includes('/articles/');
             const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
             const homeLink = isInsideArticles ? '../index.html' : 'index.html';
@@ -716,6 +707,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             
                             return root;
                         }
+                        */
 
                         function generateMenuHtml(nodes, isRoot = false) {
                             let html = isRoot ? '' : '<ul class="dropdown-menu">';
@@ -813,7 +805,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // دالة موحدة ومنظفة للتحكم بالحركة (السلايدر)
+        /* دالة موحدة ومنظفة للتحكم بالحركة (السلايدر)
         function initSliderLogic() {
             const slides = document.querySelectorAll('.square-slide');
             if(slides.length === 0) return;
@@ -853,6 +845,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     sliderTimer = setInterval(nextSlide, 4000);
                 });
             }
+            */
         }
 
         // إعدادات الخطوط والسمات (Themes) والوضع الليلي ولوحة التحكم
