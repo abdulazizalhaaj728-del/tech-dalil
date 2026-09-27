@@ -663,7 +663,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
                                 <div class="square-caption">
                                     
-                                    <div class="square-title" onclick="location.href='post.html?article=articles/' + (${p.slug} ? '${p.slug}'.replace(/\\.html$/i, '') : '${p.url}'.replace(/^.*[\\\\\\/]/, '').replace(/\\.html$/i, '')) + '.html'" style="cursor: pointer;">${p.title}</div>
+                                    <div class="square-title" onclick="location.href='post.html?article=articles/' + getCleanSlug('${p.slug || p.url}') + '.html'" style="cursor: pointer;">${p.title}</div>
                                     <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                                 </div>
                             </div>
