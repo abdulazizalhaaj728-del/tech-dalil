@@ -278,71 +278,6 @@
         padding: 5px;
         border-radius: 6px;
     }
-    
-    .products-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(2, 1fr);
-        gap: 6px;
-        flex: 1;
-        min-height: 0;
-    }
-    
-    .product-card {
-        background-color: var(--bg-color);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        overflow: hidden;
-        position: relative;
-        transition: all 0.3s ease;
-        height: 100%;
-    }
-    
-        .product-card:not(.empty):hover {
-            background-color: var(--card-bg);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-    /* تعديل حاوية المحتوى لتكون عمودية (صورة بالأعلى وتحتها النص) */
-        .product-content {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 6px;
-            box-sizing: border-box;
-            gap: 4px; /* مسافة بسيطة بين الصورة والنص */
-        }
-        
-        .ad-game-thumb {
-            width: 100%;
-            height: 78px; /* ارتفاع مخصص للصورة لترك مساحة للنص تحتها */
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        
-        .product-card span {
-            color: #ffffff;
-            font-size: 0.72rem; /* حجم خط مناسب ومقروء داخل المربع الصغير */
-            text-align: center;
-            line-height: 1.2;
-        }
-        
-        .product-card.empty {
-            opacity: 0.4;
-            cursor: default;
-        }    
-
-
-
-
 
 
         /* محتوى المقالات الرئيسي يأخذ مساحته الطبيعية للتمرير */
@@ -524,7 +459,7 @@
         <div class="three-columns-grid" id="top-three-section">
             <div class="right-scrollable-section">
         
-                 <!-- المحتوى والشريط الجانبي 
+                 <!-- المحتوى والشريط الجانبي -->
                 <div class="main-layout">-->
                 <!-- محتوى المقال الرئيسي -->
                 <main>
@@ -588,11 +523,11 @@
                 </div>
             </div>
 
-            <!--
+            <!--sidebar-->
             <div class="left-sticky-sidebar">
                 <div class="left-content-area" id="left-widgets-area"></div>
             </div>
-            -->
+            
         </div>
 
         
