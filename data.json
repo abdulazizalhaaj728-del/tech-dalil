@@ -290,6 +290,19 @@
     },
     "posts": [
         {
+            "id": "post_1790519736056",
+            "title": "تجربة أخرى",
+            "category": "Artical html2",
+            "description": "Artical html2",
+            "image": "",
+            "date": "٢٧‏/٩‏/٢٠٢٦",
+            "content": "<p>تجربة أخرى بعد اصلاح الدمج</p>",
+            "slug": "tech-post-01464.html",
+            "isDraft": false,
+            "isPublished": true,
+            "url": "articles/tech-post-01464.html"
+        },
+        {
             "id": "post_1790518668071",
             "title": "مقال تجريبي",
             "category": "Artical html",
