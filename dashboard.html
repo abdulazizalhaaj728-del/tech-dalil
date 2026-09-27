@@ -469,7 +469,7 @@
         }
 
 
-   //     طريقة المقال القديمة    
+   /*     طريقة المقال القديمة    
     async function saveServerData(successMsg, postToSave = null) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
@@ -544,7 +544,148 @@
                 console.error(err);
             }
         }
+        */
 
+
+        async function saveServerData(successMsg, postToSave = null) {
+    const token = document.getElementById('gh-token-input').value.trim();
+    if (!token) {
+        showCustomAlert("تنبيه هام", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
+        return;
+    }
+
+    try {
+        const owner = "abdulazizalhaaj728-del";
+        const repo = "tech-dalil";
+        const path = "data.json";
+
+        // 1. جلب أحدث محتوى لملف data.json مباشرة من GitHub لضمان العمل على أحدث نسخة سحابية
+        let currentSha = globalFileSha;
+        let serverJsonData = { posts: [], pages: [], menu: [], widgets: [] };
+
+        try {
+            const checkRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+            if (checkRes.ok) {
+                const checkData = await checkRes.json();
+                currentSha = checkData.sha;
+                const decodedString = decodeURIComponent(escape(atob(checkData.content)));
+                serverJsonData = JSON.parse(decodedString);
+            }
+        } catch (e) {
+            console.warn("تعذر جلب البيانات من السحابة، سيتم الاعتماد على البيانات الحالية.");
+            serverJsonData = globalData || { posts: [], pages: [], menu: [], widgets: [] };
+        }
+        
+        // التأكد من وجود المصفوفات الأساسية سحابياً
+        if (!Array.isArray(serverJsonData.posts)) serverJsonData.posts = [];
+        if (!Array.isArray(serverJsonData.pages)) serverJsonData.pages = [];
+        if (!Array.isArray(serverJsonData.menu)) serverJsonData.menu = [];
+        if (!Array.isArray(serverJsonData.widgets)) serverJsonData.widgets = [];
+
+        // 2. دمج إعدادات الأشياء الأخرى (القوائم، الودجات، الصفحات، وغيرها) من الذاكرة المحلية أو الكائن العام
+        serverJsonData.pages = typeof getData === 'function' ? getData('tech_static_pages', serverJsonData.pages) : serverJsonData.pages;
+        
+        // دمج القوائم والودجات إذا كانت مخزنة محلياً أو في متغيرات عامة
+        if (typeof menuItems !== 'undefined') {
+            serverJsonData.menu = menuItems;
+        } else if (typeof getData === 'function') {
+            serverJsonData.menu = getData('tech_dalil_menu', serverJsonData.menu);
+        }
+
+        if (typeof widgetsData !== 'undefined') {
+            serverJsonData.widgets = widgetsData;
+        } else if (typeof getData === 'function') {
+            serverJsonData.widgets = getData('tech_dalil_widgets', serverJsonData.widgets);
+        }
+
+        // إذا كان هناك إعدادات عامة أخرى مخزنة في globalData (مثل الشعار أو شريط الأخبار)، نضمن بقاءها
+        if (globalData) {
+            if (globalData.settings) serverJsonData.settings = globalData.settings;
+            if (globalData.ticker) serverJsonData.ticker = globalData.ticker;
+            if (globalData.ads) serverJsonData.ads = globalData.ads;
+        }
+
+        // 3. دمج المقال الجديد أو المحدث داخل مصفوفة posts (بناءً على الدالة الثانية المتقدمة)
+        if (postToSave) {
+            const existingIndex = serverJsonData.posts.findIndex(p => p.id == postToSave.id);
+            
+            if (existingIndex !== -1) {
+                serverJsonData.posts[existingIndex] = postToSave;
+            } else {
+                serverJsonData.posts.unshift(postToSave);
+            }
+        }
+
+        // تجهيز النص الجديد لملف data.json لرفعه للسحابة
+        const contentString = JSON.stringify(serverJsonData, null, 4);
+        const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
+
+        // 4. رفع ملف data.json المحدث إلى GitHub
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: postToSave ? `Add/Update post: ${postToSave.title}` : "Update settings, menu, widgets & data.json via Techno-Guide Admin Panel",
+                content: encodedContent,
+                sha: currentSha
+            })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            showCustomAlert("خطأ في الحفظ", "فشل حفظ data.json على السحابة: " + (result.message || ""));
+            return;
+        }
+
+        globalFileSha = result.content.sha;
+        globalData = serverJsonData; // تحديث البيانات العامة في الذاكرة
+
+        // 5. رفع صفحة الـ HTML المستقلة للمقال داخل مجلد articles/ (أو المجلد المعتمد لديك)
+        if (postToSave) {
+            const articleFileName = postToSave.slug || `${postToSave.id}.html`;
+            const fileName = `articles/${articleFileName}`;
+            
+            const htmlContent = generateArticleHtml(postToSave);
+            const encodedHtml = btoa(unescape(encodeURIComponent(htmlContent)));
+
+            let htmlSha = undefined;
+            try {
+                const resHtml = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                if (resHtml.ok) {
+                    const hData = await resHtml.json();
+                    htmlSha = hData.sha;
+                }
+            } catch (e) {}
+
+            await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: `Generate/Update static HTML page for: ${postToSave.title}`,
+                    content: encodedHtml,
+                    sha: htmlSha
+                })
+            });
+        }
+
+        showCustomAlert("نجاح", successMsg || "تم حفظ الإعدادات، القوائم، الودجات، ونشر المقال على السحابة بنجاح!");
+        menuHasChanges = false;
+
+    } catch (err) {
+        showCustomAlert("خطأ اتصال", "تعذر الاتصال بخوادم GitHub. تأكد من اتصال الإنترنت أو صحة الـ Token.");
+        console.error(err);
+    }
+}
 
 
         
