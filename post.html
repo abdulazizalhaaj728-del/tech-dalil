@@ -370,6 +370,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // دالة مساعدة لتوليد رابط المقال الصحيح بدون تكرار الامتدادات
+function getPostUrl(post) {
+    // استخراج اسم الملف النظيف بدون مسارات أو امتدادات متكررة
+    let slug = post.slug || '';
+    if (!slug && post.url) {
+        slug = post.url.replace(/^.*[\\\/]/, ''); // استخراج اسم الملف الأخير
+    }
+    // تنظيف أي امتدادات مكررة لـ .html
+    slug = slug.replace(/\.html$/i, '').replace(/\.html$/i, '');
+    
+    return `post.html?article=articles/${slug}.html`;
+}
+
         // إعدادات اللوجو والشريط الإخباري والقوائم والودجتس تماماً مثل الرئيسية
         if (data.settings) {
             if (data.settings.logoUrl) {
