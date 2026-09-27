@@ -635,7 +635,7 @@ async function saveServerData(successMsg, postToSave = null) {
         } else {
             showCustomAlert("خطأ في الحفظ", "فشل الحفظ: تأكد من صحة الـ Token. (" + (result.message || "") + ")");
         }
-    }كان catch (err) {
+    } catch (err) {
         showCustomAlert("خطأ اتصال", "تعذر الاتصال بخوادم GitHub.");
         console.error(err);
     }
