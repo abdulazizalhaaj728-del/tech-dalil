@@ -736,18 +736,29 @@ const sliderWrapper = document.getElementById('square-slider-wrapper');
                     return root;
                 }
 
-                function generateMenuHtml(nodes, isRoot = false) {
+function generateMenuHtml(nodes, isRoot = false) {
                     let html = isRoot ? '' : '<ul class="dropdown-menu">';
                     
                     nodes.forEach(node => {
                         let itemUrl = node.url || node.link || 'index.html';
-                        if (isInsideArticles && !itemUrl.startsWith('http') && !itemUrl.startsWith('../')) {
-                            itemUrl = '../' + itemUrl;
+                        
+                        // تطبيق طريقة الرابط المطلوبة مع مراعاة حالة الوجود داخل المجلد أم لا
+                        let finalHref = itemUrl;
+                        if (node.slug) {
+                            let prefix = isInsideArticles ? '../' : '';
+                            finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
+                        } else {
+                            if (!itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
+                                if (isInsideArticles && !itemUrl.startsWith('../')) {
+                                    finalHref = '../' + itemUrl;
+                                }
+                            }
                         }
+                        
                         let hasChildren = node.children && node.children.length > 0;
                         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
                         
-                        html += `<li><a href="${itemUrl}">${node.title}${arrow}</a>`;
+                        html += `<li><a href="${finalHref}">${node.title}${arrow}</a>`;
                         
                         if (hasChildren) {
                             html += generateMenuHtml(node.children, false);
@@ -763,8 +774,8 @@ const sliderWrapper = document.getElementById('square-slider-wrapper');
                 let menuTree = buildTree(data.menu);
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
-        }                
-
+        }
+        
         
         if (data.widgets && data.widgets.length > 0) {
             const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
