@@ -671,12 +671,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const sliderWrapper = document.getElementById('square-slider-wrapper');
                 const sliderPosts = filteredPosts.slice(0, 4);
                 if(sliderWrapper && sliderPosts.length > 0) {
-                    let sliderHtml = sliderPosts.map((p, idx) => {
-                        let sliderArticleUrl = isInsideArticles ? `${p.slug}.html` : `articles/${p.slug}.html`;
-                        return `
+                        // تعريف الرابط بالطريقة المطلوبة (post.html?article=...) مع مراعاة إذا كنا داخل مجلد articles أم لا
+                        let sliderArticleUrl = isInsideArticles ? `../post.html?article=articles/${p.slug}.html` : `post.html?article=articles/${p.slug}.html`;                        return `
                         <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
                             <div class="square-caption">
-                                <div class="square-title" onclick="location.href='articles/${p.slug}.html'" style="cursor: pointer;">${p.title}</div>
+                                <a href="${sliderArticleUrl}" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;">${p.title}</a>
+                                
                                 <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                             </div>
                         </div>
