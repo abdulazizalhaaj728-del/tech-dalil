@@ -286,6 +286,14 @@
             "content": "كم عدد سور القرآن الكريم؟\n1- 124؟\n2- 114؟\n3- 104؟",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1790573465840",
+            "title": "تواصل معنا",
+            "type": "contact",
+            "content": "عبدالعزيز الحاج",
+            "active": true,
+            "location": "sidebar"
         }
     ],
     "ads": {
