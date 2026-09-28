@@ -274,6 +274,19 @@
     },
     "posts": [
         {
+            "id": "post_1790582276312",
+            "title": "اتصل بنا",
+            "category": "الصفحات الثابتة",
+            "description": "اتصل بنا",
+            "image": "",
+            "date": "٢٨‏/٩‏/٢٠٢٦",
+            "content": "<p>&nbsp;نحن في <strong>تكنو - دليل</strong> نؤمن بأن التواصل الفعّال مع زوارنا هو أساس تطورنا. سواء كان لديك استفسار تقني، اقتراح لتحسين المحتوى، أو ترغب في الإبلاغ عن مشكلة، فنحن هنا للاستماع إليك.</p><p class=\"ql-direction-rtl\"><strong>يمكنكم التواصل معنا عبر الوسائل التالية:</strong></p><ul><li class=\"ql-direction-rtl\"><strong>البريد الإلكتروني الرسمي:</strong> abdulazizalhaaj728@gmail.com</li></ul><p class=\"ql-direction-rtl\"><strong>متى نتوقع الرد؟</strong> نحن نبذل قصارى جهدنا للرد على جميع الرسائل في أسرع وقت ممكن. غالباً ما يتم الرد خلال <strong>24 إلى 48 ساعة</strong> عمل.</p><p>نحن نقدر وقتكم واهتمامكم بالتواصل معنا.</p>",
+            "slug": "tech-post-24820.html",
+            "isDraft": false,
+            "isPublished": true,
+            "url": "articles/tech-post-24820.html"
+        },
+        {
             "id": "post_1790582169333",
             "title": "اتفاقية الاستخدام",
             "category": "الصفحات الثابتة",
