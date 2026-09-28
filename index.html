@@ -588,7 +588,6 @@
     </div><!-- نهاية الإطار الخارجي الشامل -->
     
 <script>
-    
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
@@ -611,27 +610,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             let cat = (p.category || '').trim();
             return cat !== 'الصفحات الثابتة';
         });
-
-
-        // ترتيب مخصص يدوي يضمن ظهور "من نحن" أولاً و"اتصل بنا" أخيراً
-        const desiredOrder = ['من نحن', 'سياسة الخصوصية', 'اتفاقية الاستخدام', 'اتصل بنا'];
-        staticPages.sort((a, b) => {
-            let indexA = desiredOrder.indexOf(a.title.trim());
-            let indexB = desiredOrder.indexOf(b.title.trim());
-            // إذا كانت الصفحة موجودة في القائمة المخصصة، نترتب حسبها، وإلا نبقيها في النهاية
-            if (indexA === -1) indexA = 999;
-            if (indexB === -1) indexB = 999;
-            return indexA - indexB;
-        });
-
-        
-        const topPagesContainer = document.querySelector('.top-pages');
-        if (topPagesContainer && staticPages.length > 0) {
-            topPagesContainer.innerHTML = staticPages.map(page => {
-                let pageUrl = isInsideArticles ? `../articles/${page.slug}.html` : `articles/${page.slug}.html`;
-                return `<a href="${pageUrl}">${page.title}</a>`;
-            }).join('');
-        }
 
         if (postId || (isInsideArticles && currentFileName && currentFileName !== 'index.html')) {
             const post = postId 
@@ -833,7 +811,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error("تعذر جلب ملف بيانات المدونة:", err);
     }
 
-
     const customLogo = localStorage.getItem('tech_custom_logo');
     const customLogoHeight = localStorage.getItem('tech_custom_logo_height') || '50px';
     if (customLogo) {
@@ -844,7 +821,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// دوال التحكم الخارجية والتهيئة العامة
+// دوال التحكم الخارجية والتهيئة العامة (الباقي بدون تغيير)
 function initSliderLogic() {
     const slides = document.querySelectorAll('.square-slide');
     if(slides.length === 0) return;
@@ -953,7 +930,7 @@ if(secretTrigger) {
         }
     });
 }
-    
+
 </script>
 </body>
 </html>
