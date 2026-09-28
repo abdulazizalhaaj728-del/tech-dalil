@@ -323,6 +323,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await response.json();
         const container = document.getElementById('post-content-box');
 
+
+        // فلترة المقالات بحيث تُستبعد "الصفحات الثابتة" تماماً من الأخبار والسلايدر
+        let rawPosts = data.posts || [];
+        let filteredPosts = rawPosts.filter(p => {
+            let cat = (p.category || '').trim();
+            return cat !== 'الصفحات الثابتة';
+        });
+
+        // معالجة وضبط روابط الصفحات الثابتة لعرضها في الشريط العلوي مرتبة حسب التاريخ
+        let staticPages = rawPosts.filter(p => {
+            let cat = (p.category || '').trim();
+            return cat === 'الصفحات الثابتة';
+        });
+
+        // ترتيب الصفحات الثابتة تناسلياً أو تصاعدياً حسب تاريخ الإدخال
+        //staticPages.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+        
+        
         let post = null;
         const postsList = data.posts || [];
 
