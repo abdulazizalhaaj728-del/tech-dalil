@@ -278,6 +278,14 @@
             "content": "للتواصل للإستفسارات والإقتراحات:\nالبريد الإلكتروني: abdulazizalhaaj728@gmail.com\nواتس اب            : 966543913406",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1790570276292",
+            "title": "سؤال وجواب",
+            "type": "custom",
+            "content": "كم عدد سور القرآن الكريم؟\n1- 124؟\n2- 114؟\n3- 104؟",
+            "active": true,
+            "location": "sidebar"
         }
     ],
     "ads": {
