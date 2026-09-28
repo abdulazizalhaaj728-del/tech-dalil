@@ -302,6 +302,14 @@
             "content": "",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1790577123282",
+            "title": "التسميات والتصنيفات",
+            "type": "categories",
+            "content": "",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
