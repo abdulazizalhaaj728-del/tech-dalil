@@ -611,14 +611,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             return cat !== 'الصفحات الثابتة';
         });
 
-        // معالجة وضبط روابط الصفحات الثابتة لعرضها في الشريط العلوي مرتبة حسب التاريخ
+        // معالجة وضبط روابط الصفحات الثابتة لعرضها في الشريط العلوي
         let staticPages = rawPosts.filter(p => {
             let cat = (p.category || '').trim();
             return cat === 'الصفحات الثابتة';
         });
 
-        // ترتيب الصفحات الثابتة تناسلياً أو تصاعدياً حسب تاريخ الإدخال
-        staticPages.sort((a, b) => new Date(a.id || 0) - new Date(b.id || 0));
+        // ترتيب الصفحات الثابتة تصاعدياً لتبدأ من "من نحن" (الأقدم) وتنهي بـ "اتصل بنا" (الأحدث)
+        staticPages.sort((a, b) => (a.id || 0) - (b.id || 0));
 
         const topPagesContainer = document.querySelector('.top-pages');
         if (topPagesContainer && staticPages.length > 0) {
@@ -770,7 +770,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let menuTree = buildTree(data.menu);
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
-        }                
+        }        
 
         if (data.widgets && data.widgets.length > 0) {
             const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
@@ -827,6 +827,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) {
         console.error("تعذر جلب ملف بيانات المدونة:", err);
     }
+
 
     const customLogo = localStorage.getItem('tech_custom_logo');
     const customLogoHeight = localStorage.getItem('tech_custom_logo_height') || '50px';
