@@ -736,18 +736,17 @@ const sliderWrapper = document.getElementById('square-slider-wrapper');
                     return root;
                 }
 
-                function generateMenuHtml(nodes, isRoot = false) {
+function generateMenuHtml(nodes, isRoot = false) {
                     let html = isRoot ? '' : '<ul class="dropdown-menu">';
                     
                     nodes.forEach(node => {
                         let itemUrl = node.url || node.link || 'index.html';
+                        let finalHref = itemUrl;
                         
                         // تطبيق طريقة الرابط المطلوبة مع مراعاة حالة الوجود داخل المجلد أم لا
-                        let finalHref = node.slug 
-                            ? `${isInsideArticles ? '../' : ''}post.html?article=articles/${node.slug}.html` 
-                            : (isInsideArticles && !itemUrl.startsWith('http') && !itemUrl.startsWith('//') && !itemUrl.startsWith('../')) 
-                                ? '../' + itemUrl 
-                                : itemUrl;
+                        if (node.slug) {
+                            let prefix = isInsideArticles ? '../' : '';
+                            finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
                         } else {
                             if (!itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
                                 if (isInsideArticles && !itemUrl.startsWith('../')) {
@@ -772,6 +771,8 @@ const sliderWrapper = document.getElementById('square-slider-wrapper');
                     return html;
                 }
 
+                let menuTree = buildTree(data.menu);
+                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
                 let menuTree = buildTree(data.menu);
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
