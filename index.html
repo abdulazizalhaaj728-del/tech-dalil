@@ -595,6 +595,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isInsideArticles = window.location.pathname.includes('/articles/');
     const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
     const homeLink = isInsideArticles ? '../index.html' : 'index.html';
+    
+    // رابط أساسي موحد لصفحة العرض يعتمد على الـ ID لضمان عدم تكرار الامتدادات
+    const postBase = isInsideArticles ? '../post.html?id=' : 'post.html?id=';
 
     const pathSegments = window.location.pathname.split('/');
     const currentFileName = pathSegments[pathSegments.length - 1];
@@ -604,7 +607,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await response.json();
         const container = document.getElementById('posts-container');
         
-        // فلترة المقالات بحيث تُستبعد "الصفحات الثابتة" تماماً من الأخبار والسلايدر
         let rawPosts = data.posts || [];
         let filteredPosts = rawPosts.filter(p => {
             let cat = (p.category || '').trim();
@@ -653,13 +655,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     container.innerHTML = filteredPosts.map(post => `
                         <div class="post-card">
                             <div class="post-title">
-                                <a href="post.html?article=articles/${post.slug}">${post.title}</a>
+                                <a href="${postBase}${post.id}">${post.title}</a>
                             </div>
                             <div class="post-meta">
                                 <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
                             </div>
                             <div class="post-excerpt">${post.description || ''}</div>
-                            <a href="post.html?article=articles/${post.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                            <a href="${postBase}${post.id}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                         </div>
                     `).join('');
                 }
@@ -670,7 +672,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     let sliderHtml = sliderPosts.map((p, idx) => `
                         <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
                             <div class="square-caption">
-                                <div class="square-title" onclick="location.href='${isInsideArticles ? p.url : ('articles/' + p.slug)}'" style="cursor: pointer;">${p.title}</div>
+                                <div class="square-title" onclick="location.href='${postBase}${p.id}'" style="cursor: pointer;">${p.title}</div>
                                 <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                             </div>
                         </div>
@@ -767,7 +769,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 let contentBox = '';
                 if (w.type === 'recent') {
-                    contentBox = '<ul class="recent-posts-list">' + filteredPosts.map(p => `<li><a href="${isInsideArticles ? p.url : ('articles/' + p.slug)}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
+                    contentBox = '<ul class="recent-posts-list">' + filteredPosts.map(p => `<li><a href="${postBase}${p.id}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
                 } else if (w.type === 'links') {
                     contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
                 } else {
@@ -821,7 +823,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// دوال التحكم الخارجية والتهيئة العامة (الباقي بدون تغيير)
 function initSliderLogic() {
     const slides = document.querySelectorAll('.square-slide');
     if(slides.length === 0) return;
