@@ -741,12 +741,21 @@ const sliderWrapper = document.getElementById('square-slider-wrapper');
                     
                     nodes.forEach(node => {
                         let itemUrl = node.url || node.link || 'index.html';
-                        // تطبيق فحص الروابط لضمان عدم تكرار الـ ../ وعدم تعديل الروابط الخارجية
-                        if (!itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
-                            if (isInsideArticles && !itemUrl.startsWith('../')) {
-                                itemUrl = '../' + itemUrl;
-                            }
-                        }
+                        // إذا كان الرابط يخص مقالاً أو صفحة ثابتة تريد توجيهها لعرضها عبر نموذج post.html
+                            // يمكنك التحقق مما إذا كان العنصر يحتوي على slug أو ينتمي للمقالات
+                            let finalHref = itemUrl;
+                            if (node.slug) {
+                                let prefix = isInsideArticles ? '../' : '';
+                                finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
+                            } else {
+                                // الروابط العادية الأخرى في القائمة
+                                if (!itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
+                                    if (isInsideArticles && !itemUrl.startsWith('../')) {
+                                        finalHref = '../' + itemUrl;
+                                    }
+                                }
+                            }    
+                        
                         let hasChildren = node.children && node.children.length > 0;
                         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
                         
