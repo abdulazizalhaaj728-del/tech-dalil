@@ -519,13 +519,14 @@
         }
 
 async function saveServerData() {
-    // ضع بيانات مستودعك هنا مباشرة
-    const token = "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"; 
-    const repo = "abdulazizalhaaj728-del/tech-dalil"; // مثال: username/tech-dalil.com
+    const token = "ضع_التوكن_الخاص_بك_هنا"; // ضع التوكن الخاص بك هنا
+    const owner = "abdulazizalhaaj728-del";
+    const repo = "tech-dalil";
+    const path = "data.json";
     const branch = 'main';
 
-    if (!token || token.includes("ضع_التوكن") || !repo) {
-        alert('الرجاء كتابة GitHub Token واسم المستودع بشكل صحيح داخل الكود البرمجي.');
+    if (!token || token.includes("ضع_التوكن")) {
+        alert('الرجاء كتابة GitHub Token الصحيح داخل الكود البرمجي.');
         return;
     }
 
@@ -536,31 +537,39 @@ async function saveServerData() {
     };
 
     try {
-        // 1. تحديث ملف data.json الشامل أولاً
-        const jsonContent = JSON.stringify(globalData, null, 2);
-        const encodedJson = btoa(unescape(encodeURIComponent(jsonContent)));
+        // تحديث البيانات المحلية أولاً كما كنت تفعل
+        globalData.posts = getData('tech_dalil_posts', []);
+        globalData.pages = getData('tech_static_pages', []);
 
-        let jsonSha = '';
-        const getFileRes = await fetch(`https://api.github.com/repos/${repo}/contents/data.json`, { headers });
+        const contentString = JSON.stringify(globalData, null, 4);
+        const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
+
+        // 1. جلب الـ SHA الخاص بملف data.json لتجنب أخطاء التحديث
+        let jsonSha = undefined;
+        const getFileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, { headers });
         if (getFileRes.ok) {
             const fileData = await getFileRes.json();
             jsonSha = fileData.sha;
         }
 
-        const updateJsonRes = await fetch(`https://api.github.com/repos/${repo}/contents/data.json`, {
+        // 2. تحديث ملف data.json على غيتهاب
+        const updateJsonRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
             method: 'PUT',
             headers: headers,
             body: JSON.stringify({
-                message: 'Update data.json via Tech-Dalil Dashboard',
-                content: encodedJson,
-                sha: jsonSha || undefined,
+                message: 'Update data.json and sync articles via Dashboard',
+                content: encodedContent,
+                sha: jsonSha,
                 branch: branch
             })
         });
 
-        if (!updateJsonRes.ok) throw new Error('فشل حفظ ملف data.json السحابي.');
+        if (!updateJsonRes.ok) {
+            const errData = await updateJsonRes.json();
+            throw new Error(errData.message || 'فشل حفظ ملف data.json السحابي.');
+        }
 
-        // 2. رفع جميع المقالات دفعة واحدة (القديمة والجديدة) لإنشاء ملفات الـ HTML
+        // 3. حلقة تكرارية لإنشاء ورفع ملفات الـ HTML لكل المقالات داخل مجلد articles/
         if (globalData.posts && Array.isArray(globalData.posts)) {
             for (const post of globalData.posts) {
                 const fileName = `article-${post.id || Date.now()}.html`;
@@ -589,34 +598,33 @@ async function saveServerData() {
 
                 const encodedPostHtml = btoa(unescape(encodeURIComponent(postHtmlContent)));
 
-                let postSha = '';
-                const checkPostRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, { headers });
+                let postSha = undefined;
+                const checkPostRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, { headers });
                 if (checkPostRes.ok) {
                     const postFileJson = await checkPostRes.json();
                     postSha = postFileJson.sha;
                 }
 
-                await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+                await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
                     method: 'PUT',
                     headers: headers,
                     body: JSON.stringify({
-                        message: `Publish/Update article: ${post.title}`,
+                        message: `Sync article file: ${post.title}`,
                         content: encodedPostHtml,
-                        sha: postSha || undefined,
+                        sha: postSha,
                         branch: branch
                     })
                 });
             }
         }
 
-        alert('تم حفظ البيانات ورفع جميع المقالات القديمة إلى مجلد articles بنجاح تام!');
+        alert('تم حفظ البيانات بنجاح ورفع جميع المقالات إلى مجلد articles على غيتهاب!');
 
     } catch (error) {
         console.error(error);
         alert(`حدث خطأ أثناء عملية الحفظ: ${error.message || error}`);
     }
-}
-        
+}        
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
             <html lang="ar" dir="rtl">
