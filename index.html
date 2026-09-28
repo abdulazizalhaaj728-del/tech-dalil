@@ -588,6 +588,7 @@
     </div><!-- نهاية الإطار الخارجي الشامل -->
     
 <script>
+    
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
@@ -611,15 +612,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             return cat !== 'الصفحات الثابتة';
         });
 
-        // معالجة وضبط روابط الصفحات الثابتة لعرضها في الشريط العلوي
+// معالجة وضبط روابط الصفحات الثابتة لعرضها في الشريط العلوي
         let staticPages = rawPosts.filter(p => {
             let cat = (p.category || '').trim();
             return cat === 'الصفحات الثابتة';
         });
 
-        // ترتيب الصفحات الثابتة تصاعدياً لتبدأ من "من نحن" (الأقدم) وتنهي بـ "اتصل بنا" (الأحدث)
-        staticPages.sort((a, b) => (a.id || 0) - (b.id || 0));
+        // ترتيب مخصص يدوي يضمن ظهور "من نحن" أولاً و"اتصل بنا" أخيراً
+        const desiredOrder = ['من نحن', 'سياسة الخصوصية', 'اتفاقية الاستخدام', 'اتصل بنا'];
+        staticPages.sort((a, b) => {
+            let indexA = desiredOrder.indexOf(a.title.trim());
+            let indexB = desiredOrder.indexOf(b.title.trim());
+            // إذا كانت الصفحة موجودة في القائمة المخصصة، نترتب حسبها، وإلا نبقيها في النهاية
+            if (indexA === -1) indexA = 999;
+            if (indexB === -1) indexB = 999;
+            return indexA - indexB;
+        });
 
+        
         const topPagesContainer = document.querySelector('.top-pages');
         if (topPagesContainer && staticPages.length > 0) {
             topPagesContainer.innerHTML = staticPages.map(page => {
