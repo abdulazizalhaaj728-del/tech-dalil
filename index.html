@@ -736,31 +736,18 @@ const sliderWrapper = document.getElementById('square-slider-wrapper');
                     return root;
                 }
 
-function generateMenuHtml(nodes, isRoot = false) {
+                function generateMenuHtml(nodes, isRoot = false) {
                     let html = isRoot ? '' : '<ul class="dropdown-menu">';
                     
                     nodes.forEach(node => {
                         let itemUrl = node.url || node.link || 'index.html';
-                        
-                        // إذا كان الرابط يخص مقالاً أو صفحة ثابتة تريد توجيهها لعرضها عبر نموذج post.html
-                        let finalHref = itemUrl;
-                        if (node.slug) {
-                            let prefix = isInsideArticles ? '../' : '';
-                            finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
-                        } else {
-                            // الروابط العادية الأخرى في القائمة
-                            if (!itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
-                                if (isInsideArticles && !itemUrl.startsWith('../')) {
-                                    finalHref = '../' + itemUrl;
-                                }
-                            }
+                        if (isInsideArticles && !itemUrl.startsWith('http') && !itemUrl.startsWith('../')) {
+                            itemUrl = '../' + itemUrl;
                         }
-                        
                         let hasChildren = node.children && node.children.length > 0;
                         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
                         
-                        // استخدام finalHref بدلاً من itemUrl لضمان عمل الرابط بالشكل المطلوب
-                        html += `<li><a href="${finalHref}">${node.title || node.name}${arrow}</a>`;
+                        html += `<li><a href="${itemUrl}">${node.title}${arrow}</a>`;
                         
                         if (hasChildren) {
                             html += generateMenuHtml(node.children, false);
@@ -775,12 +762,10 @@ function generateMenuHtml(nodes, isRoot = false) {
 
                 let menuTree = buildTree(data.menu);
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
-                
-                let menuTree = buildTree(data.menu);
-                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
-        }        
+        }                
 
+        
         if (data.widgets && data.widgets.length > 0) {
             const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
             const footerWidgetsContainer = document.getElementById('site-footer-widgets');
