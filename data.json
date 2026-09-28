@@ -248,65 +248,9 @@
     ],
     "widgets": [
         {
-            "id": "w_1790359605074",
+            "id": "w_1790577208511",
             "title": "أحدث المواضيع",
             "type": "recent",
-            "content": "",
-            "active": true,
-            "location": "sidebar"
-        },
-        {
-            "id": "w_1790359649844",
-            "title": "روابط سريعة",
-            "type": "links",
-            "content": "",
-            "active": true,
-            "location": "sidebar"
-        },
-        {
-            "id": "w_1790359939910",
-            "title": "عن تكنو-دليل",
-            "type": "custom",
-            "content": "مدونة تقنية متخصصة تهدف إلى تبسيط عالم الويب والبرمجة، وتقديم شروحات عملية، مقالات تفصيلية، وحلول موثوقة لمساعدتك في بناء وتطوير مشاريعك الرقمية بكل احترافية.",
-            "active": true,
-            "location": "footer"
-        },
-        {
-            "id": "w_1790512338695",
-            "title": "تواصل معنا",
-            "type": "custom",
-            "content": "للتواصل للإستفسارات والإقتراحات:\nالبريد الإلكتروني: abdulazizalhaaj728@gmail.com\nواتس اب            : 966543913406",
-            "active": true,
-            "location": "footer"
-        },
-        {
-            "id": "w_1790570276292",
-            "title": "سؤال وجواب",
-            "type": "custom",
-            "content": "كم عدد سور القرآن الكريم؟\n1- 124؟\n2- 114؟\n3- 104؟",
-            "active": true,
-            "location": "sidebar"
-        },
-        {
-            "id": "w_1790573465840",
-            "title": "تواصل معنا",
-            "type": "contact",
-            "content": "عبدالعزيز الحاج",
-            "active": true,
-            "location": "sidebar"
-        },
-        {
-            "id": "w_1790577083132",
-            "title": "روابط سريعة",
-            "type": "links",
-            "content": "",
-            "active": true,
-            "location": "sidebar"
-        },
-        {
-            "id": "w_1790577123282",
-            "title": "التسميات والتصنيفات",
-            "type": "categories",
             "content": "",
             "active": true,
             "location": "footer"
