@@ -294,6 +294,14 @@
             "content": "عبدالعزيز الحاج",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1790577083132",
+            "title": "روابط سريعة",
+            "type": "links",
+            "content": "",
+            "active": true,
+            "location": "sidebar"
         }
     ],
     "ads": {
