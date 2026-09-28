@@ -921,25 +921,27 @@ function initAdminUI() {
             });
         }
 
-        function deletePost(id, type) {
-            showCustomAlert("تأكيد", "هل أنت متأكد من الحذف؟", () => {
-                if(type === 'page') {
-                    let pages = getData('tech_static_pages', []);
-                    pages = pages.filter(p => p.id !== id);
-                    localStorage.setItem('tech_static_pages', JSON.stringify(pages));
-                    globalData.pages = pages;
-                } else {
-                    let posts = getData('tech_dalil_posts', []);
-                    posts = posts.filter(p => p.id !== id);
-                    localStorage.setItem('tech_dalil_posts', JSON.stringify(posts));
-                    globalData.posts = posts;
-                }
-                if (currentEditingPostId === id) resetPostForm();
-                loadPostsAdminList();
-                saveServerData("تم الحذف وتحديث السحابة بنجاح!");
-            });
+function deletePost(id, type) {
+    showCustomAlert("تأكيد", "هل أنت متأكد من الحذف النهائي من السحابة والموقع؟", async () => {
+        if(type === 'page') {
+            let pages = getData('tech_static_pages', []);
+            pages = pages.filter(p => p.id !== id);
+            localStorage.setItem('tech_static_pages', JSON.stringify(pages));
+            globalData.pages = pages;
+        } else {
+            let posts = getData('tech_dalil_posts', []);
+            posts = posts.filter(p => p.id !== id);
+            localStorage.setItem('tech_dalil_posts', JSON.stringify(posts));
+            globalData.posts = posts;
         }
-
+        
+        if (currentEditingPostId === id) resetPostForm();
+        loadPostsAdminList();
+        
+        // استدعاء مباشر ومضمون للحفظ السحابي بعد الحذف
+        await saveServerData("تم الحذف وتحديث السحابة بنجاح!");
+    });
+}
         function editPost(id, type) {
             currentEditingPostId = id;
             openArticleManager();
