@@ -741,8 +741,11 @@ const sliderWrapper = document.getElementById('square-slider-wrapper');
                     
                     nodes.forEach(node => {
                         let itemUrl = node.url || node.link || 'index.html';
-                        if (isInsideArticles && !itemUrl.startsWith('http') && !itemUrl.startsWith('../')) {
-                            itemUrl = '../' + itemUrl;
+                        // تطبيق فحص الروابط لضمان عدم تكرار الـ ../ وعدم تعديل الروابط الخارجية
+                        if (!itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
+                            if (isInsideArticles && !itemUrl.startsWith('../')) {
+                                itemUrl = '../' + itemUrl;
+                            }
                         }
                         let hasChildren = node.children && node.children.length > 0;
                         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
