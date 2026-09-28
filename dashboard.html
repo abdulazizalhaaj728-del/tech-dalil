@@ -519,18 +519,15 @@
         }
 
 async function saveServerData() {
-    const token = document.getElementById('githubToken')?.value.trim();
-    const repo = document.getElementById('githubRepo')?.value.trim(); // بصيغة: username/repository
-    const branch = document.getElementById('githubBranch')?.value.trim() || 'main';
+    // ضع بيانات مستودعك هنا مباشرة
+    const token = "ضع_التوكن_الخاص_بك_هنا"; 
+    const repo = "اسم_المستودع_هنا/tech-dalil.com"; // مثال: username/tech-dalil.com
+    const branch = 'main';
 
-    if (!token || !repo) {
-        alert('الرجاء إدخال GitHub Token ورابط المستودع (Repo) بشكل صحيح.');
+    if (!token || token.includes("ضع_التوكن") || !repo) {
+        alert('الرجاء كتابة GitHub Token واسم المستودع بشكل صحيح داخل الكود البرمجي.');
         return;
     }
-
-    // 1. تجهيز بيانات ملف data.json الشامل
-    const jsonContent = JSON.stringify(globalData, null, 2);
-    const encodedJson = btoa(unescape(encodeURIComponent(jsonContent))); // لتحويل النص لـ Base64 لدعم اللغة العربية
 
     const headers = {
         'Authorization': `token ${token}`,
@@ -539,7 +536,10 @@ async function saveServerData() {
     };
 
     try {
-        // الخطوة الأولى: جلب SHA الخاص بملف data.json الحالي (إن وُجد) لتجنب أخطاء التحديث
+        // 1. تحديث ملف data.json الشامل أولاً
+        const jsonContent = JSON.stringify(globalData, null, 2);
+        const encodedJson = btoa(unescape(encodeURIComponent(jsonContent)));
+
         let jsonSha = '';
         const getFileRes = await fetch(`https://api.github.com/repos/${repo}/contents/data.json`, { headers });
         if (getFileRes.ok) {
@@ -547,7 +547,6 @@ async function saveServerData() {
             jsonSha = fileData.sha;
         }
 
-        // الخطوة الثانية: رفع وتحديث ملف data.json على المستودع
         const updateJsonRes = await fetch(`https://api.github.com/repos/${repo}/contents/data.json`, {
             method: 'PUT',
             headers: headers,
@@ -561,14 +560,12 @@ async function saveServerData() {
 
         if (!updateJsonRes.ok) throw new Error('فشل حفظ ملف data.json السحابي.');
 
-        // الخطوة الثالثة: إنشاء أو تحديث صفحة HTML مستقلة لكل مقال داخل مجلد articles/
+        // 2. رفع جميع المقالات دفعة واحدة (القديمة والجديدة) لإنشاء ملفات الـ HTML
         if (globalData.posts && Array.isArray(globalData.posts)) {
             for (const post of globalData.posts) {
-                // توليد اسم ملف نظيف فريد للمقال بناءً على معرفه أو الرابط المختصر (slug)
                 const fileName = `article-${post.id || Date.now()}.html`;
                 const filePath = `articles/${fileName}`;
 
-                // تصميم قالب صفحة الـ HTML المستقلة للمقال
                 const postHtmlContent = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -592,7 +589,6 @@ async function saveServerData() {
 
                 const encodedPostHtml = btoa(unescape(encodeURIComponent(postHtmlContent)));
 
-                // التحقق مما إذا كان ملف المقال موجوداً مسبقاً لجلب الـ SHA الخاص به
                 let postSha = '';
                 const checkPostRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, { headers });
                 if (checkPostRes.ok) {
@@ -600,7 +596,6 @@ async function saveServerData() {
                     postSha = postFileJson.sha;
                 }
 
-                // رفع ملف المقال إلى مجلد articles/ عبر الـ API
                 await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
                     method: 'PUT',
                     headers: headers,
@@ -614,12 +609,11 @@ async function saveServerData() {
             }
         }
 
-        alert('تم حفظ البيانات وتحديث ملف data.json وإنشاء صفحات المقالات في مجلد articles بنجاح تام!');
+        alert('تم حفظ البيانات ورفع جميع المقالات القديمة إلى مجلد articles بنجاح تام!');
 
     } catch (error) {
         console.error(error);
-        demandedError = error.message || error;
-        alert(`حدث خطأ أثناء عملية الحفظ السحابي: ${demandedError}`);
+        alert(`حدث خطأ أثناء عملية الحفظ: ${error.message || error}`);
     }
 }
         
