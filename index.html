@@ -653,13 +653,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     container.innerHTML = filteredPosts.map(post => `
                         <div class="post-card">
                             <div class="post-title">
-                                <a href="post.html?article=articles/${post.slug}.html">${post.title}</a>
+                                <a href="post.html?article=articles/${post.slug}">${post.title}</a>
                             </div>
                             <div class="post-meta">
                                 <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
                             </div>
                             <div class="post-excerpt">${post.description || ''}</div>
-                            <a href="post.html?article=articles/${post.slug}.html" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                            <a href="post.html?article=articles/${post.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                         </div>
                     `).join('');
                 }
