@@ -184,7 +184,14 @@
         }
 
 
-        
+     /* توسيط الصور وتقليل المسافات الفاصلة بينها وبين النصوص */
+    .content img, .post-img, .featured-img, article img {
+    display: block !important;
+    margin: 15px auto !important; /* توسيط الصورة وجعل المسافة علوية وسفلية مقللة إلى 15 بكسل فقط */
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
         
         .three-columns-grid { 
             width: 100%; margin: 20px auto 0; padding: 0; 
@@ -611,7 +618,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         // ترتيب الصفحات الثابتة تناسلياً أو تصاعدياً حسب تاريخ الإدخال
-        staticPages.sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));
+        staticPages.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
         const topPagesContainer = document.querySelector('.top-pages');
         if (topPagesContainer && staticPages.length > 0) {
