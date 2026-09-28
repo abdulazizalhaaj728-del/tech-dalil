@@ -518,59 +518,60 @@
             loadPostsAdminList(); // <--- الاستدعاء المباشر هنا لضمان تعبئة الحاوية فور التحميل
         }
 
-async function saveServerData() {
-    const token = "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";
-    const owner = "abdulazizalhaaj728-del";
-    const repo = "tech-dalil";
-    const path = "data.json";
-    const branch = 'main';
-
-    if (!token || token.includes("ضع_التوكن")) {
-        alert('الرجاء كتابة GitHub Token الصحيح داخل الكود البرمجي.');
+async function saveServerData(successMsg, postToSave = null) {
+    const token = document.getElementById('gh-token-input').value.trim();
+    if (!token) {
+        showCustomAlert("تنبيه هامة", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
         return;
     }
 
-    const headers = {
-        'Authorization': `token ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'vnd.github.v3+json'
-    };
-
     try {
-        // تحديث البيانات المحلية أولاً كما كنت تفعل
+        const owner = "abdulazizalhaaj728-del";
+        const repo = "tech-dalil";
+        const path = "data.json";
+        const branch = 'main';
+        
         globalData.posts = getData('tech_dalil_posts', []);
         globalData.pages = getData('tech_static_pages', []);
 
         const contentString = JSON.stringify(globalData, null, 4);
         const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
 
-        // 1. جلب الـ SHA الخاص بملف data.json لتجنب أخطاء التحديث
-        let jsonSha = undefined;
-        const getFileRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, { headers });
-        if (getFileRes.ok) {
-            const fileData = await getFileRes.json();
-            jsonSha = fileData.sha;
-        }
-
-        // 2. تحديث ملف data.json على غيتهاب
-        const updateJsonRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+        // 1. حفظ وتحديث ملف data.json الأساسي باستخدام الـ SHA الموجود عندك
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
             method: 'PUT',
-            headers: headers,
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'vnd.github.v3+json'
+            },
             body: JSON.stringify({
-                message: 'Update data.json and sync articles via Dashboard',
+                message: "Update data.json via Techno-Guide Admin Panel",
                 content: encodedContent,
-                sha: jsonSha,
+                sha: globalFileSha,
                 branch: branch
             })
         });
 
-        if (!updateJsonRes.ok) {
-            const errData = await updateJsonRes.json();
+        if (!response.ok) {
+            const errData = await response.json();
             throw new Error(errData.message || 'فشل حفظ ملف data.json السحابي.');
         }
 
-        // 3. حلقة تكرارية لإنشاء ورفع ملفات الـ HTML لكل المقالات داخل مجلد articles/
+        // تحديث الـ SHA الجديد بعد نجاح الحفظ إذا أتاحته الاستجابة
+        const responseData = await response.json();
+        if (responseData.content && responseData.content.sha) {
+            globalFileSha = responseData.content.sha;
+        }
+
+        // 2. حلقة تكرارية لرفع وريث جميع المقالات القديمة وإنشاء ملفات الـ HTML الخاصة بها في مجلد articles/
         if (globalData.posts && Array.isArray(globalData.posts)) {
+            const headers = {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'vnd.github.v3+json'
+            };
+
             for (const post of globalData.posts) {
                 const fileName = `article-${post.id || Date.now()}.html`;
                 const filePath = `articles/${fileName}`;
@@ -598,6 +599,7 @@ async function saveServerData() {
 
                 const encodedPostHtml = btoa(unescape(encodeURIComponent(postHtmlContent)));
 
+                // التحقق مما إذا كان ملف المقال موجوداً مسبقاً لجلب الـ SHA الخاص به
                 let postSha = undefined;
                 const checkPostRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, { headers });
                 if (checkPostRes.ok) {
@@ -605,6 +607,7 @@ async function saveServerData() {
                     postSha = postFileJson.sha;
                 }
 
+                // رفع أو تحديث ملف المقال داخل مجلد articles/
                 await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
                     method: 'PUT',
                     headers: headers,
@@ -618,13 +621,24 @@ async function saveServerData() {
             }
         }
 
-        alert('تم حفظ البيانات بنجاح ورفع جميع المقالات إلى مجلد articles على غيتهاب!');
+        // رسالة النجاح
+        if (typeof showCustomAlert === 'function') {
+            showCustomAlert("نجاح", successMsg || "تم حفظ البيانات ورفع جميع المقالات القديمة إلى مجلد articles بنجاح تام!");
+        } else {
+            alert(successMsg || "تم حفظ البيانات ورفع جميع المقالات القديمة إلى مجلد articles بنجاح تام!");
+        }
 
     } catch (error) {
         console.error(error);
-        alert(`حدث خطأ أثناء عملية الحفظ: ${error.message || error}`);
+        if (typeof showCustomAlert === 'function') {
+            showCustomAlert("خطأ", `حدث خطأ أثناء عملية الحفظ: ${error.message || error}`);
+        } else {
+            alert(`حدث خطأ أثناء عملية الحفظ: ${error.message || error}`);
+        }
     }
-}        
+}
+        
+        
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
             <html lang="ar" dir="rtl">
