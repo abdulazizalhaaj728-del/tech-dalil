@@ -778,11 +778,8 @@ const sliderWrapper = document.getElementById('square-slider-wrapper');
                 let contentBox = '';
                 if (w.type === 'recent') {
                     contentBox = '<ul class="recent-posts-list">' + filteredPosts.map(p => {
-                        let widgetArticleUrl = isInsideArticles ? `${p.slug}.html` : `articles/${p.slug}.html`;
-                        return `<li><a href="p.html?article=articles/${post.slug}.html" ><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`;
-                    
-                    }).join('') + '</ul>';
-                } else if (w.type === 'links') {
+                        return `<li><a href="${isInsideArticles ? '../' : ''}post.html?article=articles/${p.slug}.html"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`;
+                    }).join('') + '</ul>';                } else if (w.type === 'links') {
                     contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
                 } else {
                     contentBox = '<div>' + (w.content || '') + '</div>';
