@@ -125,6 +125,29 @@
         .ql-font-cairo { font-family: 'Cairo', sans-serif !important; }
         .ql-font-tajawal { font-family: 'Tajawal', sans-serif !important; }
         .ql-font-amiri { font-family: 'Amiri', serif !important; }
+
+        /* تخصيص صندوق المقال ومنطقة الودجات بلون بيج دافئ ومريح للعين */
+        .post-card, #editor-container, .ql-container.ql-snow, #widget-custom-text, #widgets-list-box {
+            background-color: #F7F4EF !important;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png');
+            border: 1px solid #E2D8C5 !important;
+            border-radius: 12px;
+            color: #2C3E50 !important;
+        }
+        
+        /* ضبط محاذاة الخطوط لتكون مشدودة ومنسقة من الأطراف (Justify) وبخط مريح */
+        .ql-editor, .post-card p, .section-box textarea, input[type="text"] {
+            font-family: 'Cairo', 'Tajawal', sans-serif !important;
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            color: #2C3E50 !important;
+            line-height: 2 !important;
+        }
+        
+        /* تنسيق عناوين صواندي الكتابة */
+        .post-card h1, .post-card h2, .post-card h3 {
+            color: #2C3E50 !important;
+        }
     </style>
 </head>
 <body>
@@ -199,6 +222,7 @@
                         <select id="widget-type-input" disabled>
                             <option value="recent">أحدث المواضيع</option>
                             <option value="links">روابط سريعة</option>
+                            <option value="contact">معلومات التواصل (اتصل بنا)</option>
                             <option value="custom">محتوى مخصص / HTML</option>
                         </select>
                     </div>
@@ -1049,7 +1073,13 @@ function initAdminUI() {
                 publishBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تحديث المحتوى';
                 publishBtn.disabled = false;
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // التعديل هنا لكي يقفز المؤشر إلى حدود منطقة كتابة المقالة فقط وليس أعلى الصفحة
+            const managerContainer = document.getElementById('article-manager-form-container');
+            if (managerContainer) {
+                managerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+           // window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function previewPost() {
