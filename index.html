@@ -771,14 +771,13 @@ function generateMenuHtml(nodes, isRoot = false) {
                     return html;
                 }
 
+                // تم تصحيح التكرار وجعله مرة واحدة فقط وبشكل آمن
                 let menuTree = buildTree(data.menu);
-                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
-                let menuTree = buildTree(data.menu);
-                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
-            }
-        }
-        
-        
+                const menuContainer = document.getElementById('site-menu-container'); // التأكد من وجود المتغير أو جلبه إن أمكن
+                if (menuContainer) {
+                    menuContainer.innerHTML = generateMenuHtml(menuTree, true);
+                }
+
         if (data.widgets && data.widgets.length > 0) {
             const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
             const footerWidgetsContainer = document.getElementById('site-footer-widgets');
@@ -844,8 +843,7 @@ function generateMenuHtml(nodes, isRoot = false) {
             logoContainer.innerHTML = `<a href="${homeLink}"><img src="${customLogo}" alt="الشعار" style="height: ${customLogoHeight}; max-height: 60px; object-fit: contain;"></a>`;
         }
     }
-});
-    
+});    
 
 function initSliderLogic() {
     const slides = document.querySelectorAll('.square-slide');
