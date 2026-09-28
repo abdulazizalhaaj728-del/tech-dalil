@@ -270,6 +270,14 @@
             "content": "",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1790577385808",
+            "title": "اتصل بنا",
+            "type": "contact",
+            "content": "",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
