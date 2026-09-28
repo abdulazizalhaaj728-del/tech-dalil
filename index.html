@@ -618,7 +618,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         // ترتيب الصفحات الثابتة تناسلياً أو تصاعدياً حسب تاريخ الإدخال
-        staticPages.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+        //staticPages.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
         const topPagesContainer = document.querySelector('.top-pages');
         if (topPagesContainer && staticPages.length > 0) {
