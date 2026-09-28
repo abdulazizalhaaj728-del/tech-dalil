@@ -650,7 +650,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (filteredPosts.length > 0) {
                 if (container) {
                     container.innerHTML = filteredPosts.map(post => {
-                        // إرجاع الرابط الأصلي المعتمد على مجلد articles واسم المقال مع امتداد .html واحد مضبوط
                         let articleUrl = isInsideArticles ? `${post.slug}.html` : `articles/${post.slug}.html`;
 
                         return `
@@ -668,11 +667,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }).join('');
                 }
                 
-const sliderWrapper = document.getElementById('square-slider-wrapper');
+                const sliderWrapper = document.getElementById('square-slider-wrapper');
                 const sliderPosts = filteredPosts.slice(0, 4);
                 if(sliderWrapper && sliderPosts.length > 0) {
                     let sliderHtml = sliderPosts.map((p, idx) => {
-                        // تعريف الرابط بالطريقة المطلوبة (post.html?article=...) مع مراعاة إذا كنا داخل مجلد articles أم لا
                         let sliderArticleUrl = isInsideArticles ? `../post.html?article=articles/${p.slug}.html` : `post.html?article=articles/${p.slug}.html`;
                         
                         return `
@@ -685,7 +683,6 @@ const sliderWrapper = document.getElementById('square-slider-wrapper');
                         `;
                     }).join('');
 
-                    
                     sliderHtml += `
                         <button class="slider-arrow slider-prev" id="slider-prev-btn"><i class="fa-solid fa-chevron-right"></i></button>
                         <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
@@ -736,14 +733,13 @@ const sliderWrapper = document.getElementById('square-slider-wrapper');
                     return root;
                 }
 
-function generateMenuHtml(nodes, isRoot = false) {
+                function generateMenuHtml(nodes, isRoot = false) {
                     let html = isRoot ? '' : '<ul class="dropdown-menu">';
                     
                     nodes.forEach(node => {
                         let itemUrl = node.url || node.link || 'index.html';
                         let finalHref = itemUrl;
                         
-                        // تطبيق طريقة الرابط المطلوبة مع مراعاة حالة الوجود داخل المجلد أم لا
                         if (node.slug) {
                             let prefix = isInsideArticles ? '../' : '';
                             finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
@@ -771,12 +767,10 @@ function generateMenuHtml(nodes, isRoot = false) {
                     return html;
                 }
 
-                // تم تصحيح التكرار وجعله مرة واحدة فقط وبشكل آمن
                 let menuTree = buildTree(data.menu);
-                const menuContainer = document.getElementById('site-menu-container'); // التأكد من وجود المتغير أو جلبه إن أمكن
-                if (menuContainer) {
-                    menuContainer.innerHTML = generateMenuHtml(menuTree, true);
-                }
+                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
+            }
+        }
 
         if (data.widgets && data.widgets.length > 0) {
             const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
@@ -792,7 +786,8 @@ function generateMenuHtml(nodes, isRoot = false) {
                 if (w.type === 'recent') {
                     contentBox = '<ul class="recent-posts-list">' + filteredPosts.map(p => {
                         return `<li><a href="${isInsideArticles ? '../' : ''}post.html?article=articles/${p.slug}.html"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`;
-                    }).join('') + '</ul>';                } else if (w.type === 'links') {
+                    }).join('') + '</ul>';
+                } else if (w.type === 'links') {
                     contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
                 } else {
                     contentBox = '<div>' + (w.content || '') + '</div>';
@@ -843,7 +838,7 @@ function generateMenuHtml(nodes, isRoot = false) {
             logoContainer.innerHTML = `<a href="${homeLink}"><img src="${customLogo}" alt="الشعار" style="height: ${customLogoHeight}; max-height: 60px; object-fit: contain;"></a>`;
         }
     }
-});    
+});
 
 function initSliderLogic() {
     const slides = document.querySelectorAll('.square-slide');
@@ -953,7 +948,7 @@ if(secretTrigger) {
         }
     });
 }
-
+    
 </script>
 </body>
 </html>
