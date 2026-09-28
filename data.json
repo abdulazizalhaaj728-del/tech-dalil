@@ -253,7 +253,7 @@
             "type": "recent",
             "content": "",
             "active": true,
-            "location": "footer"
+            "location": "sidebar"
         }
     ],
     "ads": {
