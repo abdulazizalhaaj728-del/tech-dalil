@@ -585,12 +585,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const postId = urlParams.get('id');
 
-            // اكتشاف ما إذا كنا داخل مجلد articles أو في الصفحة الرئيسية
             const isInsideArticles = window.location.pathname.includes('/articles/');
             const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
             const homeLink = isInsideArticles ? '../index.html' : 'index.html';
 
-            // استخراج اسم الملف الحالي (الـ slug)
             const pathSegments = window.location.pathname.split('/');
             const currentFileName = pathSegments[pathSegments.length - 1];
 
@@ -599,12 +597,34 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const data = await response.json();
                 const container = document.getElementById('posts-container');
                 
-                // إذا كنا في صفحة مقال فردي
+                // فلترة المقالات بحيث تُستبعد "الصفحات الثابتة" تماماً من الأخبار والسلايدر
+                let rawPosts = data.posts || [];
+                let filteredPosts = rawPosts.filter(p => {
+                    let cat = (p.category || '').trim();
+                    return cat !== 'الصفحات الثابتة';
+                });
+
+                // معالجة وضبط روابط الصفحات الثابتة لعرضها في الشريط العلوي مرتبة حسب التاريخ
+                let staticPages = rawPosts.filter(p => {
+                    let cat = (p.category || '').trim();
+                    return cat === 'الصفحات الثابتة';
+                });
+
+                // ترتيب الصفحات الثابتة تناسلياً أو تصاعدياً حسب تاريخ الإدخال
+                staticPages.sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));
+
+                const topPagesContainer = document.querySelector('.top-pages');
+                if (topPagesContainer && staticPages.length > 0) {
+                    topPagesContainer.innerHTML = staticPages.map(page => {
+                        let pageUrl = isInsideArticles ? `../articles/${page.slug}.html` : `articles/${page.slug}.html`;
+                        return `<a href="${pageUrl}">${page.title}</a>`;
+                    }).join('');
+                }
+
                 if (postId || (isInsideArticles && currentFileName && currentFileName !== 'index.html')) {
-                    const postsList = data.posts || [];
                     const post = postId 
-                        ? postsList.find(p => p.id == postId) 
-                        : postsList.find(p => p.slug === currentFileName || (p.url && p.url.includes(currentFileName)));
+                        ? rawPosts.find(p => p.id == postId) 
+                        : rawPosts.find(p => p.slug === currentFileName || (p.url && p.url.includes(currentFileName)));
 
                     if (post) {
                         const siteTitleEl = document.getElementById('site-title');
@@ -638,11 +658,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     }
                 } else {
-                    // عرض الصفحة الرئيسية (قائمة المقالات + السلايدر)
-                    // عرض الصفحة الرئيسية (قائمة المقالات)
-                    if (data.posts && data.posts.length > 0) {
+                    if (filteredPosts.length > 0) {
                         if (container) {
-                            container.innerHTML = data.posts.map(post => `
+                            container.innerHTML = filteredPosts.map(post => `
                                 <div class="post-card">
                                     <div class="post-title">
                                         <a href="post.html?article=articles/${post.slug}.html">${post.title}</a>
@@ -657,14 +675,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                         
                         const sliderWrapper = document.getElementById('square-slider-wrapper');
-                        const sliderPosts = data.posts.slice(0, 4);
+                        const sliderPosts = filteredPosts.slice(0, 4);
                         if(sliderWrapper && sliderPosts.length > 0) {
                             let sliderHtml = sliderPosts.map((p, idx) => `
                             <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
                                 <div class="square-caption">
-                                    
-                                   <div class="square-title" onclick="location.href='post.html?article=articles/${p.slug}.html'" style="cursor: pointer;">${p.title}</div>
-                                   <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
+                                    <div class="square-title" onclick="location.href='${isInsideArticles ? p.url : ('articles/' + p.slug)}'" style="cursor: pointer;">${p.title}</div>
+                                    <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                                 </div>
                             </div>
                         `).join('');
@@ -719,12 +736,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                             return root;
                         }
 
-                        function generateMenuHtml(nodes, isRoot = false) {
+                        
+function generateMenuHtml(nodes, isRoot = false) {
                             let html = isRoot ? '' : '<ul class="dropdown-menu">';
                             
                             nodes.forEach(node => {
                                 let itemUrl = node.url || node.link || 'index.html';
-                                // ضبط مسار القائمة إذا كان داخلياً
                                 if (isInsideArticles && !itemUrl.startsWith('http') && !itemUrl.startsWith('../')) {
                                     itemUrl = '../' + itemUrl;
                                 }
@@ -761,7 +778,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                         let contentBox = '';
                         if (w.type === 'recent') {
-                            contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="${isInsideArticles ? p.url : ('articles/' + p.slug)}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
+                            contentBox = '<ul class="recent-posts-list">' + filteredPosts.map(p => `<li><a href="${isInsideArticles ? p.url : ('articles/' + p.slug)}"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
                         } else if (w.type === 'links') {
                             contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
                         } else {
@@ -783,7 +800,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     });
 
                     if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
-                    if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml; // تم تصحيح الخطأ هنا (innerHTML بدل html)
+                    if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml;
                 }
 
                 if (data.ads) {
@@ -815,8 +832,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
+    
         // دالة موحدة ومنظفة للتحكم بالحركة (السلايدر)
-        function initSliderLogic() {
+function initSliderLogic() {
             const slides = document.querySelectorAll('.square-slide');
             if(slides.length === 0) return;
             let currentSlide = 0;
@@ -857,6 +875,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
+        let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
+        
+        const fontToggleBtn = document.getElementById('font-toggle-btn');
+        if(fontToggleBtn) {
+            fontToggleBtn.addEventListener('click', () => {
+                currentFontIdx = (currentFontIdx + 1) % fontsList.length;
+                document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
+                localStorage.setItem('tech_font_idx', currentFontIdx);
+            });
+        }
+        document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
+
+        const themesList = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
+        let currentThemeIdx = localStorage.getItem('tech_theme_idx') ? parseInt(localStorage.getItem('tech_theme_idx')) : 0;
+
+    
         // إعدادات الخطوط والسمات (Themes) والوضع الليلي ولوحة التحكم
         const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
         let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
@@ -874,7 +909,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const themesList = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
         let currentThemeIdx = localStorage.getItem('tech_theme_idx') ? parseInt(localStorage.getItem('tech_theme_idx')) : 0;
 
-        function applyTheme(idx) {
+function applyTheme(idx) {
             document.body.classList.remove('light-mode');
             themesList.forEach(t => document.body.classList.remove(t));
             document.body.classList.add(themesList[idx]);
@@ -924,7 +959,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         }
-
+    
 </script>
 </body>
 </html>
