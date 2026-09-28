@@ -286,6 +286,14 @@
             "content": "",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1790577428112",
+            "title": "الصفحات الثابتة",
+            "type": "pages",
+            "content": "",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
