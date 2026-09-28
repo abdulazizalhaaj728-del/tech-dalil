@@ -278,6 +278,14 @@
             "content": "",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1790577414112",
+            "title": "مشاركات مميزة",
+            "type": "popular",
+            "content": "",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
