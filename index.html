@@ -612,11 +612,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return cat !== 'الصفحات الثابتة';
         });
 
-// معالجة وضبط روابط الصفحات الثابتة لعرضها في الشريط العلوي
-        let staticPages = rawPosts.filter(p => {
-            let cat = (p.category || '').trim();
-            return cat === 'الصفحات الثابتة';
-        });
 
         // ترتيب مخصص يدوي يضمن ظهور "من نحن" أولاً و"اتصل بنا" أخيراً
         const desiredOrder = ['من نحن', 'سياسة الخصوصية', 'اتفاقية الاستخدام', 'اتصل بنا'];
