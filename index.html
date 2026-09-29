@@ -740,9 +740,9 @@ function generateMenuHtml(nodes, isRoot = false) {
                         let itemUrl = node.url || node.link || 'index.html';
                         let finalHref = itemUrl;
                         
-                        // تصحيح الأخطاء في تحديد الروابط وإسنادها للمتغيرات بشكل صحيح
                         if (node.slug) {
                             let prefix = isInsideArticles ? '../' : '';
+                            // التأكد من أن الرابط يشير لصفحة العرض مع مسار المقال الصحيح مرة واحدة فقط
                             finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
                         } else {
                             if (!itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
@@ -755,7 +755,6 @@ function generateMenuHtml(nodes, isRoot = false) {
                         let hasChildren = node.children && node.children.length > 0;
                         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
                         
-                        // استخدام المتغير الصحيح finalHref بدلاً من الأكواد الخاطئة
                         html += `<li><a href="${finalHref}">${node.title}${arrow}</a>`;
                         
                         if (hasChildren) {
