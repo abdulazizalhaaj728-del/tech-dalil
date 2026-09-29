@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             }
                             if (cleanPath.endsWith('.html')) {
                                 let prefix = isInsideArticles ? '../' : '';
-                                finalHref = `post.html?article=${cleanPath.slug}.html">${node.title}`;
+                                finalHref = `post.html?article=${node.slug}.html">${node.title}`;
 
                              //   <a href="post.html?article=articles/${post.slug}.html">${post.title}</a>
                             }
@@ -751,7 +751,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         
                         html += `
                             <li>
-                                <a href="post.html?article=articles/${cleanPath.slug}.html">${node.title}</a>
+                                <a href="post.html?article=articles/${node.slug}.html">${node.title}</a>
                                 ${hasChildren ? generateMenuHtml(node.children, false) : ''}
                             </li>
                         `;
