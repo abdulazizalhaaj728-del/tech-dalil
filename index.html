@@ -477,32 +477,9 @@
                 <a href="#">البرمجيات ▾</a>
                 <ul class="dropdown-menu">
                     <li><a href="#">أنظمة الويب</a></li>
-                    <li><a href="#">تطبيقات الجوال</a></li>
-                    <li><a href="#">سكربتات جاهزة</a></li>
                 </ul>
             </li>
             <li>
-                <a href="#">الشروحات ▾</a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">دليل الاستضافة</a></li>
-                    <li><a href="#">كلود فلير</a></li>
-                    <li><a href="#">حماية وتأمين</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">المنتجات ▾</a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">قوالب جاهزة</a></li>
-                    <li><a href="#">الحزم البرمجية</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">الدعم ▾</a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">اتصل بنا</a></li>
-                    <li><a href="#">الشكاوى</a></li>
-                </ul>
-            </li>
         </nav>
     </div>
 
@@ -722,6 +699,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+
+
+
         if (data.menu && data.menu.length > 0) {
             const menuContainer = document.getElementById('site-main-menu');
             if (menuContainer) {
@@ -744,23 +724,35 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return root;
                 }
 
+                // --- دالة توليد القائمة بالطريقة القالبية المباشرة ---
                 function generateMenuHtml(nodes, isRoot = false) {
                     let html = isRoot ? '' : '<ul class="dropdown-menu">';
                     
                     nodes.forEach(node => {
                         let itemUrl = node.url || node.link || '#';
-                        let finalHref = itemUrl;
                         
+                        // معالجة الرابط إن كان مقالاً ليتوافق مع نموذج العرض الصحيح تماماً
+                        let finalHref = itemUrl;
+                        if (!finalHref.startsWith('http') && !finalHref.startsWith('//') && finalHref !== '#') {
+                            let cleanPath = finalHref.replace('../', '').replace('./', '');
+                            if (!cleanPath.startsWith('articles/') && cleanPath.endsWith('.html')) {
+                                cleanPath = 'articles/' + cleanPath;
+                            }
+                            if (cleanPath.endsWith('.html')) {
+                                let prefix = isInsideArticles ? '../' : '';
+                                finalHref = `${prefix}post.html?article=${cleanPath}`;
+                            }
+                        }
+
                         let hasChildren = node.children && node.children.length > 0;
                         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
                         
-                        html += `<li><a href="${finalHref}">${node.title}${arrow}</a>`;
-                        
-                        if (hasChildren) {
-                            html += generateMenuHtml(node.children, false);
-                        }
-                        
-                        html += `</li>`;
+                        html += `
+                            <li>
+                                <a href="${finalHref}">${node.title}${arrow}</a>
+                                ${hasChildren ? generateMenuHtml(node.children, false) : ''}
+                            </li>
+                        `;
                     });
                     
                     if (!isRoot) html += '</ul>';
@@ -769,25 +761,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 let menuTree = buildTree(data.menu);
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
-                // --- تطبيق فكرتك: معالجة وتأقلمة روابط القائمة في الذاكرة لتطابق السلايدر ونماذج العرض تماماً ---
-                const menuLinks = menuContainer.querySelectorAll('a');
-                menuLinks.forEach(link => {
-                    let href = link.getAttribute('href');
-                    if (!href || href.startsWith('http') || href.startsWith('//') || href === '#' || href.includes('post.html')) {
-                        return;
-                    }
-                    if (href.includes('articles/') || href.endsWith('.html')) {
-                        let cleanPath = href.replace('../', '').replace('./', '');
-                        if (!cleanPath.startsWith('articles/')) {
-                            cleanPath = 'articles/' + cleanPath;
-                        }
-                        let prefix = isInsideArticles ? '../' : '';
-                        link.setAttribute('href', `${prefix}post.html?article=${cleanPath}`);
-                    }
-                });
-                
             }
         }
+
+
+
+
+
+        
 
         if (data.widgets && data.widgets.length > 0) {
             const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
