@@ -702,66 +702,70 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 if (data.menu && data.menu.length > 0) {
-            const menuContainer = document.getElementById('site-main-menu');
-            if (menuContainer) {
-                function buildTree(items) {
-                    let root = [];
-                    let stack = [{ level: 0, children: root }];
-                    
-                    items.forEach(item => {
-                        let node = { ...item, children: [] };
-                        let lvl = item.level || 1;
-                        
-                        while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
-                            stack.pop();
-                        }
-                        
-                        stack[stack.length - 1].children.push(node);
-                        stack.push({ level: lvl, children: node.children });
-                    });
-                    
-                    return root;
-                }
-
-                // --- دالة القائمة الجديدة على طريقة السلايدر تماماً (Dev Style) ---
-                function generateMenuHtml(nodes, isRoot = false) {
-                    let html = isRoot ? '' : '<ul class="dropdown-menu">';
-                    
-                    nodes.forEach(node => {
-                        let rawUrl = node.url || node.link || '#';
-                        let finalHref = rawUrl;
-                        
-                        // معالجة الرابط بطريقة السلايدر البشارة والنظيفة
-                        if (finalHref !== '#' && !finalHref.startsWith('http') && !finalHref.startsWith('//')) {
-                            let prefix = isInsideArticles ? '../' : '';
-                            // إذا كان الرابط لا يحتوي على post.html ولا يبدأ بـ articles/ ويقود لمقال
-                            if (finalHref.endsWith('.html') && !finalHref.includes('post.html') && !finalHref.includes('/')) {
-                                finalHref = `${prefix}post.html?article=articles/${finalHref}`;
-                            } else {
-                                finalHref = prefix + finalHref;
-                            }
-                        }
-
-                        let hasChildren = node.children && node.children.length > 0;
-                        let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-                        
-                        html += `
-                            <li>
-                                <a href="${finalHref}">${node.title}${arrow}</a>
-                                ${hasChildren ? generateMenuHtml(node.children, false) : ''}
-                            </li>
-                        `;
-                    });
-                    
-                    if (!isRoot) html += '</ul>';
-                    return html;
+    const menuContainer = document.getElementById('site-main-menu');
+    if (menuContainer) {
+        // دالة بناء الشجرة (للحفاظ على هرمية القائمة والقوائم المنسدلة)
+        function buildTree(items) {
+            let root = [];
+            let stack = [{ level: 0, children: root }];
+            
+            items.forEach(item => {
+                let node = { ...item, children: [] };
+                let lvl = item.level || 1;
+                
+                while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
+                    stack.pop();
                 }
                 
-                let menuTree = buildTree(data.menu);
-                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
-            }
+                stack[stack.length - 1].children.push(node);
+                stack.push({ level: lvl, children: node.children });
+            });
+            
+            return root;
         }
 
+        // دالة توليد الـ HTML باستخدام طريقة map المباشرة والنظيفة (Dev Style)
+        function generateMenuHtml(nodes, isRoot = false) {
+            let prefix = isInsideArticles ? '../' : '';
+            
+            if (nodes.length === 0) return '';
+            
+            let html = isRoot ? '' : '<ul class="dropdown-menu">';
+            
+            html += nodes.map(node => {
+                let itemUrl = node.url || node.link || '#';
+                let finalHref = itemUrl;
+                
+                // توجيه الرابط بالطريقة المباشرة (مثل المقالات تماماً)
+                if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
+                    if (itemUrl.endsWith('.html') && !itemUrl.includes('post.html')) {
+                        let cleanName = itemUrl.replace('articles/', '');
+                        finalHref = `${prefix}post.html?article=articles/${cleanName}`;
+                    } else {
+                        finalHref = prefix + itemUrl;
+                    }
+                }
+
+                let hasChildren = node.children && node.children.length > 0;
+                let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+                
+                return `
+                    <li>
+                        <a href="${finalHref}">${node.title}${arrow}</a>
+                        ${hasChildren ? generateMenuHtml(node.children, false) : ''}
+                    </li>
+                `;
+            }).join('');
+            
+            if (!isRoot) html += '</ul>';
+            return html;
+        }
+        
+        let menuTree = buildTree(data.menu);
+        menuContainer.innerHTML = generateMenuHtml(menuTree, true);
+    }
+}
+        
 
 
         
