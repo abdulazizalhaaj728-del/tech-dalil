@@ -337,17 +337,30 @@
 
 
 
-                /* صندوق المقال بخلفية مميزة */
-        .post-card {
+        /* تخصيص صندوق المقال ومنطقة الودجات بلون بيج دافئ ومريح للعين */
+        .dynamic-post-content-box {
             background-color: #F7F4EF !important;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png');
             border: 1px solid #E2D8C5 !important;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            padding: 25px;
-            margin-bottom: 15px;
+            color: #2C3E50 !important;
         }
-        .post-card h1, .post-card h2, .post-card h3, .single-post-content { color: #2C3E50 !important; }
-        .post-card .post-meta { color: #596573 !important; }
+        
+        /* ضبط محاذاة الخطوط لتكون مشدودة ومنسقة من الأطراف (Justify) وبخط مريح */
+        .dynamic-post-content-box {
+            font-family: 'Cairo', 'Tajawal', sans-serif !important;
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            color: #2C3E50 !important;
+            line-height: 2 !important;
+        }
+        
+        /* تنسيق عناوين صواندي الكتابة */
+        .dynamic-post-content-box h1, .dynamic-post-content-box h2, .dynamic-post-content-box h3 {
+            color: #2C3E50 !important;
+        }
+
+        
 
         .back-to-home-btn {
             display: inline-flex; align-items: center; gap: 6px;
