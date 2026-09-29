@@ -337,13 +337,16 @@
 
 
 
-        /* تخصيص صندوق المقال ومنطقة الودجات بلون بيج دافئ ومريح للعين */
+        /* تخصيص صندوق المقال ومنطقة العرض بلون بيج دافئ ومريح للعين */
+        #dynamic-post-view .post-card,
         .dynamic-post-content-box {
             background-color: #F7F4EF !important;
             background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png');
             border: 1px solid #E2D8C5 !important;
             border-radius: 12px;
             color: #2C3E50 !important;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
         
         /* ضبط محاذاة الخطوط لتكون مشدودة ومنسقة من الأطراف (Justify) وبخط مريح */
@@ -355,11 +358,17 @@
             line-height: 2 !important;
         }
         
-        /* تنسيق عناوين صواندي الكتابة */
-        .dynamic-post-content-box h1, .dynamic-post-content-box h2, .dynamic-post-content-box h3 {
+        /* تنسيق العناوين والنصوص داخل صندوق الكتابة */
+        .dynamic-post-content-box h1, 
+        .dynamic-post-content-box h2, 
+        .dynamic-post-content-box h3 {
             color: #2C3E50 !important;
+            margin-bottom: 15px;
         }
-
+        
+        .dynamic-post-content-box p {
+            margin-bottom: 15px;
+        }
         
 
         .back-to-home-btn {
@@ -997,120 +1006,125 @@ if(secretTrigger) {
 }
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    const dynamicView = document.getElementById('dynamic-post-view');
-    const dynamicContentBox = document.getElementById('dynamic-post-content-box');
-    
-    // عناصر الرئيسية التي ستختفي عند فتح المقال
-    const elementsToHide = document.querySelectorAll('.right-scrollable-section > *:not(#dynamic-post-view)');
-
-    window.openPostBySlug = async function(identifier) {
-        let data = window.siteBlogData;
-        if (!data) {
-            try {
-                const res = await fetch('data.json?t=' + Date.now());
-                data = await res.json();
-                window.siteBlogData = data;
-            } catch (e) {
-                console.error("تعذر جلب البيانات");
-                return;
-            }
-        }
-
-        const postsList = data.posts || [];
+        document.addEventListener('DOMContentLoaded', () => {
+            const dynamicView = document.getElementById('dynamic-post-view');
+            const dynamicContentBox = document.getElementById('dynamic-post-content-box');
+            
+            // عناصر الرئيسية التي ستختفي عند فتح المقال
+            const elementsToHide = document.querySelectorAll('.right-scrollable-section > *:not(#dynamic-post-view)');
         
-        // البحث عن المقال بالـ slug أو الـ id أو الرابط لضمان عمل كافة المقالات القديمة والجديدة
-        let post = postsList.find(p => {
-            let pSlug = (p.slug || '').trim();
-            let pUrl = (p.url || '').trim();
-            let cleanId = String(p.id || '');
-            return pSlug === identifier || cleanId === identifier || pUrl.includes(identifier);
-        });
-
-        if (post) {
-            // إخفاء السلايدر وكل محتويات القسم الأيمن عدا مربع العرض
-            elementsToHide.forEach(el => {
-                el.style.display = 'none';
+        document.addEventListener('DOMContentLoaded', () => {
+            const dynamicView = document.getElementById('dynamic-post-view');
+            const dynamicContentBox = document.getElementById('dynamic-post-content-box');
+            
+            // عناصر الرئيسية التي ستختفي عند فتح المقال (السلايدر والجانب الأيمن)
+            const elementsToHide = document.querySelectorAll('.right-scrollable-section > *:not(#dynamic-post-view)');
+        
+            window.openPostBySlug = async function(identifier) {
+                let data = window.siteBlogData;
+                if (!data) {
+                    try {
+                        const res = await fetch('data.json?t=' + Date.now());
+                        data = await res.json();
+                        window.siteBlogData = data;
+                    } catch (e) {
+                        console.error("تعذر جلب البيانات");
+                        return;
+                    }
+                }
+        
+                const postsList = data.posts || [];
+                
+                // البحث عن المقال بالـ slug أو الـ id أو الرابط
+                let post = postsList.find(p => {
+                    let pSlug = (p.slug || '').trim();
+                    let pUrl = (p.url || '').trim();
+                    let cleanId = String(p.id || '');
+                    return pSlug === identifier || cleanId === identifier || pUrl.includes(identifier);
+                });
+        
+                if (post) {
+                    // إخفاء السلايدر وباقي محتويات القسم الأيمن عدا مربع العرض
+                    elementsToHide.forEach(el => {
+                        el.style.display = 'none';
+                    });
+        
+                    // إظهار مربع المقال
+                    dynamicView.style.display = 'block';
+                    window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
+        
+                    let ads = data.ads || {};
+                    let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
+                    let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
+        
+                    // حقن محتوى المقال مع زر العودة في الأعلى والأسفل وتطبيق كلاس التنسيق البيج والمحاذاة
+                    dynamicContentBox.innerHTML = `
+                        <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                            <button class="back-to-home-action back-to-home-btn" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 6px 14px; border-radius: 6px; font-weight: bold;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                        </div>
+                        
+                        <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4;">${post.title}</h1>
+                        <div class="post-meta" style="color: #596573; font-size: 0.85rem; margin-bottom: 20px;">
+                            <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
+                        </div>
+                        
+                        ${topAd}
+                        <div class="dynamic-post-content-box">
+                            ${post.content || post.description || ''}
+                        </div>
+                        ${botAd}
+        
+                        <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
+                            <button class="back-to-home-action back-to-home-btn" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 6px 14px; border-radius: 6px; font-weight: bold;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                        </div>
+                    `;
+        
+                    history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
+                }
+            };
+        
+            // دالة إغلاق المقال وإعادة إظهار السلايدر والمحتويات
+            function closePostView() {
+                dynamicView.style.display = 'none';
+                dynamicContentBox.innerHTML = '';
+                
+                elementsToHide.forEach(el => {
+                    el.style.display = '';
+                });
+        
+                history.pushState({}, '', 'index.html');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        
+            // الاستماع لأي ضغطة على أزرار العودة والروابط
+            document.addEventListener('click', (e) => {
+                const backAction = e.target.closest('.back-to-home-action');
+                if (backAction) {
+                    e.preventDefault();
+                    closePostView();
+                    return;
+                }
+        
+                const link = e.target.closest('a');
+                if (link && link.getAttribute('href')) {
+                    const href = link.getAttribute('href');
+                    if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
+                        e.preventDefault();
+                        let identifier = href.split('/').pop().replace('.html', '').replace('?article=', '').trim();
+                        openPostBySlug(identifier);
+                    }
+                }
             });
-
-            // إظهار مربع المقال
-            dynamicView.style.display = 'block';
-            window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
-
-            let ads = data.ads || {};
-            let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
-            let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
-
-            // حقن محتوى المقال مع زر العودة في الأعلى وفي الأسفل
-            dynamicContentBox.innerHTML = `
-                <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                    <button class="back-to-home-action back-to-home-btn" style="cursor: pointer; border: none;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
-                </div>
-                
-                <h1 style="font-size: 1.8rem; font-weight: 700; color: #2C3E50; margin-bottom: 10px; line-height: 1.4;">${post.title}</h1>
-                <div class="post-meta" style="color: #596573; font-size: 0.85rem; margin-bottom: 20px;">
-                    <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
-                </div>
-                
-                ${topAd}
-                <div class="single-post-content" style="line-height: 1.8; color: #2C3E50;">
-                    ${post.content || post.description || ''}
-                </div>
-                ${botAd}
-
-                <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
-                    <button class="back-to-home-action back-to-home-btn" style="cursor: pointer; border: none;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
-                </div>
-            `;
-
-            history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
-        }
-    };
-
-    // دالة إغلاق المقال وإعادة إظهار السلايدر والمحتويات المخفية
-    function closePostView() {
-        dynamicView.style.display = 'none';
-        dynamicContentBox.innerHTML = '';
         
-        elementsToHide.forEach(el => {
-            el.style.display = '';
-        });
-
-        history.pushState({}, '', 'index.html');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // الاستماع لأي ضغطة على أزرار العودة (سواء في الأعلى أو الأسفل)
-    document.addEventListener('click', (e) => {
-        const backAction = e.target.closest('.back-to-home-action');
-        if (backAction) {
-            e.preventDefault();
-            closePostView();
-            return;
-        }
-
-        // التقاط الروابط وضمان فتح المقالات ديناميكياً
-        const link = e.target.closest('a');
-        if (link && link.getAttribute('href')) {
-            const href = link.getAttribute('href');
-            if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
-                e.preventDefault();
-                let identifier = href.split('/').pop().replace('.html', '').replace('?article=', '').trim();
-                openPostBySlug(identifier);
-            }
-        }
-    });
-
-    // دعم زر الرجوع في المتصفح
-    window.addEventListener('popstate', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const article = urlParams.get('article');
-        if (!article) {
-            closePostView();
-        }
-    });
-});
-    
+            // دعم زر الرجوع في المتصفح
+            window.addEventListener('popstate', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const article = urlParams.get('article');
+                if (!article) {
+                    closePostView();
+                }
+            });
+        });    
     
     
     
