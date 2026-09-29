@@ -623,7 +623,7 @@
     </div><!-- نهاية الإطار الخارجي الشامل -->
     
     <script>
-                document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const jsonPath = 'data.json?t=' + Date.now();
         
             try {
@@ -637,7 +637,6 @@
                     return cat !== 'الصفحات الثابتة';
                 });
         
-                // دالة لترتيب المقالات بناءً على تسلسل القوائم (Menu Tree Order)
                 function getOrderedPosts(menuItems, allPosts) {
                     let ordered = [];
                     let visitedIds = new Set();
@@ -677,7 +676,6 @@
                 let menuTree = data.menu ? buildTree(data.menu) : [];
                 let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
         
-                // العرض الافتراضي للرئيسية (قائمة المقالات)
                 const container = document.getElementById('posts-container');
                 if (filteredPosts.length > 0) {
                     if (container) {
@@ -724,7 +722,6 @@
                     }
                 }
         
-                // إعداد القوائم الرئيسية
                 if (data.menu && data.menu.length > 0) {
                     const menuContainer = document.getElementById('site-main-menu');
                     if (menuContainer) {
@@ -732,7 +729,6 @@
                     }
                 }
         
-                // إعداد الودجات (تعديل أحدث المواضيع ليعرض 3 فقط وتثبيت ارتفاع التذييل)
                 if (data.widgets && data.widgets.length > 0) {
                     const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
                     const footerWidgetsContainer = document.getElementById('site-footer-widgets');
@@ -767,14 +763,12 @@
         
                     if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
                     
-                    // تثبيت ارتفاع التذييل (Footer) دائماً
                     if (footerWidgetsContainer) {
                         footerWidgetsContainer.style.minHeight = "220px";
                         footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px;">منطقة التذييل فارغة</div>';
                     }
                 }
         
-                // الإعلانات
                 if (data.ads) {
                     if (data.ads.topOn && data.ads.topCode) {
                         const topAdBox = document.getElementById('site-ad-top');
@@ -790,7 +784,6 @@
                     }
                 }
         
-                // فحص الرابط عند الفتح المباشر عبر رابط يحتوي على ?article=
                 const urlParams = new URLSearchParams(window.location.search);
                 const articleParam = urlParams.get('article');
                 if (articleParam) {
@@ -803,7 +796,16 @@
             }
         });
         
-        // نظام عرض المقال الديناميكي (Single Page Dynamic View)
+        // دالة قص العنوان لأول 5 كلمات
+        function getShortTitle(title) {
+            if (!title) return '';
+            let words = title.trim().split(/\s+/);
+            if (words.length > 5) {
+                return words.slice(0, 5).join(' ') + '...';
+            }
+            return title;
+        }
+        
         document.addEventListener('DOMContentLoaded', () => {
             const dynamicView = document.getElementById('dynamic-post-view');
             const dynamicContentBox = document.getElementById('dynamic-post-content-box');
@@ -811,7 +813,7 @@
         
             const elementsToHide = document.querySelectorAll('.right-scrollable-section > *:not(#dynamic-post-view)');
         
-            window.openPostBySlug = async function(identifier) {
+            window.openPostBySlug = async function(identifier, scrollToTop = true) {
                 let data = window.siteBlogData;
                 if (!data) {
                     try {
@@ -828,7 +830,6 @@
                 let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
                 let menuTree = data.menu ? buildTree(data.menu) : [];
                 
-                // دالة الترتيب المتسلسل للقوائم
                 function getOrderedPosts(menuItems, allPosts) {
                     let ordered = [];
                     let visitedIds = new Set();
@@ -868,27 +869,37 @@
                 if (post) {
                     elementsToHide.forEach(el => el.style.display = 'none');
                     dynamicView.style.display = 'block';
-                    window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
+                    if (scrollToTop) {
+                        window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
+                    }
         
                     let ads = data.ads || {};
                     let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
                     let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
         
-                    // حساب المقال السابق واللاحق بناءً على الترتيب التسلسلي
                     let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
                     let prevPost = currentIndex > 0 ? sequencedPosts[currentIndex - 1] : null;
                     let nextPost = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? sequencedPosts[currentIndex + 1] : null;
         
-                    let prevHtml = prevPost ? `<a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: bold; font-size: 0.9rem;"><i class="fa-solid fa-arrow-right" style="margin-left: 5px;"></i> ${prevPost.title}</a>` : `<span></span>`;
-                    let nextHtml = nextPost ? `<a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: bold; font-size: 0.9rem;">${nextPost.title} <i class="fa-solid fa-arrow-left" style="margin-right: 5px;"></i></a>` : `<span></span>`;
+                    // تصميم أزرار السابق والتالي المستقلة مع حدود وبوردر، وأول 5 كلمات للعنوان
+                    let prevHtml = prevPost ? `
+                        <div style="display: flex; align-items: center; gap: 8px; border: 1px solid #dcd3c1; padding: 6px 10px; border-radius: 6px; background: rgba(245, 240, 230, 0.3);">
+                            <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', false); return false;" style="background: var(--primary-color); color: #fff; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; text-decoration: none;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></a>
+                            <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', true); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem;" title="${prevPost.title}">${getShortTitle(prevPost.title)}</a>
+                        </div>` : `<span></span>`;
         
-                    // صندوق "شاهد أيضاً / مواضيع ذات صلة" في منتصف المقال (4 روابط بألوان متناسقة مع الخلفية البيج)
+                    let nextHtml = nextPost ? `
+                        <div style="display: flex; align-items: center; gap: 8px; border: 1px solid #dcd3c1; padding: 6px 10px; border-radius: 6px; background: rgba(245, 240, 230, 0.3);">
+                            <a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}', true); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem;" title="${nextPost.title}">${getShortTitle(nextPost.title)}</a>
+                            <a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}', false); return false;" style="background: var(--primary-color); color: #fff; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; text-decoration: none;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></a>
+                        </div>` : `<span></span>`;
+        
                     let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
                     let relatedHtml = '';
                     if (relatedPosts.length > 0) {
                         let linksList = relatedPosts.map(rp => `
                             <li style="margin-bottom: 8px;">
-                                <a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;" style="color: #4a3b32; background: rgba(210, 195, 170, 0.25); padding: 8px 12px; display: block; border-radius: 6px; text-decoration: none; font-weight: 500;">
+                                <a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}', true); return false;" style="color: #4a3b32; background: rgba(210, 195, 170, 0.25); padding: 8px 12px; display: block; border-radius: 6px; text-decoration: none; font-weight: 500;">
                                     <i class="fa-solid fa-bookmark" style="color: var(--primary-color); margin-left: 6px;"></i> ${rp.title}
                                 </a>
                             </li>
@@ -921,18 +932,16 @@
                             <button class="back-to-home-action" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 6px 14px; border-radius: 6px; font-weight: bold;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
                         </div>
         
-                        <!-- شريط محتويات المقال النحيف العلوي (Table of Contents) -->
                         <div id="toc-container" style="margin-bottom: 20px; border: 1px solid #dcd3c1; border-radius: 6px; background: rgba(245, 240, 230, 0.4);">
                             <div id="toc-header" style="padding: 8px 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #4a3b32; font-size: 0.9rem;">
                                 <span><i class="fa-solid fa-list-ul" style="color: var(--primary-color); margin-left: 8px;"></i> محتويات المقال</span>
                                 <i class="fa-solid fa-chevron-down" id="toc-arrow" style="transition: transform 0.3s;"></i>
                             </div>
-                            <div id="toc-list-box" style="display: none; padding: 10px 20px; border-top: 1px solid #dcd3c1; max-height: 200px; overflow-y: auto;">
-                                <!-- يتم تعبئتها ديناميكياً بالعناوين -->
-                            </div>
+                            <div id="toc-list-box" style="display: none; padding: 10px 20px; border-top: 1px solid #dcd3c1; max-height: 200px; overflow-y: auto;"></div>
                         </div>
         
-                        <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
+                        <!-- عنوان رئيسي بحجم أصغر وأنيق -->
+                        <h1 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
                         <div class="post-meta" style="color: #596573; font-size: 0.85rem; margin-bottom: 20px;">
                             <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
                         </div>
@@ -942,8 +951,7 @@
                         </div>
                         ${botAd}
         
-                        <!-- أزرار المقال السابق والتالي في الأسفل -->
-                        <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                             <div>${prevHtml}</div>
                             <div>${nextHtml}</div>
                         </div>
@@ -955,7 +963,6 @@
         
                     history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
         
-                    // تفعيل تفاعلية قائمة محتويات المقال والتمرير السلس
                     setTimeout(() => {
                         const tocHeader = document.getElementById('toc-header');
                         const tocListBox = document.getElementById('toc-list-box');
@@ -1019,7 +1026,6 @@
             });
         });
         
-        // دوال مساعدة إضافية للقوائم
         function buildTree(items) {
             let root = [];
             let stack = [{ level: 0, children: root }];
@@ -1060,7 +1066,6 @@
             return html;
         }
         
-        // السلايدر وإعدادات المظهر والخطوط وكلمة المرور
         function initSliderLogic() {
             const slides = document.querySelectorAll('.square-slide');
             if(slides.length === 0) return;
@@ -1166,6 +1171,7 @@
                 }
             });
         }
+    
     </script>
 </body>
 </html>
