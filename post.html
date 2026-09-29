@@ -307,288 +307,137 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
+    // 1. التقاط الرابط ومعرف المقال أو الـ Slug بدقة متناهية
     const urlParams = new URLSearchParams(window.location.search);
-    let postId = urlParams.get('id');
-    const articleParam = urlParams.get('article'); // لمعالجة صيغة الروابط مثل post.html?article=articles/slug.html
+    const articleParam = urlParams.get('article');
+    const slugParam = urlParams.get('slug');
+    const postId = urlParams.get('id');
 
+    let targetSlug = '';
+    if (articleParam) {
+        let parts = articleParam.split('/');
+        let lastPart = parts[parts.length - 1];
+        targetSlug = lastPart.replace(/\.html$/i, '').trim();
+    } else if (slugParam) {
+        targetSlug = slugParam.replace(/\.html$/i, '').trim();
+    }
+
+    const container = document.getElementById('post-content-box');
     const isInsideArticles = window.location.pathname.includes('/articles/');
-    const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
     const homeLink = isInsideArticles ? '../index.html' : 'index.html';
 
-    const pathSegments = window.location.pathname.split('/');
-    const currentFileName = pathSegments[pathSegments.length - 1];
+    // 2. محاولة جلب data.json من أكثر من مسار محتمل لضمان النجاح بغض النظر عن مكان تواجد الملف
+    let data = null;
+    const possiblePaths = isInsideArticles 
+        ? ['../data.json', 'data.json', '/data.json'] 
+        : ['data.json', './data.json', '/data.json'];
 
-    try {
-        const response = await fetch(jsonPath);
-        const data = await response.json();
-        const container = document.getElementById('post-content-box');
-
-
-        // فلترة المقالات بحيث تُستبعد "الصفحات الثابتة" تماماً من الأخبار والسلايدر
-        let rawPosts = data.posts || [];
-        let filteredPosts = rawPosts.filter(p => {
-            let cat = (p.category || '').trim();
-            return cat !== 'الصفحات الثابتة';
-        });
-
-        // معالجة وضبط روابط الصفحات الثابتة لعرضها في الشريط العلوي مرتبة حسب التاريخ
-        let staticPages = rawPosts.filter(p => {
-            let cat = (p.category || '').trim();
-            return cat === 'الصفحات الثابتة';
-        });
-
-        // ترتيب الصفحات الثابتة تناسلياً أو تصاعدياً حسب تاريخ الإدخال
-        staticPages.sort((a, b) => new Date(b.id || 0) - new Date(a.id || 0));
-
-        
-        
-        let post = null;
-        const postsList = data.posts || [];
-
-        if (postId) {
-            post = postsList.find(p => p.id == postId);
-        } else if (articleParam) {
-            let cleanSlug = articleParam.replace('articles/', '').replace('.html', '');
-            post = postsList.find(p => p.slug === cleanSlug || (p.url && p.url.includes(cleanSlug)));
-        } else if (currentFileName && currentFileName !== 'post.html') {
-            post = postsList.find(p => p.slug === currentFileName || (p.url && p.url.includes(currentFileName)));
-        }
-
-        // إذا لم يتم تحديد مقال صراحةً، اعرض أول مقال افتراضياً أو رسالة خطأ
-        if (!post && postsList.length > 0 && !postId && !articleParam) {
-            post = postsList[0]; 
-        }
-
-        if (post) {
-            const siteTitleEl = document.getElementById('site-title');
-            if (siteTitleEl) siteTitleEl.innerText = post.title + " | تكنو-دليل";
-
-            let ads = data.ads || {};
-            let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
-            let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
-
-            // اختيار مواضيع ذات صلة عشوائية أو من نفس القسم
-            let relatedPosts = postsList.filter(p => p.id !== post.id).slice(0, 2);
-            let relatedHtml = '';
-            if (relatedPosts.length > 0) {
-                relatedHtml = `
-                    <div class="related-posts-section">
-                        <h3 style="font-size: 1rem; color: var(--accent-color); margin-bottom: 10px;">📌 مواضيع قد تهمك أو ذات صلة:</h3>
-                        <div class="related-posts-grid">
-                            ${relatedPosts.map(rp => `
-                                <a href="post.html?article=articles/${rp.slug}.html" class="related-card">
-                                    <h4>${rp.title}</h4>
-                                    <p>${rp.description ? rp.description.substring(0, 60) + '...' : ''}</p>
-                                </a>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
+    for (let path of possiblePaths) {
+        try {
+            const res = await fetch(path + '?t=' + Date.now());
+            if (res.ok) {
+                data = await res.json();
+                break; // تم الجلب بنجاح، نخرج من الحلقة
             }
-
-            if (container) {
-                container.innerHTML = `
-                    <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                        <a href="${homeLink}" class="back-to-home-btn"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</a>
-                    </div>
-                    <h1 style="font-size: 1.8rem; font-weight: 700; color: var(--accent-color); margin-bottom: 10px; line-height: 1.4;">${post.title}</h1>
-                    <div class="post-meta">
-                        <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
-                    </div>
-                    ${topAd}
-                    <div class="single-post-content">
-                        ${post.content || post.description || ''}
-                    </div>
-                    ${botAd}
-                    ${relatedHtml}
-                    <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                        <a href="${homeLink}" class="back-to-home-btn"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</a>
-                    </div>
-                `;
-            }
-        } else {
-            if (container) {
-                container.innerHTML = `
-                    <div style="text-align: right;">
-                        <h2>عذراً</h2>
-                        <p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود أو تم تغيير رابطه.</p>
-                        <a href="${homeLink}" class="back-to-home-btn">العودة للرئيسية</a>
-                    </div>
-                `;
-            }
-        }
-
-        //دالة مساعدة لتوليد رابط المقال الصحيح بدون تكرار الامتدادات
-            /*
-            function getPostUrl(post) {
-                // استخراج اسم الملف النظيف بدون مسارات أو امتدادات متكررة
-                let slug = post.slug || '';
-                if (!slug && post.url) {
-                    slug = post.url.replace(/^.*[\\\/]/, ''); // استخراج اسم الملف الأخير
-                }
-                // تنظيف أي امتدادات مكررة لـ .html
-                slug = slug.replace(/\.html$/i, '').replace(/\.html$/i, '');
-                
-                return `post.html?article=articles/${slug}.html`;
-            }
-            */
-
-        // إعدادات اللوجو والشريط الإخباري والقوائم والودجتس تماماً مثل الرئيسية
-        if (data.settings) {
-            if (data.settings.logoUrl) {
-                const logoContainer = document.getElementById('site-logo-container');
-                if (logoContainer) {
-                    let h = data.settings.logoHeight || '50px';
-                    logoContainer.innerHTML = `<a href="${homeLink}"><img src="${data.settings.logoUrl}" alt="الشعار" style="height: ${h}; max-height: 60px; object-fit: contain;"></a>`;
-                }
-            }
-            const tickerWrapper = document.getElementById('site-ticker-wrapper');
-            if (tickerWrapper) {
-                tickerWrapper.style.display = data.settings.tickerVisible !== false ? 'block' : 'none';
-            }
-        }
-
-        if (data.menu && data.menu.length > 0) {
-            const menuContainer = document.getElementById('site-main-menu');
-            if (menuContainer) {
-                function buildTree(items) {
-                    let root = [];
-                    let stack = [{ level: 0, children: root }];
-                    items.forEach(item => {
-                        let node = { ...item, children: [] };
-                        let lvl = item.level || 1;
-                        while (stack.length > 1 && stack[stack.length - 1].level >= lvl) { stack.pop(); }
-                        stack[stack.length - 1].children.push(node);
-                        stack.push({ level: lvl, children: node.children });
-                    });
-                    return root;
-                }
-
-                function generateMenuHtml(nodes, isRoot = false) {
-                    let html = isRoot ? '' : '<ul class="dropdown-menu">';
-                    nodes.forEach(node => {
-                        let itemUrl = node.url || node.link || 'index.html';
-                        if (isInsideArticles && !itemUrl.startsWith('http') && !itemUrl.startsWith('../')) {
-                            itemUrl = '../' + itemUrl;
-                        }
-                        let hasChildren = node.children && node.children.length > 0;
-                        let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-                        html += `<li><a href="${itemUrl}">${node.title}${arrow}</a>`;
-                        if (hasChildren) { html += generateMenuHtml(node.children, false); }
-                        html += `</li>`;
-                    });
-                    if (!isRoot) html += '</ul>';
-                    return html;
-                }
-
-                let menuTree = buildTree(data.menu);
-                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
-            }
-        }
-
-        if (data.widgets && data.widgets.length > 0) {
-            const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
-            const footerWidgetsContainer = document.getElementById('site-footer-widgets');
-            
-            let sidebarHtml = '';
-            let footerHtml = '';
-
-            data.widgets.forEach(w => {
-                if (!w.active) return;
-                let contentBox = '';
-                if (w.type === 'recent') {
-                    contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="post.html?article=articles/${p.slug}.html"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
-                } else if (w.type === 'links') {
-                    contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
-                } else {
-                    contentBox = '<div>' + (w.content || '') + '</div>';
-                }
-
-                let widgetBlock = `
-                    <div class="widget-card" id="${w.id}">
-                        <h3 class="widget-title">${w.title}</h3>
-                        <div class="widget-content">${contentBox}</div>
-                    </div>
-                `;
-
-                if (w.location === 'footer') {
-                    footerHtml += widgetBlock;
-                } else {
-                    sidebarHtml += widgetBlock;
-                }
-            });
-
-            if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
-            if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml;
-        }
-
-        if (data.ads) {
-            if (data.ads.topOn && data.ads.topCode) document.getElementById('site-ad-top').innerHTML = data.ads.topCode;
-            if (data.ads.midOn && data.ads.midCode) document.getElementById('site-ad-mid').innerHTML = data.ads.midCode;
-            if (data.ads.botOn && data.ads.botCode) document.getElementById('site-ad-bot').innerHTML = data.ads.botCode;
-        }
-
-    } catch (err) {
-        console.error("تعذر جلب ملف بيانات المدونة:", err);
-    }
-
-    // إعدادات الخطوط والسمات والوضع الليلي
-    const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
-    let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
-    
-    const fontToggleBtn = document.getElementById('font-toggle-btn');
-    if(fontToggleBtn) {
-        fontToggleBtn.addEventListener('click', () => {
-            currentFontIdx = (currentFontIdx + 1) % fontsList.length;
-            document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
-            localStorage.setItem('tech_font_idx', currentFontIdx);
-        });
-    }
-    document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
-
-    const themesList = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
-    let currentThemeIdx = localStorage.getItem('tech_theme_idx') ? parseInt(localStorage.getItem('tech_theme_idx')) : 0;
-
-    function applyTheme(idx) {
-        document.body.classList.remove('light-mode');
-        themesList.forEach(t => document.body.classList.remove(t));
-        document.body.classList.add(themesList[idx]);
-        localStorage.setItem('tech_theme_idx', idx);
-    }
-
-    const nextThemeBtn = document.getElementById('next-theme-btn');
-    const prevThemeBtn = document.getElementById('prev-theme-btn');
-
-    if(nextThemeBtn) nextThemeBtn.addEventListener('click', () => { currentThemeIdx = (currentThemeIdx + 1) % themesList.length; applyTheme(currentThemeIdx); });
-    if(prevThemeBtn) prevThemeBtn.addEventListener('click', () => { currentThemeIdx = (currentThemeIdx - 1 + themesList.length) % themesList.length; applyTheme(currentThemeIdx); });
-    applyTheme(currentThemeIdx);
-
-    const darkModeBtn = document.getElementById('dark-mode-btn');
-    if(darkModeBtn) {
-        darkModeBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
-            darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-        });
-        if(localStorage.getItem('tech_light_mode') === '1') {
-            document.body.classList.add('light-mode');
-            darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        } catch (e) {
+            // نتابع التجربة في المسار التالي
         }
     }
 
-    const secretTrigger = document.getElementById('secret-trigger');
-    if(secretTrigger) {
-        secretTrigger.addEventListener('click', () => {
-            const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
-            if(pass === "aziz728") {
-                window.location.href = isInsideArticles ? "../dashboard.html" : "dashboard.html";
-            } else if(pass !== null) {
-                alert("كلمة المرور غير صحيحة!");
-            }
+    // إذا فشل الـ fetch تماماً، نحاول جلب آخر نسخة مخزنة محلياً كخيار أخیر
+    if (!data) {
+        try {
+            const local = localStorage.getItem('tech_dalil_data');
+            if (local) data = JSON.parse(local);
+        } catch (err) {}
+    }
+
+    if (!data || !data.posts) {
+        if (container) {
+            container.innerHTML = `
+                <div style="text-align: right; padding: 30px;">
+                    <h2>عذراً، تعذر تحميل قاعدة بيانات المقالات.</h2>
+                    <p style="color: var(--text-muted); margin: 10px 0;">تأكد من وجود ملف <code>data.json</code> في مكانه الصحيح.</p>
+                    <a href="${homeLink}" class="back-to-home-btn">العودة للرئيسية</a>
+                </div>
+            `;
+        }
+        return;
+    }
+
+    // 3. البحث عن المقال المطلوب بناءً على الـ Slug أو الـ ID
+    const postsList = data.posts || [];
+    let post = null;
+
+    if (postId) {
+        post = postsList.find(p => String(p.id) === String(postId));
+    } else if (targetSlug) {
+        post = postsList.find(p => {
+            let pSlug = (p.slug || '').trim();
+            let pUrl = (p.url || '').trim();
+            return pSlug === targetSlug || pUrl.includes(targetSlug);
         });
+    }
+
+    // 4. عرض المقال أو إظهار سبب عدم التطابق
+    if (post) {
+        // تحديث عنوان المتصفح
+        const siteTitleEl = document.getElementById('site-title');
+        if (siteTitleEl) siteTitleEl.innerText = post.title + " | تكنو-دليل";
+
+        let ads = data.ads || {};
+        let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
+        let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
+
+        // مقالات ذات صلة
+        let relatedPosts = postsList.filter(p => String(p.id) !== String(post.id)).slice(0, 2);
+        let relatedHtml = '';
+        if (relatedPosts.length > 0) {
+            relatedHtml = `
+                <div class="related-posts-section" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <h3 style="font-size: 1rem; color: var(--accent-color); margin-bottom: 10px;">📌 مواضيع ذات صلة:</h3>
+                    <div class="related-posts-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        ${relatedPosts.map(rp => `
+                            <a href="post.html?article=articles/${rp.slug}.html" style="text-decoration: none; color: inherit; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; display: block;">
+                                <h4 style="font-size: 0.9rem; margin-bottom: 5px; color: var(--accent-color);">${rp.title}</h4>
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = `
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <a href="${homeLink}" class="back-to-home-btn"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</a>
+            </div>
+            <h1 style="font-size: 1.8rem; font-weight: 700; color: var(--accent-color); margin-bottom: 10px; line-height: 1.4;">${post.title}</h1>
+            <div class="post-meta" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
+                <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
+            </div>
+            ${topAd}
+            <div class="single-post-content" style="line-height: 1.8;">
+                ${post.content || post.description || ''}
+            </div>
+            ${botAd}
+            ${relatedHtml}
+            <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <a href="${homeLink}" class="back-to-home-btn"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</a>
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <div style="text-align: right; padding: 30px;">
+                <h2>عذراً، لم يتم العثور على هذا المقال!</h2>
+                <p style="color: var(--text-muted); margin: 10px 0;">الرابط المطلوبة أو الـ Slug هو: <code>${targetSlug || 'غير معروف'}</code></p>
+                <p style="color: var(--text-muted); margin: 10px 0;">تأكد من أن هذا المقال مسجل في ملف <code>data.json</code> وأن اسم الرابط يطابق الـ slug الخاص به تماماً.</p>
+                <br>
+                <a href="${homeLink}" class="back-to-home-btn">العودة للرئيسية</a>
+            </div>
+        `;
     }
 });
 </script>
+
 </body>
 </html>
