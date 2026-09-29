@@ -751,10 +751,7 @@ if (data.menu && data.menu.length > 0) {
                 
                 return `
                     <li>
-                        <!--
-                        <a href="${finalHref}">${node.title}${arrow}</a>
-                        ${hasChildren ? generateMenuHtml(node.children, false) : ''}
-                        -->
+
 
                         <a href="post.html?article=articles/${node.slug}.html">${node.title}</a>
                     </li>
