@@ -740,7 +740,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                             }
                             if (cleanPath.endsWith('.html')) {
                                 let prefix = isInsideArticles ? '../' : '';
-                                finalHref = `${prefix}post.html?article=${cleanPath}`;
+                                finalHref = `${prefix}post.html?article=${post.slug}.html">${node.title}`;
+
+                             //   <a href="post.html?article=articles/${post.slug}.html">${post.title}</a>
                             }
                         }
 
