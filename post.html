@@ -137,11 +137,32 @@
 
         .right-scrollable-section { width: 100%; }
 
-        .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; margin-bottom: 15px; }
-        .post-title a { font-size: 1.15rem; font-weight: 700; color: var(--accent-color); text-decoration: none; }
-        .post-meta { font-size: 0.8rem; color: var(--text-muted); margin: 8px 0; display: flex; gap: 15px; }
-        .single-post-content { font-size: 1.05rem; color: var(--text-main); line-height: 1.8; margin-top: 15px; }
+        .post-card {
+            background-color: #F7F4EF !important;
+            border: 1px solid #E2D8C5 !important;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .post-card h1, .post-card h2, .post-card h3, .single-post-content {
+            color: #2C3E50 !important;
+        }
+        
+        .post-card .post-meta {
+            color: #596573 !important;
+        }    
+
+        .single-post-content { font-size: 1.05rem; line-height: 1.8; margin-top: 15px; }
         .single-post-content p { margin-bottom: 15px; }
+        .content img, .post-img, .featured-img, article img {
+            display: block !important;
+            margin: 15px auto !important;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
 
         .back-to-home-btn {
             display: inline-flex; align-items: center; gap: 6px;
@@ -166,12 +187,6 @@
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
             position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
         }
-        .sidebar-widget { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
-        .sidebar-widget h4, .sidebar-widget h3 { color: var(--accent-color); font-size: 0.95rem; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
-        .sidebar-widget ul { list-style: none; }
-        .sidebar-widget ul li { padding: 6px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; cursor: pointer; color: var(--text-main); }
-        .sidebar-widget ul li:hover { color: var(--accent-color); }
-
         .left-sticky-sidebar::-webkit-scrollbar { display: none; }
         .left-sticky-sidebar { scrollbar-width: none; -ms-overflow-style: none; }
 
@@ -192,35 +207,6 @@
 
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
-
-
-        /* تخصيص صندوق المقال وحده ليكون بخلفية بيج دافئة ومريحة للقراءة */
-        .post-card {
-            background-color: #F7F4EF !important; /* لون بيج هادئ وغير مؤذي للعين */
-            background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png'); /* تدرج أو نقشة ناعمة (اختياري) */
-            border: 1px solid #E2D8C5 !important;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        /* ضبط لون النصوص داخل المقال لتكون واضحة ومتباينة بشكل ممتاز مع الخلفية البيج */
-        .post-card h1, .post-card h2, .post-card h3, .single-post-content {
-            color: #2C3E50 !important;
-        }
-        
-        .post-card .post-meta {
-            color: #596573 !important;
-        }    
-
-        /* توسيط الصور وتقليل المسافات الفاصلة بينها وبين النصوص */
-    .content img, .post-img, .featured-img, article img {
-    display: block !important;
-    margin: 15px auto !important; /* توسيط الصورة وجعل المسافة علوية وسفلية مقللة إلى 15 بكسل فقط */
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-
     </style>
 </head>
 <body class="theme-default">
@@ -230,10 +216,10 @@
 
         <div class="top-bar">
             <div class="top-pages">
-                <a href="privacy.html">خصوصية</a>
-                <a href="terms.html">شروط</a>
-                <a href="about.html">من نحن</a>
-                <a href="contact.html">اتصل بنا</a>
+                <a href="articles/privacy-policy.html">سياسة الخصوصية</a>
+                <a href="articles/terms.html">اتفاقية الاستخدام</a>
+                <a href="articles/about-us.html">من نحن</a>
+                <a href="articles/contact-us.html">اتصل بنا</a>
             </div>
             
             <div class="top-controls">
@@ -308,55 +294,35 @@
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    let postId = urlParams.get('id');
-    const articleParam = urlParams.get('article'); // لمعالجة صيغة الروابط مثل post.html?article=articles/slug.html
+    const postId = urlParams.get('id');
+    const articleParam = urlParams.get('article');
+    const slugParam = urlParams.get('slug');
+
+    let targetSlug = '';
+    if (articleParam) {
+        let parts = articleParam.split('/');
+        let lastPart = parts[parts.length - 1];
+        targetSlug = lastPart.replace(/\.html$/i, '');
+    } else if (slugParam) {
+        targetSlug = slugParam.replace(/\.html$/i, '');
+    }
 
     const isInsideArticles = window.location.pathname.includes('/articles/');
     const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
     const homeLink = isInsideArticles ? '../index.html' : 'index.html';
-
-    const pathSegments = window.location.pathname.split('/');
-    const currentFileName = pathSegments[pathSegments.length - 1];
 
     try {
         const response = await fetch(jsonPath);
         const data = await response.json();
         const container = document.getElementById('post-content-box');
 
-
-        // فلترة المقالات بحيث تُستبعد "الصفحات الثابتة" تماماً من الأخبار والسلايدر
-        let rawPosts = data.posts || [];
-        let filteredPosts = rawPosts.filter(p => {
-            let cat = (p.category || '').trim();
-            return cat !== 'الصفحات الثابتة';
-        });
-
-        // معالجة وضبط روابط الصفحات الثابتة لعرضها في الشريط العلوي مرتبة حسب التاريخ
-        let staticPages = rawPosts.filter(p => {
-            let cat = (p.category || '').trim();
-            return cat === 'الصفحات الثابتة';
-        });
-
-        // ترتيب الصفحات الثابتة تناسلياً أو تصاعدياً حسب تاريخ الإدخال
-        staticPages.sort((a, b) => new Date(b.id || 0) - new Date(a.id || 0));
-
-        
-        
-        let post = null;
         const postsList = data.posts || [];
+        let post = null;
 
         if (postId) {
             post = postsList.find(p => p.id == postId);
-        } else if (articleParam) {
-            let cleanSlug = articleParam.replace('articles/', '').replace('.html', '');
-            post = postsList.find(p => p.slug === cleanSlug || (p.url && p.url.includes(cleanSlug)));
-        } else if (currentFileName && currentFileName !== 'post.html') {
-            post = postsList.find(p => p.slug === currentFileName || (p.url && p.url.includes(currentFileName)));
-        }
-
-        // إذا لم يتم تحديد مقال صراحةً، اعرض أول مقال افتراضياً أو رسالة خطأ
-        if (!post && postsList.length > 0 && !postId && !articleParam) {
-            post = postsList[0]; 
+        } else if (targetSlug) {
+            post = postsList.find(p => p.slug === targetSlug || (p.url && p.url.includes(targetSlug)));
         }
 
         if (post) {
@@ -367,7 +333,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
             let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
 
-            // اختيار مواضيع ذات صلة عشوائية أو من نفس القسم
             let relatedPosts = postsList.filter(p => p.id !== post.id).slice(0, 2);
             let relatedHtml = '';
             if (relatedPosts.length > 0) {
@@ -409,7 +374,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             if (container) {
                 container.innerHTML = `
-                    <div style="text-align: right;">
+                    <div style="text-align: right; padding: 20px;">
                         <h2>عذراً</h2>
                         <p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود أو تم تغيير رابطه.</p>
                         <a href="${homeLink}" class="back-to-home-btn">العودة للرئيسية</a>
@@ -418,22 +383,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        //دالة مساعدة لتوليد رابط المقال الصحيح بدون تكرار الامتدادات
-            /*
-            function getPostUrl(post) {
-                // استخراج اسم الملف النظيف بدون مسارات أو امتدادات متكررة
-                let slug = post.slug || '';
-                if (!slug && post.url) {
-                    slug = post.url.replace(/^.*[\\\/]/, ''); // استخراج اسم الملف الأخير
-                }
-                // تنظيف أي امتدادات مكررة لـ .html
-                slug = slug.replace(/\.html$/i, '').replace(/\.html$/i, '');
-                
-                return `post.html?article=articles/${slug}.html`;
-            }
-            */
-
-        // إعدادات اللوجو والشريط الإخباري والقوائم والودجتس تماماً مثل الرئيسية
+        // إعدادات القوائم والودجتس
         if (data.settings) {
             if (data.settings.logoUrl) {
                 const logoContainer = document.getElementById('site-logo-container');
@@ -520,12 +470,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
             if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml;
-        }
-
-        if (data.ads) {
-            if (data.ads.topOn && data.ads.topCode) document.getElementById('site-ad-top').innerHTML = data.ads.topCode;
-            if (data.ads.midOn && data.ads.midCode) document.getElementById('site-ad-mid').innerHTML = data.ads.midCode;
-            if (data.ads.botOn && data.ads.botCode) document.getElementById('site-ad-bot').innerHTML = data.ads.botCode;
         }
 
     } catch (err) {
