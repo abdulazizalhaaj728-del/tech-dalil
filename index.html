@@ -852,6 +852,40 @@ function generateMenuHtml(nodes, isRoot = false) {
     }
 });
 
+
+document.addEventListener('click', function(e) {
+    // ابحث عما إذا كان العنصر المضغوط هو رابط داخل القائمة
+    let link = e.target.closest('.navbar nav a, .menu-container a, ul.dropdown-menu a');
+    
+    if (!link) return;
+    
+    let href = link.getAttribute('href');
+    
+    // استثناء الروابط الخارجية (مثل http أو https أو # أو روابط تفتح صفحات رئيسية معروفة)
+    if (!href || href.startsWith('http') || href.startsWith('//') || href === '#' || href.includes('index.html')) {
+        return; // اتركها تعمل بشكل طبيعي
+    }
+    
+    // إذا كان الرابط يشير لملف داخل مجلد articles أو له اسم ملف معين تريد فتحه بالنموذج
+    if (href.includes('articles/') || href.endsWith('.html')) {
+        e.preventDefault(); // منع التوجيه الخاطئ التقليدي اللحظي
+        
+        // تنظيف الرابط وجعله يتوافق تماماً مع طريقة عمل السلايدر (عبر post.html)
+        let cleanPath = href.replace('../', '').replace('./', '');
+        if (!cleanPath.startsWith('articles/')) {
+            cleanPath = 'articles/' + cleanPath;
+        }
+        
+        let prefix = (typeof isInsideArticles !== 'undefined' && isInsideArticles) ? '../' : '';
+        let targetModelUrl = `${prefix}post.html?article=${cleanPath}`;
+        
+        // التوجيه السلس للنموذج الصحيح وكأن السلايدر هو من ضُغط عليه
+        window.location.href = targetModelUrl;
+    }
+});
+    
+
+    
 function initSliderLogic() {
     const slides = document.querySelectorAll('.square-slide');
     if(slides.length === 0) return;
