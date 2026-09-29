@@ -751,7 +751,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         
                         html += `
                             <li>
-                                <a href="${finalHref}">${node.title}${arrow}</a>
+                                <a href="post.html?article=articles/${post.slug}.html">${node.title}</a>
                                 ${hasChildren ? generateMenuHtml(node.children, false) : ''}
                             </li>
                         `;
