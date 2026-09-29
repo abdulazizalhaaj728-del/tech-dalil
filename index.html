@@ -701,7 +701,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
-        if (data.menu && data.menu.length > 0) {
+if (data.menu && data.menu.length > 0) {
             const menuContainer = document.getElementById('site-main-menu');
             if (menuContainer) {
                 function buildTree(items) {
@@ -723,27 +723,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return root;
                 }
 
-                // دالة توليد القائمة مع معالجة سليمة ودقيقة للروابط (مثل السلايدر تماماً)
+                // --- دالة القائمة الجديدة على طريقة السلايدر تماماً (Dev Style) ---
                 function generateMenuHtml(nodes, isRoot = false) {
                     let html = isRoot ? '' : '<ul class="dropdown-menu">';
                     
                     nodes.forEach(node => {
-                        let itemUrl = node.url || node.link || '#';
-                        let finalHref = itemUrl;
+                        let rawUrl = node.url || node.link || '#';
+                        let finalHref = rawUrl;
                         
-                        // معالجة الرابط لتطابق نظام عرض المقالات في الموقع والسلايدر
-                        if (!finalHref.startsWith('http') && !finalHref.startsWith('//') && finalHref !== '#') {
-                            let cleanPath = finalHref.replace('../', '').replace('./', '');
-                            if (!cleanPath.startsWith('articles/') && cleanPath.endsWith('.html') && cleanPath !== 'index.html' && cleanPath !== 'contact.html' && cleanPath !== 'about.html') {
-                                cleanPath = 'articles/' + cleanPath;
-                            }
-                            if (cleanPath.endsWith('.html') && cleanPath !== 'index.html' && cleanPath !== 'contact.html' && cleanPath !== 'about.html') {
-                                let prefix = isInsideArticles ? '../' : '';
-                                finalHref = `${prefix}post.html?article=${cleanPath}`;
+                        // معالجة الرابط بطريقة السلايدر البشارة والنظيفة
+                        if (finalHref !== '#' && !finalHref.startsWith('http') && !finalHref.startsWith('//')) {
+                            let prefix = isInsideArticles ? '../' : '';
+                            // إذا كان الرابط لا يحتوي على post.html ولا يبدأ بـ articles/ ويقود لمقال
+                            if (finalHref.endsWith('.html') && !finalHref.includes('post.html') && !finalHref.includes('/')) {
+                                finalHref = `${prefix}post.html?article=articles/${finalHref}`;
                             } else {
-                                // للصفحات العادية أو الرابط الجاهز
-                                let prefix = isInsideArticles ? '../' : '';
-                                finalHref = finalHref.includes('post.html') ? finalHref : (prefix + finalHref);
+                                finalHref = prefix + finalHref;
                             }
                         }
 
@@ -765,8 +760,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let menuTree = buildTree(data.menu);
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
-        }        
-
+        }
 
 
 
