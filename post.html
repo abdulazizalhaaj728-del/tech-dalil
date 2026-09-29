@@ -291,6 +291,7 @@
         </footer>
     </div>
 
+
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -308,14 +309,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const isInsideArticles = window.location.pathname.includes('/articles/');
-    const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
     const homeLink = isInsideArticles ? '../index.html' : 'index.html';
 
-    try {
-        const response = await fetch(jsonPath);
-        const data = await response.json();
-        const container = document.getElementById('post-content-box');
+    let data = null;
 
+    // 1. محاولة جلب البيانات من التخزين المحلي (localStorage) أولاً لضمان السرعة وتفادي مشاكل المسارات
+    try {
+        const localData = localStorage.getItem('tech_dalil_data');
+        if (localData) {
+            data = JSON.parse(localData);
+        }
+    } catch (e) {
+        console.warn("تعذر القراءة من التخزين المحلي:", e);
+    }
+
+    // 2. إذا لمط توجد في التخزين المحلي، نقوم بجلبها مباشرة من ملف data.json
+    if (!data || !data.posts) {
+        const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
+        try {
+            const response = await fetch(jsonPath);
+            if (response.ok) {
+                data = await response.json();
+            }
+        } catch (err) {
+            console.error("تعذر جلب ملف بيانات المدونة من الخادم:", err);
+        }
+    }
+
+    const container = document.getElementById('post-content-box');
+
+    if (data && data.posts) {
         const postsList = data.posts || [];
         let post = null;
 
@@ -472,8 +495,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml;
         }
 
-    } catch (err) {
-        console.error("تعذر جلب ملف بيانات المدونة:", err);
+    } else {
+        if (container) {
+            container.innerHTML = `
+                <div style="text-align: right; padding: 20px;">
+                    <h2>عذراً</h2>
+                    <p style="color: var(--text-muted); margin: 10px 0;">تعذر جلب بيانات المقالات. تأكد من اتصال الإنترنت أو صحة ملف البيانات.</p>
+                    <a href="${homeLink}" class="back-to-home-btn">العودة للرئيسية</a>
+                </div>
+            `;
+        }
     }
 
     // إعدادات الخطوط والسمات والوضع الليلي
