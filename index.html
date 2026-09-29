@@ -825,6 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // نجعل البحث يشمل جميع المقالات بما فيها الصفحات الثابتة لكي تعمل القوائم والصفحات الثابتة بشكل صحيح
         let rawPosts = data.posts || [];
         let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
         let menuTree = data.menu ? buildTree(data.menu) : [];
@@ -857,7 +858,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return ordered;
         }
 
-        let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+        let sequencedPosts = getOrderedPosts(menuTree, rawPosts);
 
         let post = rawPosts.find(p => {
             let pSlug = (p.slug || '').trim();
@@ -877,7 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let prevPost = currentIndex > 0 ? sequencedPosts[currentIndex - 1] : null;
             let nextPost = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? sequencedPosts[currentIndex + 1] : null;
 
-            // فصل تام ومسافة واضحة بين زر السهم وبوردر العنوان لتجنب الضغط بالخطأ وثبات تام للشاشة
+            // تثبيت تام للشاشة ومنع أي حركة عند النقر على الأسهم باستخدام e.preventDefault()
             let prevHtml = prevPost ? `
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
                     <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', 'arrow'); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></a>
@@ -940,7 +941,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div id="toc-list-box" style="display: none; padding: 10px 20px; border-top: 1px solid #dcd3c1; max-height: 200px; overflow-y: auto;"></div>
                 </div>
 
-                <!-- عنوان المقال الرئيسي مع هوامش متساوية -->
                 <div style="padding: 0 15px;">
                     <h1 id="article-main-title-heading" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
                     <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 20px;">
@@ -965,12 +965,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
 
-            // التمرير الدقيق ليكون العنوان ببدأه من أعلى تماماً
             if (scrollMode === 'title') {
                 setTimeout(() => {
                     const titleHeading = document.getElementById('article-main-title-heading');
                     if (titleHeading) {
-                        const headerOffset = 70; // مسافة بسيطة لتبقي العنوان ظاهراً وواضحاً تماماً من بدايته العليا
+                        const headerOffset = 70;
                         const elementPosition = titleHeading.getBoundingClientRect().top;
                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                         window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
@@ -1062,17 +1061,24 @@ function generateMenuHtml(nodes, isRoot = false) {
     html += nodes.map(node => {
         let itemUrl = node.url || node.link || '#';
         let finalHref = itemUrl;
+        
+        // تحويل روابط القوائم والصفحات الثابتة لتعمل ديناميكياً داخل المربع المخصص بدلاً من صفحة بيضاء
         if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
-            if (itemUrl.endsWith('.html') && !itemUrl.includes('post.html')) {
-                let cleanName = itemUrl.replace('articles/', '').replace('.html', '');
-                finalHref = `?article=${cleanName}`;
-            }
+            let cleanSlug = itemUrl.replace('articles/', '').replace('.html', '').replace(/^\/+/, '');
+            finalHref = `?article=${cleanSlug}`;
         }
+        
+        // استخراج الـ slug أو المعرف للاستدعاء عبر openPostBySlug
+        let slugMatch = finalHref.includes('?article=') ? finalHref.split('?article=')[1] : '';
+
         let hasChildren = node.children && node.children.length > 0;
         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+        
+        let onClickAttr = slugMatch ? `onclick="openPostBySlug('${slugMatch}', 'title'); return false;"` : '';
+
         return `
             <li>
-                <a href="${finalHref}">${node.title}${arrow}</a>
+                <a href="${finalHref}" ${onClickAttr}>${node.title}${arrow}</a>
                 ${hasChildren ? generateMenuHtml(node.children, false) : ''}
             </li>
         `;
@@ -1185,8 +1191,7 @@ if(secretTrigger) {
             alert("كلمة المرور غير صحيحة!");
         }
     });
-}
-    
+}    
     </script>
 </body>
 </html>
