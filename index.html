@@ -745,40 +745,40 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
 function generateMenuHtml(nodes, isRoot = false) {
-                    let html = isRoot ? '' : '<ul class="dropdown-menu">';
-                    
-                    nodes.forEach(node => {
-                        let itemUrl = node.url || node.link || 'index.html';
-                        let finalHref = itemUrl;
-                        let prefix = isInsideArticles ? '../' : '';
-                        
-                        // إذا كان العنصر يحتوي على slug، نقوم ببناء الرابط بشكل نظيف وموحد
-                        if (node.slug) {
-                            finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
-                        } else {
-                            if (!itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
-                                if (isInsideArticles && !itemUrl.startsWith('../')) {
-                                    finalHref = '../' + itemUrl;
-                                }
-                            }
-                        }
-                        
-                        let hasChildren = node.children && node.children.length > 0;
-                        let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-                        
-                        html += `<li><a href="${finalHref}">${node.title}${arrow}</a>`;
-                        
-                        if (hasChildren) {
-                            html += generateMenuHtml(node.children, false);
-                        }
-                        
-                        html += `</li>`;
-                    });
-                    
-                    if (!isRoot) html += '</ul>';
-                    return html;
-                }
-                
+    let html = isRoot ? '' : '<ul class="dropdown-menu">';
+    
+    nodes.forEach(node => {
+        let itemUrl = node.url || node.link || '#';
+        let finalHref = itemUrl;
+        let prefix = isInsideArticles ? '../' : '';
+        
+        // إذا كان عنصر القائمة يحتوي على slug أو يشير لمقال، قم بتوجيهه لملف النموذج post.html بالطريقة الصحيحة
+        if (node.slug) {
+            finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
+        } else if (itemUrl && !itemUrl.startsWith('http') && !itemUrl.startsWith('//') && itemUrl !== '#') {
+            // معالجة الروابط العادية والتأكد من صحة المسارات نسبياً
+            if (isInsideArticles && !itemUrl.startsWith('../')) {
+                finalHref = '../' + itemUrl;
+            } else {
+                finalHref = itemUrl;
+            }
+        }
+        
+        let hasChildren = node.children && node.children.length > 0;
+        let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+        
+        html += `<li><a href="${finalHref}">${node.title}${arrow}</a>`;
+        
+        if (hasChildren) {
+            html += generateMenuHtml(node.children, false);
+        }
+        
+        html += `</li>`;
+    });
+    
+    if (!isRoot) html += '</ul>';
+    return html;
+}                
                 let menuTree = buildTree(data.menu);
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
