@@ -701,7 +701,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
-
         if (data.menu && data.menu.length > 0) {
             const menuContainer = document.getElementById('site-main-menu');
             if (menuContainer) {
@@ -724,42 +723,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return root;
                 }
 
-        if (data.menu && data.menu.length > 0) {
-            const menuContainer = document.getElementById('site-main-menu');
-            if (menuContainer) {
-                function buildTree(items) {
-                    let root = [];
-                    let stack = [{ level: 0, children: root }];
-                    
-                    items.forEach(item => {
-                        let node = { ...item, children: [] };
-                        let lvl = item.level || 1;
-                        
-                        while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
-                            stack.pop();
-                        }
-                        
-                        stack[stack.length - 1].children.push(node);
-                        stack.push({ level: lvl, children: node.children });
-                    });
-                    
-                    return root;
-                }
-
-                // دالة توليد القائمة بالطريقة البسطة والمباشرة (مثل السلايدر)
+                // دالة توليد القائمة مع معالجة سليمة ودقيقة للروابط (مثل السلايدر تماماً)
                 function generateMenuHtml(nodes, isRoot = false) {
                     let html = isRoot ? '' : '<ul class="dropdown-menu">';
                     
                     nodes.forEach(node => {
-                        // جلب الرابط مباشرة مثلما يتم في السلايدر
-                        let rawUrl = node.url || node.link || '#';
-                        let finalHref = rawUrl;
+                        let itemUrl = node.url || node.link || '#';
+                        let finalHref = itemUrl;
                         
-                        // إذا أردت تطبيق منطق الرابط المباشر حسب مكان تواجد الصفحة:
+                        // معالجة الرابط لتطابق نظام عرض المقالات في الموقع والسلايدر
                         if (!finalHref.startsWith('http') && !finalHref.startsWith('//') && finalHref !== '#') {
-                            let prefix = isInsideArticles ? '../' : '';
-                            // إذا كان الرابط لا يحتوي على post.html مسبقاً، يمكنك توجيهه بالشكل المطلوب
-                            finalHref = finalHref.includes('post.html') ? finalHref : (prefix + finalHref);
+                            let cleanPath = finalHref.replace('../', '').replace('./', '');
+                            if (!cleanPath.startsWith('articles/') && cleanPath.endsWith('.html') && cleanPath !== 'index.html' && cleanPath !== 'contact.html' && cleanPath !== 'about.html') {
+                                cleanPath = 'articles/' + cleanPath;
+                            }
+                            if (cleanPath.endsWith('.html') && cleanPath !== 'index.html' && cleanPath !== 'contact.html' && cleanPath !== 'about.html') {
+                                let prefix = isInsideArticles ? '../' : '';
+                                finalHref = `${prefix}post.html?article=${cleanPath}`;
+                            } else {
+                                // للصفحات العادية أو الرابط الجاهز
+                                let prefix = isInsideArticles ? '../' : '';
+                                finalHref = finalHref.includes('post.html') ? finalHref : (prefix + finalHref);
+                            }
                         }
 
                         let hasChildren = node.children && node.children.length > 0;
@@ -780,7 +765,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let menuTree = buildTree(data.menu);
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
-        
+        }        
 
 
 
