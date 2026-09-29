@@ -724,26 +724,42 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return root;
                 }
 
-                // --- دالة توليد القائمة بالطريقة القالبية المباشرة ---
+        if (data.menu && data.menu.length > 0) {
+            const menuContainer = document.getElementById('site-main-menu');
+            if (menuContainer) {
+                function buildTree(items) {
+                    let root = [];
+                    let stack = [{ level: 0, children: root }];
+                    
+                    items.forEach(item => {
+                        let node = { ...item, children: [] };
+                        let lvl = item.level || 1;
+                        
+                        while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
+                            stack.pop();
+                        }
+                        
+                        stack[stack.length - 1].children.push(node);
+                        stack.push({ level: lvl, children: node.children });
+                    });
+                    
+                    return root;
+                }
+
+                // دالة توليد القائمة بالطريقة البسطة والمباشرة (مثل السلايدر)
                 function generateMenuHtml(nodes, isRoot = false) {
                     let html = isRoot ? '' : '<ul class="dropdown-menu">';
                     
                     nodes.forEach(node => {
-                        let itemUrl = node.url || node.link || '#';
+                        // جلب الرابط مباشرة مثلما يتم في السلايدر
+                        let rawUrl = node.url || node.link || '#';
+                        let finalHref = rawUrl;
                         
-                        // معالجة الرابط إن كان مقالاً ليتوافق مع نموذج العرض الصحيح تماماً
-                        let finalHref = itemUrl;
+                        // إذا أردت تطبيق منطق الرابط المباشر حسب مكان تواجد الصفحة:
                         if (!finalHref.startsWith('http') && !finalHref.startsWith('//') && finalHref !== '#') {
-                            let cleanPath = finalHref.replace('../', '').replace('./', '');
-                            if (!cleanPath.startsWith('articles/') && cleanPath.endsWith('.html')) {
-                                cleanPath = 'articles/' + cleanPath;
-                            }
-                            if (cleanPath.endsWith('.html')) {
-                                let prefix = isInsideArticles ? '../' : '';
-                                finalHref = `${prefix}post.html?article=${cleanPath}`;
-
-                             //   <a href="post.html?article=articles/${post.slug}.html">${post.title}</a>
-                            }
+                            let prefix = isInsideArticles ? '../' : '';
+                            // إذا كان الرابط لا يحتوي على post.html مسبقاً، يمكنك توجيهه بالشكل المطلوب
+                            finalHref = finalHref.includes('post.html') ? finalHref : (prefix + finalHref);
                         }
 
                         let hasChildren = node.children && node.children.length > 0;
@@ -751,10 +767,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         
                         html += `
                             <li>
-                                 <a href="${finalHref}">${node.title}${arrow}</a>
-                              
-                                 <!-- <a href="https://tech-dalil.com/articles/tech-2026-03086"</a> -->
-                              
+                                <a href="${finalHref}">${node.title}${arrow}</a>
                                 ${hasChildren ? generateMenuHtml(node.children, false) : ''}
                             </li>
                         `;
@@ -768,7 +781,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
         }
-
 
 
 
