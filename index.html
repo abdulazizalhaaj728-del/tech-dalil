@@ -741,8 +741,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                         let finalHref = itemUrl;
                         
                         if (node.slug) {
-                            let prefix = isInsideArticles ? '../' : '';
-                            finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
+                            //let prefix = isInsideArticles ? '../' : '';
+                           // finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
+                            <a href="node.html?article=articles/${node.slug}.html">${node.title}</a>
                         } else {
                             if (!itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
                                 if (isInsideArticles && !itemUrl.startsWith('../')) {
@@ -754,8 +755,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         let hasChildren = node.children && node.children.length > 0;
                         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
                         
-                        html += `<li><a href="${finalHref}">${node.title}${arrow}</a>`;
-                        
+                        html += `<li><a href="node.html?article=articles/${node.slug}.html">${node.title}${arrow}</a>`;
+                        //<a href="post.html?article=articles/${post.slug}.html">${post.title}</a>
                         if (hasChildren) {
                             html += generateMenuHtml(node.children, false);
                         }
