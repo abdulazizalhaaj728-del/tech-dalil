@@ -744,43 +744,48 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return root;
                 }
 
-function generateMenuHtml(nodes, isRoot = false) {
-    let html = isRoot ? '' : '<ul class="dropdown-menu">';
-    
-    nodes.forEach(node => {
-        let itemUrl = node.url || node.link || '#';
-        let finalHref = itemUrl;
-        let prefix = isInsideArticles ? '../' : '';
-        
-        // إذا كان عنصر القائمة يحتوي على slug أو يشير لمقال، قم بتوجيهه لملف النموذج post.html بالطريقة الصحيحة
-        if (node.slug) {
-            finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
-        } else if (itemUrl && !itemUrl.startsWith('http') && !itemUrl.startsWith('//') && itemUrl !== '#') {
-            // معالجة الروابط العادية والتأكد من صحة المسارات نسبياً
-            if (isInsideArticles && !itemUrl.startsWith('../')) {
-                finalHref = '../' + itemUrl;
-            } else {
-                finalHref = itemUrl;
-            }
-        }
-        
-        let hasChildren = node.children && node.children.length > 0;
-        let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-        
-        html += `<li><a href="${finalHref}">${node.title}${arrow}</a>`;
-        
-        if (hasChildren) {
-            html += generateMenuHtml(node.children, false);
-        }
-        
-        html += `</li>`;
-    });
-    
-    if (!isRoot) html += '</ul>';
-    return html;
-}                
+                function generateMenuHtml(nodes, isRoot = false) {
+                    let html = isRoot ? '' : '<ul class="dropdown-menu">';
+                    
+                    nodes.forEach(node => {
+                        let itemUrl = node.url || node.link || '#';
+                        let finalHref = itemUrl;
+                        
+                        let hasChildren = node.children && node.children.length > 0;
+                        let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+                        
+                        html += `<li><a href="${finalHref}">${node.title}${arrow}</a>`;
+                        
+                        if (hasChildren) {
+                            html += generateMenuHtml(node.children, false);
+                        }
+                        
+                        html += `</li>`;
+                    });
+                    
+                    if (!isRoot) html += '</ul>';
+                    return html;
+                }
+                
                 let menuTree = buildTree(data.menu);
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
+
+                // --- تطبيق فكرتك: معالجة وتأقلمة روابط القائمة في الذاكرة لتطابق السلايدر ونماذج العرض تماماً ---
+                const menuLinks = menuContainer.querySelectorAll('a');
+                menuLinks.forEach(link => {
+                    let href = link.getAttribute('href');
+                    if (!href || href.startsWith('http') || href.startsWith('//') || href === '#' || href.includes('post.html')) {
+                        return;
+                    }
+                    if (href.includes('articles/') || href.endsWith('.html')) {
+                        let cleanPath = href.replace('../', '').replace('./', '');
+                        if (!cleanPath.startsWith('articles/')) {
+                            cleanPath = 'articles/' + cleanPath;
+                        }
+                        let prefix = isInsideArticles ? '../' : '';
+                        link.setAttribute('href', `${prefix}post.html?article=${cleanPath}`);
+                    }
+                });
             }
         }
 
@@ -852,40 +857,6 @@ function generateMenuHtml(nodes, isRoot = false) {
     }
 });
 
-
-document.addEventListener('click', function(e) {
-    // ابحث عما إذا كان العنصر المضغوط هو رابط داخل القائمة
-    let link = e.target.closest('.navbar nav a, .menu-container a, ul.dropdown-menu a');
-    
-    if (!link) return;
-    
-    let href = link.getAttribute('href');
-    
-    // استثناء الروابط الخارجية (مثل http أو https أو # أو روابط تفتح صفحات رئيسية معروفة)
-    if (!href || href.startsWith('http') || href.startsWith('//') || href === '#' || href.includes('index.html')) {
-        return; // اتركها تعمل بشكل طبيعي
-    }
-    
-    // إذا كان الرابط يشير لملف داخل مجلد articles أو له اسم ملف معين تريد فتحه بالنموذج
-    if (href.includes('articles/') || href.endsWith('.html')) {
-        e.preventDefault(); // منع التوجيه الخاطئ التقليدي اللحظي
-        
-        // تنظيف الرابط وجعله يتوافق تماماً مع طريقة عمل السلايدر (عبر post.html)
-        let cleanPath = href.replace('../', '').replace('./', '');
-        if (!cleanPath.startsWith('articles/')) {
-            cleanPath = 'articles/' + cleanPath;
-        }
-        
-        let prefix = (typeof isInsideArticles !== 'undefined' && isInsideArticles) ? '../' : '';
-        let targetModelUrl = `${prefix}post.html?article=${cleanPath}`;
-        
-        // التوجيه السلس للنموذج الصحيح وكأن السلايدر هو من ضُغط عليه
-        window.location.href = targetModelUrl;
-    }
-});
-    
-
-    
 function initSliderLogic() {
     const slides = document.querySelectorAll('.square-slide');
     if(slides.length === 0) return;
