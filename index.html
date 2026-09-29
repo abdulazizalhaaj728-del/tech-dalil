@@ -674,7 +674,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         let menuTree = data.menu ? buildTree(data.menu) : [];
-        let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+        window.sequencedGlobalPosts = getOrderedPosts(menuTree, rawPosts); // تخزين المصفوفة عالمياً لتكون جاهزة دائماً
 
         const container = document.getElementById('posts-container');
         if (filteredPosts.length > 0) {
@@ -738,7 +738,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!w.active) return;
                 let contentBox = '';
                 if (w.type === 'recent') {
-                    let recentThree = sequencedPosts.slice(0, 3);
+                    let recentThree = window.sequencedGlobalPosts.slice(0, 3);
                     contentBox = '<ul class="recent-posts-list">' + recentThree.map(p => {
                         return `<li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}', 'title'); return false;" style="font-size: 0.75rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`;
                     }).join('') + '</ul>';
@@ -812,6 +812,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const elementsToHide = document.querySelectorAll('.right-scrollable-section > *:not(#dynamic-post-view)');
 
+    // دالة لتحديث النصوص في الأسفل عند النقر على الأسهم دون مغادرة المقال الحالي
+    window.shiftPreviewIndex = function(direction) {
+        if (!window.sequencedGlobalPosts || window.sequencedGlobalPosts.length === 0) return;
+        
+        // نحصل على المقال الحالي المعروض
+        let currentSlug = window.currentActiveSlug;
+        let currentIndex = window.sequencedGlobalPosts.findIndex(p => p.slug === currentSlug);
+        if (currentIndex === -1) currentIndex = 0;
+
+        // حساب المؤشر الجديد بناءً على اتجاه السهم (زائد أو ناقص)
+        let newIndex = currentIndex + direction;
+        if (newIndex < 0) newIndex = 0;
+        if (newIndex >= window.sequencedGlobalPosts.length) newIndex = window.sequencedGlobalPosts.length - 1;
+
+        let targetPost = window.sequencedGlobalPosts[newIndex];
+        window.currentPreviewIndex = newIndex; // نخزن المؤشر المعاينة الحالي
+
+        // تحديث ليبل/عنوان المقال السابق في أزرار التنقل السفلية دون أي انتقال أو اهتزاز
+        let prevIndex = newIndex > 0 ? newIndex - 1 : -1;
+        let nextIndex = newIndex < window.sequencedGlobalPosts.length - 1 ? newIndex + 1 : -1;
+
+        const prevContainer = document.getElementById('bottom-prev-container');
+        const nextContainer = document.getElementById('bottom-next-container');
+
+        if (prevContainer) {
+            if (prevIndex !== -1) {
+                let pPost = window.sequencedGlobalPosts[prevIndex];
+                prevContainer.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
+                        <button onclick="shiftPreviewIndex(-1); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; min-width: 34px; min-height: 34px; border: none; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
+                        <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right; min-height: 34px; display: flex; align-items: center;">
+                            <a href="?article=${pPost.slug}" onclick="openPostBySlug('${pPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block; width: 100%;" title="${pPost.title}">${getShortTitle(pPost.title)}</a>
+                        </div>
+                    </div>`;
+            } else {
+                prevContainer.innerHTML = `<span></span>`;
+            }
+        }
+
+        if (nextContainer) {
+            if (nextIndex !== -1) {
+                let nPost = window.sequencedGlobalPosts[nextIndex];
+                nextContainer.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
+                        <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left; min-height: 34px; display: flex; align-items: center;">
+                            <a href="?article=${nPost.slug}" onclick="openPostBySlug('${nPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block; width: 100%;" title="${nPost.title}">${getShortTitle(nPost.title)}</a>
+                        </div>
+                        <button onclick="shiftPreviewIndex(1); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; min-width: 34px; min-height: 34px; border: none; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
+                    </div>`;
+            } else {
+                nextContainer.innerHTML = `<span></span>`;
+            }
+        }
+    };
+
     window.openPostBySlug = async function(identifier, scrollMode = 'title') {
         let data = window.siteBlogData;
         if (!data) {
@@ -825,40 +880,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // نجعل البحث يشمل جميع المقالات بما فيها الصفحات الثابتة لكي تعمل القوائم والصفحات الثابتة بشكل صحيح
         let rawPosts = data.posts || [];
-        let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
-        let menuTree = data.menu ? buildTree(data.menu) : [];
-        
-        function getOrderedPosts(menuItems, allPosts) {
-            let ordered = [];
-            let visitedIds = new Set();
-            function traverse(items) {
-                if (!items) return;
-                items.forEach(item => {
-                    let itemUrl = item.url || item.link || '';
-                    for (let p of allPosts) {
-                        if (!visitedIds.has(p.id)) {
-                            if (itemUrl.includes(p.slug) || itemUrl.includes(String(p.id)) || (item.title && p.title && item.title.trim() === p.title.trim())) {
-                                ordered.push(p);
-                                visitedIds.add(p.id);
-                            }
-                        }
-                    }
-                    if (item.children) traverse(item.children);
-                });
-            }
-            traverse(menuItems);
-            allPosts.forEach(p => {
-                if (!visitedIds.has(p.id)) {
-                    ordered.push(p);
-                    visitedIds.add(p.id);
-                }
-            });
-            return ordered;
-        }
-
-        let sequencedPosts = getOrderedPosts(menuTree, rawPosts);
+        let sequencedPosts = window.sequencedGlobalPosts || rawPosts;
 
         let post = rawPosts.find(p => {
             let pSlug = (p.slug || '').trim();
@@ -867,6 +890,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (post) {
+            window.currentActiveSlug = post.slug; // تخزين المقال الفعال حالياً
             elementsToHide.forEach(el => el.style.display = 'none');
             dynamicView.style.display = 'block';
 
@@ -875,24 +899,23 @@ document.addEventListener('DOMContentLoaded', () => {
             let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
 
             let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
-            let prevPost = currentIndex > 0 ? sequencedPosts[currentIndex - 1] : null;
-            let nextPost = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? sequencedPosts[currentIndex + 1] : null;
+            let prevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
+            let nextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
 
-            // تثبيت تام للشاشة ومنع أي حركة عند النقر على الأسهم باستخدام e.preventDefault()
-            let prevHtml = prevPost ? `
+            let prevHtml = prevIndex !== -1 ? `
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                    <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', 'arrow'); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></a>
-                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right;">
-                        <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${prevPost.title}">${getShortTitle(prevPost.title)}</a>
+                    <button onclick="shiftPreviewIndex(-1); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; min-width: 34px; min-height: 34px; border: none; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
+                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right; min-height: 34px; display: flex; align-items: center;">
+                        <a href="?article=${sequencedPosts[prevIndex].slug}" onclick="openPostBySlug('${sequencedPosts[prevIndex].slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block; width: 100%;" title="${sequencedPosts[prevIndex].title}">${getShortTitle(sequencedPosts[prevIndex].title)}</a>
                     </div>
                 </div>` : `<span></span>`;
 
-            let nextHtml = nextPost ? `
+            let nextHtml = nextIndex !== -1 ? `
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
-                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left;">
-                        <a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nextPost.title}">${getShortTitle(nextPost.title)}</a>
+                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left; min-height: 34px; display: flex; align-items: center;">
+                        <a href="?article=${sequencedPosts[nextIndex].slug}" onclick="openPostBySlug('${sequencedPosts[nextIndex].slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block; width: 100%;" title="${sequencedPosts[nextIndex].title}">${getShortTitle(sequencedPosts[nextIndex].title)}</a>
                     </div>
-                    <a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}', 'arrow'); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></a>
+                    <button onclick="shiftPreviewIndex(1); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; min-width: 34px; min-height: 34px; border: none; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
                 </div>` : `<span></span>`;
 
             let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
@@ -953,8 +976,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${botAd}
 
                     <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>${prevHtml}</div>
-                        <div>${nextHtml}</div>
+                        <div id="bottom-prev-container">${prevHtml}</div>
+                        <div id="bottom-next-container">${nextHtml}</div>
                     </div>
 
                     <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
@@ -1062,13 +1085,11 @@ function generateMenuHtml(nodes, isRoot = false) {
         let itemUrl = node.url || node.link || '#';
         let finalHref = itemUrl;
         
-        // تحويل روابط القوائم والصفحات الثابتة لتعمل ديناميكياً داخل المربع المخصص بدلاً من صفحة بيضاء
         if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
             let cleanSlug = itemUrl.replace('articles/', '').replace('.html', '').replace(/^\/+/, '');
             finalHref = `?article=${cleanSlug}`;
         }
         
-        // استخراج الـ slug أو المعرف للاستدعاء عبر openPostBySlug
         let slugMatch = finalHref.includes('?article=') ? finalHref.split('?article=')[1] : '';
 
         let hasChildren = node.children && node.children.length > 0;
@@ -1191,7 +1212,8 @@ if(secretTrigger) {
             alert("كلمة المرور غير صحيحة!");
         }
     });
-}    
+}
+    
     </script>
 </body>
 </html>
