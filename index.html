@@ -740,18 +740,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (w.type === 'recent') {
                     let recentThree = sequencedPosts.slice(0, 3);
                     contentBox = '<ul class="recent-posts-list">' + recentThree.map(p => {
-                        return `<li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}', 'title'); return false;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`;
+                        return `<li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}', 'title'); return false;" style="font-size: 0.75rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`;
                     }).join('') + '</ul>';
                 } else if (w.type === 'links') {
-                    contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
+                    contentBox = '<div class="quick-links-box" style="font-size: 0.75rem;">' + (w.content || '') + '</div>';
                 } else {
-                    contentBox = '<div>' + (w.content || '') + '</div>';
+                    contentBox = '<div style="font-size: 0.75rem;">' + (w.content || '') + '</div>';
                 }
 
                 let widgetBlock = `
                     <div class="widget-card" id="${w.id}">
-                        <h3 class="widget-title" style="font-size: 0.95rem; margin-bottom: 8px;">${w.title}</h3>
-                        <div class="widget-content" style="font-size: 0.82rem;">${contentBox}</div>
+                        <h3 class="widget-title" style="font-size: 0.9rem; margin-bottom: 8px;">${w.title}</h3>
+                        <div class="widget-content">${contentBox}</div>
                     </div>
                 `;
                 if (w.location === 'footer') {
@@ -765,7 +765,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             if (footerWidgetsContainer) {
                 footerWidgetsContainer.style.minHeight = "220px";
-                footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.85rem;">منطقة التذييل فارغة</div>';
+                footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
             }
         }
 
@@ -787,7 +787,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const articleParam = urlParams.get('article');
         if (articleParam) {
-            let slug = articleParam.split('/').pop().replace('.html', '');
+            let slug = urlParams.get('article').split('/').pop().replace('.html', '');
             openPostBySlug(slug, 'none');
         }
 
@@ -877,16 +877,21 @@ document.addEventListener('DOMContentLoaded', () => {
             let prevPost = currentIndex > 0 ? sequencedPosts[currentIndex - 1] : null;
             let nextPost = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? sequencedPosts[currentIndex + 1] : null;
 
+            // فصل تام ومسافة واضحة بين زر السهم وبوردر العنوان لتجنب الضغط بالخطأ وثبات تام للشاشة
             let prevHtml = prevPost ? `
-                <div style="display: flex; align-items: center; gap: 8px; border: 1px solid #dcd3c1; padding: 6px 10px; border-radius: 6px; background: rgba(245, 240, 230, 0.3);">
-                    <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', 'arrow'); return false;" style="background: var(--primary-color); color: #fff; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; text-decoration: none;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></a>
-                    <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem;" title="${prevPost.title}">${getShortTitle(prevPost.title)}</a>
+                <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
+                    <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', 'arrow'); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></a>
+                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right;">
+                        <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${prevPost.title}">${getShortTitle(prevPost.title)}</a>
+                    </div>
                 </div>` : `<span></span>`;
 
             let nextHtml = nextPost ? `
-                <div style="display: flex; align-items: center; gap: 8px; border: 1px solid #dcd3c1; padding: 6px 10px; border-radius: 6px; background: rgba(245, 240, 230, 0.3);">
-                    <a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem;" title="${nextPost.title}">${getShortTitle(nextPost.title)}</a>
-                    <a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}', 'arrow'); return false;" style="background: var(--primary-color); color: #fff; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 4px; text-decoration: none;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></a>
+                <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
+                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left;">
+                        <a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nextPost.title}">${getShortTitle(nextPost.title)}</a>
+                    </div>
+                    <a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}', 'arrow'); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></a>
                 </div>` : `<span></span>`;
 
             let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
@@ -935,37 +940,42 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div id="toc-list-box" style="display: none; padding: 10px 20px; border-top: 1px solid #dcd3c1; max-height: 200px; overflow-y: auto;"></div>
                 </div>
 
-                <!-- عنوان المقال الرئيسي -->
-                <h1 id="article-main-title-heading" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
-                <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 20px;">
-                    <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️️ ${post.author || 'إدارة المدونة'}</span>
-                </div>
-                ${topAd}
-                <div class="dynamic-post-content-box" id="article-main-content" style="font-size: 0.9rem;">
-                    ${rawContent}
-                </div>
-                ${botAd}
+                <!-- عنوان المقال الرئيسي مع هوامش متساوية -->
+                <div style="padding: 0 15px;">
+                    <h1 id="article-main-title-heading" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
+                    <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 20px;">
+                        <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍ ${post.author || 'إدارة المدونة'}</span>
+                    </div>
+                    ${topAd}
+                    <div class="dynamic-post-content-box" id="article-main-content" style="font-size: 0.9rem;">
+                        ${rawContent}
+                    </div>
+                    ${botAd}
 
-                <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                    <div>${prevHtml}</div>
-                    <div>${nextHtml}</div>
-                </div>
+                    <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>${prevHtml}</div>
+                        <div>${nextHtml}</div>
+                    </div>
 
-                <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
-                    <button class="back-to-home-action" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                    <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
+                        <button class="back-to-home-action" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                    </div>
                 </div>
             `;
 
             history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
 
-            // تحديد مكان التمرير بناءً على نوع الضغط (سهم أم عنوان)
+            // التمرير الدقيق ليكون العنوان ببدأه من أعلى تماماً
             if (scrollMode === 'title') {
                 setTimeout(() => {
                     const titleHeading = document.getElementById('article-main-title-heading');
                     if (titleHeading) {
-                        titleHeading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        const headerOffset = 70; // مسافة بسيطة لتبقي العنوان ظاهراً وواضحاً تماماً من بدايته العليا
+                        const elementPosition = titleHeading.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                     }
-                }, 50);
+                }, 60);
             }
 
             setTimeout(() => {
@@ -1175,7 +1185,8 @@ if(secretTrigger) {
             alert("كلمة المرور غير صحيحة!");
         }
     });
-}    
+}
+    
     </script>
 </body>
 </html>
