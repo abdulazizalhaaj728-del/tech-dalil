@@ -591,6 +591,14 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
+    const articleParam = urlParams.get('article');
+
+    let slugFromParam = '';
+    if (articleParam) {
+        let parts = articleParam.split('/');
+        let fileName = parts[parts.length - 1];
+        slugFromParam = fileName.replace('.html', '');
+    }
 
     const isInsideArticles = window.location.pathname.includes('/articles/');
     const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
@@ -610,10 +618,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             return cat !== 'الصفحات الثابتة';
         });
 
-        if (postId || (isInsideArticles && currentFileName && currentFileName !== 'index.html')) {
+        if (postId || slugFromParam || (isInsideArticles && currentFileName && currentFileName !== 'index.html' && currentFileName !== 'post.html')) {
             const post = postId 
                 ? rawPosts.find(p => p.id == postId) 
-                : rawPosts.find(p => p.slug === currentFileName || (p.url && p.url.includes(currentFileName)));
+                : slugFromParam 
+                    ? rawPosts.find(p => p.slug === slugFromParam)
+                    : rawPosts.find(p => p.slug === currentFileName.replace('.html', '') || (p.url && p.url.includes(currentFileName)));
 
             if (post) {
                 const siteTitleEl = document.getElementById('site-title');
@@ -642,6 +652,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     `;
                 }
             } else {
+                
                 if (container) {
                     container.innerHTML = `<div class="post-card"><h2>عذراً</h2><p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود أو تم تغيير رابطه.</p><a href="${homeLink}" style="color: var(--accent-color); text-decoration: none; font-weight: bold;">العودة للرئيسية</a></div>`;
                 }
