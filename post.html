@@ -294,6 +294,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
+    // استخلاص معرف المقال أو الـ Slug مباشرة من رابط الصفحة الحالية (URL) دون تدخل من أي ملف آخر
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
     const articleParam = urlParams.get('article');
@@ -310,38 +311,39 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const isInsideArticles = window.location.pathname.includes('/articles/');
     const homeLink = isInsideArticles ? '../index.html' : 'index.html';
+    const container = document.getElementById('post-content-box');
 
     let data = null;
 
-    // 1. محاولة جلب البيانات من التخزين المحلي (localStorage) أولاً لضمان السرعة وتفادي مشاكل المسارات
+    // جلب ملف data.json مباشرة وحسب مساره الصحيح (سواء من داخل articles أو من الجذر)
+    const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
+    
     try {
-        const localData = localStorage.getItem('tech_dalil_data');
-        if (localData) {
-            data = JSON.parse(localData);
+        const response = await fetch(jsonPath);
+        if (response.ok) {
+            data = await response.json();
         }
-    } catch (e) {
-        console.warn("تعذر القراءة من التخزين المحلي:", e);
+    } catch (err) {
+        console.error("خطأ في جلب بيانات المدونة:", err);
     }
 
-    // 2. إذا لمط توجد في التخزين المحلي، نقوم بجلبها مباشرة من ملف data.json
+    // إذا فشل الجلب المباشر، نحاول الاحتياط عبر التخزين المحلي فقط لتفادي التوقف التام
     if (!data || !data.posts) {
-        const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
         try {
-            const response = await fetch(jsonPath);
-            if (response.ok) {
-                data = await response.json();
+            const localData = localStorage.getItem('tech_dalil_data');
+            if (localData) {
+                data = JSON.parse(localData);
             }
-        } catch (err) {
-            console.error("تعذر جلب ملف بيانات المدونة من الخادم:", err);
+        } catch (e) {
+            console.warn("التخزين المحلي غير متوفر:", e);
         }
     }
-
-    const container = document.getElementById('post-content-box');
 
     if (data && data.posts) {
         const postsList = data.posts || [];
         let post = null;
 
+        // مطابقة المقال المطلوب بناءً على الرابط المستخلص ذاتياً
         if (postId) {
             post = postsList.find(p => p.id == postId);
         } else if (targetSlug) {
@@ -349,6 +351,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (post) {
+            // تحديث عنوان الصفحة
             const siteTitleEl = document.getElementById('site-title');
             if (siteTitleEl) siteTitleEl.innerText = post.title + " | تكنو-دليل";
 
@@ -356,17 +359,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
             let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
 
+            // المقالات ذات الصلة
             let relatedPosts = postsList.filter(p => p.id !== post.id).slice(0, 2);
             let relatedHtml = '';
             if (relatedPosts.length > 0) {
                 relatedHtml = `
-                    <div class="related-posts-section">
-                        <h3 style="font-size: 1rem; color: var(--accent-color); margin-bottom: 10px;">📌 مواضيع قد تهمك أو ذات صلة:</h3>
-                        <div class="related-posts-grid">
+                    <div class="related-posts-section" style="margin-top: 30px; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 8px;">
+                        <h3 style="font-size: 1rem; color: var(--accent-color); margin-bottom: 10px;">📌 مواضيع ذات صلة:</h3>
+                        <div class="related-posts-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             ${relatedPosts.map(rp => `
-                                <a href="post.html?article=articles/${rp.slug}.html" class="related-card">
-                                    <h4>${rp.title}</h4>
-                                    <p>${rp.description ? rp.description.substring(0, 60) + '...' : ''}</p>
+                                <a href="post.html?article=articles/${rp.slug}.html" class="related-card" style="text-decoration: none; color: inherit; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; display: block;">
+                                    <h4 style="font-size: 0.9rem; margin-bottom: 5px;">${rp.title}</h4>
                                 </a>
                             `).join('')}
                         </div>
@@ -374,17 +377,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 `;
             }
 
+            // عرض محتوى المقال بكل استقلالية
             if (container) {
                 container.innerHTML = `
                     <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
                         <a href="${homeLink}" class="back-to-home-btn"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</a>
                     </div>
                     <h1 style="font-size: 1.8rem; font-weight: 700; color: var(--accent-color); margin-bottom: 10px; line-height: 1.4;">${post.title}</h1>
-                    <div class="post-meta">
+                    <div class="post-meta" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
                         <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
                     </div>
                     ${topAd}
-                    <div class="single-post-content">
+                    <div class="single-post-content" style="line-height: 1.8;">
                         ${post.content || post.description || ''}
                     </div>
                     ${botAd}
@@ -397,171 +401,46 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             if (container) {
                 container.innerHTML = `
-                    <div style="text-align: right; padding: 20px;">
-                        <h2>عذراً</h2>
-                        <p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود أو تم تغيير رابطه.</p>
-                        <a href="${homeLink}" class="back-to-home-btn">العودة للرئيسية</a>
-                    </div>
+                    عذراً، المقال المطلوب غير موجود في قاعدة البيانات أو أن الرابط غير صحيح.
+                    <br><br><a href="${homeLink}" class="back-to-home-btn">العودة للرئيسية</a>
                 `;
             }
         }
 
-        // إعدادات القوائم والودجتس
-        if (data.settings) {
-            if (data.settings.logoUrl) {
-                const logoContainer = document.getElementById('site-logo-container');
-                if (logoContainer) {
-                    let h = data.settings.logoHeight || '50px';
-                    logoContainer.innerHTML = `<a href="${homeLink}"><img src="${data.settings.logoUrl}" alt="الشعار" style="height: ${h}; max-height: 60px; object-fit: contain;"></a>`;
-                }
-            }
-            const tickerWrapper = document.getElementById('site-ticker-wrapper');
-            if (tickerWrapper) {
-                tickerWrapper.style.display = data.settings.tickerVisible !== false ? 'block' : 'none';
-            }
-        }
-
+        // بناء القوائم والودجتس الخاصة بملف المقال نفسه بشكل ذاتي
         if (data.menu && data.menu.length > 0) {
             const menuContainer = document.getElementById('site-main-menu');
             if (menuContainer) {
-                function buildTree(items) {
-                    let root = [];
-                    let stack = [{ level: 0, children: root }];
-                    items.forEach(item => {
-                        let node = { ...item, children: [] };
-                        let lvl = item.level || 1;
-                        while (stack.length > 1 && stack[stack.length - 1].level >= lvl) { stack.pop(); }
-                        stack[stack.length - 1].children.push(node);
-                        stack.push({ level: lvl, children: node.children });
-                    });
-                    return root;
-                }
-
-                function generateMenuHtml(nodes, isRoot = false) {
-                    let html = isRoot ? '' : '<ul class="dropdown-menu">';
-                    nodes.forEach(node => {
-                        let itemUrl = node.url || node.link || 'index.html';
-                        if (isInsideArticles && !itemUrl.startsWith('http') && !itemUrl.startsWith('../')) {
-                            itemUrl = '../' + itemUrl;
-                        }
-                        let hasChildren = node.children && node.children.length > 0;
-                        let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-                        html += `<li><a href="${itemUrl}">${node.title}${arrow}</a>`;
-                        if (hasChildren) { html += generateMenuHtml(node.children, false); }
-                        html += `</li>`;
-                    });
-                    if (!isRoot) html += '</ul>';
-                    return html;
-                }
-
-                let menuTree = buildTree(data.menu);
-                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
+                // توليد القائمة مباشرة دون تدخل الـ index
+                let menuHtml = '';
+                data.menu.forEach(item => {
+                    let itemUrl = item.url || item.link || 'index.html';
+                    if (isInsideArticles && !itemUrl.startsWith('http') && !itemUrl.startsWith('../')) {
+                        itemUrl = '../' + itemUrl;
+                    }
+                    menuHtml += `<li><a href="${itemUrl}">${item.title}</a></li>`;
+                });
+                menuContainer.innerHTML = menuHtml;
             }
-        }
-
-        if (data.widgets && data.widgets.length > 0) {
-            const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
-            const footerWidgetsContainer = document.getElementById('site-footer-widgets');
-            
-            let sidebarHtml = '';
-            let footerHtml = '';
-
-            data.widgets.forEach(w => {
-                if (!w.active) return;
-                let contentBox = '';
-                if (w.type === 'recent') {
-                    contentBox = '<ul class="recent-posts-list">' + (data.posts || []).map(p => `<li><a href="post.html?article=articles/${p.slug}.html"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`).join('') + '</ul>';
-                } else if (w.type === 'links') {
-                    contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
-                } else {
-                    contentBox = '<div>' + (w.content || '') + '</div>';
-                }
-
-                let widgetBlock = `
-                    <div class="widget-card" id="${w.id}">
-                        <h3 class="widget-title">${w.title}</h3>
-                        <div class="widget-content">${contentBox}</div>
-                    </div>
-                `;
-
-                if (w.location === 'footer') {
-                    footerHtml += widgetBlock;
-                } else {
-                    sidebarHtml += widgetBlock;
-                }
-            });
-
-            if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
-            if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml;
         }
 
     } else {
         if (container) {
-            container.innerHTML = `
-                <div style="text-align: right; padding: 20px;">
-                    <h2>عذراً</h2>
-                    <p style="color: var(--text-muted); margin: 10px 0;">تعذر جلب بيانات المقالات. تأكد من اتصال الإنترنت أو صحة ملف البيانات.</p>
-                    <a href="${homeLink}" class="back-to-home-btn">العودة للرئيسية</a>
-                </div>
-            `;
+            container.innerHTML = `تعذر تحميل بيانات المدونة. تأكد من سلامة ملف data.json. <br><br><a href="${homeLink}">العودة للرئيسية</a>`;
         }
     }
 
-    // إعدادات الخطوط والسمات والوضع الليلي
-    const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
+    // إعدادات السمات والألوان والخطوط (تعمل محلياً لكل صفحة بصورة مستقلة)
+    const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif"];
     let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
-    
-    const fontToggleBtn = document.getElementById('font-toggle-btn');
-    if(fontToggleBtn) {
-        fontToggleBtn.addEventListener('click', () => {
-            currentFontIdx = (currentFontIdx + 1) % fontsList.length;
-            document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
-            localStorage.setItem('tech_font_idx', currentFontIdx);
-        });
-    }
     document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
 
     const themesList = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
     let currentThemeIdx = localStorage.getItem('tech_theme_idx') ? parseInt(localStorage.getItem('tech_theme_idx')) : 0;
+    document.body.classList.add(themesList[currentThemeIdx]);
 
-    function applyTheme(idx) {
-        document.body.classList.remove('light-mode');
-        themesList.forEach(t => document.body.classList.remove(t));
-        document.body.classList.add(themesList[idx]);
-        localStorage.setItem('tech_theme_idx', idx);
-    }
-
-    const nextThemeBtn = document.getElementById('next-theme-btn');
-    const prevThemeBtn = document.getElementById('prev-theme-btn');
-
-    if(nextThemeBtn) nextThemeBtn.addEventListener('click', () => { currentThemeIdx = (currentThemeIdx + 1) % themesList.length; applyTheme(currentThemeIdx); });
-    if(prevThemeBtn) prevThemeBtn.addEventListener('click', () => { currentThemeIdx = (currentThemeIdx - 1 + themesList.length) % themesList.length; applyTheme(currentThemeIdx); });
-    applyTheme(currentThemeIdx);
-
-    const darkModeBtn = document.getElementById('dark-mode-btn');
-    if(darkModeBtn) {
-        darkModeBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
-            darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-        });
-        if(localStorage.getItem('tech_light_mode') === '1') {
-            document.body.classList.add('light-mode');
-            darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-        }
-    }
-
-    const secretTrigger = document.getElementById('secret-trigger');
-    if(secretTrigger) {
-        secretTrigger.addEventListener('click', () => {
-            const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
-            if(pass === "aziz728") {
-                window.location.href = isInsideArticles ? "../dashboard.html" : "dashboard.html";
-            } else if(pass !== null) {
-                alert("كلمة المرور غير صحيحة!");
-            }
-        });
+    if(localStorage.getItem('tech_light_mode') === '1') {
+        document.body.classList.add('light-mode');
     }
 });
 </script>
