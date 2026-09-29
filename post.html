@@ -48,17 +48,6 @@
         body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; }
         body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; }
 
-        .section-title {
-            text-align: center;
-            color: var(--text-main);
-            font-size: 1rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-            background-color: var(--accent-color);
-            padding: 5px;
-            border-radius: 6px;
-        }
-        
         .top-bar {
             background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 8px 20px;
             display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-size: 0.85rem;
@@ -102,32 +91,11 @@
         .ticker-title { background: var(--accent-color); color: #000; padding: 5px 12px; font-size: 0.85rem; font-weight: 700; border-radius: 4px; margin-left: 15px; flex-shrink: 0; z-index: 5; position: relative; }
         .ticker-viewport { overflow: hidden; width: 100%; position: relative; height: 24px; }
         .ticker-content { display: inline-block; position: absolute; white-space: nowrap; animation: tickerSmooth 18s linear infinite; font-size: 0.9rem; color: var(--text-main); right: 0; }
-        .ticker-content span { margin-left: 35px; cursor: pointer; }
-        @keyframes tickerSmooth { 
-            0% { transform: translateX(-100%); opacity: 1; } 
-            90% { opacity: 1; }
-            95% { transform: translateX(85%); opacity: 0; }
-            100% { transform: translateX(100%); opacity: 0; } 
-        }
 
         .main-menu-bar { width: 100%; margin: 10px auto 0; padding: 0; position: sticky; top: 0; z-index: 999; }
         .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; }
         .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
-       
-        .dropdown-menu {
-            position: absolute; top: 100%; right: 0; min-width: 200px;
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 8px; list-style: none; display: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 99; text-align: right; padding: 5px 0;
-        }
-        .mega-menu > li { position: relative; }
-        .mega-menu > li:hover > .dropdown-menu { display: block; }
-        .dropdown-menu li { position: relative; border-bottom: 1px solid var(--border-color); }
-        .dropdown-menu li:last-child { border-bottom: none; }
-        .dropdown-menu li a { display: block; padding: 9px 15px; color: var(--text-main); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: 0.2s; }
-        .dropdown-menu li a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); padding-right: 20px; }
-        .dropdown-menu li:hover > .dropdown-menu { display: block; position: absolute; right: 100%; top: -5px; }
 
         .three-columns-grid { 
             width: 100%; margin: 20px auto 0; padding: 0; 
@@ -137,30 +105,24 @@
 
         .right-scrollable-section { width: 100%; }
 
-        .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; margin-bottom: 15px; }
-        .post-title a { font-size: 1.15rem; font-weight: 700; color: var(--accent-color); text-decoration: none; }
-        .post-meta { font-size: 0.8rem; color: var(--text-muted); margin: 8px 0; display: flex; gap: 15px; }
-        .single-post-content { font-size: 1.05rem; color: var(--text-main); line-height: 1.8; margin-top: 15px; }
-        .single-post-content p { margin-bottom: 15px; }
+        /* صندوق المقال بخلفية مميزة */
+        .post-card {
+            background-color: #F7F4EF !important;
+            border: 1px solid #E2D8C5 !important;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 15px;
+        }
+        .post-card h1, .post-card h2, .post-card h3, .single-post-content { color: #2C3E50 !important; }
+        .post-card .post-meta { color: #596573 !important; }
 
         .back-to-home-btn {
             display: inline-flex; align-items: center; gap: 6px;
             background: var(--primary-color); color: #fff; padding: 6px 14px;
             border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;
-            transition: opacity 0.2s;
         }
         .back-to-home-btn:hover { opacity: 0.85; }
-
-        .related-posts-section { margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; }
-        .related-posts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-        @media(max-width: 600px) { .related-posts-grid { grid-template-columns: 1fr; } }
-        .related-card {
-            background: var(--bg-color); border: 1px solid var(--border-color); padding: 12px;
-            border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text-main); display: block; transition: 0.2s;
-        }
-        .related-card:hover { border-color: var(--primary-color); transform: translateY(-2px); }
-        .related-card h4 { font-size: 0.9rem; color: var(--accent-color); margin-bottom: 4px; }
-        .related-card p { font-size: 0.75rem; color: var(--text-muted); }
 
         .left-sticky-sidebar { 
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
@@ -169,18 +131,7 @@
         .sidebar-widget { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
         .sidebar-widget h4, .sidebar-widget h3 { color: var(--accent-color); font-size: 0.95rem; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
         .sidebar-widget ul { list-style: none; }
-        .sidebar-widget ul li { padding: 6px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; cursor: pointer; color: var(--text-main); }
-        .sidebar-widget ul li:hover { color: var(--accent-color); }
-
-        .left-sticky-sidebar::-webkit-scrollbar { display: none; }
-        .left-sticky-sidebar { scrollbar-width: none; -ms-overflow-style: none; }
-
-        .widget-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 15px; }
-        .widget-title { color: var(--accent-color); font-size: 1rem; margin-bottom: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 5px; }
-        .recent-posts-list { list-style: none; padding: 0; }
-        .recent-posts-list li { margin-bottom: 6px; font-size: 0.85rem; }
-        .recent-posts-list li a { color: var(--text-main); text-decoration: none; display: flex; align-items: center; }
-        .recent-posts-list li a:hover { color: var(--accent-color); }
+        .sidebar-widget ul li { padding: 6px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; color: var(--text-main); }
 
         .site-footer { width: 100%; margin: 15px auto 0; padding: 0; }
         .footer-container { 
@@ -189,38 +140,6 @@
         }
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
-
-        @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
-
-
-        /* تخصيص صندوق المقال وحده ليكون بخلفية بيج دافئة ومريحة للقراءة */
-        .post-card {
-            background-color: #F7F4EF !important; /* لون بيج هادئ وغير مؤذي للعين */
-            background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png'); /* تدرج أو نقشة ناعمة (اختياري) */
-            border: 1px solid #E2D8C5 !important;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        /* ضبط لون النصوص داخل المقال لتكون واضحة ومتباينة بشكل ممتاز مع الخلفية البيج */
-        .post-card h1, .post-card h2, .post-card h3, .single-post-content {
-            color: #2C3E50 !important;
-        }
-        
-        .post-card .post-meta {
-            color: #596573 !important;
-        }    
-
-        /* توسيط الصور وتقليل المسافات الفاصلة بينها وبين النصوص */
-    .content img, .post-img, .featured-img, article img {
-    display: block !important;
-    margin: 15px auto !important; /* توسيط الصورة وجعل المسافة علوية وسفلية مقللة إلى 15 بكسل فقط */
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-
     </style>
 </head>
 <body class="theme-default">
@@ -246,12 +165,10 @@
                 <button class="control-btn" id="dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
             </div>
 
-            <div class="top-social">
+            <div class="top-social" id="top-social-box">
                 <a href="#" title="إكس (تويتر)"><i class="fa-brands fa-x-twitter"></i></a>
                 <a href="#" title="يوتيوب"><i class="fa-brands fa-youtube"></i></a>
                 <a href="#" title="تيليجرام"><i class="fa-brands fa-telegram"></i></a>
-                <a href="#" title="سناب شات"><i class="fa-brands fa-snapchat"></i></a>
-                <a href="#" title="جيت هب"><i class="fa-brands fa-github"></i></a>
             </div>
         </div>
 
@@ -285,13 +202,15 @@
             <div class="right-scrollable-section">
                 <main>
                     <article class="post-card" id="post-content-box">
-                        <div style="text-align: center; padding: 40px; color: var(--text-muted);">جاري تحميل المقال...</div>
+                        <div style="text-align: center; padding: 40px; color: #596573;">جاري تحميل المقال...</div>
                     </article>
                 </main>
             </div>
 
             <div class="left-sticky-sidebar">
-                <div class="left-content-area" id="left-widgets-area"></div>
+                <div class="left-content-area" id="left-widgets-area">
+                    <!-- سيتم تعبئة الودجات تلقائياً من data.json -->
+                </div>
             </div>
         </div>
 
@@ -307,7 +226,91 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. التقاط الرابط ومعرف المقال أو الـ Slug بدقة متناهية
+    // 1. جلب بيانات المدونة (data.json) العامة والهيكلية
+    let data = null;
+    const isInsideArticles = window.location.pathname.includes('/articles/');
+    const homeLink = isInsideArticles ? '../index.html' : 'index.html';
+    const possiblePaths = isInsideArticles 
+        ? ['../data.json', 'data.json', '/data.json'] 
+        : ['data.json', './data.json', '/data.json'];
+
+    for (let path of possiblePaths) {
+        try {
+            const res = await fetch(path + '?t=' + Date.now());
+            if (res.ok) {
+                data = await res.json();
+                break;
+            }
+        } catch (e) {}
+    }
+
+    if (!data) {
+        try {
+            const local = localStorage.getItem('tech_dalil_data');
+            if (local) data = JSON.parse(local);
+        } catch (err) {}
+    }
+
+    // بناء الهيدر، الشعار، القوائم والودجات إذا توفرت البيانات
+    if (data) {
+        // اسم المدونة والشعار
+        if (data.settings) {
+            if (data.settings.siteName) {
+                document.getElementById('footer-site-name').innerText = data.settings.siteName;
+                const heading = document.getElementById('site-main-heading');
+                if (heading) heading.innerHTML = data.settings.siteName.replace('تكنو', 'تكنو-<span>');
+            }
+            if (data.settings.tagline) {
+                const tagEl = document.getElementById('site-tagline');
+                if (tagEl) tagEl.innerText = data.settings.tagline;
+            }
+            if (data.settings.logoUrl) {
+                const logoContainer = document.getElementById('site-logo-container');
+                if (logoContainer) {
+                    logoContainer.innerHTML = `<a href="${homeLink}"><img src="${data.settings.logoUrl}" alt="شعار المدونة"></a>`;
+                }
+            }
+        }
+
+        // شريط الإضاءة (Ticker)
+        if (data.ticker && data.ticker.length > 0) {
+            const tickerEl = document.getElementById('ticker-text');
+            if (tickerEl) {
+                tickerEl.innerHTML = data.ticker.map(t => `<span>${t}</span>`).join(' | ');
+            }
+        }
+
+        // القائمة الرئيسية
+        if (data.menu && data.menu.length > 0) {
+            const menuContainer = document.getElementById('site-main-menu');
+            if (menuContainer) {
+                menuContainer.innerHTML = data.menu.map(item => {
+                    let url = item.url || item.link || 'index.html';
+                    if (isInsideArticles && !url.startsWith('http') && !url.startsWith('../')) {
+                        url = '../' + url;
+                    }
+                    return `<li><a href="${url}">${item.title}</a></li>`;
+                }).join('');
+            }
+        }
+
+        // الودجات الجانبية في الشريط الأيسر
+        const widgetsContainer = document.getElementById('left-widgets-area');
+        if (widgetsContainer && data.posts) {
+            widgetsContainer.innerHTML = `
+                <div class="sidebar-widget">
+                    <h4>أحدث المقالات</h4>
+                    <ul>
+                        ${data.posts.slice(0, 5).map(p => `
+                            <li><a href="post.html?article=articles/${p.slug}.html" style="color:inherit; text-decoration:none;">${p.title}</a></li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+    }
+
+    // 2. معالجة وعرض المقال المطلوب بناءً على رابط الـ URL
     const urlParams = new URLSearchParams(window.location.search);
     const articleParam = urlParams.get('article');
     const slugParam = urlParams.get('slug');
@@ -323,49 +326,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const container = document.getElementById('post-content-box');
-    const isInsideArticles = window.location.pathname.includes('/articles/');
-    const homeLink = isInsideArticles ? '../index.html' : 'index.html';
-
-    // 2. محاولة جلب data.json من أكثر من مسار محتمل لضمان النجاح بغض النظر عن مكان تواجد الملف
-    let data = null;
-    const possiblePaths = isInsideArticles 
-        ? ['../data.json', 'data.json', '/data.json'] 
-        : ['data.json', './data.json', '/data.json'];
-
-    for (let path of possiblePaths) {
-        try {
-            const res = await fetch(path + '?t=' + Date.now());
-            if (res.ok) {
-                data = await res.json();
-                break; // تم الجلب بنجاح، نخرج من الحلقة
-            }
-        } catch (e) {
-            // نتابع التجربة في المسار التالي
-        }
-    }
-
-    // إذا فشل الـ fetch تماماً، نحاول جلب آخر نسخة مخزنة محلياً كخيار أخیر
-    if (!data) {
-        try {
-            const local = localStorage.getItem('tech_dalil_data');
-            if (local) data = JSON.parse(local);
-        } catch (err) {}
-    }
 
     if (!data || !data.posts) {
         if (container) {
-            container.innerHTML = `
-                <div style="text-align: right; padding: 30px;">
-                    <h2>عذراً، تعذر تحميل قاعدة بيانات المقالات.</h2>
-                    <p style="color: var(--text-muted); margin: 10px 0;">تأكد من وجود ملف <code>data.json</code> في مكانه الصحيح.</p>
-                    <a href="${homeLink}" class="back-to-home-btn">العودة للرئيسية</a>
-                </div>
-            `;
+            container.innerHTML = `<div style="padding: 20px; text-align: center;">عذراً، تعذر جلب المقالات. تأكد من سلامة ملف data.json</div>`;
         }
         return;
     }
 
-    // 3. البحث عن المقال المطلوب بناءً على الـ Slug أو الـ ID
     const postsList = data.posts || [];
     let post = null;
 
@@ -379,9 +347,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // 4. عرض المقال أو إظهار سبب عدم التطابق
     if (post) {
-        // تحديث عنوان المتصفح
         const siteTitleEl = document.getElementById('site-title');
         if (siteTitleEl) siteTitleEl.innerText = post.title + " | تكنو-دليل";
 
@@ -389,17 +355,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
         let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
 
-        // مقالات ذات صلة
         let relatedPosts = postsList.filter(p => String(p.id) !== String(post.id)).slice(0, 2);
         let relatedHtml = '';
         if (relatedPosts.length > 0) {
             relatedHtml = `
                 <div class="related-posts-section" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                    <h3 style="font-size: 1rem; color: var(--accent-color); margin-bottom: 10px;">📌 مواضيع ذات صلة:</h3>
+                    <h3 style="font-size: 1rem; color: #2C3E50; margin-bottom: 10px;">📌 مواضيع ذات صلة:</h3>
                     <div class="related-posts-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         ${relatedPosts.map(rp => `
-                            <a href="post.html?article=articles/${rp.slug}.html" style="text-decoration: none; color: inherit; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; display: block;">
-                                <h4 style="font-size: 0.9rem; margin-bottom: 5px; color: var(--accent-color);">${rp.title}</h4>
+                            <a href="post.html?article=articles/${rp.slug}.html" style="text-decoration: none; color: inherit; padding: 10px; border: 1px solid #E2D8C5; border-radius: 6px; display: block; background: #fff;">
+                                <h4 style="font-size: 0.9rem; margin-bottom: 5px; color: var(--primary-color);">${rp.title}</h4>
                             </a>
                         `).join('')}
                     </div>
@@ -411,8 +376,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
                 <a href="${homeLink}" class="back-to-home-btn"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</a>
             </div>
-            <h1 style="font-size: 1.8rem; font-weight: 700; color: var(--accent-color); margin-bottom: 10px; line-height: 1.4;">${post.title}</h1>
-            <div class="post-meta" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
+            <h1 style="font-size: 1.8rem; font-weight: 700; color: #2C3E50; margin-bottom: 10px; line-height: 1.4;">${post.title}</h1>
+            <div class="post-meta" style="color: #596573; font-size: 0.85rem; margin-bottom: 20px;">
                 <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
             </div>
             ${topAd}
@@ -421,16 +386,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             ${botAd}
             ${relatedHtml}
-            <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
+            <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
                 <a href="${homeLink}" class="back-to-home-btn"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</a>
             </div>
         `;
     } else {
         container.innerHTML = `
             <div style="text-align: right; padding: 30px;">
-                <h2>عذراً، لم يتم العثور على هذا المقال!</h2>
-                <p style="color: var(--text-muted); margin: 10px 0;">الرابط المطلوبة أو الـ Slug هو: <code>${targetSlug || 'غير معروف'}</code></p>
-                <p style="color: var(--text-muted); margin: 10px 0;">تأكد من أن هذا المقال مسجل في ملف <code>data.json</code> وأن اسم الرابط يطابق الـ slug الخاص به تماماً.</p>
+                <h2 style="color: #2C3E50;">عذراً، لم يتم العثور على هذا المقال!</h2>
+                <p style="color: #596573; margin: 10px 0;">الرابط أو الـ Slug هو: <code>${targetSlug || 'غير معروف'}</code></p>
                 <br>
                 <a href="${homeLink}" class="back-to-home-btn">العودة للرئيسية</a>
             </div>
