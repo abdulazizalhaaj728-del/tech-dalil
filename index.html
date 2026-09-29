@@ -752,13 +752,9 @@ function generateMenuHtml(nodes, isRoot = false) {
                         let finalHref = itemUrl;
                         let prefix = isInsideArticles ? '../' : '';
                         
-                        // إذا كان العنصر يمتلك slug أو يوجه إلى مجلد المقالات articles/
+                        // إذا كان العنصر يحتوي على slug، نقوم ببناء الرابط بشكل نظيف وموحد
                         if (node.slug) {
                             finalHref = `${prefix}post.html?article=articles/${node.slug}.html`;
-                        } else if (itemUrl.includes('articles/') && !itemUrl.includes('post.html')) {
-                            // تحويل روابط المقالات المباشرة لتفتح عبر post.html بنفس قالب الموقع
-                            let cleanPath = itemUrl.replace(/^\.\.\//, '');
-                            finalHref = `${prefix}post.html?article=${cleanPath}`;
                         } else {
                             if (!itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
                                 if (isInsideArticles && !itemUrl.startsWith('../')) {
@@ -782,6 +778,7 @@ function generateMenuHtml(nodes, isRoot = false) {
                     if (!isRoot) html += '</ul>';
                     return html;
                 }
+                
                 let menuTree = buildTree(data.menu);
                 menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
