@@ -1005,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     const titleHeading = document.getElementById('article-main-title-heading');
                     if (titleHeading) {
-                        const headerOffset = 70;
+                        const headerOffset = 180;
                         const elementPosition = titleHeading.getBoundingClientRect().top;
                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                         window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
