@@ -654,6 +654,7 @@ async function saveServerData(successMsg, postToSave = null) {
                     // 1. جلب البيانات والقوائم والودجات الإعدادات
                     globalData.posts = getData('tech_dalil_posts', globalData.posts || []);
                     globalData.pages = getData('tech_static_pages', globalData.pages || []);
+
                     
                     if (typeof menuItems !== 'undefined') globalData.menu = menuItems;
                     if (typeof widgetsData !== 'undefined') globalData.widgets = widgetsData;
@@ -666,6 +667,25 @@ async function saveServerData(successMsg, postToSave = null) {
                             globalData.posts[existingIndex] = postToSave;
                         } else {
                             globalData.posts.unshift(postToSave);
+                        }
+
+                                            // [إضافة جوهرية]: التأكد من إضافة رابط المقال بصيغة SPA الصحيحة إلى القائمة (menu) إذا لم يكن موجوداً
+                        if (!globalData.menu) globalData.menu = [];
+                        const articleUrl = `?article=${postToSave.slug}`;
+                        
+                        // التحقق هل الرابط أو العنوان موجود مسبقاً في القائمة لتجنب التكرار
+                        let menuContainsPost = globalData.menu.some(item => 
+                            (item.url && item.url.includes(postToSave.slug)) || 
+                            (item.title && item.title.trim() === postToSave.title.trim())
+                        );
+
+                        if (!menuContainsPost) {
+                            globalData.menu.push({
+                                title: postToSave.title,
+                                url: articleUrl,
+                                level: 3,
+                                rawText: postToSave.title
+                            });
                         }
                     }
             
