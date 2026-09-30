@@ -334,7 +334,52 @@
             opacity: 0.4;
             cursor: default;
         }    
-            
+
+
+
+        /* تخصيص صندوق المقال ومنطقة العرض بلون بيج دافئ ومريح للعين */
+        #dynamic-post-view .post-card,
+        .dynamic-post-content-box {
+            background-color: #F7F4EF !important;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png');
+            border: 1px solid #E2D8C5 !important;
+            border-radius: 12px;
+            color: #2C3E50 !important;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* ضبط محاذاة الخطوط لتكون مشدودة ومنسقة من الأطراف (Justify) وبخط مريح */
+        .dynamic-post-content-box {
+            font-family: 'Cairo', 'Tajawal', sans-serif !important;
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            color: #2C3E50 !important;
+            line-height: 2 !important;
+        }
+        
+        /* تنسيق العناوين والنصوص داخل صندوق الكتابة */
+        .dynamic-post-content-box h1, 
+        .dynamic-post-content-box h2, 
+        .dynamic-post-content-box h3 {
+            color: #2C3E50 !important;
+            margin-bottom: 15px;
+        }
+        
+        .dynamic-post-content-box p {
+            margin-bottom: 15px;
+        }
+        
+
+        .back-to-home-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--primary-color); color: #fff; padding: 6px 14px;
+            border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;
+        }
+        .back-to-home-btn:hover { opacity: 0.85; }
+
+
+        
 
         .left-sticky-sidebar { 
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
@@ -493,6 +538,19 @@
         
         <div class="three-columns-grid" id="top-three-section">
             <div class="right-scrollable-section">
+
+                <!-- صندوق عرض المقال الديناميكي (مخفي افتراضياً ولا يظهر إلا عند الضغط على أي مقال) -->
+                <div id="dynamic-post-view" style="display: none; width: 100%; margin-bottom: 20px;">
+                    <article class="post-card" style="background-color: #F7F4EF !important; border: 1px solid #E2D8C5 !important; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
+
+                        
+                        <!-- مكان تچیيز وتحميل محتوى المقال -->
+                        <div id="dynamic-post-content-box">
+                            <!-- هنا سيظهر عنوان ومحتوى المقال -->
+                        </div>
+                    </article>
+                </div>
+
                 
                 <!-- صف يضم السلايدر وبجانبه صندوق المنتجات الرقمية -->
                 <div class="top-right-row">
@@ -564,30 +622,14 @@
 
     </div><!-- نهاية الإطار الخارجي الشامل -->
     
-<script>
+    <script>
 document.addEventListener('DOMContentLoaded', async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const postId = urlParams.get('id');
-    const articleParam = urlParams.get('article');
-
-    let slugFromParam = '';
-    if (articleParam) {
-        let parts = articleParam.split('/');
-        let fileName = parts[parts.length - 1];
-        slugFromParam = fileName.replace('.html', '');
-    }
-
-    const isInsideArticles = window.location.pathname.includes('/articles/');
-    const jsonPath = isInsideArticles ? '../data.json?t=' + Date.now() : 'data.json?t=' + Date.now();
-    const homeLink = isInsideArticles ? '../index.html' : 'index.html';
-
-    const pathSegments = window.location.pathname.split('/');
-    const currentFileName = pathSegments[pathSegments.length - 1];
+    const jsonPath = 'data.json?t=' + Date.now();
 
     try {
         const response = await fetch(jsonPath);
         const data = await response.json();
-        const container = document.getElementById('posts-container');
+        window.siteBlogData = data; 
         
         let rawPosts = data.posts || [];
         let filteredPosts = rawPosts.filter(p => {
@@ -595,209 +637,123 @@ document.addEventListener('DOMContentLoaded', async () => {
             return cat !== 'الصفحات الثابتة';
         });
 
-        if (postId || slugFromParam || (isInsideArticles && currentFileName && currentFileName !== 'index.html' && currentFileName !== 'post.html')) {
-            const post = postId 
-                ? rawPosts.find(p => p.id == postId) 
-                : slugFromParam 
-                    ? rawPosts.find(p => p.slug === slugFromParam)
-                    : rawPosts.find(p => p.slug === currentFileName.replace('.html', '') || (p.url && p.url.includes(currentFileName)));
+        function getOrderedPosts(menuItems, allPosts) {
+            let ordered = [];
+            let visitedIds = new Set();
 
-            if (post) {
-                const siteTitleEl = document.getElementById('site-title');
-                if (siteTitleEl) siteTitleEl.innerText = post.title + " | تكنو-دليل";
-                
-                let ads = data.ads || {};
-                let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
-                let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
+            function traverse(items) {
+                if (!items) return;
+                items.forEach(item => {
+                    let itemUrl = item.url || item.link || '';
+                    for (let p of allPosts) {
+                        if (!visitedIds.has(p.id)) {
+                            if (itemUrl.includes(p.slug) || itemUrl.includes(String(p.id)) || (item.title && p.title && item.title.trim() === p.title.trim())) {
+                                ordered.push(p);
+                                visitedIds.add(p.id);
+                            }
+                        }
+                    }
+                    if (item.children && item.children.length > 0) {
+                        traverse(item.children);
+                    }
+                });
+            }
 
-                if (container) {
-                    container.innerHTML = `
-                        <div class="post-card">
-                            <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--accent-color); margin-bottom: 10px;">${post.title}</h1>
-                            <div class="post-meta">
-                                <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
-                            </div>
-                            ${topAd}
-                            <div class="single-post-content">
-                                ${post.content || ''}
-                            </div>
-                            ${botAd}
-                            <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                                <a href="${homeLink}" style="display: inline-block; background: var(--primary-color); color: #fff; padding: 6px 15px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← العودة إلى الصفحة الرئيسية</a>
-                            </div>
+            if (menuItems) {
+                traverse(menuItems);
+            }
+
+            allPosts.forEach(p => {
+                if (!visitedIds.has(p.id)) {
+                    ordered.push(p);
+                    visitedIds.add(p.id);
+                }
+            });
+
+            return ordered;
+        }
+
+        let menuTree = data.menu ? buildTree(data.menu) : [];
+        let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+
+        const container = document.getElementById('posts-container');
+        if (filteredPosts.length > 0) {
+            if (container) {
+                container.innerHTML = filteredPosts.map(post => {
+                    return `
+                    <div class="post-card">
+                        <div class="post-title">
+                            <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}', 'title'); return false;">${post.title}</a>
                         </div>
+                        <div class="post-meta">
+                            <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
+                        </div>
+                        <div class="post-excerpt">${post.description || ''}</div>
+                        <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}', 'title'); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                    </div>
+                `;
+                }).join('');
+            }
+            
+            const sliderWrapper = document.getElementById('square-slider-wrapper');
+            const sliderPosts = filteredPosts.slice(0, 4);
+            if(sliderWrapper && sliderPosts.length > 0) {
+                let sliderHtml = sliderPosts.map((p, idx) => {
+                    return `
+                    <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
+                        <div class="square-caption">
+                            <a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}', 'title'); return false;" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;">${p.title}</a>
+                            <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
+                        </div>
+                    </div>
                     `;
-                }
-            } else {
-                
-                if (container) {
-                    container.innerHTML = `<div class="post-card"><h2>عذراً</h2><p style="color: var(--text-muted); margin: 10px 0;">المقال المطلوب غير موجود أو تم تغيير رابطه.</p><a href="${homeLink}" style="color: var(--accent-color); text-decoration: none; font-weight: bold;">العودة للرئيسية</a></div>`;
-                }
+                }).join('');
+
+                sliderHtml += `
+                    <button class="slider-arrow slider-prev" id="slider-prev-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                `;
+                sliderWrapper.innerHTML = sliderHtml;
+                initSliderLogic();
             }
         } else {
-            if (filteredPosts.length > 0) {
-                if (container) {
-                    container.innerHTML = filteredPosts.map(post => {
-                        let articleUrl = isInsideArticles ? `${post.slug}.html` : `articles/${post.slug}.html`;
-
-                        return `
-                        <div class="post-card">
-                            <div class="post-title">
-                                <a href="post.html?article=articles/${post.slug}.html">${post.title}</a>
-                            </div>
-                            <div class="post-meta">
-                                <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
-                            </div>
-                            <div class="post-excerpt">${post.description || ''}</div>
-                            <a href="post.html?article=articles/${post.slug}.html" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
-                        </div>
-                    `;
-                    }).join('');
-                }
-                
-                const sliderWrapper = document.getElementById('square-slider-wrapper');
-                const sliderPosts = filteredPosts.slice(0, 4);
-                if(sliderWrapper && sliderPosts.length > 0) {
-                    let sliderHtml = sliderPosts.map((p, idx) => {
-                        let sliderArticleUrl = isInsideArticles ? `../post.html?article=articles/${p.slug}.html` : `post.html?article=articles/${p.slug}.html`;
-                        
-                        return `
-                        <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
-                            <div class="square-caption">
-                                <a href="${sliderArticleUrl}" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;">${p.title}</a>
-                                <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
-                            </div>
-                        </div>
-                        `;
-                    }).join('');
-
-                    sliderHtml += `
-                        <button class="slider-arrow slider-prev" id="slider-prev-btn"><i class="fa-solid fa-chevron-right"></i></button>
-                        <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
-                    `;
-                    sliderWrapper.innerHTML = sliderHtml;
-                    initSliderLogic();
-                }
-            } else {
-                if (container) {
-                    container.innerHTML = `<div class="post-card"><p>لا توجد مقالات منشورة حالياً.</p></div>`;
-                }
+            if (container) {
+                container.innerHTML = `<div class="post-card"><p>لا توجد مقالات منشورة حالياً.</p></div>`;
             }
         }
 
-        if (data.settings) {
-            if (data.settings.logoUrl) {
-                const logoContainer = document.getElementById('site-logo-container');
-                if (logoContainer) {
-                    let h = data.settings.logoHeight || '50px';
-                    logoContainer.innerHTML = `<a href="${homeLink}"><img src="${data.settings.logoUrl}" alt="الشعار" style="height: ${h}; max-height: 60px; object-fit: contain;"></a>`;
-                }
-            }
-            const tickerWrapper = document.getElementById('site-ticker-wrapper');
-            if (tickerWrapper) {
-                tickerWrapper.style.display = data.settings.tickerVisible !== false ? 'block' : 'none';
+        if (data.menu && data.menu.length > 0) {
+            const menuContainer = document.getElementById('site-main-menu');
+            if (menuContainer) {
+                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
         }
-
-
-
-if (data.menu && data.menu.length > 0) {
-    const menuContainer = document.getElementById('site-main-menu');
-    if (menuContainer) {
-        // دالة بناء الشجرة (للحفاظ على هرمية القائمة والقوائم المنسدلة)
-        function buildTree(items) {
-            let root = [];
-            let stack = [{ level: 0, children: root }];
-            
-            items.forEach(item => {
-                let node = { ...item, children: [] };
-                let lvl = item.level || 1;
-                
-                while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
-                    stack.pop();
-                }
-                
-                stack[stack.length - 1].children.push(node);
-                stack.push({ level: lvl, children: node.children });
-            });
-            
-            return root;
-        }
-
-        // دالة توليد الـ HTML باستخدام طريقة map المباشرة والنظيفة (Dev Style)
-        function generateMenuHtml(nodes, isRoot = false) {
-            let prefix = isInsideArticles ? '../' : '';
-            
-            if (nodes.length === 0) return '';
-            
-            let html = isRoot ? '' : '<ul class="dropdown-menu">';
-            
-            html += nodes.map(node => {
-                let itemUrl = node.url || node.link || '#';
-                let finalHref = itemUrl;
-                
-                // توجيه الرابط بالطريقة المباشرة (مثل المقالات تماماً)
-                if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
-                    if (itemUrl.endsWith('.html') && !itemUrl.includes('post.html')) {
-                        let cleanName = itemUrl.replace('articles/', '');
-                        finalHref = `${prefix}post.html?article=articles/${cleanName}`;
-                    } else {
-                        finalHref = prefix + itemUrl;
-                    }
-                }
-
-                let hasChildren = node.children && node.children.length > 0;
-                let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-                
-                return `
-                    <li>
-                        <a href="${finalHref}">${node.title}${arrow}</a>
-                        ${hasChildren ? generateMenuHtml(node.children, false) : ''}
-                    </li>
-                `;
-            }).join('');
-            
-            if (!isRoot) html += '</ul>';
-            return html;
-        }
-        
-        let menuTree = buildTree(data.menu);
-        menuContainer.innerHTML = generateMenuHtml(menuTree, true);
-    }
-}
-        
-
-
-        
 
         if (data.widgets && data.widgets.length > 0) {
             const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
             const footerWidgetsContainer = document.getElementById('site-footer-widgets');
-            
-            let sidebarHtml = '';
-            let footerHtml = '';
+            let sidebarHtml = '', footerHtml = '';
 
             data.widgets.forEach(w => {
                 if (!w.active) return;
-
                 let contentBox = '';
                 if (w.type === 'recent') {
-                    contentBox = '<ul class="recent-posts-list">' + filteredPosts.map(p => {
-                        return `<li><a href="${isInsideArticles ? '../' : ''}post.html?article=articles/${p.slug}.html"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`;
+                    let recentThree = sequencedPosts.slice(0, 3);
+                    contentBox = '<ul class="recent-posts-list">' + recentThree.map(p => {
+                        return `<li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}', 'title'); return false;" style="font-size: 0.75rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`;
                     }).join('') + '</ul>';
                 } else if (w.type === 'links') {
-                    contentBox = '<div class="quick-links-box">' + (w.content || '') + '</div>';
+                    contentBox = '<div class="quick-links-box" style="font-size: 0.75rem;">' + (w.content || '') + '</div>';
                 } else {
-                    contentBox = '<div>' + (w.content || '') + '</div>';
+                    contentBox = '<div style="font-size: 0.75rem;">' + (w.content || '') + '</div>';
                 }
 
                 let widgetBlock = `
                     <div class="widget-card" id="${w.id}">
-                        <h3 class="widget-title">${w.title}</h3>
+                        <h3 class="widget-title" style="font-size: 0.9rem; margin-bottom: 8px;">${w.title}</h3>
                         <div class="widget-content">${contentBox}</div>
                     </div>
                 `;
-
                 if (w.location === 'footer') {
                     footerHtml += widgetBlock;
                 } else {
@@ -806,7 +762,11 @@ if (data.menu && data.menu.length > 0) {
             });
 
             if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
-            if (footerWidgetsContainer) footerWidgetsContainer.innerHTML = footerHtml;
+            
+            if (footerWidgetsContainer) {
+                footerWidgetsContainer.style.minHeight = "220px";
+                footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
+            }
         }
 
         if (data.ads) {
@@ -824,19 +784,302 @@ if (data.menu && data.menu.length > 0) {
             }
         }
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleParam = urlParams.get('article');
+        if (articleParam) {
+            let slug = urlParams.get('article').split('/').pop().replace('.html', '');
+            openPostBySlug(slug, 'none');
+        }
+
     } catch (err) {
         console.error("تعذر جلب ملف بيانات المدونة:", err);
     }
-
-    const customLogo = localStorage.getItem('tech_custom_logo');
-    const customLogoHeight = localStorage.getItem('tech_custom_logo_height') || '50px';
-    if (customLogo) {
-        const logoContainer = document.getElementById('site-logo-container');
-        if(logoContainer && !logoContainer.innerHTML.trim()) {
-            logoContainer.innerHTML = `<a href="${homeLink}"><img src="${customLogo}" alt="الشعار" style="height: ${customLogoHeight}; max-height: 60px; object-fit: contain;"></a>`;
-        }
-    }
 });
+
+function getShortTitle(title) {
+    if (!title) return '';
+    let words = title.trim().split(/\s+/);
+    if (words.length > 5) {
+        return words.slice(0, 5).join(' ') + '...';
+    }
+    return title;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const dynamicView = document.getElementById('dynamic-post-view');
+    const dynamicContentBox = document.getElementById('dynamic-post-content-box');
+    if (!dynamicView || !dynamicContentBox) return;
+
+    const elementsToHide = document.querySelectorAll('.right-scrollable-section > *:not(#dynamic-post-view)');
+
+    window.openPostBySlug = async function(identifier, scrollMode = 'title') {
+        let data = window.siteBlogData;
+        if (!data) {
+            try {
+                const res = await fetch('data.json?t=' + Date.now());
+                data = await res.json();
+                window.siteBlogData = data;
+            } catch (e) {
+                console.error("تعذر جلب البيانات");
+                return;
+            }
+        }
+
+        let rawPosts = data.posts || [];
+        let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
+        let menuTree = data.menu ? buildTree(data.menu) : [];
+        
+        function getOrderedPosts(menuItems, allPosts) {
+            let ordered = [];
+            let visitedIds = new Set();
+            function traverse(items) {
+                if (!items) return;
+                items.forEach(item => {
+                    let itemUrl = item.url || item.link || '';
+                    for (let p of allPosts) {
+                        if (!visitedIds.has(p.id)) {
+                            if (itemUrl.includes(p.slug) || itemUrl.includes(String(p.id)) || (item.title && p.title && item.title.trim() === p.title.trim())) {
+                                ordered.push(p);
+                                visitedIds.add(p.id);
+                            }
+                        }
+                    }
+                    if (item.children) traverse(item.children);
+                });
+            }
+            traverse(menuItems);
+            allPosts.forEach(p => {
+                if (!visitedIds.has(p.id)) {
+                    ordered.push(p);
+                    visitedIds.add(p.id);
+                }
+            });
+            return ordered;
+        }
+
+        let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+
+        let post = rawPosts.find(p => {
+            let pSlug = (p.slug || '').trim();
+            let cleanId = String(p.id || '');
+            return pSlug === identifier || cleanId === identifier;
+        });
+
+        if (post) {
+            elementsToHide.forEach(el => el.style.display = 'none');
+            dynamicView.style.display = 'block';
+
+            let ads = data.ads || {};
+            let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
+            let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
+
+            let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
+            let prevPost = currentIndex > 0 ? sequencedPosts[currentIndex - 1] : null;
+            let nextPost = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? sequencedPosts[currentIndex + 1] : null;
+
+            // فصل تام ومسافة واضحة بين زر السهم وبوردر العنوان لتجنب الضغط بالخطأ وثبات تام للشاشة
+            let prevHtml = prevPost ? `
+                <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
+                    <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', 'arrow'); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></a>
+                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right;">
+                        <a href="?article=${prevPost.slug}" onclick="openPostBySlug('${prevPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${prevPost.title}">${getShortTitle(prevPost.title)}</a>
+                    </div>
+                </div>` : `<span></span>`;
+
+            let nextHtml = nextPost ? `
+                <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
+                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left;">
+                        <a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nextPost.title}">${getShortTitle(nextPost.title)}</a>
+                    </div>
+                    <a href="?article=${nextPost.slug}" onclick="openPostBySlug('${nextPost.slug}', 'arrow'); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></a>
+                </div>` : `<span></span>`;
+
+            let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
+            let relatedHtml = '';
+            if (relatedPosts.length > 0) {
+                let linksList = relatedPosts.map(rp => `
+                    <li style="margin-bottom: 8px;">
+                        <a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}', 'title'); return false;" style="color: #4a3b32; background: rgba(210, 195, 170, 0.25); padding: 8px 12px; display: block; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 0.85rem;">
+                            <i class="fa-solid fa-bookmark" style="color: var(--primary-color); margin-left: 6px;"></i> ${rp.title}
+                        </a>
+                    </li>
+                `).join('');
+
+                relatedHtml = `
+                    <div style="margin: 35px 0; padding: 20px; background: rgba(245, 240, 230, 0.6); border: 1px solid #dcd3c1; border-radius: 8px;">
+                        <h3 style="color: #8c4a32; font-size: 1.05rem; margin-bottom: 12px; font-weight: 700; border-bottom: 2px solid #dcd3c1; padding-bottom: 6px;">
+                            <i class="fa-solid fa-fire"></i> شاهد أيضاً / مواضيع ذات صلة:
+                        </h3>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            ${linksList}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            let rawContent = post.content || '';
+            let contentParts = rawContent.split('</p>');
+            let middleIndex = Math.floor(contentParts.length / 2);
+            if (contentParts.length > 1) {
+                contentParts[middleIndex] += relatedHtml;
+                rawContent = contentParts.join('</p>');
+            } else {
+                rawContent += relatedHtml;
+            }
+
+            dynamicContentBox.innerHTML = `
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                    <button class="back-to-home-action" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                </div>
+
+                <div id="toc-container" style="margin-bottom: 20px; border: 1px solid #dcd3c1; border-radius: 6px; background: rgba(245, 240, 230, 0.4);">
+                    <div id="toc-header" style="padding: 8px 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #4a3b32; font-size: 0.85rem;">
+                        <span><i class="fa-solid fa-list-ul" style="color: var(--primary-color); margin-left: 8px;"></i> محتويات المقال</span>
+                        <i class="fa-solid fa-chevron-down" id="toc-arrow" style="transition: transform 0.3s;"></i>
+                    </div>
+                    <div id="toc-list-box" style="display: none; padding: 10px 20px; border-top: 1px solid #dcd3c1; max-height: 200px; overflow-y: auto;"></div>
+                </div>
+
+                <!-- عنوان المقال الرئيسي مع هوامش متساوية -->
+                <div style="padding: 0 15px;">
+                    <h1 id="article-main-title-heading" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
+                    <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 20px;">
+                        <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍ ${post.author || 'إدارة المدونة'}</span>
+                    </div>
+                    ${topAd}
+                    <div class="dynamic-post-content-box" id="article-main-content" style="font-size: 0.9rem;">
+                        ${rawContent}
+                    </div>
+                    ${botAd}
+
+                    <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>${prevHtml}</div>
+                        <div>${nextHtml}</div>
+                    </div>
+
+                    <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
+                        <button class="back-to-home-action" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                    </div>
+                </div>
+            `;
+
+            history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
+
+            // التمرير الدقيق ليكون العنوان ببدأه من أعلى تماماً
+            if (scrollMode === 'title') {
+                setTimeout(() => {
+                    const titleHeading = document.getElementById('article-main-title-heading');
+                    if (titleHeading) {
+                        const headerOffset = 70; // مسافة بسيطة لتبقي العنوان ظاهراً وواضحاً تماماً من بدايته العليا
+                        const elementPosition = titleHeading.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    }
+                }, 60);
+            }
+
+            setTimeout(() => {
+                const tocHeader = document.getElementById('toc-header');
+                const tocListBox = document.getElementById('toc-list-box');
+                const tocArrow = document.getElementById('toc-arrow');
+                const articleContent = document.getElementById('article-main-content');
+
+                if (tocHeader && tocListBox && articleContent) {
+                    tocHeader.onclick = () => {
+                        let isVisible = tocListBox.style.display === 'block';
+                        tocListBox.style.display = isVisible ? 'none' : 'block';
+                        tocArrow.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+                    };
+
+                    const headings = articleContent.querySelectorAll('h2, h3');
+                    if (headings.length > 0) {
+                        let tocHtml = '<ul style="list-style: none; padding: 0; margin: 0;">';
+                        headings.forEach((heading, idx) => {
+                            if (!heading.id) heading.id = 'heading-' + idx;
+                            let indent = heading.tagName === 'H3' ? 'margin-right: 15px;' : '';
+                            tocHtml += `<li style="margin-bottom: 6px; ${indent}">
+                                <a href="#${heading.id}" class="toc-link" style="color: var(--accent-color); text-decoration: none; font-size: 0.85rem;">• ${heading.innerText}</a>
+                            </li>`;
+                        });
+                        tocHtml += '</ul>';
+                        tocListBox.innerHTML = tocHtml;
+
+                        tocListBox.querySelectorAll('.toc-link').forEach(link => {
+                            link.onclick = (e) => {
+                                e.preventDefault();
+                                const targetId = link.getAttribute('href').substring(1);
+                                const targetEl = document.getElementById(targetId);
+                                if (targetEl) {
+                                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                                    tocListBox.style.display = 'none';
+                                    tocArrow.style.transform = 'rotate(0deg)';
+                                }
+                            };
+                        });
+                    } else {
+                        tocListBox.innerHTML = '<p style="font-size: 0.8rem; color: #777; margin: 0;">لا توجد عناوين فرعية في هذا المقال.</p>';
+                    }
+                }
+            }, 100);
+        }
+    };
+
+    window.closePostView = function() {
+        dynamicView.style.display = 'none';
+        dynamicContentBox.innerHTML = '';
+        elementsToHide.forEach(el => el.style.display = '');
+        history.pushState({}, '', window.location.pathname);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.addEventListener('popstate', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const article = urlParams.get('article');
+        if (!article) {
+            closePostView();
+        }
+    });
+});
+
+function buildTree(items) {
+    let root = [];
+    let stack = [{ level: 0, children: root }];
+    items.forEach(item => {
+        let node = { ...item, children: [] };
+        let lvl = item.level || 1;
+        while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
+            stack.pop();
+        }
+        stack[stack.length - 1].children.push(node);
+        stack.push({ level: lvl, children: node.children });
+    });
+    return root;
+}
+
+function generateMenuHtml(nodes, isRoot = false) {
+    if (nodes.length === 0) return '';
+    let html = isRoot ? '' : '<ul class="dropdown-menu">';
+    html += nodes.map(node => {
+        let itemUrl = node.url || node.link || '#';
+        let finalHref = itemUrl;
+        if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
+            if (itemUrl.endsWith('.html') && !itemUrl.includes('post.html')) {
+                let cleanName = itemUrl.replace('articles/', '').replace('.html', '');
+                finalHref = `?article=${cleanName}`;
+            }
+        }
+        let hasChildren = node.children && node.children.length > 0;
+        let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+        return `
+            <li>
+                <a href="${finalHref}">${node.title}${arrow}</a>
+                ${hasChildren ? generateMenuHtml(node.children, false) : ''}
+            </li>
+        `;
+    }).join('');
+    if (!isRoot) html += '</ul>';
+    return html;
+}
 
 function initSliderLogic() {
     const slides = document.querySelectorAll('.square-slide');
@@ -881,7 +1124,6 @@ function initSliderLogic() {
 
 const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
 let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
-
 const fontToggleBtn = document.getElementById('font-toggle-btn');
 if(fontToggleBtn) {
     fontToggleBtn.addEventListener('click', () => {
@@ -904,7 +1146,6 @@ function applyTheme(idx) {
 
 const nextThemeBtn = document.getElementById('next-theme-btn');
 const prevThemeBtn = document.getElementById('prev-theme-btn');
-
 if(nextThemeBtn) {
     nextThemeBtn.addEventListener('click', () => {
         currentThemeIdx = (currentThemeIdx + 1) % themesList.length;
@@ -939,14 +1180,13 @@ if(secretTrigger) {
     secretTrigger.addEventListener('click', () => {
         const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
         if(pass === "aziz728") {
-            const isInsideArticles = window.location.pathname.includes('/articles/');
-            window.location.href = isInsideArticles ? "../dashboard.html" : "dashboard.html";
+            window.location.href = "dashboard.html";
         } else if(pass !== null) {
             alert("كلمة المرور غير صحيحة!");
         }
     });
 }
     
-</script>
+    </script>
 </body>
 </html>
