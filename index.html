@@ -650,23 +650,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const jsonPath = 'data.json?t=' + Date.now();
 
-    // الاعتراض العام للروابط لضمان عمل كافة القوائم والمقالات بسلاسة
-    document.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (link && link.getAttribute('href')) {
-            const href = link.getAttribute('href');
-            if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
-                e.preventDefault();
-                let slug = href.split('/').pop().replace('.html', '').replace('?article=', '').split('&')[0];
-                openPostBySlug(slug);
-            }
-        }
-    });
-//---------------------------------------------------------------
-
-    
     try {
-        
         const response = await fetch(jsonPath);
         const data = await response.json();
         window.siteBlogData = data; 
@@ -714,7 +698,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         let menuTree = data.menu ? buildTree(data.menu) : [];
-        window.sequencedGlobalPosts = getOrderedPosts(menuTree, rawPosts); // تخزين شامل لجميع عناوين القوائم والمقالات بالترتيب
+        let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
 
         const container = document.getElementById('posts-container');
         if (filteredPosts.length > 0) {
@@ -723,13 +707,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return `
                     <div class="post-card">
                         <div class="post-title">
-                            <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}', 'title'); return false;">${post.title}</a>
+                            <a href="?article=${post.slug}">${post.title}</a>
                         </div>
                         <div class="post-meta">
                             <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
                         </div>
                         <div class="post-excerpt">${post.description || ''}</div>
-                        <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}', 'title'); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                        <a href="?article=${post.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                     </div>
                 `;
                 }).join('');
@@ -742,7 +726,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return `
                     <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
                         <div class="square-caption">
-                            <a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}', 'title'); return false;" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;">${p.title}</a>
+                            <a href="?article=${p.slug}" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;">${p.title}</a>
                             <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                         </div>
                     </div>
@@ -778,19 +762,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!w.active) return;
                 let contentBox = '';
                 if (w.type === 'recent') {
-                    let recentThree = window.sequencedGlobalPosts.slice(0, 3);
+                    let recentThree = sequencedPosts.slice(0, 3);
                     contentBox = '<ul class="recent-posts-list">' + recentThree.map(p => {
-                        return `<li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}', 'title'); return false;" style="font-size: 0.75rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`;
+                        return `<li><a href="?article=${p.slug}" style="font-size: 0.68rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>`;
                     }).join('') + '</ul>';
                 } else if (w.type === 'links') {
-                    contentBox = '<div class="quick-links-box" style="font-size: 0.75rem;">' + (w.content || '') + '</div>';
+                    contentBox = '<div class="quick-links-box" style="font-size: 0.68rem;">' + (w.content || '') + '</div>';
                 } else {
-                    contentBox = '<div style="font-size: 0.75rem;">' + (w.content || '') + '</div>';
+                    contentBox = '<div style="font-size: 0.68rem;">' + (w.content || '') + '</div>';
                 }
 
                 let widgetBlock = `
                     <div class="widget-card" id="${w.id}">
-                        <h3 class="widget-title" style="font-size: 0.9rem; margin-bottom: 8px;">${w.title}</h3>
+                        <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">${w.title}</h3>
                         <div class="widget-content">${contentBox}</div>
                     </div>
                 `;
@@ -827,8 +811,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const articleParam = urlParams.get('article');
         if (articleParam) {
-            let slug = urlParams.get('article').split('/').pop().replace('.html', '');
-            openPostBySlug(slug, 'none');
+            let slug = articleParam.split('/').pop().replace('.html', '');
+            openPostBySlug(slug);
         }
 
     } catch (err) {
@@ -848,63 +832,11 @@ function getShortTitle(title) {
 document.addEventListener('DOMContentLoaded', () => {
     const dynamicView = document.getElementById('dynamic-post-view');
     const dynamicContentBox = document.getElementById('dynamic-post-content-box');
+    const backBtn = document.getElementById('back-to-home-btn');
+
     if (!dynamicView || !dynamicContentBox) return;
 
-    const elementsToHide = document.querySelectorAll('.right-scrollable-section > *:not(#dynamic-post-view)');
-
-    // دالة تحديث العناوين في أزرار التنقل بشكل تسلسلي صحيح حتى نهاية جميع المقالات
-    window.shiftPreviewIndex = function(direction) {
-        if (!window.sequencedGlobalPosts || window.sequencedGlobalPosts.length === 0) return;
-        
-        let currentSlug = window.currentActiveSlug;
-        let currentIndex = window.sequencedGlobalPosts.findIndex(p => p.slug === currentSlug);
-        if (currentIndex === -1) currentIndex = 0;
-
-        let newIndex = currentIndex + direction;
-        if (newIndex < 0) newIndex = 0;
-        if (newIndex >= window.sequencedGlobalPosts.length) newIndex = window.sequencedGlobalPosts.length - 1;
-
-        // تحديث المقال النشط الحالي لكي ينتقل السهم للمقال التالي/السابق في الضغطة القادمة
-        window.currentActiveSlug = window.sequencedGlobalPosts[newIndex].slug;
-
-        let prevIndex = newIndex > 0 ? newIndex - 1 : -1;
-        let nextIndex = newIndex < window.sequencedGlobalPosts.length - 1 ? newIndex + 1 : -1;
-
-        const prevContainer = document.getElementById('bottom-prev-container');
-        const nextContainer = document.getElementById('bottom-next-container');
-
-        if (prevContainer) {
-            if (prevIndex !== -1) {
-                let pPost = window.sequencedGlobalPosts[prevIndex];
-                prevContainer.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                        <button onclick="shiftPreviewIndex(-1); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; min-width: 34px; min-height: 34px; border: none; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
-                        <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right; min-height: 34px; display: flex; align-items: center;">
-                            <a href="?article=${pPost.slug}" onclick="openPostBySlug('${pPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block; width: 100%;" title="${pPost.title}">${getShortTitle(pPost.title)}</a>
-                        </div>
-                    </div>`;
-            } else {
-                prevContainer.innerHTML = `<span></span>`;
-            }
-        }
-
-        if (nextContainer) {
-            if (nextIndex !== -1) {
-                let nPost = window.sequencedGlobalPosts[nextIndex];
-                nextContainer.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
-                        <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left; min-height: 34px; display: flex; align-items: center;">
-                            <a href="?article=${nPost.slug}" onclick="openPostBySlug('${nPost.slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block; width: 100%;" title="${nPost.title}">${getShortTitle(nPost.title)}</a>
-                        </div>
-                        <button onclick="shiftPreviewIndex(1); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; min-width: 34px; min-height: 34px; border: none; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
-                    </div>`;
-            } else {
-                nextContainer.innerHTML = `<span></span>`;
-            }
-        }
-    };
-
-    window.openPostBySlug = async function(identifier, scrollMode = 'title') {
+    window.openPostBySlug = async function(slug) {
         let data = window.siteBlogData;
         if (!data) {
             try {
@@ -918,41 +850,79 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let rawPosts = data.posts || [];
-        let sequencedPosts = window.sequencedGlobalPosts || rawPosts;
+        let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
+        let menuTree = data.menu ? buildTree(data.menu) : [];
 
-        let post = rawPosts.find(p => {
-            let pSlug = (p.slug || '').trim();
-            let cleanId = String(p.id || '');
-            return pSlug === identifier || cleanId === identifier;
-        });
+        function getOrderedPosts(menuItems, allPosts) {
+            let ordered = [];
+            let visitedIds = new Set();
+            function traverse(items) {
+                if (!items) return;
+                items.forEach(item => {
+                    let itemUrl = item.url || item.link || '';
+                    for (let p of allPosts) {
+                        if (!visitedIds.has(p.id)) {
+                            if (itemUrl.includes(p.slug) || itemUrl.includes(String(p.id)) || (item.title && p.title && item.title.trim() === p.title.trim())) {
+                                ordered.push(p);
+                                visitedIds.add(p.id);
+                            }
+                        }
+                    }
+                    if (item.children) traverse(item.children);
+                });
+            }
+            traverse(menuItems);
+            allPosts.forEach(p => {
+                if (!visitedIds.has(p.id)) {
+                    ordered.push(p);
+                    visitedIds.add(p.id);
+                }
+            });
+            return ordered;
+        }
+
+        let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+        let post = rawPosts.find(p => (p.slug || '').trim() === slug || String(p.id || '') === slug || (p.url && p.url.includes(slug)));
 
         if (post) {
-            window.currentActiveSlug = post.slug; 
-            elementsToHide.forEach(el => el.style.display = 'none');
             dynamicView.style.display = 'block';
+
+            // التمرير الدقيق ليكون العنوان ببدأه من أعلى تماماً وتجنب اختفائه خلف الهيدر
+            setTimeout(() => {
+                const titleHeading = document.getElementById('article-main-title-heading');
+                if (titleHeading) {
+                    const headerOffset = 70;
+                    const elementPosition = titleHeading.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                } else {
+                    window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
+                }
+            }, 50);
 
             let ads = data.ads || {};
             let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
             let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
 
             let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
-            let prevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
-            let nextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
+            let prevPost = currentIndex > 0 ? sequencedPosts[currentIndex - 1] : null;
+            let nextPost = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? sequencedPosts[currentIndex + 1] : null;
 
-            let prevHtml = prevIndex !== -1 ? `
+            // فصل تام ومسافة واضحة بين زر السهم وبوردر العنوان لمنع الضغط بالخطأ وثبات الشاشة
+            let prevHtml = prevPost ? `
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                    <button onclick="shiftPreviewIndex(-1); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; min-width: 34px; min-height: 34px; border: none; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
-                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right; min-height: 34px; display: flex; align-items: center;">
-                        <a href="?article=${sequencedPosts[prevIndex].slug}" onclick="openPostBySlug('${sequencedPosts[prevIndex].slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block; width: 100%;" title="${sequencedPosts[prevIndex].title}">${getShortTitle(sequencedPosts[prevIndex].title)}</a>
+                    <a href="?article=${prevPost.slug}" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></a>
+                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right;">
+                        <a href="?article=${prevPost.slug}" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${prevPost.title}">${getShortTitle(prevPost.title)}</a>
                     </div>
                 </div>` : `<span></span>`;
 
-            let nextHtml = nextIndex !== -1 ? `
+            let nextHtml = nextPost ? `
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
-                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left; min-height: 34px; display: flex; align-items: center;">
-                        <a href="?article=${sequencedPosts[nextIndex].slug}" onclick="openPostBySlug('${sequencedPosts[nextIndex].slug}', 'title'); return false;" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block; width: 100%;" title="${sequencedPosts[nextIndex].title}">${getShortTitle(sequencedPosts[nextIndex].title)}</a>
+                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left;">
+                        <a href="?article=${nextPost.slug}" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nextPost.title}">${getShortTitle(nextPost.title)}</a>
                     </div>
-                    <button onclick="shiftPreviewIndex(1); return false;" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; min-width: 34px; min-height: 34px; border: none; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
+                    <a href="?article=${nextPost.slug}" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></a>
                 </div>` : `<span></span>`;
 
             let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
@@ -960,7 +930,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (relatedPosts.length > 0) {
                 let linksList = relatedPosts.map(rp => `
                     <li style="margin-bottom: 8px;">
-                        <a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}', 'title'); return false;" style="color: #4a3b32; background: rgba(210, 195, 170, 0.25); padding: 8px 12px; display: block; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 0.85rem;">
+                        <a href="?article=${rp.slug}" style="color: #4a3b32; background: rgba(210, 195, 170, 0.25); padding: 8px 12px; display: block; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 0.85rem;">
                             <i class="fa-solid fa-bookmark" style="color: var(--primary-color); margin-left: 6px;"></i> ${rp.title}
                         </a>
                     </li>
@@ -978,7 +948,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
 
-            let rawContent = post.content || '';
+            let rawContent = post.content || post.description || '';
             let contentParts = rawContent.split('</p>');
             let middleIndex = Math.floor(contentParts.length / 2);
             if (contentParts.length > 1) {
@@ -990,7 +960,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dynamicContentBox.innerHTML = `
                 <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                    <button class="back-to-home-action" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                    <button id="back-to-home-btn-inner" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
                 </div>
 
                 <div id="toc-container" style="margin-bottom: 20px; border: 1px solid #dcd3c1; border-radius: 6px; background: rgba(245, 240, 230, 0.4);">
@@ -1004,38 +974,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div style="padding: 0 15px;">
                     <h1 id="article-main-title-heading" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
                     <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 20px;">
-                        <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍ ${post.author || 'إدارة المدونة'}</span>
+                        <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️️ ${post.author || 'إدارة المدونة'}</span>
                     </div>
                     ${topAd}
-                    <div class="dynamic-post-content-box" id="article-main-content" style="font-size: 0.9rem;">
+                    <div class="single-post-content" id="article-main-content" style="line-height: 1.8; color: #2C3E50; font-size: 0.9rem;">
                         ${rawContent}
                     </div>
                     ${botAd}
 
                     <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div id="bottom-prev-container">${prevHtml}</div>
-                        <div id="bottom-next-container">${nextHtml}</div>
+                        <div>${prevHtml}</div>
+                        <div>${nextHtml}</div>
                     </div>
 
                     <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
-                        <button class="back-to-home-action" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                        <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
                     </div>
                 </div>
             `;
 
-            history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
-
-            if (scrollMode === 'title') {
-                setTimeout(() => {
-                    const titleHeading = document.getElementById('article-main-title-heading');
-                    if (titleHeading) {
-                        const headerOffset = 183;
-                        const elementPosition = titleHeading.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                    }
-                }, 60);
-            }
+            history.pushState({ slug: slug }, post.title, `?article=${slug}`);
 
             setTimeout(() => {
                 const tocHeader = document.getElementById('toc-header');
@@ -1086,16 +1044,38 @@ document.addEventListener('DOMContentLoaded', () => {
     window.closePostView = function() {
         dynamicView.style.display = 'none';
         dynamicContentBox.innerHTML = '';
-        elementsToHide.forEach(el => el.style.display = '');
-        history.pushState({}, '', window.location.pathname);
+        history.pushState({}, '', window.location.pathname || 'index.html');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.addEventListener('popstate', () => {
+    if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closePostView();
+        });
+    }
+
+    // الاعتراض العام للروابط بنفس الطريقة التي أرسلتها لتعمل القوائم بكفاءة تامة
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (link && link.getAttribute('href')) {
+            const href = link.getAttribute('href');
+            if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
+                e.preventDefault();
+                let slug = href.split('/').pop().replace('.html', '').replace('?article=', '').split('&')[0];
+                openPostBySlug(slug);
+            }
+        }
+    });
+
+    window.addEventListener('popstate', (e) => {
         const urlParams = new URLSearchParams(window.location.search);
         const article = urlParams.get('article');
         if (!article) {
-            closePostView();
+            dynamicView.style.display = 'none';
+            dynamicContentBox.innerHTML = '';
+        } else {
+            openPostBySlug(article);
         }
     });
 });
@@ -1116,7 +1096,7 @@ function buildTree(items) {
 }
 
 function generateMenuHtml(nodes, isRoot = false) {
-    if (!nodes || nodes.length === 0) return '';
+    if (nodes.length === 0) return '';
     let html = isRoot ? '' : '<ul class="dropdown-menu">';
     html += nodes.map(node => {
         let itemUrl = node.url || node.link || '#';
