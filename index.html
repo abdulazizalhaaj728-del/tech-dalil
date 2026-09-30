@@ -650,12 +650,13 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const jsonPath = 'data.json?t=' + Date.now();
 
-    // الاعتراض العام للروابط لضمان عمل كافة القوائم والمقالات بسلاسة
+    // الاعتراض العام المخصص لكي يعمل مع المقالات والسلاسل دون التأثير على القوائم المنسدلة العادية
     document.addEventListener('click', (e) => {
         const link = e.target.closest('a');
         if (link && link.getAttribute('href')) {
             const href = link.getAttribute('href');
-            if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
+            // التأكد من عدم تعطيل روابط القوائم الرئيسية أو الروابط الخارجية
+            if ((href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) && !link.closest('.dropdown-menu') && !link.closest('#site-main-menu')) {
                 e.preventDefault();
                 let slug = href.split('/').pop().replace('.html', '').replace('?article=', '').split('&')[0];
                 openPostBySlug(slug);
@@ -712,7 +713,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         let menuTree = data.menu ? buildTree(data.menu) : [];
-        window.sequencedGlobalPosts = getOrderedPosts(menuTree, rawPosts); // تخزين شامل لجميع عناوين القوائم والمقالات بالترتيب
+        window.sequencedGlobalPosts = getOrderedPosts(menuTree, rawPosts);
 
         const container = document.getElementById('posts-container');
         if (filteredPosts.length > 0) {
@@ -850,7 +851,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const elementsToHide = document.querySelectorAll('.right-scrollable-section > *:not(#dynamic-post-view)');
 
-    // دالة تحديث العناوين في أزرار التنقل بشكل تسلسلي صحيح حتى نهاية جميع المقالات
     window.shiftPreviewIndex = function(direction) {
         if (!window.sequencedGlobalPosts || window.sequencedGlobalPosts.length === 0) return;
         
@@ -862,7 +862,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (newIndex < 0) newIndex = 0;
         if (newIndex >= window.sequencedGlobalPosts.length) newIndex = window.sequencedGlobalPosts.length - 1;
 
-        // تحديث المقال النشط الحالي لكي ينتقل السهم للمقال التالي/السابق في الضغطة القادمة
         window.currentActiveSlug = window.sequencedGlobalPosts[newIndex].slug;
 
         let prevIndex = newIndex > 0 ? newIndex - 1 : -1;
