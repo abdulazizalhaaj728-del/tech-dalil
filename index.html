@@ -788,7 +788,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const articleParam = urlParams.get('article');
         if (articleParam) {
             let slug = articleParam.split('/').pop().replace('.html', '');
-            openPostBySlug(slug, 'none');
+            openPostBySlug(slug);
         }
 
     } catch (err) {
@@ -808,11 +808,11 @@ function getShortTitle(title) {
 document.addEventListener('DOMContentLoaded', () => {
     const dynamicView = document.getElementById('dynamic-post-view');
     const dynamicContentBox = document.getElementById('dynamic-post-content-box');
+    const backBtn = document.getElementById('back-to-home-btn');
+
     if (!dynamicView || !dynamicContentBox) return;
 
-    const elementsToHide = document.querySelectorAll('.right-scrollable-section > *:not(#dynamic-post-view)');
-
-    window.openPostBySlug = async function(identifier, scrollMode = 'title') {
+    window.openPostBySlug = async function(slug) {
         let data = window.siteBlogData;
         if (!data) {
             try {
@@ -828,7 +828,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let rawPosts = data.posts || [];
         let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
         let menuTree = data.menu ? buildTree(data.menu) : [];
-        
+
         function getOrderedPosts(menuItems, allPosts) {
             let ordered = [];
             let visitedIds = new Set();
@@ -858,16 +858,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
-
-        let post = rawPosts.find(p => {
-            let pSlug = (p.slug || '').trim();
-            let cleanId = String(p.id || '');
-            return pSlug === identifier || cleanId === identifier;
-        });
+        let post = rawPosts.find(p => (p.slug || '').trim() === slug || String(p.id || '') === slug || (p.url && p.url.includes(slug)));
 
         if (post) {
-            elementsToHide.forEach(el => el.style.display = 'none');
             dynamicView.style.display = 'block';
+
+            // التمرير الدقيق ليكون العنوان ببدأه من أعلى تماماً وتجنب اختفائه خلف الهيدر
+            setTimeout(() => {
+                const titleHeading = document.getElementById('article-main-title-heading');
+                if (titleHeading) {
+                    const headerOffset = 70;
+                    const elementPosition = titleHeading.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                } else {
+                    window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
+                }
+            }, 50);
 
             let ads = data.ads || {};
             let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
@@ -877,7 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let prevPost = currentIndex > 0 ? sequencedPosts[currentIndex - 1] : null;
             let nextPost = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? sequencedPosts[currentIndex + 1] : null;
 
-            // فصل تام ومسافة واضحة بين زر السهم وبوردر العنوان لتجنب الضغط بالخطأ وثبات تام للشاشة
+            // فصل تام ومسافة واضحة بين زر السهم وبوردر العنوان لمنع الضغط بالخطأ وثبات الشاشة
             let prevHtml = prevPost ? `
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
                     <a href="?article=${prevPost.slug}" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></a>
@@ -917,7 +924,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
 
-            let rawContent = post.content || '';
+            let rawContent = post.content || post.description || '';
             let contentParts = rawContent.split('</p>');
             let middleIndex = Math.floor(contentParts.length / 2);
             if (contentParts.length > 1) {
@@ -929,7 +936,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dynamicContentBox.innerHTML = `
                 <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                    <button class="back-to-home-action" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                    <button id="back-to-home-btn-inner" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
                 </div>
 
                 <div id="toc-container" style="margin-bottom: 20px; border: 1px solid #dcd3c1; border-radius: 6px; background: rgba(245, 240, 230, 0.4);">
@@ -940,14 +947,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div id="toc-list-box" style="display: none; padding: 10px 20px; border-top: 1px solid #dcd3c1; max-height: 200px; overflow-y: auto;"></div>
                 </div>
 
-                <!-- عنوان المقال الرئيسي مع هوامش متساوية -->
                 <div style="padding: 0 15px;">
                     <h1 id="article-main-title-heading" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
                     <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 20px;">
-                        <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍ ${post.author || 'إدارة المدونة'}</span>
+                        <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️️ ${post.author || 'إدارة المدونة'}</span>
                     </div>
                     ${topAd}
-                    <div class="dynamic-post-content-box" id="article-main-content" style="font-size: 0.9rem;">
+                    <div class="single-post-content" id="article-main-content" style="line-height: 1.8; color: #2C3E50; font-size: 0.9rem;">
                         ${rawContent}
                     </div>
                     ${botAd}
@@ -958,25 +964,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
 
                     <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
-                        <button class="back-to-home-action" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                        <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
                     </div>
                 </div>
             `;
 
-            history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
-
-            // التمرير الدقيق ليكون العنوان ببدأه من أعلى تماماً
-            if (scrollMode === 'title') {
-                setTimeout(() => {
-                    const titleHeading = document.getElementById('article-main-title-heading');
-                    if (titleHeading) {
-                        const headerOffset = 70; // مسافة بسيطة لتبقي العنوان ظاهراً وواضحاً تماماً من بدايته العليا
-                        const elementPosition = titleHeading.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                    }
-                }, 60);
-            }
+            history.pushState({ slug: slug }, post.title, `?article=${slug}`);
 
             setTimeout(() => {
                 const tocHeader = document.getElementById('toc-header');
@@ -1024,37 +1017,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // اعتراض الروابط ديناميكياً بنفس الطريقة الناجحة التي طلبتها لتعمل القوائم والروابط بكفاءة
+    window.closePostView = function() {
+        dynamicView.style.display = 'none';
+        dynamicContentBox.innerHTML = '';
+        history.pushState({}, '', window.location.pathname || 'index.html');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closePostView();
+        });
+    }
+
+    // الاعتراض العام للروابط بنفس الطريقة التي أرسلتها لتعمل القوائم بكفاءة تامة
     document.addEventListener('click', (e) => {
         const link = e.target.closest('a');
         if (link && link.getAttribute('href')) {
             const href = link.getAttribute('href');
-            // استثناء القوائم المنسدلة أو الروابط الخارجية أو الروابط التي ليس لها علاقة بالمقالات لتستمر بالعمل طبيعياً
-            if (href.includes('?article=')) {
+            if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
                 e.preventDefault();
-                let slug = href.split('?article=').pop().split('&')[0];
-                openPostBySlug(slug, 'title');
-            } else if (href.includes('articles/') || href.includes('post.html')) {
-                e.preventDefault();
-                let slug = href.split('/').pop().replace('.html', '').replace('?article=', '');
-                openPostBySlug(slug, 'title');
+                let slug = href.split('/').pop().replace('.html', '').replace('?article=', '').split('&')[0];
+                openPostBySlug(slug);
             }
         }
     });
 
-    window.closePostView = function() {
-        dynamicView.style.display = 'none';
-        dynamicContentBox.innerHTML = '';
-        elementsToHide.forEach(el => el.style.display = '');
-        history.pushState({}, '', window.location.pathname);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    window.addEventListener('popstate', () => {
+    window.addEventListener('popstate', (e) => {
         const urlParams = new URLSearchParams(window.location.search);
         const article = urlParams.get('article');
         if (!article) {
-            closePostView();
+            dynamicView.style.display = 'none';
+            dynamicContentBox.innerHTML = '';
+        } else {
+            openPostBySlug(article);
         }
     });
 });
@@ -1203,8 +1200,7 @@ if(secretTrigger) {
             alert("كلمة المرور غير صحيحة!");
         }
     });
-}
-    
+}    
     
     </script>
 </body>
