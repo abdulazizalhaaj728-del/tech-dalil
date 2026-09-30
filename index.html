@@ -650,23 +650,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const jsonPath = 'data.json?t=' + Date.now();
 
-    // الاعتراض العام المخصص لكي يعمل مع المقالات والسلاسل دون التأثير على القوائم المنسدلة العادية
-    document.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (link && link.getAttribute('href')) {
-            const href = link.getAttribute('href');
-            // التأكد من عدم تعطيل روابط القوائم الرئيسية أو الروابط الخارجية
-            if ((href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) && !link.closest('.dropdown-menu') && !link.closest('#site-main-menu')) {
-                e.preventDefault();
-                let slug = href.split('/').pop().replace('.html', '').replace('?article=', '').split('&')[0];
-                openPostBySlug(slug);
-            }
-        }
-    });
-//---------------------------------------------------------------
-
     try {
-        const response = await fetch(jsonPath);
+        const response = await fetch(jsonpath = jsonPath);
         const data = await response.json();
         window.siteBlogData = data; 
         
@@ -1118,17 +1103,24 @@ function generateMenuHtml(nodes, isRoot = false) {
     html += nodes.map(node => {
         let itemUrl = node.url || node.link || '#';
         let finalHref = itemUrl;
+        
+        // معالجة روابط القوائم المنسدلة بدقة لتفتح المقالات عبر أداة العرض دون منع القوائم
         if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
             if (itemUrl.endsWith('.html') && !itemUrl.includes('post.html')) {
                 let cleanName = itemUrl.replace('articles/', '').replace('.html', '');
                 finalHref = `?article=${cleanName}`;
             }
         }
+        
         let hasChildren = node.children && node.children.length > 0;
         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+        
+        // إضافة حدث افتراضي آمن يتيح فتح المقال من القائمة بسلاسة دون تعارض
+        let clickAction = (finalHref.includes('?article=')) ? `onclick="openPostBySlug('${finalHref.split('?article=')[1]}', 'title'); return false;"` : '';
+
         return `
             <li>
-                <a href="${finalHref}">${node.title}${arrow}</a>
+                <a href="${finalHref}" ${clickAction}>${node.title}${arrow}</a>
                 ${hasChildren ? generateMenuHtml(node.children, false) : ''}
             </li>
         `;
