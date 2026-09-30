@@ -1116,7 +1116,7 @@ function buildTree(items) {
 }
 
 function generateMenuHtml(nodes, isRoot = false) {
-    if (nodes.length === 0) return '';
+    if (!nodes || nodes.length === 0) return '';
     let html = isRoot ? '' : '<ul class="dropdown-menu">';
     html += nodes.map(node => {
         let itemUrl = node.url || node.link || '#';
