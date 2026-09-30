@@ -1103,20 +1103,19 @@ function generateMenuHtml(nodes, isRoot = false) {
     html += nodes.map(node => {
         let itemUrl = node.url || node.link || '#';
         let finalHref = itemUrl;
+        let clickAction = '';
         
-        // معالجة روابط القوائم المنسدلة بدقة لتفتح المقالات عبر أداة العرض دون منع القوائم
+        // إذا كان الرابط مقالاً أو مساراً مرتبطاً بـ html، نقوم بتحويله ليعمل داخل صندوق المقالات الديناميكي
         if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
             if (itemUrl.endsWith('.html') && !itemUrl.includes('post.html')) {
                 let cleanName = itemUrl.replace('articles/', '').replace('.html', '');
                 finalHref = `?article=${cleanName}`;
+                clickAction = `onclick="openPostBySlug('${cleanName}', 'title'); return false;"`;
             }
         }
         
         let hasChildren = node.children && node.children.length > 0;
         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-        
-        // إضافة حدث افتراضي آمن يتيح فتح المقال من القائمة بسلاسة دون تعارض
-        let clickAction = (finalHref.includes('?article=')) ? `onclick="openPostBySlug('${finalHref.split('?article=')[1]}', 'title'); return false;"` : '';
 
         return `
             <li>
@@ -1129,6 +1128,7 @@ function generateMenuHtml(nodes, isRoot = false) {
     return html;
 }
 
+        
 function initSliderLogic() {
     const slides = document.querySelectorAll('.square-slide');
     if(slides.length === 0) return;
