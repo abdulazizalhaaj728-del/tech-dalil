@@ -904,24 +904,72 @@ document.addEventListener('DOMContentLoaded', () => {
             let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
 
             let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
-            let prevPost = currentIndex > 0 ? sequencedPosts[currentIndex - 1] : null;
-            let nextPost = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? sequencedPosts[currentIndex + 1] : null;
 
-            let prevHtml = prevPost ? `
-                <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                    <a href="?article=${prevPost.slug}" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></a>
-                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right;">
-                        <a href="?article=${prevPost.slug}" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${prevPost.title}">${getShortTitle(prevPost.title)}</a>
-                    </div>
-                </div>` : `<span></span>`;
+            // سننشئ متغيرات لحفظ مؤشر المقالات المعروضة عبر السهمين تفاعلياً
+            window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
+            window._currentNavNextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
 
-            let nextHtml = nextPost ? `
-                <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
-                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left;">
-                        <a href="?article=${nextPost.slug}" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nextPost.title}">${getShortTitle(nextPost.title)}</a>
-                    </div>
-                    <a href="?article=${nextPost.slug}" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; text-decoration: none; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></a>
-                </div>` : `<span></span>`;
+            function renderNavContainer() {
+                let pPost = window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
+                let nPost = window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
+
+                let pHtml = pPost ? `
+                    <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
+                        <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال السابق (تدوير الأسماء)"><i class="fa-solid fa-arrow-right"></i></button>
+                        <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right;">
+                            <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${pPost.title}">${getShortTitle(pPost.title)}</a>
+                        </div>
+                    </div>` : `<span></span>`;
+
+                let nHtml = nPost ? `
+                    <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
+                        <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left;">
+                            <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nPost.title}">${getShortTitle(nPost.title)}</a>
+                        </div>
+                        <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال التالي (تدوير الأسماء)"><i class="fa-solid fa-arrow-left"></i></button>
+                    </div>` : `<span></span>`;
+
+                const navBox = document.getElementById('bottom-navigation-wrapper');
+                if (navBox) {
+                    navBox.innerHTML = `
+                        <div>${pHtml}</div>
+                        <div>${nHtml}</div>
+                    `;
+                    attachNavEvents();
+                }
+            }
+
+            function attachNavEvents() {
+                const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
+                const nextArrowBtn = document.getElementById('custom-next-arrow-btn');
+
+                if (prevArrowBtn) {
+                    prevArrowBtn.onclick = () => {
+                        // السهم الأيمن يقلب الأسماء إلى الوراء (تراجع في الفهرس نحو البداية)
+                        if (window._currentNavPrevIndex > 0) {
+                            window._currentNavPrevIndex--;
+                            window._currentNavNextIndex = window._currentNavPrevIndex + 2 < sequencedPosts.length ? window._currentNavPrevIndex + 2 : -1; // تعديل التوافقية أو جعلها تتحرك خطوة بخطوة
+                        } else {
+                            // إذا وصلنا للبداية يمكننا جعلها دائرية أو إيقافها، هنا نحرك المؤشر خطوة للخلف بناءً على المطلوب
+                            window._currentNavPrevIndex = sequencedPosts.length - 1;
+                        }
+                        renderNavContainer();
+                    };
+                }
+
+                if (nextArrowBtn) {
+                    nextArrowBtn.onclick = () => {
+                        // السهم الأيسر يقلب الأسماء إلى الأمام (تقدم في الفهرس نحو النهاية)
+                        if (window._currentNavNextIndex !== -1 && window._currentNavNextIndex < sequencedPosts.length - 1) {
+                            window._currentNavNextIndex++;
+                            window._currentNavPrevIndex = window._currentNavNextIndex - 2 >= 0 ? window._currentNavNextIndex - 2 : -1;
+                        } else {
+                            window._currentNavNextIndex = 0;
+                        }
+                        renderNavContainer();
+                    };
+                }
+            }
 
             let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
             let relatedHtml = '';
@@ -980,9 +1028,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     ${botAd}
 
-                    <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>${prevHtml}</div>
-                        <div>${nextHtml}</div>
+                    <div id="bottom-navigation-wrapper" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <!-- يتم حقن الأزرار والعناوين هنا ديناميكياً -->
                     </div>
 
                     <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
@@ -991,7 +1038,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
+            // تحديث الرابط للمقال الحالي فقط عند فتحه لأول مرة
             history.pushState({ slug: slug }, post.title, `?article=${slug}`);
+
+            // استدعاء دالة بناء الأزرار والأسهم لأول مرة
+            renderNavContainer();
 
             setTimeout(() => {
                 const tocHeader = document.getElementById('toc-header');
@@ -1054,9 +1105,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.addEventListener('click', (e) => {
+        // التحقق مما إذا كان النقر على عناوين المقالات في التنقل السفلي أو غيرها
         const link = e.target.closest('a');
         if (link && link.getAttribute('href')) {
             const href = link.getAttribute('href');
+            // إذا كان الرابط تابعاً لعناوين المقالات (سواء في القائمة، أو العناوين المجاورة للسهمين)
             if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
                 e.preventDefault();
                 let slug = href.split('/').pop().replace('.html', '').replace('?article=', '').split('&')[0];
@@ -1221,8 +1274,7 @@ if(secretTrigger) {
             alert("كلمة المرور غير صحيحة!");
         }
     });
-}
-        
+}        
     </script>
 </body>
 </html>
