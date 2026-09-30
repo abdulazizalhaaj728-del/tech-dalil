@@ -864,6 +864,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+
+
+
+    // التعامل مع الروابط ديناميكياً (Intercept links)
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (link && link.getAttribute('href')) {
+            const href = link.getAttribute('href');
+            if (href.includes('post.html') || href.includes('articles/')) {
+                e.preventDefault();
+                // استخلاص الـ slug من الرابط
+                let slug = href.split('/').pop().replace('.html', '').replace('?article=', '');
+                openPostBySlug(slug);
+            }
+        }
+    });
+
+
+    
+
+    
     window.openPostBySlug = async function(identifier, scrollMode = 'title') {
         let data = window.siteBlogData;
         if (!data) {
