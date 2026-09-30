@@ -868,6 +868,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // التعامل مع الروابط ديناميكياً (Intercept links)
+    /*
     document.addEventListener('click', (e) => {
         const link = e.target.closest('a');
         if (link && link.getAttribute('href')) {
@@ -880,8 +881,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+*/
 
 
+    // التقاط الروابط وضمان عملها للمقالات القديمة والجديدة
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (link && link.getAttribute('href')) {
+            const href = link.getAttribute('href');
+            // إذا كان الرابط يخص المقالات
+            if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
+                e.preventDefault();
+                let identifier = href.split('/').pop().replace('.html', '').replace('?article=', '').trim();
+                openPostBySlug(identifier);
+            }
+        }
+    });
     
 
     
@@ -1010,7 +1025,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     const titleHeading = document.getElementById('article-main-title-heading');
                     if (titleHeading) {
-                        const headerOffset = 70;
+                        const headerOffset = 170;
                         const elementPosition = titleHeading.getBoundingClientRect().top;
                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                         window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
