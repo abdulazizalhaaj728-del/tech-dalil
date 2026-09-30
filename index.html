@@ -882,8 +882,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
-        let post = rawPosts.find(p => (p.slug || '').trim() === slug || String(p.id || '') === slug || (p.url && p.url.includes(slug)));
-
+            let post = rawPosts.find(p => {
+                let pSlug = (p.slug || '').replace('.html', '').trim();
+                let targetSlug = slug.replace('.html', '').trim();
+                let pUrl = (p.url || '').replace('.html', '').trim();
+                return pSlug === targetSlug || String(p.id || '') === targetSlug || pUrl.includes(targetSlug);
+            });
         if (post) {
             dynamicView.style.display = 'block';
 
