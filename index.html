@@ -649,180 +649,93 @@
     <script>
 
 document.addEventListener('DOMContentLoaded', () => {
-
     const dynamicView = document.getElementById('dynamic-post-view');
-
     const dynamicContentBox = document.getElementById('dynamic-post-content-box');
-
     const backBtn = document.getElementById('back-to-home-btn');
-
     
-
     // العناصر الأصلية للرئيسية (التي سنقوم بإخفائها عند عرض المقال)
-
     // يمكنك تحديد الحاويات أو أقسام الرئيسية التي تريد إخفاءها مؤقتاً
-
     const mainContentArea = document.querySelector('.right-scrollable-section main'); // أو السلايدر وشبكة المقالات
 
-
-
     // دالة فتح المقال ديناميكياً دون مغادرة الصفحة
-
     window.openPostBySlug = async function(slug) {
-
         // جلب البيانات من الذاكرة أو ملف data.json
-
         let data = window.siteBlogData; // افترض أنك خزنت البيانات عامة عند تحميل الصفحة
-
         if (!data) {
-
             try {
-
                 const res = await fetch('data.json?t=' + Date.now());
-
                 data = await res.json();
-
             } catch (e) {
-
                 console.error("تعذر جلب البيانات");
-
                 return;
-
             }
-
         }
-
-
 
         const post = data.posts.find(p => p.slug === slug || p.url.includes(slug));
-
         if (post) {
-
             // إخفاء الـ آرتايكلات العادية والتركيز على صندوق المقال المفرد
-
             // إظهار صندوق المقال فوق كل شيء
-
             dynamicView.style.display = 'block';
-
             
-
             // تمرير الشاشة بسلاسة إلى الأعلى حيث يظهر المقال
-
             window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
 
-
-
             let ads = data.ads || {};
-
             let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
-
             let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
 
-
-
             dynamicContentBox.innerHTML = `
-
                 <h1 style="font-size: 1.8rem; font-weight: 700; color: #2C3E50; margin-bottom: 10px; line-height: 1.4;">${post.title}</h1>
-
                 <div class="post-meta" style="color: #596573; font-size: 0.85rem; margin-bottom: 20px;">
-
                     <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍️ ${post.author || 'إدارة المدونة'}</span>
-
                 </div>
-
                 ${topAd}
-
                 <div class="single-post-content" style="line-height: 1.8; color: #2C3E50;">
-
                     ${post.content || post.description || ''}
-
                 </div>
-
                 ${botAd}
-
             `;
 
-
-
             // تغيير رابط المتصفح (URL) دون إعادة تحميل الصفحة لتשعر كأنها صفحة حقيقية
-
             history.pushState({ slug: slug }, post.title, `?article=${slug}`);
-
         }
-
     };
 
-
-
     // زر العودة للرئيسية وإخفاء صندوق المقال
-
     if (backBtn) {
-
         backBtn.addEventListener('click', (e) => {
-
             e.preventDefault();
-
             dynamicView.style.display = 'none';
-
             dynamicContentBox.innerHTML = '';
-
             history.pushState({}, '', 'index.html');
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
-
         });
-
     }
 
-
-
     // التعامل مع الروابط ديناميكياً (Intercept links)
-
     document.addEventListener('click', (e) => {
-
         const link = e.target.closest('a');
-
         if (link && link.getAttribute('href')) {
-
             const href = link.getAttribute('href');
-
             if (href.includes('post.html') || href.includes('articles/')) {
-
                 e.preventDefault();
-
                 // استخلاص الـ slug من الرابط
-
                 let slug = href.split('/').pop().replace('.html', '').replace('?article=', '');
-
                 openPostBySlug(slug);
-
             }
-
         }
-
     });
-
-
 
     // دعم زر الرجوع في المتصفح (Back Button)
-
     window.addEventListener('popstate', (e) => {
-
         const urlParams = new URLSearchParams(window.location.search);
-
         const article = urlParams.get('article');
-
         if (!article) {
-
             dynamicView.style.display = 'none';
-
             dynamicContentBox.innerHTML = '';
-
         }
-
     });
-
-}); 
+});
         
     </script>
 </body>
