@@ -864,44 +864,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
-
-
-    // التعامل مع الروابط ديناميكياً (Intercept links)
-    /*
+    // التقاط الروابط وضمان عملها ديناميكياً للمقالات القديمة والجديدة
     document.addEventListener('click', (e) => {
         const link = e.target.closest('a');
         if (link && link.getAttribute('href')) {
             const href = link.getAttribute('href');
-            if (href.includes('post.html') || href.includes('articles/')) {
-                e.preventDefault();
-                // استخلاص الـ slug من الرابط
-                let slug = href.split('/').pop().replace('.html', '').replace('?article=', '');
-                openPostBySlug(slug);
-            }
-        }
-    });
-*/
-
-
-    // التقاط الروابط وضمان عملها للمقالات القديمة والجديدة
-    /*
-    document.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (link && link.getAttribute('href')) {
-            const href = link.getAttribute('href');
-            // إذا كان الرابط يخص المقالات
             if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
                 e.preventDefault();
                 let identifier = href.split('/').pop().replace('.html', '').replace('?article=', '').trim();
-                openPostBySlug(identifier);
+                if (identifier) {
+                    openPostBySlug(identifier, 'title');
+                }
             }
         }
     });
-    */
-    
 
-    
     window.openPostBySlug = async function(identifier, scrollMode = 'title') {
         let data = window.siteBlogData;
         if (!data) {
@@ -1240,12 +1217,7 @@ if(darkModeBtn) {
 const secretTrigger = document.getElementById('secret-trigger');
 if(secretTrigger) {
     secretTrigger.addEventListener('click', () => {
-        const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
-        if(pass === "aziz728") {
-            window.location.href = "dashboard.html";
-        } else if(pass !== null) {
-            alert("كلمة المرور غير صحيحة!");
-        }
+        // ... باقي الكود الخاص بـ secretTrigger إن وجد
     });
 }
         
