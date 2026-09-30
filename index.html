@@ -447,6 +447,30 @@
                 grid-template-columns: 1fr; /* عمود واحد في الهواتف الضيقة */
             }
         }
+
+
+        /* ضمان تفاعل واستجابة القوائم المنسدلة وكافة عناصرها للنقر تماماً */
+        .site-main-menu, 
+        .site-main-menu ul, 
+        .site-main-menu li, 
+        .site-main-menu a,
+        .dropdown-menu,
+        .dropdown-menu li,
+        .dropdown-menu a {
+            pointer-events: auto !important;
+        }
+        
+        /* التأكد من أن القوائم المنسدلة تظهر فوق العناصر وتستقبل النقرات عند التحويم أو الاستخدام */
+        .site-main-menu li {
+            position: relative;
+        }
+        
+        .site-main-menu li:hover > .dropdown-menu {
+            display: block !important;
+            pointer-events: auto !important;
+        }
+
+        
         
     </style>
 </head>
