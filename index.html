@@ -627,6 +627,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     const jsonPath = 'data.json?t=' + Date.now();
 
     try {
+
+
+// الاعتراض العام للروابط لضمان عمل كافة القوائم والمقالات بسلاسة
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (link && link.getAttribute('href')) {
+            const href = link.getAttribute('href');
+            if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
+                e.preventDefault();
+                let slug = href.split('/').pop().replace('.html', '').replace('?article=', '').split('&')[0];
+                openPostBySlug(slug);
+            }
+        }
+    });
+//---------------------------------------------------------------
+
+        
         const response = await fetch(jsonPath);
         const data = await response.json();
         window.siteBlogData = data; 
@@ -1081,22 +1098,17 @@ function generateMenuHtml(nodes, isRoot = false) {
     html += nodes.map(node => {
         let itemUrl = node.url || node.link || '#';
         let finalHref = itemUrl;
-        
         if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
-            let cleanSlug = itemUrl.replace('articles/', '').replace('.html', '').replace(/^\/+/, '');
-            finalHref = `?article=${cleanSlug}`;
+            if (itemUrl.endsWith('.html') && !itemUrl.includes('post.html')) {
+                let cleanName = itemUrl.replace('articles/', '').replace('.html', '');
+                finalHref = `?article=${cleanName}`;
+            }
         }
-        
-        let slugMatch = finalHref.includes('?article=') ? finalHref.split('?article=')[1] : '';
-
         let hasChildren = node.children && node.children.length > 0;
         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-        
-        let onClickAttr = slugMatch ? `onclick="openPostBySlug('${slugMatch}', 'title'); return false;"` : '';
-
         return `
             <li>
-                <a href="${finalHref}" ${onClickAttr}>${node.title}${arrow}</a>
+                <a href="${finalHref}">${node.title}${arrow}</a>
                 ${hasChildren ? generateMenuHtml(node.children, false) : ''}
             </li>
         `;
