@@ -158,11 +158,12 @@
         <div class="section-box">
             <h3>☁️ إعدادات الربط السحابي (GitHub Sync)</h3>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
-                أدخل بيانات حسابك في جيت هب لتتمكن من تحديث ملف <code>data.json</code> مباشرة من لوحة التحكم.
+                أدخل بيانات حسابك في جيت هب لتتمكن من تحديث ملف <code>data.json</code> مباشرة من لوحة التحكم. 
+                <span style="color: #f59e0b; display: block; margin-top: 5px;">⚠️ تنبيه أمني: لا يتم حفظ رمز الوصول (Token) في التخزين المحلي أبداً حماية لحسابك.</span>
             </p>
             <div style="display: grid; gap: 10px;">
                 <div class="form-group" style="margin-bottom:0;">
-                    <label>رمز الوصول الشخصي (GitHub Token):</label>
+                    <label>رمز الوصول الشخصي (GitHub Token) - <span style="color: #ef4444;">غير محفوظ محلياً</span>:</label>
                     <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxx">
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
@@ -222,7 +223,7 @@
 
         <!-- ودجات الشريط الأيسر والتذييل -->
         <div class="section-box">
-            <h3>⚙️️ ودجات الشريط الأيسر (Sidebar) والتذييل (Footer)</h3>
+            <h3>⚙ ودجات الشريط الأيسر (Sidebar) والتذييل (Footer)</h3>
             <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
                 <div style="flex: 0.9; min-width: 260px;">
                     <input type="hidden" id="editing-widget-index" value="">
@@ -557,12 +558,17 @@ function saveGitHubSettings() {
     if (!globalData.settings.github) {
         globalData.settings.github = {};
     }
-    globalData.settings.github.token = token;
+    // ملاحظة أمنية: لا يتم حفظ التوكن في الـ localStorage نهائياً لمنع تسريبه أو حظر الحساب
+    globalData.settings.github.token = token; 
     globalData.settings.github.owner = owner;
     globalData.settings.github.repo = repo;
 
-    localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
-    showCustomAlert("نجاح", "تم حفظ إعدادات جيت هب بنجاح!");
+    // حفظ المالك والمستودع فقط محلياً، وإبقاء التتوكن للجلسة الحالية فقط في الذاكرة
+    const storageBackup = JSON.parse(JSON.stringify(globalData));
+    storageBackup.settings.github.token = ""; 
+
+    localStorage.setItem('tech_dalil_local_data', JSON.stringify(storageBackup));
+    showCustomAlert("نجاح", "تم حفظ اسم المستخدم والمستودع بنجاح (ملاحظة: لضمان أمان حسابك، لم يتم حفظ رمز الوصول Token محلياً).");
 }
 
 function openArticleManager() {
@@ -617,7 +623,11 @@ async function saveOrUpdatePost() {
         globalData.posts.unshift(postObj);
     }
 
-    localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
+    const storageBackup = JSON.parse(JSON.stringify(globalData));
+    if(storageBackup.settings && storageBackup.settings.github) {
+        storageBackup.settings.github.token = "";
+    }
+    localStorage.setItem('tech_dalil_local_data', JSON.stringify(storageBackup));
     
     showCustomAlert("نجاح", "تم الحفظ المؤقت محلياً، وجاري الرفع للسحابة...");
     closeArticleManager();
@@ -627,8 +637,14 @@ async function saveOrUpdatePost() {
 }
 
 async function syncDataToCloud(dataObj) {
+    const currentTokenInput = document.getElementById('gh-token-input').value.trim();
+    if (currentTokenInput) {
+        if (!globalData.settings.github) globalData.settings.github = {};
+        globalData.settings.github.token = currentTokenInput;
+    }
+
     if (!globalData.settings.github || !globalData.settings.github.token || !globalData.settings.github.owner || !globalData.settings.github.repo) {
-        console.warn('بيانات الربط السحابي غير مكتملة. تم الحفظ محلياً فقط.');
+        console.warn('بيانات الربط السحابي أو التوكن غير مكتملة لجلسة العمل الحالية. تم الحفظ محلياً فقط.');
         return;
     }
 
@@ -683,11 +699,13 @@ function loadDataFromStorageOrCloud() {
     const localSaved = localStorage.getItem('tech_dalil_local_data');
     if (localSaved) {
         try {
-            globalData = JSON.parse(localSaved);
+            const parsedLocal = JSON.parse(localSaved);
+            globalData = { ...globalData, ...parsedLocal };
             if (globalData.settings && globalData.settings.github) {
-                document.getElementById('gh-token-input').value = globalData.settings.github.token || '';
                 document.getElementById('gh-owner-input').value = globalData.settings.github.owner || '';
                 document.getElementById('gh-repo-input').value = globalData.settings.github.repo || '';
+                // حقل التوكن يظل فارغاً تماماً عند التحميل لضمان الأمان وعدم حفظه محلياً
+                document.getElementById('gh-token-input').value = '';
             }
         } catch (e) {
             console.error('خطأ في قراءة التخزين المحلي');
@@ -1336,7 +1354,6 @@ function handleDragEnd(e) {
     });
     draggedIndices = [];
 }
-
         
 function saveAdsSettings() {
     globalData.ads = {
