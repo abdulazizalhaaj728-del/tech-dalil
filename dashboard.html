@@ -126,13 +126,19 @@
         .ql-font-tajawal { font-family: 'Tajawal', sans-serif !important; }
         .ql-font-amiri { font-family: 'Amiri', serif !important; }
 
-        /* تخصيص صندوق المقال ومنطقة الودجات بلون بيج دافئ ومريح للعين */
+        /* تخصيص صندوق المقال ومنطقة الودجات بلون بيج دافئ ومريح للعين مع تحكم بارتفاع الـ Scroll للمقالات (أول 5 مقالات والباقي سكرول) */
         .post-card, #editor-container, .ql-container.ql-snow, #widget-custom-text, #widgets-list-box {
             background-color: #F7F4EF !important;
             background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png');
             border: 1px solid #E2D8C5 !important;
             border-radius: 12px;
             color: #2C3E50 !important;
+        }
+
+        /* تخصيص قائمة الودجات وقوائم المقالات لتشمل تمرير (Scroll) بعد أول 5 عناصر (ارتفاع تقريبي لـ 5 عناصر مع سكرول للباقي) */
+        #widgets-list-box, #posts-admin-management-list {
+            max-height: 280px !important;
+            overflow-y: auto !important;
         }
         
         .ql-editor, .post-card p, .section-box textarea, input[type="text"] {
@@ -143,7 +149,7 @@
             line-height: 2 !important;
         }
         
-        .post-card h1, .post-card h2, .post-card h3 {
+        .post-card h1, .post-card h2, .post-card h3, .widgets-table th, h3 {
             color: #2C3E50 !important;
         }
     </style>
@@ -158,12 +164,11 @@
         <div class="section-box">
             <h3>☁️ إعدادات الربط السحابي (GitHub Sync)</h3>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
-                أدخل بيانات حسابك في جيت هب لتتمكن من تحديث ملف <code>data.json</code> مباشرة من لوحة التحكم. 
-                <span style="color: #f59e0b; display: block; margin-top: 5px;">⚠️ تنبيه أمني: لا يتم حفظ رمز الوصول (Token) في التخزين المحلي أبداً حماية لحسابك.</span>
+                أدخل بيانات حسابك في جيت هب لتتمكن من تحديث ملف <code>data.json</code> مباشرة من لوحة التحكم.
             </p>
             <div style="display: grid; gap: 10px;">
                 <div class="form-group" style="margin-bottom:0;">
-                    <label>رمز الوصول الشخصي (GitHub Token) - <span style="color: #ef4444;">غير محفوظ محلياً</span>:</label>
+                    <label>رمز الوصول الشخصي (GitHub Token):</label>
                     <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxx">
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
@@ -217,6 +222,7 @@
                 <input type="text" id="menu-url-input" placeholder="الرابط (مثال: # أو رابط مقال)" style="flex: 2;">
                 <button type="button" class="btn" id="menu-add-btn" onclick="addOrUpdateStructuredMenuItem()">إضافة للقائمة</button>
                 <button type="button" class="btn" id="menu-cancel-edit-btn" onclick="resetMenuForm()" style="display:none; background:#64748b;">إلغاء</button>
+                <button type="button" class="btn" onclick="saveStructuredMenuSettings()" style="background:#10b981; margin-right: auto;"><i class="fa-solid fa-floppy-disk"></i> حفظ إعدادات القوائم</button>
             </div>
             <div id="admin-menu-structured-list" style="max-height: 300px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
         </div>
@@ -273,15 +279,16 @@
                         <label class="checkbox-label"><input type="checkbox" id="widget-pos-sidebar" checked onchange="handleWidgetPosChange('sidebar')"> للشريط الأيسر</label>
                         <label class="checkbox-label"><input type="checkbox" id="widget-pos-footer" onchange="handleWidgetPosChange('footer')"> للتذييل (أقصى 4 أفقية)</label>
                     </div>
-                    <div style="display: flex; gap: 8px;">
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                         <button type="button" class="btn" id="widget-main-action-btn" onclick="handleWidgetMainAction()">إضافة ودجت جديد</button>
                         <button type="button" class="btn" id="widget-cancel-btn" onclick="resetWidgetForm()" style="display:none; background:#64748b;">إلغاء</button>
+                        <button type="button" class="btn" onclick="saveWidgetsSettingsManually()" style="background:#10b981;"><i class="fa-solid fa-floppy-disk"></i> حفظ إعدادات الودجت</button>
                     </div>
                 </div>
                 <div style="width: 1px; background: var(--border-color); align-self: stretch;"></div>
                 <div style="flex: 1.1; min-width: 320px;">
                     <label style="color: var(--accent-color); margin-bottom: 8px;">قائمة الودجات المخزنة:</label>
-                    <div id="widgets-list-box" style="max-height: 250px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
+                    <div id="widgets-list-box" style="background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
                 </div>
             </div>
         </div>
@@ -558,17 +565,12 @@ function saveGitHubSettings() {
     if (!globalData.settings.github) {
         globalData.settings.github = {};
     }
-    // ملاحظة أمنية: لا يتم حفظ التوكن في الـ localStorage نهائياً لمنع تسريبه أو حظر الحساب
-    globalData.settings.github.token = token; 
+    globalData.settings.github.token = token;
     globalData.settings.github.owner = owner;
     globalData.settings.github.repo = repo;
 
-    // حفظ المالك والمستودع فقط محلياً، وإبقاء التتوكن للجلسة الحالية فقط في الذاكرة
-    const storageBackup = JSON.parse(JSON.stringify(globalData));
-    storageBackup.settings.github.token = ""; 
-
-    localStorage.setItem('tech_dalil_local_data', JSON.stringify(storageBackup));
-    showCustomAlert("نجاح", "تم حفظ اسم المستخدم والمستودع بنجاح (ملاحظة: لضمان أمان حسابك، لم يتم حفظ رمز الوصول Token محلياً).");
+    localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
+    showCustomAlert("نجاح", "تم حفظ إعدادات جيت هب بنجاح!");
 }
 
 function openArticleManager() {
@@ -623,11 +625,7 @@ async function saveOrUpdatePost() {
         globalData.posts.unshift(postObj);
     }
 
-    const storageBackup = JSON.parse(JSON.stringify(globalData));
-    if(storageBackup.settings && storageBackup.settings.github) {
-        storageBackup.settings.github.token = "";
-    }
-    localStorage.setItem('tech_dalil_local_data', JSON.stringify(storageBackup));
+    localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
     
     showCustomAlert("نجاح", "تم الحفظ المؤقت محلياً، وجاري الرفع للسحابة...");
     closeArticleManager();
@@ -637,14 +635,8 @@ async function saveOrUpdatePost() {
 }
 
 async function syncDataToCloud(dataObj) {
-    const currentTokenInput = document.getElementById('gh-token-input').value.trim();
-    if (currentTokenInput) {
-        if (!globalData.settings.github) globalData.settings.github = {};
-        globalData.settings.github.token = currentTokenInput;
-    }
-
     if (!globalData.settings.github || !globalData.settings.github.token || !globalData.settings.github.owner || !globalData.settings.github.repo) {
-        console.warn('بيانات الربط السحابي أو التوكن غير مكتملة لجلسة العمل الحالية. تم الحفظ محلياً فقط.');
+        console.warn('بيانات الربط السحابي غير مكتملة. تم الحفظ محلياً فقط.');
         return;
     }
 
@@ -699,13 +691,11 @@ function loadDataFromStorageOrCloud() {
     const localSaved = localStorage.getItem('tech_dalil_local_data');
     if (localSaved) {
         try {
-            const parsedLocal = JSON.parse(localSaved);
-            globalData = { ...globalData, ...parsedLocal };
+            globalData = JSON.parse(localSaved);
             if (globalData.settings && globalData.settings.github) {
+                document.getElementById('gh-token-input').value = globalData.settings.github.token || '';
                 document.getElementById('gh-owner-input').value = globalData.settings.github.owner || '';
                 document.getElementById('gh-repo-input').value = globalData.settings.github.repo || '';
-                // حقل التوكن يظل فارغاً تماماً عند التحميل لضمان الأمان وعدم حفظه محلياً
-                document.getElementById('gh-token-input').value = '';
             }
         } catch (e) {
             console.error('خطأ في قراءة التخزين المحلي');
@@ -1040,6 +1030,13 @@ function handleWidgetMainAction() {
 
     resetWidgetForm();
     loadSidebarWidgetsAdmin();
+    saveWidgetsSettingsManually();
+}
+
+function saveWidgetsSettingsManually() {
+    localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
+    showCustomAlert("نجاح", "تم حفظ إعدادات الودجت بنجاح!");
+    syncDataToCloud(globalData);
 }
 
 function editWidget(index) {
@@ -1081,6 +1078,7 @@ function toggleWidgetActive(index) {
     let widgets = globalData.widgets;
     if (widgets[index]) {
         widgets[index].active = !widgets[index].active;
+        saveWidgetsSettingsManually();
     }
 }
 
@@ -1089,6 +1087,7 @@ function removeSidebarWidget(index) {
         let widgets = globalData.widgets;
         widgets.splice(index, 1);
         loadSidebarWidgetsAdmin();
+        saveWidgetsSettingsManually();
     });
 }
 
@@ -1124,6 +1123,14 @@ function addOrUpdateStructuredMenuItem() {
     urlInput.value = '';
     menuHasChanges = true;
     renderStructuredMenuAdmin();
+    saveStructuredMenuSettings();
+}
+
+function saveStructuredMenuSettings() {
+    localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
+    menuHasChanges = false;
+    showCustomAlert("نجاح", "تم حفظ إعدادات القوائم بنجاح!");
+    syncDataToCloud(globalData);
 }
 
 function editStructuredItem(index) {
@@ -1150,6 +1157,7 @@ function deleteStructuredItem(index) {
     menu.splice(index, 1);
     menuHasChanges = true;
     renderStructuredMenuAdmin();
+    saveStructuredMenuSettings();
 }
 
 let collapsedMenuIndices = new Set();
@@ -1346,6 +1354,7 @@ function handleDrop(e) {
     globalData.menu = remainingItems;
     collapsedMenuIndices.clear();
     renderStructuredMenuAdmin();
+    saveStructuredMenuSettings();
 }
 
 function handleDragEnd(e) {
@@ -1364,7 +1373,9 @@ function saveAdsSettings() {
         botOn: document.getElementById('ad-bot-on').checked,
         botCode: document.getElementById('ad-bot-code').value
     };
+    localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
     showCustomAlert("نجاح", "تم حفظ إعدادات وشفرات الإعلانات!");
+    syncDataToCloud(globalData);
 }
 
 window.addEventListener('beforeunload', function (e) {
