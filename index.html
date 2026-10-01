@@ -101,8 +101,14 @@
         .ticker-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 15px; display: flex; align-items: center; position: relative; overflow: hidden; }
         .ticker-title { background: var(--accent-color); color: #000; padding: 5px 12px; font-size: 0.85rem; font-weight: 700; border-radius: 4px; margin-left: 15px; flex-shrink: 0; z-index: 5; position: relative; }
         .ticker-viewport { overflow: hidden; width: 100%; position: relative; height: 24px; }
-        .ticker-content { display: inline-block; position: absolute; white-space: nowrap; font-size: 0.9rem; color: var(--text-main); right: 0; }
-        .ticker-content span { margin-left: 35px; }
+        .ticker-content { display: inline-block; position: absolute; white-space: nowrap; animation: tickerSmooth 18s linear infinite; font-size: 0.9rem; color: var(--text-main); right: 0; }
+        .ticker-content span { margin-left: 35px; cursor: pointer; }
+        @keyframes tickerSmooth { 
+            0% { transform: translateX(-100%); opacity: 1; } 
+            90% { opacity: 1; }
+            95% { transform: translateX(85%); opacity: 0; }
+            100% { transform: translateX(100%); opacity: 0; } 
+        }
 
         .main-menu-bar { width: 100%; margin: 10px auto 0; padding: 0; position: sticky; top: 0; z-index: 999; }
         .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; }
@@ -110,21 +116,42 @@
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
        
         .dropdown-menu {
-            position: absolute; top: 100%; right: 0; min-width: 200px;
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 8px; list-style: none; display: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 99; text-align: right; padding: 5px 0;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            min-width: 200px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            list-style: none;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 99;
+            text-align: right;
+            padding: 5px 0;
         }
+
         .mega-menu > li { position: relative; }
         .mega-menu > li:hover > .dropdown-menu { display: block; }
+
         .dropdown-menu li { position: relative; border-bottom: 1px solid var(--border-color); }
         .dropdown-menu li:last-child { border-bottom: none; }
-        .dropdown-menu li a { display: block; padding: 9px 15px; color: var(--text-main); text-decoration: none; font-size: 12.5px; font-weight: 600; }
+        .dropdown-menu li a { display: block; padding: 9px 15px; color: var(--text-main); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: 0.2s; }
         .dropdown-menu li a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); padding-right: 20px; }
-        .dropdown-menu li:hover > .dropdown-menu { display: block; position: absolute; right: 100%; top: -5px; }
+        
+        .dropdown-menu li:hover > .dropdown-menu {
+            display: block;
+            position: absolute;
+            right: 100%;
+            top: -5px;
+        }
 
         .content img, .post-img, .featured-img, article img {
-            display: block !important; margin: 15px auto !important; max-width: 100%; height: auto; border-radius: 8px;
+            display: block !important;
+            margin: 15px auto !important;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
         }
         
         .three-columns-grid { 
@@ -137,8 +164,13 @@
         .top-right-row { display: flex; gap: 15px; align-items: stretch; margin-bottom: 15px; }
 
         .square-slider-box {
-            flex: 1.6; height: 310px; position: relative; border-radius: 12px; overflow: hidden;
-            background: var(--card-bg); border: 1px solid var(--border-color);
+            flex: 1.6;
+            height: 310px;
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
         }
         .square-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.6s ease; background-size: cover; background-position: center; display: flex; align-items: flex-end; }
         .square-slide.active { opacity: 1; }
@@ -157,51 +189,164 @@
         .slider-next { left: 10px; }
 
         .news-mini-container { 
-            flex: 1; background: var(--card-bg); border: 2px dashed var(--border-color); 
-            border-radius: 12px; height: 310px; padding: 15px; display: flex; 
-            flex-direction: column; overflow: hidden; color: var(--text-muted); font-size: 0.9rem; 
+            flex: 1;
+            background: var(--card-bg); 
+            border: 2px dashed var(--border-color); 
+            border-radius: 12px; 
+            height: 310px; 
+            padding: 15px; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            color: var(--text-muted); 
+            font-size: 0.9rem; 
+            box-sizing: border-box;
         }
 
-        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 6px; flex: 1; min-height: 0; }
-        .product-card {
-            background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px;
-            display: flex; align-items: center; justify-content: center; text-decoration: none; overflow: hidden; position: relative; height: 100%;
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 6px;
+            flex: 1;
+            min-height: 0;
         }
-        .product-content { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; gap: 4px; }
-        .ad-game-thumb { width: 100%; height: 78px; object-fit: cover; border-radius: 4px; }
-        .product-card span { color: #ffffff; font-size: 0.72rem; text-align: center; line-height: 1.2; }
+        
+        .product-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .product-card:not(.empty):hover {
+            background-color: var(--card-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            box-sizing: border-box;
+            gap: 4px;
+        }
+        
+        .ad-game-thumb {
+            width: 100%;
+            height: 78px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .product-card span {
+            color: #ffffff;
+            font-size: 0.72rem;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
         .product-card.empty { opacity: 0.4; cursor: default; }
 
-        .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
-        .post-title a { font-size: 1.15rem; font-weight: 700; color: var(--accent-color); text-decoration: none; }
-        .post-meta { font-size: 0.8rem; color: var(--text-muted); margin: 8px 0; display: flex; gap: 15px; }
-        .post-excerpt { font-size: 0.9rem; color: var(--text-main); line-height: 1.6; margin-bottom: 10px; }
+        #dynamic-post-view .post-card,
+        .dynamic-post-content-box {
+            background-color: #F7F4EF !important;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png');
+            border: 1px solid #E2D8C5 !important;
+            border-radius: 12px;
+            color: #2C3E50 !important;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .dynamic-post-content-box {
+            font-family: 'Cairo', 'Tajawal', sans-serif !important;
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            color: #2C3E50 !important;
+            line-height: 2 !important;
+        }
+        
+        .dynamic-post-content-box h1, 
+        .dynamic-post-content-box h2, 
+        .dynamic-post-content-box h3 {
+            color: #2C3E50 !important;
+            margin-bottom: 15px;
+        }
+        
+        .dynamic-post-content-box p { margin-bottom: 15px; }
 
         .left-sticky-sidebar { 
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
             position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
         }
-        .sidebar-widget, .widget-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 15px; }
+        .sidebar-widget { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+        .sidebar-widget h4, .sidebar-widget h3 { color: var(--accent-color); font-size: 0.95rem; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
+        .sidebar-widget ul { list-style: none; }
+        .sidebar-widget ul li { padding: 6px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; cursor: pointer; color: var(--text-main); }
+        .sidebar-widget ul li:hover { color: var(--accent-color); }
+
+        .tags-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        .tag-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
+        .tag-btn.active, .tag-btn:hover { background: var(--primary-color); color: #fff; }
+
+        .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+        .post-title a { font-size: 1.15rem; font-weight: 700; color: var(--accent-color); text-decoration: none; }
+        .post-meta { font-size: 0.8rem; color: var(--text-muted); margin: 8px 0; display: flex; gap: 15px; }
+        .post-excerpt { font-size: 0.9rem; color: var(--text-main); line-height: 1.6; margin-bottom: 10px; }
+        
+        .single-post-content { font-size: 1.05rem; color: var(--text-main); line-height: 1.8; margin-top: 15px; }
+        .single-post-content p { margin-bottom: 15px; }
+
+        .widget-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 15px; }
         .widget-title { color: var(--accent-color); font-size: 1rem; margin-bottom: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 5px; }
+        .recent-posts-list { list-style: none; padding: 0; }
+        .recent-posts-list li { margin-bottom: 6px; font-size: 0.85rem; }
+        .recent-posts-list li a { color: var(--text-main); text-decoration: none; display: flex; align-items: center; }
+        .recent-posts-list li a:hover { color: var(--accent-color); }
 
         .site-footer { width: 100%; margin: 15px auto 0; padding: 0; }
         .footer-container { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; 
-            padding: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 15px; 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px; 
         }
-        @media (max-width: 768px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
+
+        @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
     </style>
 </head>
+    
 <body class="theme-default">
 
     <div class="site-outer-frame">
-        <!-- شريط علوي -->
+
+        <div id="site-ad-top" style="width: 100%; margin: 10px auto; text-align: center;"></div>
+
         <div class="top-bar">
-            <div class="top-pages" id="dynamic-top-pages">
-                <a href="#">من نحن</a>
-                <a href="#">سياسة الخصوصية</a>
+            <div class="top-pages">
+                <a href="articles/about-us.html">من نحن</a>
+                <a href="articles/privacy-policy.html">سياسة الخصوصية</a>
+                <a href="articles/terms.html">اتفاقية الاستخدام</a>
+                <a href="articles/contact-us.html">اتصل بنا</a>
             </div>
             
             <div class="top-controls">
@@ -214,335 +359,554 @@
                 <button class="control-btn" id="dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
             </div>
 
-            <div class="top-social" id="dynamic-social">
-                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            <div class="top-social">
+                <a href="#" title="إكس (تويتر)"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" title="يوتيوب"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" title="تيليجرام"><i class="fa-brands fa-telegram"></i></a>
+                <a href="#" title="سناب شات"><i class="fa-brands fa-snapchat"></i></a>
+                <a href="#" title="جيت هب"><i class="fa-brands fa-github"></i></a>
             </div>
         </div>
 
-        <!-- الهيدر الرئيسي -->
         <header>
-            <div class="header-logo" id="dynamic-logo"></div>
+            <div class="header-logo" id="site-logo-container"></div>
             <div class="header-center">
                 <h1 id="site-main-heading">تكنو-<span>دليل</span></h1>
-                <p id="site-sub-heading">بوابة الحلول الرقمية والتقنية المبتكرة</p>
+                <p id="site-tagline">بوابة الحلول الرقمية والتقنية المبتكرة</p>
             </div>
             <div></div>
         </header>
 
-        <!-- الشريط الإخباري المتحرك -->
-        <div class="ticker-wrapper">
+        <div class="ticker-wrapper" id="site-ticker-wrapper">
             <div class="ticker-container">
-                <div class="ticker-title" id="ticker-label-box">إضاءة</div>
+                <div class="ticker-title">إضاءة</div>
                 <div class="ticker-viewport">
-                    <div class="ticker-content" id="dynamic-ticker">مرحباً بك في مدونة تكنو-دليل...</div>
+                    <div class="ticker-content" id="ticker-text">مرحباً بك في مدونة تكنو-دليل | تابع أحدث المقالات التقنية والشروحات البرمجية المتجددة.</div>
                 </div>
             </div>
         </div>
 
-        <!-- القائمة الرئيسية المنسدلة -->
+        <!-- القائمة الرئيسية الأفقية -->
         <div class="main-menu-bar">
-            <nav class="mega-menu" id="dynamic-main-menu">
-                <li><a href="#">الرئيسية</a></li>
+            <nav id="site-main-menu" class="mega-menu">
+                <a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
             </nav>
         </div>
-
-        <!-- المحتوى الرئيسي والأعمدة -->
-        <div class="three-columns-grid">
+        
+        <div id="site-ad-mid" style="width: 100%; margin: 15px auto; text-align: center;"></div>
+        
+        <div class="three-columns-grid" id="top-three-section">
             <div class="right-scrollable-section">
+
+                <!-- صندوق عرض المقال الديناميكي (يفتح بداخل الصندوق على اليمين) -->
+                <div id="dynamic-post-view" style="display: none; width: 100%; margin-bottom: 20px;">
+                    <article class="post-card" style="background-color: #F7F4EF !important; border: 1px solid #E2D8C5 !important; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
+                        <div id="dynamic-post-content-box">
+                            <!-- محتوى المقال المستدعى -->
+                        </div>
+                    </article>
+                </div>
+                
+                <!-- صف يضم السلايدر وبجانبه صندوق المنتجات الرقمية -->
                 <div class="top-right-row">
-                    <!-- السلايدر التفاعلي -->
-                    <div class="square-slider-box" id="dynamic-slider">
+                    <div class="square-slider-box" id="square-slider-wrapper">
                         <div class="square-slide active" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80');">
                             <div class="square-caption">
                                 <div class="square-title">منطقة حيوية - أحدث التقنيات</div>
                                 <div class="square-desc">تابع أهم المقالات والشروحات التقنية المتجددة يومياً.</div>
                             </div>
                         </div>
-                        <button class="slider-arrow slider-prev"><i class="fa-solid fa-chevron-right"></i></button>
-                        <button class="slider-arrow slider-next"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="slider-arrow slider-prev" id="slider-prev-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
                     </div>
         
-                    <!-- المنتجات الرقمية المصغرة -->
-                    <div class="news-mini-container">
-                        <div class="section-title" id="products-section-title">منتجات رقمية</div>
-                        <div class="products-grid" id="dynamic-products-grid">
-                            <div class="product-card empty"></div>
-                            <div class="product-card empty"></div>
+                    <div class="news-mini-container" id="side-news-summaries">
+                        <div class="section-title">منتجات رقمية</div>
+                        <div class="products-grid">
+                            <a href="game.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
+                                <div class="product-content">
+                                    <img src="https://tech-dalil.com/4.png" alt="لعبة تحدي الثقافة التعليمية" class="ad-game-thumb">
+                                    <span>لعبة التحدي الثقافية</span>
+                                </div>
+                            </a>
+        
+                            <a href="test.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
+                                <div class="product-content">
+                                    <img src="https://tech-dalil.com/6.png" alt="اختبار تحدي الثقافة" class="ad-game-thumb">
+                                    <span>تحدي المعرفة الثقافي</span>
+                                </div>
+                            </a>
+        
                             <div class="product-card empty"></div>
                             <div class="product-card empty"></div>
                         </div>
                     </div>
                 </div>
         
-                <!-- قسم المقالات العامة -->
-                <div class="main-posts-section" id="dynamic-posts-container">
-                    <div class="post-card">
-                        <div class="post-title"><a href="#">مثال عنوان مقال تجريبي للتصميم</a></div>
-                        <div class="post-meta"><span>📅 2026-10-01</span> | <span>📁 عام</span></div>
-                        <div class="post-excerpt">هذا النص هو مقتطف تجريبي لعرض التصميم الهيكلي للموقع بدون أي بيانات أو عمليات حفظ واسترجاع فعلية...</div>
-                    </div>
+                <div class="tags-filter-section">
+                    <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 10px;">🏷️ تصفية حسب التسميات:</h3>
+                    <div class="tags-bar" id="tags-filter-bar"></div>
+                </div>
+        
+                <div class="main-posts-section" id="posts-list-section">
+                    <div id="posts-container"></div>
                 </div>
             </div>
         
-            <!-- الشريط الجانبي والودجات -->
-            <div class="left-sticky-sidebar" id="dynamic-sidebar-widgets">
-                <div class="widget-card">
-                    <h3 class="widget-title">أحدث المواضيع</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">قائمة جانبية تجريبية للتصميم.</p>
-                </div>
+            <div class="left-sticky-sidebar">
+                <div class="left-content-area" id="left-widgets-area"></div>
             </div>
         </div>
 
-        <!-- الفوتر والمكونات السفلية -->
+        <div id="site-ad-bot" style="width: 100%; margin: 15px auto; text-align: center;"></div>
+
         <footer class="site-footer">
-            <div class="footer-container" id="dynamic-footer-widgets">
-                <div class="widget-card"><h3 class="widget-title">عن الموقع</h3></div>
-                <div class="widget-card"><h3 class="widget-title">روابط سريعة</h3></div>
-                <div class="widget-card"><h3 class="widget-title">تواصل معنا</h3></div>
-                <div class="widget-card"><h3 class="widget-title">القائمة البريدية</h3></div>
-            </div>
-            <div class="footer-bottom-bar" id="dynamic-footer-bottom">
-                جميع الحقوق محفوظة <span class="secret-c">©</span> 2026 - تكنو-دليل
+            <div class="footer-container" id="site-footer-widgets"></div>
+            <div class="footer-bottom-bar">
+                جميع الحقوق محفوظة <span class="secret-c" id="secret-trigger" title="إدارة">©</span> 2026 - <span id="footer-site-name">تكنو-دليل</span>
             </div>
         </footer>
+
     </div>
-
-    <!-- كود جافاسكريبت الموحد لجلب البيانات وتفعيل كافة أجزاء الموقع والتخصيصات -->
+    
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // تحميل البيانات من ملف data.json السحابي
-            fetch('data.json?' + new Date().getTime())
-                .then(response => response.json())
-                .then(data => {
-                    if (!data) return;
+document.addEventListener('DOMContentLoaded', async () => {
+    const jsonPath = `data.json?t=${Date.now()}`;
 
-                    // 1. إعدادات الهيدر والعناوين
-                    if (data.siteTitle) {
-                        document.title = data.siteTitle;
-                        const mainHeading = document.getElementById('site-main-heading');
-                        if (mainHeading && data.siteNameHtml) mainHeading.innerHTML = data.siteNameHtml;
-                    }
-                    if (data.siteSubTitle) {
-                        const subHeading = document.getElementById('site-sub-heading');
-                        if (subHeading) subHeading.textContent = data.siteSubTitle;
-                    }
-                    if (data.logoUrl) {
-                        const logoContainer = document.getElementById('dynamic-logo');
-                        if (logoContainer) logoContainer.innerHTML = `<img src="${data.logoUrl}" alt="شعار الموقع">`;
-                    }
+    try {
+        const response = await fetch(jsonPath);
+        const data = await response.json();
+        window.siteBlogData = data; 
+        
+        let rawPosts = data.posts || [];
+        let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
 
-                    // 2. القوائم العلوية السريعة
-                    if (data.topPages && Array.isArray(data.topPages)) {
-                        const topPagesContainer = document.getElementById('dynamic-top-pages');
-                        if (topPagesContainer) {
-                            topPagesContainer.innerHTML = data.topPages.map(p => `<a href="${p.url || '#'}">${p.title}</a>`).join('');
-                        }
-                    }
+        let menuTree = data.menu ? buildTree(data.menu) : [];
+        let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
 
-                    // 3. أيقونات التواصل الاجتماعي
-                    if (data.socialLinks && Array.isArray(data.socialLinks)) {
-                        const socialContainer = document.getElementById('dynamic-social');
-                        if (socialContainer) {
-                            socialContainer.innerHTML = data.socialLinks.map(s => `<a href="${s.url || '#'}" target="_blank" title="${s.name || ''}"><i class="${s.icon}"></i></a>`).join('');
-                        }
-                    }
+        // 1. عرض المقالات في القائمة الرئيسية بالمنتصف / الأسفل
+        const container = document.getElementById('posts-container');
+        if (filteredPosts.length > 0) {
+            if (container) {
+                container.innerHTML = filteredPosts.map(post => `
+                    <div class="post-card">
+                        <div class="post-title">
+                            <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}'); return false;">${post.title}</a>
+                        </div>
+                        <div class="post-meta">
+                            <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
+                        </div>
+                        <div class="post-excerpt">${post.description || ''}</div>
+                        <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}'); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                    </div>
+                `).join('');
+            }
+            
+            // 2. تفعيل السلايدر العلوي بأحدث المقالات
+            const sliderWrapper = document.getElementById('square-slider-wrapper');
+            const sliderPosts = filteredPosts.slice(0, 4);
+            if (sliderWrapper && sliderPosts.length > 0) {
+                let sliderHtml = sliderPosts.map((p, idx) => `
+                    <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
+                        <div class="square-caption">
+                            <a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}'); return false;" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;">${p.title}</a>
+                            <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
+                        </div>
+                    </div>
+                `).join('');
 
-                    // 4. الشريط الإخباري
-                    if (data.tickerText) {
-                        const tickerContainer = document.getElementById('dynamic-ticker');
-                        if (tickerContainer) tickerContainer.innerHTML = `<span>${data.tickerText}</span>`;
-                    }
+                sliderHtml += `
+                    <button class="slider-arrow slider-prev" id="slider-prev-btn" aria-label="السابق"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button class="slider-arrow slider-next" id="slider-next-btn" aria-label="التالي"><i class="fa-solid fa-chevron-left"></i></button>
+                `;
+                sliderWrapper.innerHTML = sliderHtml;
+                initSliderLogic();
+            }
+        } else {
+            if (container) {
+                container.innerHTML = `<div class="post-card"><p>لا توجد مقالات منشورة حالياً.</p></div>`;
+            }
+        }
 
-                    // 5. القائمة الرئيسية المنسدلة (Mega Menu)
-                    if (data.mainMenu && Array.isArray(data.mainMenu)) {
-                        const menuContainer = document.getElementById('dynamic-main-menu');
-                        if (menuContainer) {
-                            menuContainer.innerHTML = data.mainMenu.map(item => {
-                                if (item.children && item.children.length > 0) {
-                                    let subHtml = item.children.map(sub => `<li><a href="${sub.url || '#'}">${sub.title}</a></li>`).join('');
-                                    return `<li><a href="${item.url || '#'}">${item.title} ▾</a><ul class="dropdown-menu">${subHtml}</ul></li>`;
-                                } else {
-                                    return `<li><a href="${item.url || '#'}">${item.title}</a></li>`;
-                                }
-                            }).join('');
-                        }
-                    }
+        // 3. بناء القوائم العلوية المنسدلة من بيانات لوحة التحكم
+        if (data.menu && data.menu.length > 0) {
+            const menuContainer = document.getElementById('site-main-menu');
+            if (menuContainer) {
+                menuContainer.innerHTML = `<a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>` + generateMenuHtml(menuTree, false);
+            }
+        }
 
-                    // 6. السلايدر التفاعلي
-                    if (data.sliderItems && Array.isArray(data.sliderItems) && data.sliderItems.length > 0) {
-                        const sliderBox = document.getElementById('dynamic-slider');
-                        if (sliderBox) {
-                            let slidesHtml = data.sliderItems.map((slide, idx) => `
-                                <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${slide.image}');">
-                                    <div class="square-caption">
-                                        <div class="square-title" onclick="location.href='${slide.url || '#'}'">${slide.title}</div>
-                                        <div class="square-desc">${slide.desc || ''}</div>
-                                    </div>
-                                </div>
-                            `).join('');
-                            sliderBox.innerHTML = slidesHtml + `
-                                <button class="slider-arrow slider-prev"><i class="fa-solid fa-chevron-right"></i></button>
-                                <button class="slider-arrow slider-next"><i class="fa-solid fa-chevron-left"></i></button>
-                            `;
-                            initSliderLogic();
-                        }
-                    }
+        // 4. بناء الودجتس الجانبية وفي التذييل واستدعاء المقالات الحديثة بداخلها
+        if (data.widgets && data.widgets.length > 0) {
+            const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
+            const footerWidgetsContainer = document.getElementById('site-footer-widgets');
+            let sidebarHtml = '', footerHtml = '';
 
-                    // 7. المنتجات الرقمية المصغرة
-                    if (data.products && Array.isArray(data.products)) {
-                        const prodContainer = document.getElementById('dynamic-products-grid');
-                        if (prodContainer) {
-                            let prodHtml = '';
-                            for (let i = 0; i < 4; i++) {
-                                let p = data.products[i];
-                                if (p) {
-                                    prodHtml += `
-                                        <a href="${p.url || '#'}" class="product-card" target="_blank"> 
-                                            <div class="product-content">
-                                                <img src="${p.image}" alt="${p.title}" class="ad-game-thumb">
-                                                <span>${p.title}</span>
-                                            </div>
-                                        </a>`;
-                                } else {
-                                    prodHtml += `<div class="product-card empty"></div>`;
-                                }
-                            }
-                            prodContainer.innerHTML = prodHtml;
-                        }
-                    }
-
-                    // 8. المقالات العامة في الصفحة الرئيسية
-                    if (data.posts && Array.isArray(data.posts)) {
-                        const postsContainer = document.getElementById('dynamic-posts-container');
-                        if (postsContainer) {
-                            postsContainer.innerHTML = data.posts.map(post => `
-                                <div class="post-card">
-                                    <div class="post-title"><a href="${post.url || '#'}">${post.title}</a></div>
-                                    <div class="post-meta"><span>📅 ${post.date || ''}</span> | <span>📁 ${post.category || 'عام'}</span></div>
-                                    <div class="post-excerpt">${post.excerpt || ''}</div>
-                                </div>
-                            `).join('');
-                        }
-                    }
-
-                    // 9. الودجات الجانبية (Sidebar Widgets)
-                    if (data.sidebarWidgets && Array.isArray(data.sidebarWidgets)) {
-                        const sidebarContainer = document.getElementById('dynamic-sidebar-widgets');
-                        if (sidebarContainer) {
-                            sidebarContainer.innerHTML = data.sidebarWidgets.map(w => `
-                                <div class="widget-card">
-                                    <h3 class="widget-title">${w.title}</h3>
-                                    <div>${w.contentHtml || ''}</div>
-                                </div>
-                            `).join('');
-                        }
-                    }
-
-                    // 10. وديجات الفوتر (Footer Widgets)
-                    if (data.footerWidgets && Array.isArray(data.footerWidgets)) {
-                        const footerContainer = document.getElementById('dynamic-footer-widgets');
-                        if (footerContainer) {
-                            footerContainer.innerHTML = data.footerWidgets.map(w => `
-                                <div class="widget-card">
-                                    <h3 class="widget-title">${w.title}</h3>
-                                    <div>${w.contentHtml || ''}</div>
-                                </div>
-                            `).join('');
-                        }
-                    }
-
-                    // 11. نص حقوق النشر في الفوتر السفلي
-                    if (data.footerCopyrightHtml) {
-                        const fBottom = document.getElementById('dynamic-footer-bottom');
-                        if (fBottom) fBottom.innerHTML = data.footerCopyrightHtml;
-                    }
-                })
-                .catch(err => console.log("جاري استخدام الهيكل التصميمي الافتراضي:", err));
-
-            // تفعيل وظائف السلايدر التفاعلي (يتم استدعاؤها بعد حقن عناصر السلايدر)
-            function initSliderLogic() {
-                const slides = document.querySelectorAll('.square-slide');
-                const prevBtn = document.querySelector('.slider-prev');
-                const nextBtn = document.querySelector('.slider-next');
-                if (!slides.length) return;
-                let currentSlide = 0;
-
-                function showSlide(index) {
-                    slides.forEach(s => s.classList.remove('active'));
-                    slides[index].classList.add('active');
+            data.widgets.forEach(w => {
+                if (!w.active) return;
+                let contentBox = '';
+                if (w.type === 'recent') {
+                    let recentThree = sequencedPosts.slice(0, 3);
+                    contentBox = '<ul class="recent-posts-list">' + recentThree.map(p => `
+                        <li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}'); return false;" style="font-size: 0.75rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>
+                    `).join('') + '</ul>';
+                } else if (w.type === 'links') {
+                    contentBox = `<div class="quick-links-box" style="font-size: 0.75rem;">${w.content || ''}</div>`;
+                } else {
+                    contentBox = `<div style="font-size: 0.75rem;">${w.content || ''}</div>`;
                 }
 
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', () => {
-                        currentSlide = (currentSlide + 1) % slides.length;
-                        showSlide(currentSlide);
-                    });
+                let widgetBlock = `
+                    <div class="widget-card" id="${w.id}">
+                        <h3 class="widget-title" style="font-size: 0.9rem; margin-bottom: 8px;">${w.title}</h3>
+                        <div class="widget-content">${contentBox}</div>
+                    </div>
+                `;
+                if (w.location === 'footer') {
+                    footerHtml += widgetBlock;
+                } else {
+                    sidebarHtml += widgetBlock;
                 }
+            });
 
-                if (prevBtn) {
-                    prevBtn.addEventListener('click', () => {
-                        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-                        showSlide(currentSlide);
-                    });
+            if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
+            if (footerWidgetsContainer) {
+                footerWidgetsContainer.style.minHeight = "220px";
+                footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
+            }
+        }
+
+        // 5. الإعلانات
+        if (data.ads) {
+            if (data.ads.topOn && data.ads.topCode) {
+                const topAdBox = document.getElementById('site-ad-top');
+                if (topAdBox) topAdBox.innerHTML = data.ads.topCode;
+            }
+            if (data.ads.midOn && data.ads.midCode) {
+                const midAdBox = document.getElementById('site-ad-mid');
+                if (midAdBox) midAdBox.innerHTML = data.ads.midCode;
+            }
+            if (data.ads.botOn && data.ads.botCode) {
+                const botAdBox = document.getElementById('site-ad-bot');
+                if (botAdBox) botAdBox.innerHTML = data.ads.botCode;
+            }
+        }
+
+        // فحص الـ URL عند التحميل الأولي لعرض المقال داخل الصندوق الديناميكي إن وجد
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleParam = urlParams.get('article');
+        if (articleParam) {
+            let slug = articleParam.split('/').pop().replace('.html', '');
+            openPostBySlug(slug);
+        }
+
+    } catch (err) {
+        console.error("تعذر جلب ملف بيانات المدونة:", err);
+    }
+});
+
+// دالة ترتيب المقالات
+function getOrderedPosts(menuItems, allPosts) {
+    let ordered = [];
+    let visitedIds = new Set();
+
+    function traverse(items) {
+        if (!items) return;
+        items.forEach(item => {
+            let itemUrl = item.url || item.link || '';
+            for (let p of allPosts) {
+                if (!visitedIds.has(p.id)) {
+                    if (itemUrl.includes(p.slug) || itemUrl.includes(String(p.id)) || (item.title && p.title && item.title.trim() === p.title.trim())) {
+                        ordered.push(p);
+                        visitedIds.add(p.id);
+                    }
                 }
-
-                // التنقل التلقائي كل 5 ثوانٍ
-                setInterval(() => {
-                    currentSlide = (currentSlide + 1) % slides.length;
-                    showSlide(currentSlide);
-                }, 5000);
             }
-            initSliderLogic();
-
-            // أنظمة الثيمات والخطوط والوضع الليلي
-            const themes = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
-            let currentThemeIdx = 0;
-            const nextThemeBtn = document.getElementById('next-theme-btn');
-            const prevThemeBtn = document.getElementById('prev-theme-btn');
-
-            if (nextThemeBtn) {
-                nextThemeBtn.addEventListener('click', () => {
-                    document.body.classList.remove(themes[currentThemeIdx]);
-                    currentThemeIdx = (currentThemeIdx + 1) % themes.length;
-                    document.body.classList.add(themes[currentThemeIdx]);
-                    localStorage.setItem('site_theme', themes[currentThemeIdx]);
-                });
-            }
-
-            if (prevThemeBtn) {
-                prevThemeBtn.addEventListener('click', () => {
-                    document.body.classList.remove(themes[currentThemeIdx]);
-                    currentThemeIdx = (currentThemeIdx - 1 + themes.length) % themes.length;
-                    document.body.classList.add(themes[currentThemeIdx]);
-                    localStorage.setItem('site_theme', themes[currentThemeIdx]);
-                });
-            }
-
-            // تبديل الخطوط المتعددة
-            const fonts = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
-            let currentFontIdx = 0;
-            const fontToggleBtn = document.getElementById('font-toggle-btn');
-            if (fontToggleBtn) {
-                fontToggleBtn.addEventListener('click', () => {
-                    currentFontIdx = (currentFontIdx + 1) % fonts.length;
-                    document.documentElement.style.setProperty('--active-font', fonts[currentFontIdx]);
-                    localStorage.setItem('site_font_idx', currentFontIdx);
-                });
-            }
-
-            // استرجاع الإعدادات المحفوظة محلياً للمظهر والخط
-            const savedTheme = localStorage.getItem('site_theme');
-            if (savedTheme && themes.includes(savedTheme)) {
-                document.body.className = savedTheme;
-                currentThemeIdx = themes.indexOf(savedTheme);
-            }
-            const savedFontIdx = localStorage.getItem('site_font_idx');
-            if (savedFontIdx !== null) {
-                currentFontIdx = parseInt(savedFontIdx);
-                document.documentElement.style.setProperty('--active-font', fonts[currentFontIdx]);
+            if (item.children && item.children.length > 0) {
+                traverse(item.children);
             }
         });
+    }
+
+    if (menuItems) traverse(menuItems);
+
+    allPosts.forEach(p => {
+        if (!visitedIds.has(p.id)) {
+            ordered.push(p);
+            visitedIds.add(p.id);
+        }
+    });
+
+    return ordered;
+}
+
+function getShortTitle(title) {
+    if (!title) return '';
+    let words = title.trim().split(/\s+/);
+    return words.length > 5 ? words.slice(0, 5).join(' ') + '...' : title;
+}
+
+// دالة فتح المقال ديناميكياً داخل الصندوق المخصص على اليمين دون إعادة تحميل الصفحة
+window.openPostBySlug = async function(slug) {
+    const dynamicView = document.getElementById('dynamic-post-view');
+    const dynamicContentBox = document.getElementById('dynamic-post-content-box');
+    
+    if (!dynamicView || !dynamicContentBox) return;
+
+    let data = window.siteBlogData;
+    if (!data) {
+        try {
+            const res = await fetch(`data.json?t=${Date.now()}`);
+            data = await res.json();
+            window.siteBlogData = data;
+        } catch (e) {
+            console.error("تعذر جلب البيانات");
+            return;
+        }
+    }
+
+    let rawPosts = data.posts || [];
+    let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
+    let menuTree = data.menu ? buildTree(data.menu) : [];
+    let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+
+    let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
+
+    let post = rawPosts.find(p => {
+        let pSlug = (p.slug || '').replace('.html', '').trim().toLowerCase();
+        let pId = String(p.id || '').trim();
+        let pUrl = (p.url || '').replace('.html', '').trim().toLowerCase();
+        return pSlug === targetSlug || pId === targetSlug || pUrl.endsWith(targetSlug) || pUrl.includes(targetSlug);
+    });
+
+    if (post) {
+        dynamicView.style.display = 'block';
+
+        setTimeout(() => {
+            window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
+        }, 50);
+
+        let ads = data.ads || {};
+        let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
+        let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
+
+        let rawContent = post.content || post.description || '';
+
+        dynamicContentBox.innerHTML = `
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+            </div>
+
+            <div style="padding: 0 15px;">
+                <h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
+                <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 20px;">
+                    <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍ ${post.author || 'إدارة المدونة'}</span>
+                </div>
+                ${topAd}
+                <div class="single-post-content" style="line-height: 1.8; color: #2C3E50; font-size: 0.9rem;">
+                    ${rawContent}
+                </div>
+                ${botAd}
+
+                <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
+                    <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                </div>
+            </div>
+        `;
+
+        history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
+    }
+};
+
+window.closePostView = function() {
+    const dynamicView = document.getElementById('dynamic-post-view');
+    const dynamicContentBox = document.getElementById('dynamic-post-content-box');
+    if (dynamicView && dynamicContentBox) {
+        dynamicView.style.display = 'none';
+        dynamicContentBox.innerHTML = '';
+        history.pushState({}, document.title, window.location.pathname);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+};
+
+// اعتراض الروابط الداخلية لتعمل بسلاسة
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (link && link.getAttribute('href')) {
+        const href = link.getAttribute('href');
+        if (href.includes('?article=')) {
+            e.preventDefault();
+            let cleanSlug = href.split('?article=')[1].replace('.html', '').split('&')[0].trim();
+            openPostBySlug(cleanSlug);
+        }
+    }
+});
+
+window.addEventListener('popstate', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const article = urlParams.get('article');
+    if (!article) {
+        closePostView();
+    } else {
+        openPostBySlug(article);
+    }
+});
+
+// دوال القائمة المنسدلة والسلايدر والثيمات
+function buildTree(items) {
+    let root = [];
+    let stack = [{ level: 0, children: root }];
+    items.forEach(item => {
+        let node = { ...item, children: [] };
+        let lvl = item.level || 1;
+        while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
+            stack.pop();
+        }
+        stack[stack.length - 1].children.push(node);
+        stack.push({ level: lvl, children: node.children });
+    });
+    return root;
+}
+
+function generateMenuHtml(nodes, isSub = false) {
+    if (!nodes || nodes.length === 0) return '';
+    let html = isSub ? '<ul class="dropdown-menu">' : '';
+    
+    html += nodes.map(node => {
+        let itemUrl = node.url || node.link || '#';
+        let finalHref = itemUrl;
+        let isInternalPost = false;
+        let cleanSlug = '';
+
+        if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//') && !itemUrl.startsWith('javascript:')) {
+            cleanSlug = itemUrl.split('/').pop().replace('.html', '').replace('?article=', '').trim();
+            if (cleanSlug) {
+                finalHref = `?article=${cleanSlug}`;
+                isInternalPost = true;
+            }
+        }
+
+        let hasChildren = node.children && node.children.length > 0;
+        let arrow = !isSub && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+        let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;"` : '';
+
+        return `
+            <li>
+                <a href="${finalHref}" ${clickAttr}>${node.title}${arrow}</a>
+                ${hasChildren ? generateMenuHtml(node.children, true) : ''}
+            </li>
+        `;
+    }).join('');
+
+    if (isSub) html += '</ul>';
+    return html;
+}
+
+function initSliderLogic() {
+    const slides = document.querySelectorAll('.square-slide');
+    if (slides.length === 0) return;
+    let currentSlide = 0;
+    let sliderTimer = setInterval(nextSlide, 4000);
+
+    function showSlide(index) {
+        slides.forEach(s => s.classList.remove('active'));
+        slides[index].classList.add('active');
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    const nextBtn = document.getElementById('slider-next-btn');
+    const prevBtn = document.getElementById('slider-prev-btn');
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            clearInterval(sliderTimer);
+            nextSlide();
+            sliderTimer = setInterval(nextSlide, 4000);
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            clearInterval(sliderTimer);
+            prevSlide();
+            sliderTimer = setInterval(nextSlide, 4000);
+        });
+    }
+}
+
+const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
+let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
+const fontToggleBtn = document.getElementById('font-toggle-btn');
+if (fontToggleBtn) {
+    fontToggleBtn.addEventListener('click', () => {
+        currentFontIdx = (currentFontIdx + 1) % fontsList.length;
+        document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
+        localStorage.setItem('tech_font_idx', currentFontIdx);
+    });
+}
+document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
+
+const themesList = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
+let currentThemeIdx = localStorage.getItem('tech_theme_idx') ? parseInt(localStorage.getItem('tech_theme_idx')) : 0;
+
+function applyTheme(idx) {
+    document.body.classList.remove('light-mode');
+    themesList.forEach(t => document.body.classList.remove(t));
+    document.body.classList.add(themesList[idx]);
+    localStorage.setItem('tech_theme_idx', idx);
+}
+
+const nextThemeBtn = document.getElementById('next-theme-btn');
+const prevThemeBtn = document.getElementById('prev-theme-btn');
+if (nextThemeBtn) {
+    nextThemeBtn.addEventListener('click', () => {
+        currentThemeIdx = (currentThemeIdx + 1) % themesList.length;
+        applyTheme(currentThemeIdx);
+    });
+}
+if (prevThemeBtn) {
+    prevThemeBtn.addEventListener('click', () => {
+        currentThemeIdx = (currentThemeIdx - 1 + themesList.length) % themesList.length;
+        applyTheme(currentThemeIdx);
+    });
+}
+applyTheme(currentThemeIdx);
+
+const darkModeBtn = document.getElementById('dark-mode-btn');
+if (darkModeBtn) {
+    darkModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
+        darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    });
+
+    if (localStorage.getItem('tech_light_mode') === '1') {
+        document.body.classList.add('light-mode');
+        darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+    }
+}
+
+const secretTrigger = document.getElementById('secret-trigger');
+if (secretTrigger) {
+    secretTrigger.addEventListener('click', () => {
+        const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
+        if (pass === "aziz728") {
+            window.location.href = "dashboard.html";
+        } else if (pass !== null) {
+            alert("كلمة المرور غير صحيحة!");
+        }
+    });
+}
     </script>
 </body>
 </html>
