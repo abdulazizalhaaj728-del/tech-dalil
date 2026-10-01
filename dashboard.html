@@ -553,22 +553,21 @@ function initAdminUI() {
     loadDataFromStorageOrCloud();
 }
 
-function saveGitHubSettings() {
-
-                try {
-                const owner = "abdulazizalhaaj728-del";
-                const repo = "tech-dalil";
-                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json`);
-                if (res.ok) {
-                    const fileData = await res.json();
-                    globalFileSha = fileData.sha;
-                }
-            } catch (e) {
-                console.log("تعذر جلب ملف الـ SHA.");
-            }
+async function saveGitHubSettings() {
+    try {
+        const owner = "abdulazizalhaaj728-del";
+        const repo = "tech-dalil";
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json`);
+        if (res.ok) {
+            const fileData = await res.json();
+            window.globalFileSha = fileData.sha;
+        }
+    } catch (e) {
+        console.log("تعذر جلب ملف الـ SHA.");
+    }
 
     localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
-    showCustomAlert("نجاح", "تم حفظ إعدادات جيت هب بنجاح!");
+    showCustomAlert("نجاح", "تم حفظ إعدادات وفحص جيت هب بنجاح!");
 }
 
 async function saveAllChangesToServer() {
