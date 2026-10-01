@@ -24,7 +24,16 @@
             "url": "#"
         }
     ],
-    "widgets": [],
+    "widgets": [
+        {
+            "id": "w_1790878213264",
+            "title": "التسميات والتصنيفات",
+            "type": "categories",
+            "content": "",
+            "active": true,
+            "location": "sidebar"
+        }
+    ],
     "ads": {
         "topOn": false,
         "topCode": "",
