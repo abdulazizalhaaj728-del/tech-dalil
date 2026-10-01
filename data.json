@@ -4,7 +4,26 @@
         "logoHeight": "100px",
         "tickerVisible": true
     },
-    "menu": [],
+    "menu": [
+        {
+            "rawText": "علوم الحاسب الآلي",
+            "title": "علوم الحاسب الآلي",
+            "level": 1,
+            "url": "#"
+        },
+        {
+            "rawText": "برمجة الحاسب الآلي",
+            "title": "برمجة الحاسب الآلي",
+            "level": 1,
+            "url": "#"
+        },
+        {
+            "rawText": "لغات برمجة التطبيقات والألعاب",
+            "title": "لغات برمجة التطبيقات والألعاب",
+            "level": 1,
+            "url": "#"
+        }
+    ],
     "widgets": [],
     "ads": {
         "topOn": false,
