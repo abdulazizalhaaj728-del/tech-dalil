@@ -675,10 +675,9 @@ window.openPostBySlug = async function(slug) {
             let pPost = window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
             let nPost = window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
 
-            // تم برمجة الأسهم بحيث تحرك اسم العنوان فقط دون جلبه، وجلب المقال يكون بالضغط على الرابط المجاور فقط
             let pHtml = pPost ? `
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                    <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="السهم السابق"><i class="fa-solid fa-arrow-right"></i></button>
+                    <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
                     <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right;">
                         <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${pPost.title}">${getShortTitle(pPost.title)}</a>
                     </div>
@@ -689,7 +688,7 @@ window.openPostBySlug = async function(slug) {
                     <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left;">
                         <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nPost.title}">${getShortTitle(nPost.title)}</a>
                     </div>
-                    <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="السهم التالي"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
                 </div>` : `<span></span>`;
 
             const navBox = document.getElementById('bottom-navigation-wrapper');
@@ -698,6 +697,7 @@ window.openPostBySlug = async function(slug) {
                 attachNavEvents();
             }
         }
+
         
         function attachNavEvents() {
             const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
@@ -727,6 +727,7 @@ window.openPostBySlug = async function(slug) {
                 };
             }
         }
+
 
         let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
         let relatedHtml = '';
