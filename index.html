@@ -1,9 +1,5 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-    <meta charset="UT<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة</title>
@@ -276,6 +272,24 @@
         }
         .site-main-menu li { position: relative; }
         .site-main-menu li:hover > .dropdown-menu { display: block !important; pointer-events: auto !important; }
+
+
+        /* تنسيق أيقونات الأسهم بجانب عناوين المقالات أو القوائم */
+        .recent-posts-list li a i,
+        .sidebar-widget ul li i,
+        .post-title i {
+            margin-left: 8px; /* مسافة بسيطة بين السهم والعنوان بناءً على اللغة العربية */
+            font-size: 0.85rem;
+            color: var(--accent-color, var(--primary-color));
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+        
+        /* حركة جمالية عند المرور على السهم أو العنوان */
+        .recent-posts-list li a:hover i,
+        .sidebar-widget ul li:hover i {
+            transform: translateX(-3px); /* يتحرك السهم قليلاً لليمين في الواجهات العربية */
+        }
     </style>
 </head>
     
