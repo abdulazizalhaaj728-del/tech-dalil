@@ -135,7 +135,6 @@
             color: #2C3E50 !important;
         }
         
-        /* ضبط محاذاة الخطوط لتكون مشدودة ومنسقة من الأطراف (Justify) وبخط مريح */
         .ql-editor, .post-card p, .section-box textarea, input[type="text"] {
             font-family: 'Cairo', 'Tajawal', sans-serif !important;
             text-align: justify !important;
@@ -144,7 +143,6 @@
             line-height: 2 !important;
         }
         
-        /* تنسيق عناوين صواندي الكتابة */
         .post-card h1, .post-card h2, .post-card h3 {
             color: #2C3E50 !important;
         }
@@ -155,6 +153,31 @@
     <div class="admin-container">
         <a href="index.html" style="color: var(--primary-color); text-decoration: none; font-weight: bold; display:inline-block; margin-bottom:15px;">← العودة للموقع الرئيسي</a>
         <h2>لوحة التحكم الشاملة لمدونة تكنو-دليل</h2>
+
+        <!-- إعدادات الربط السحابي (GitHub Sync) -->
+        <div class="section-box">
+            <h3>☁️ إعدادات الربط السحابي (GitHub Sync)</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
+                أدخل بيانات حسابك في جيت هب لتتمكن من تحديث ملف <code>data.json</code> مباشرة من لوحة التحكم.
+            </p>
+            <div style="display: grid; gap: 10px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>رمز الوصول الشخصي (GitHub Token):</label>
+                    <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxx">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>اسم المستخدم (GitHub Username):</label>
+                    <input type="text" id="gh-owner-input" placeholder="اسم المستخدم أو المؤسسة">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>اسم المستودع (Repository Name):</label>
+                    <input type="text" id="gh-repo-input" placeholder="اسم المستودع (مثال: tech-dalil)">
+                </div>
+                <div>
+                    <button type="button" class="btn" onclick="saveGitHubSettings()" style="padding: 6px 15px; margin-top: 5px;">حفظ إعدادات السحابة</button>
+                </div>
+            </div>
+        </div>
 
         <!-- إدارة شعار المدونة -->
         <div class="section-box">
@@ -199,7 +222,7 @@
 
         <!-- ودجات الشريط الأيسر والتذييل -->
         <div class="section-box">
-            <h3>⚙️ ودجات الشريط الأيسر (Sidebar) والتذييل (Footer)</h3>
+            <h3>⚙️️ ودجات الشريط الأيسر (Sidebar) والتذييل (Footer)</h3>
             <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
                 <div style="flex: 0.9; min-width: 260px;">
                     <input type="hidden" id="editing-widget-index" value="">
@@ -284,14 +307,12 @@
         <div class="section-box">
             <h3>📝 إدارة ونشر المقالات والصفحات</h3>
 
-            <!-- 1. زر الإدارة الوحيد الظاهر افتراضياً -->
             <div id="manager-trigger-wrapper" style="margin: 15px 0;">
                 <button type="button" class="btn" id="toggle-manager-btn" style="padding: 8px 16px; font-size: 0.9rem;">
                     <i class="fa-solid fa-pen-to-square"></i> إدارة مقالة / صفحة
                 </button>
             </div>
 
-            <!-- 2. حاوية الفورم الكاملة -->
             <div id="article-manager-form-container" style="display: none; margin-top: 15px; background: rgba(255,255,255,0.01); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
                 <div class="form-group">
                     <label>نوع المحتوى:</label>
@@ -338,11 +359,9 @@
                             <button type="button" class="font-tag-btn" style="color: #94a3b8;" onclick="applyCustomFont(false)">إزالة الخط</button>
                         </div>
                     </div>
-                    <!-- حقل المحرر الصافي -->
                     <div id="editor-container"></div>
                 </div>
 
-                <!-- حقل الرابط المتوقع وزر النسخ -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
                     <div style="flex: 1; display: flex; align-items: center; gap: 5px;">
                         <span style="font-size: 0.8rem; color: var(--text-muted);">رابط المقال:</span>
@@ -354,7 +373,6 @@
                     </button>
                 </div>
 
-                <!-- 3. شريط الأزرار السفلي للفورم -->
                 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                         <button type="button" class="btn" id="publish-btn" style="padding: 6px 14px; font-size: 0.85rem;">
@@ -396,7 +414,12 @@
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
     <script>
 let globalData = {
-    settings: { logoUrl: "", logoHeight: "55px", tickerVisible: true },
+    settings: { 
+        logoUrl: "", 
+        logoHeight: "55px", 
+        tickerVisible: true,
+        github: { token: "", owner: "", repo: "" }
+    },
     menu: [],
     widgets: [],
     ads: { topOn: false, topCode: '', midOn: false, midCode: '', botOn: false, botCode: '' },
@@ -456,7 +479,6 @@ function generateSlug(text) {
     return `${baseSlug}-${uniqueId}.html`;
 }
 
-// إعداد محرر Quill
 var Font = Quill.import('formats/font');
 Font.whitelist = ['cairo', 'tajawal', 'amiri', false];
 Quill.register(Font, true);
@@ -524,8 +546,23 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function initAdminUI() {
-    // جلب البيانات الأولية من التخزين المحلي أو السحابة عند البداية
     loadDataFromStorageOrCloud();
+}
+
+function saveGitHubSettings() {
+    const token = document.getElementById('gh-token-input').value.trim();
+    const owner = document.getElementById('gh-owner-input').value.trim();
+    const repo = document.getElementById('gh-repo-input').value.trim();
+
+    if (!globalData.settings.github) {
+        globalData.settings.github = {};
+    }
+    globalData.settings.github.token = token;
+    globalData.settings.github.owner = owner;
+    globalData.settings.github.repo = repo;
+
+    localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
+    showCustomAlert("نجاح", "تم حفظ إعدادات جيت هب بنجاح!");
 }
 
 function openArticleManager() {
@@ -539,7 +576,6 @@ function closeArticleManager() {
     resetPostForm();
 }
 
-// دالة حفظ أو تحديث المقال مع الآلية الجديدة (محلياً ثم السحابة)
 async function saveOrUpdatePost() {
     const title = document.getElementById('post-title').value.trim();
     const category = document.getElementById('post-cat').value.trim() || "عام";
@@ -581,28 +617,29 @@ async function saveOrUpdatePost() {
         globalData.posts.unshift(postObj);
     }
 
-    // 1. الحفظ المؤقت السريع في التخزين المحلي (localStorage) كمنطقة تجميع (Staging)
     localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
     
     showCustomAlert("نجاح", "تم الحفظ المؤقت محلياً، وجاري الرفع للسحابة...");
     closeArticleManager();
     if (typeof loadPostsAdminList === 'function') loadPostsAdminList();
 
-    // 2. مزامنة ورفع البيانات الكاملة إلى ملف data.json في السحابة
     await syncDataToCloud(globalData);
 }
 
-// دالة مزامنة ورفع البيانات إلى السحابة (GitHub API)
 async function syncDataToCloud(dataObj) {
-    const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN'; // ضع رمز الوصول الخاص بك هنا
-    const REPO_OWNER = 'YOUR_USERNAME';       // اسم المستخدم على جيت هب
-    const REPO_NAME = 'YOUR_REPO';            // اسم المستودع
-    const FILE_PATH = 'data.json';            // مسار ملف الداتا
+    if (!globalData.settings.github || !globalData.settings.github.token || !globalData.settings.github.owner || !globalData.settings.github.repo) {
+        console.warn('بيانات الربط السحابي غير مكتملة. تم الحفظ محلياً فقط.');
+        return;
+    }
+
+    const GITHUB_TOKEN = globalData.settings.github.token;
+    const REPO_OWNER = globalData.settings.github.owner;
+    const REPO_NAME = globalData.settings.github.repo;
+    const FILE_PATH = 'data.json';
 
     const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
 
     try {
-        // جلب الـ SHA الخاص بالملف الحالي على جيت هب
         const getResponse = await fetch(url, {
             headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
         });
@@ -615,11 +652,9 @@ async function syncDataToCloud(dataObj) {
         const fileData = await getResponse.json();
         const sha = fileData.sha;
 
-        // تجهيز المحتوى للرفع بصيغة Base64
         const updatedContent = JSON.stringify(dataObj, null, 2);
         const encodedContent = btoa(unescape(encodeURIComponent(updatedContent)));
 
-        // إرسال التحديث للسحابة
         const putResponse = await fetch(url, {
             method: 'PUT',
             headers: {
@@ -644,18 +679,21 @@ async function syncDataToCloud(dataObj) {
     }
 }
 
-// دالة جلب البيانات الأولية (تحميل من المحلي أولاً للسرعة، ثم محاولة الجلب من السحابة)
-async function loadDataFromStorageOrCloud() {
+function loadDataFromStorageOrCloud() {
     const localSaved = localStorage.getItem('tech_dalil_local_data');
     if (localSaved) {
         try {
             globalData = JSON.parse(localSaved);
+            if (globalData.settings && globalData.settings.github) {
+                document.getElementById('gh-token-input').value = globalData.settings.github.token || '';
+                document.getElementById('gh-owner-input').value = globalData.settings.github.owner || '';
+                document.getElementById('gh-repo-input').value = globalData.settings.github.repo || '';
+            }
         } catch (e) {
             console.error('خطأ في قراءة التخزين المحلي');
         }
     }
     
-    // تشغيل دوال العرض في الواجهة
     if (typeof loadSidebarWidgetsAdmin === 'function') loadSidebarWidgetsAdmin();
     if (typeof renderStructuredMenuAdmin === 'function') renderStructuredMenuAdmin();
     if (typeof loadPostsAdminList === 'function') loadPostsAdminList();
@@ -709,614 +747,614 @@ function initArticleSlugField(post) {
     slugInput.value = post && post.slug ? post.slug : '';
 }
         
-        function toggleArticleDraftStatus() {
-            currentArticleIsDraft = !currentArticleIsDraft;
-            const draftBtn = document.getElementById('draft-toggle-btn');
-            
-            if (currentArticleIsDraft) {
-                draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
-                draftBtn.style.background = '#10b981';
-                showCustomAlert("تنبيه", "تم تحويل المقال إلى وضع (مسودة).");
-            } else {
-                draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
-                draftBtn.style.background = '#f59e0b';
-                showCustomAlert("تنبيه", "تم تغيير الوضع إلى (نشر).");
-            }
-        }
+function toggleArticleDraftStatus() {
+    currentArticleIsDraft = !currentArticleIsDraft;
+    const draftBtn = document.getElementById('draft-toggle-btn');
+    
+    if (currentArticleIsDraft) {
+        draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
+        draftBtn.style.background = '#10b981';
+        showCustomAlert("تنبيه", "تم تحويل المقال إلى وضع (مسودة).");
+    } else {
+        draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+        draftBtn.style.background = '#f59e0b';
+        showCustomAlert("تنبيه", "تم تغيير الوضع إلى (نشر).");
+    }
+}
 
-        function copyArticleLink() {
-            const slugInput = document.getElementById('article-slug-input');
-            if (!slugInput) return;
+function copyArticleLink() {
+    const slugInput = document.getElementById('article-slug-input');
+    if (!slugInput) return;
+
+    const slugValue = slugInput.value.trim() || 'post.html';
+    let fileName = slugValue.endsWith('.html') ? slugValue : slugValue + '.html';
+    let fullLink = `${window.location.origin}/articles/${fileName}`;
+
+    navigator.clipboard.writeText(fullLink).then(() => {
+        showCustomAlert("تم النسخ", "تم نسخ رابط المقالة بنجاح إلى الحافظة!");
+    });
+}
+
+function loadPostsAdminList() {
+    const container = document.getElementById('posts-admin-management-list');
+    if(!container) return;
+    container.innerHTML = "";
+    
+    if(globalData.posts.length === 0 && globalData.pages.length === 0) { 
+        container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>لا توجد مقالات أو صفحات منشورة.</p>"; 
+        return; 
+    }
+
+    globalData.posts.forEach((p) => {
+        let statusBadge = p.isDraft ? '<span style="color:#f59e0b; font-size:0.75rem;">(مسودة)</span>' : '<span style="color:#10b981; font-size:0.75rem;">(منشور)</span>';
+        container.innerHTML += `
+            <div class="item-row">
+                <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title} ${statusBadge} (${p.date})</span>
+                <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'post')">تعديل</button>
+                <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'post')">حذف</button>
+            </div>`;
+    });
+
+    globalData.pages.forEach((p) => {
+        container.innerHTML += `
+            <div class="item-row">
+                <span style="flex:1; font-size:0.9rem; color:var(--accent-color);"><b>[صفحة علوية]</b> ${p.title}</span>
+                <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'page')">تعديل</button>
+                <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'page')">حذف</button>
+            </div>`;
+    });
+}
+
+function deletePost(id, type) {
+    showCustomAlert("تأكيد", "هل أنت متأكد من الحذف النهائي؟", () => {
+        if(type === 'page') {
+            globalData.pages = globalData.pages.filter(p => p.id !== id);
+        } else {
+            globalData.posts = globalData.posts.filter(p => p.id !== id);
+        }
         
-            const slugValue = slugInput.value.trim() || 'post.html';
-            let fileName = slugValue.endsWith('.html') ? slugValue : slugValue + '.html';
-            let fullLink = `${window.location.origin}/articles/${fileName}`;
+        if (currentEditingPostId === id) resetPostForm();
+        loadPostsAdminList();
+    });
+}
+
+function editPost(id, type) {
+    currentEditingPostId = id;
+    openArticleManager();
+    if(type === 'page') {
+        const p = globalData.pages.find(item => item.id === id);
+        if(!p) return;
+        document.getElementById('content-type-selector').value = "page";
+        document.getElementById('post-title').value = p.title;
+        document.getElementById('post-cat').value = "";
+        document.getElementById('post-desc').value = "";
+        document.getElementById('post-img').value = "";
+        quill.root.innerHTML = p.content || "";
+        initArticleSlugField(p);
+    } else {
+        const p = globalData.posts.find(item => item.id === id);
+        if(!p) return;
+        document.getElementById('content-type-selector').value = "post";
+        document.getElementById('post-title').value = p.title;
+        document.getElementById('post-cat').value = p.category || "";
+        document.getElementById('post-desc').value = p.description || "";
+        document.getElementById('post-img').value = p.image || "";
+        document.getElementById('post-date').value = p.date || "";
+        quill.root.innerHTML = p.content || "";
+        initArticleSlugField(p);
+    }
+    
+    const publishBtn = document.getElementById('publish-btn');
+    if(publishBtn) {
+        publishBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تحديث';
+    }
+
+    const managerContainer = document.getElementById('article-manager-form-container');
+    if (managerContainer) {
+        managerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function previewPost() {
+    const title = document.getElementById('post-title').value.trim() || "عنوان تجريبي للمحتوى";
+    const content = quill.root.innerHTML;
+    const previewWin = window.open('', '_blank');
+    previewWin.document.write(`
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>معاينة: ${title}</title>
+            <style>
+                body { font-family: 'Cairo', sans-serif; padding: 40px; background: #0f172a; color: #f8fafc; line-height: 1.8; }
+                .container { max-width: 800px; margin: auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; }
+                h1 { color: #f59e0b; border-bottom: 2px solid #0284c7; padding-bottom: 15px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>${title}</h1>
+                <div>${content}</div>
+            </div>
+        </body>
+        </html>
+    `);
+    previewWin.document.close();
+}
+
+function uploadLogoFile(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            globalData.settings.logoUrl = e.target.result;
+            showCustomAlert("نجاح", "تم رفع الشعار بنجاح!");
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removeLogo() {
+    globalData.settings.logoUrl = "";
+    showCustomAlert("نجاح", "تمت إزالة الشعار!");
+}
+
+function saveSelectedLogoSize() {
+    const selector = document.getElementById('logo-size-selector');
+    if (!selector) return;
+    globalData.settings.logoHeight = selector.value;
+    showCustomAlert("نجاح", "تم حفظ حجم الشعار!");
+}
+
+function saveTickerSetting() {
+    const tickerToggle = document.getElementById('ticker-visible-toggle');
+    if (!tickerToggle) return;
+    globalData.settings.tickerVisible = tickerToggle.checked;
+    showCustomAlert("نجاح", "تم حفظ إعداد الشريط المتحرك!");
+}
+
+function loadSidebarWidgetsAdmin() {
+    const widgets = globalData.widgets;
+    const listBox = document.getElementById('widgets-list-box');
+    if(!listBox) return;
+    
+    if (widgets.length === 0) {
+        listBox.innerHTML = '<p style="font-size: 0.85rem; background: var(--bg-dark); color: var(--text-muted); text-align:center;">لا توجد ودجات مخزنة.</p>';
+        return;
+    }
+
+    let html = `<table class="widgets-table"><thead><tr><th>العنوان</th><th>المكان</th><th>تفعيل</th><th>إدارة</th></tr></thead><tbody>`;
+    widgets.forEach((w, index) => {
+        let loc = w.location === 'footer' ? 'التذييل (أفقي)' : 'الشريط الأيسر';
+        html += `<tr>
+            <td>${w.title}</td>
+            <td style="color: var(--text-muted);">${loc}</td>
+            <td><input type="checkbox" ${w.active ? 'checked' : ''} onchange="toggleWidgetActive(${index})"></td>
+            <td>
+                <button type="button" class="btn-warning" onclick="editWidget(${index})" style="padding: 2px 6px; font-size: 0.75rem; border:none; border-radius:3px; cursor:pointer;">تعديل</button>
+                <button type="button" class="btn-danger" onclick="removeSidebarWidget(${index})" style="padding: 2px 6px; font-size: 0.75rem; border:none; border-radius:3px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>`;
+    });
+    html += `</tbody></table>`;
+    listBox.innerHTML = html;
+}
+
+function handleWidgetTypeSelection(type) {
+    const customGroup = document.getElementById('custom-text-group');
+    const contactGroup = document.getElementById('contact-fields-group');
+    const autoMsg = document.getElementById('auto-widget-msg');
+    const titleInput = document.getElementById('widget-title-input');
+
+    customGroup.style.display = 'none';
+    contactGroup.style.display = 'none';
+    autoMsg.style.display = 'none';
+    titleInput.disabled = false;
+
+    if (type === 'custom') {
+        customGroup.style.display = 'block';
+        if (!titleInput.value) titleInput.value = "محتوى مخصص";
+    } else if (type === 'contact') {
+        contactGroup.style.display = 'block';
+        titleInput.value = "اتصل بنا";
+        titleInput.disabled = true;
+    } else {
+        autoMsg.style.display = 'block';
+        titleInput.disabled = true;
         
-            navigator.clipboard.writeText(fullLink).then(() => {
-                showCustomAlert("تم النسخ", "تم نسخ رابط المقالة بنجاح إلى الحافظة!");
-            });
+        if (type === 'recent') titleInput.value = "أحدث المواضيع";
+        else if (type === 'links') titleInput.value = "روابط سريعة";
+        else if (type === 'categories') titleInput.value = "التسميات والتصنيفات";
+        else if (type === 'pages') titleInput.value = "الصفحات الثابتة";
+        else if (type === 'popular') titleInput.value = "مشاركات مميزة";
+    }
+}
+
+function handleWidgetPosChange(pos) {
+    const sb = document.getElementById('widget-pos-sidebar');
+    const ft = document.getElementById('widget-pos-footer');
+    if (pos === 'sidebar' && sb.checked) ft.checked = false;
+    else if (pos === 'footer' && ft.checked) {
+        const widgets = globalData.widgets;
+        const footerCount = widgets.filter((w, idx) => w.location === 'footer' && idx !== editingWidgetIndex).length;
+        if (footerCount >= 4) {
+            ft.checked = false;
+            showCustomAlert("تنبيه", "عذراً، الحد الأقصى لودجات التذييل الأفقية هو 4 فقط!");
+            return;
         }
+        sb.checked = false;
+    }
+}
 
-        function loadPostsAdminList() {
-            const container = document.getElementById('posts-admin-management-list');
-            if(!container) return;
-            container.innerHTML = "";
-            
-            if(globalData.posts.length === 0 && globalData.pages.length === 0) { 
-                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>لا توجد مقالات أو صفحات منشورة.</p>"; 
-                return; 
-            }
+function handleWidgetMainAction() {
+    const titleInput = document.getElementById('widget-title-input');
+    const typeInput = document.getElementById('widget-type-input');
+    const contentInput = document.getElementById('widget-custom-text');
+    const footerPos = document.getElementById('widget-pos-footer');
+    const btn = document.getElementById('widget-main-action-btn');
 
-            globalData.posts.forEach((p) => {
-                let statusBadge = p.isDraft ? '<span style="color:#f59e0b; font-size:0.75rem;">(مسودة)</span>' : '<span style="color:#10b981; font-size:0.75rem;">(منشور)</span>';
-                container.innerHTML += `
-                    <div class="item-row">
-                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title} ${statusBadge} (${p.date})</span>
-                        <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'post')">تعديل</button>
-                        <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'post')">حذف</button>
-                    </div>`;
-            });
+    if (titleInput.disabled) {
+        titleInput.disabled = false; typeInput.disabled = false;
+        contentInput.disabled = false; document.getElementById('widget-pos-sidebar').disabled = false;
+        footerPos.disabled = false; titleInput.focus();
+        btn.innerText = "حفظ التعديلات";
+        document.getElementById('widget-cancel-btn').style.display = 'inline-block';
+        return;
+    }
 
-            globalData.pages.forEach((p) => {
-                container.innerHTML += `
-                    <div class="item-row">
-                        <span style="flex:1; font-size:0.9rem; color:var(--accent-color);"><b>[صفحة علوية]</b> ${p.title}</span>
-                        <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'page')">تعديل</button>
-                        <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'page')">حذف</button>
-                    </div>`;
-            });
-        }
+    const title = titleInput.value.trim();
+    if (!title) { showCustomAlert("تنبيه", "الرجاء إدخال عنوان الودجت!"); return; }
 
-        function deletePost(id, type) {
-            showCustomAlert("تأكيد", "هل أنت متأكد من الحذف النهائي؟", () => {
-                if(type === 'page') {
-                    globalData.pages = globalData.pages.filter(p => p.id !== id);
-                } else {
-                    globalData.posts = globalData.posts.filter(p => p.id !== id);
-                }
-                
-                if (currentEditingPostId === id) resetPostForm();
-                loadPostsAdminList();
-            });
-        }
+    let widgets = globalData.widgets;
+    const location = footerPos.checked ? 'footer' : 'sidebar';
 
-        function editPost(id, type) {
-            currentEditingPostId = id;
-            openArticleManager();
-            if(type === 'page') {
-                const p = globalData.pages.find(item => item.id === id);
-                if(!p) return;
-                document.getElementById('content-type-selector').value = "page";
-                document.getElementById('post-title').value = p.title;
-                document.getElementById('post-cat').value = "";
-                document.getElementById('post-desc').value = "";
-                document.getElementById('post-img').value = "";
-                quill.root.innerHTML = p.content || "";
-                initArticleSlugField(p);
-            } else {
-                const p = globalData.posts.find(item => item.id === id);
-                if(!p) return;
-                document.getElementById('content-type-selector').value = "post";
-                document.getElementById('post-title').value = p.title;
-                document.getElementById('post-cat').value = p.category || "";
-                document.getElementById('post-desc').value = p.description || "";
-                document.getElementById('post-img').value = p.image || "";
-                document.getElementById('post-date').value = p.date || "";
-                quill.root.innerHTML = p.content || "";
-                initArticleSlugField(p);
-            }
-            
-            const publishBtn = document.getElementById('publish-btn');
-            if(publishBtn) {
-                publishBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تحديث';
-            }
-
-            const managerContainer = document.getElementById('article-manager-form-container');
-            if (managerContainer) {
-                managerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
-
-        function previewPost() {
-            const title = document.getElementById('post-title').value.trim() || "عنوان تجريبي للمحتوى";
-            const content = quill.root.innerHTML;
-            const previewWin = window.open('', '_blank');
-            previewWin.document.write(`
-                <html lang="ar" dir="rtl">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>معاينة: ${title}</title>
-                    <style>
-                        body { font-family: 'Cairo', sans-serif; padding: 40px; background: #0f172a; color: #f8fafc; line-height: 1.8; }
-                        .container { max-width: 800px; margin: auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; }
-                        h1 { color: #f59e0b; border-bottom: 2px solid #0284c7; padding-bottom: 15px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <h1>${title}</h1>
-                        <div>${content}</div>
-                    </div>
-                </body>
-                </html>
-            `);
-            previewWin.document.close();
-        }
-
-        function uploadLogoFile(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    globalData.settings.logoUrl = e.target.result;
-                    showCustomAlert("نجاح", "تم رفع الشعار بنجاح!");
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function removeLogo() {
-            globalData.settings.logoUrl = "";
-            showCustomAlert("نجاح", "تمت إزالة الشعار!");
-        }
-
-        function saveSelectedLogoSize() {
-            const selector = document.getElementById('logo-size-selector');
-            if (!selector) return;
-            globalData.settings.logoHeight = selector.value;
-            showCustomAlert("نجاح", "تم حفظ حجم الشعار!");
-        }
-
-        function saveTickerSetting() {
-            const tickerToggle = document.getElementById('ticker-visible-toggle');
-            if (!tickerToggle) return;
-            globalData.settings.tickerVisible = tickerToggle.checked;
-            showCustomAlert("نجاح", "تم حفظ إعداد الشريط المتحرك!");
-        }
-
-        function loadSidebarWidgetsAdmin() {
-            const widgets = globalData.widgets;
-            const listBox = document.getElementById('widgets-list-box');
-            if(!listBox) return;
-            
-            if (widgets.length === 0) {
-                listBox.innerHTML = '<p style="font-size: 0.85rem; background: var(--bg-dark); color: var(--text-muted); text-align:center;">لا توجد ودجات مخزنة.</p>';
+    if (editingWidgetIndex !== null) {
+        widgets[editingWidgetIndex] = { ...widgets[editingWidgetIndex], title, type: typeInput.value, content: contentInput.value.trim(), location };
+        editingWidgetIndex = null;
+    } else {
+        if (location === 'footer') {
+            let footerWidgets = widgets.filter(w => w.location === 'footer');
+            if (footerWidgets.length >= 4) {
+                showCustomAlert("تنبيه", "الحد الأقصى لودجات الفوتر هو 4 ودجات أفقية!");
                 return;
             }
+        }
+        widgets.push({ id: 'w_' + Date.now(), title, type: typeInput.value, content: contentInput.value.trim(), active: true, location });
+    }
 
-            let html = `<table class="widgets-table"><thead><tr><th>العنوان</th><th>المكان</th><th>تفعيل</th><th>إدارة</th></tr></thead><tbody>`;
-            widgets.forEach((w, index) => {
-                let loc = w.location === 'footer' ? 'التذييل (أفقي)' : 'الشريط الأيسر';
-                html += `<tr>
-                    <td>${w.title}</td>
-                    <td style="color: var(--text-muted);">${loc}</td>
-                    <td><input type="checkbox" ${w.active ? 'checked' : ''} onchange="toggleWidgetActive(${index})"></td>
-                    <td>
-                        <button type="button" class="btn-warning" onclick="editWidget(${index})" style="padding: 2px 6px; font-size: 0.75rem; border:none; border-radius:3px; cursor:pointer;">تعديل</button>
-                        <button type="button" class="btn-danger" onclick="removeSidebarWidget(${index})" style="padding: 2px 6px; font-size: 0.75rem; border:none; border-radius:3px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>`;
-            });
-            html += `</tbody></table>`;
-            listBox.innerHTML = html;
+    resetWidgetForm();
+    loadSidebarWidgetsAdmin();
+}
+
+function editWidget(index) {
+    const widgets = globalData.widgets;
+    const w = widgets[index];
+    if (!w) return;
+    editingWidgetIndex = index;
+
+    const titleInput = document.getElementById('widget-title-input');
+    const typeInput = document.getElementById('widget-type-input');
+    const contentInput = document.getElementById('widget-custom-text');
+    const sb = document.getElementById('widget-pos-sidebar');
+    const ft = document.getElementById('widget-pos-footer');
+
+    titleInput.disabled = false; typeInput.disabled = false; contentInput.disabled = false; sb.disabled = false; ft.disabled = false;
+    titleInput.value = w.title; typeInput.value = w.type || 'custom'; contentInput.value = w.content || '';
+    
+    if (w.location === 'footer') { ft.checked = true; sb.checked = false; }
+    else { sb.checked = true; ft.checked = false; }
+
+    document.getElementById('widget-main-action-btn').innerText = "حفظ التعديلات";
+    document.getElementById('widget-cancel-btn').style.display = 'inline-block';
+}
+
+function resetWidgetForm() {
+    editingWidgetIndex = null;
+    document.getElementById('widget-title-input').disabled = true;
+    document.getElementById('widget-type-input').disabled = true;
+    document.getElementById('widget-custom-text').disabled = true;
+    document.getElementById('widget-pos-sidebar').disabled = true;
+    document.getElementById('widget-pos-footer').disabled = true;
+    document.getElementById('widget-title-input').value = '';
+    document.getElementById('widget-custom-text').value = '';
+    document.getElementById('widget-main-action-btn').innerText = "إضافة ودجت جديد";
+    document.getElementById('widget-cancel-btn').style.display = 'none';
+}
+
+function toggleWidgetActive(index) {
+    let widgets = globalData.widgets;
+    if (widgets[index]) {
+        widgets[index].active = !widgets[index].active;
+    }
+}
+
+function removeSidebarWidget(index) {
+    showCustomAlert("تأكيد", "هل أنت متأكد من رغبتك في حذف هذا الودجت؟", () => {
+        let widgets = globalData.widgets;
+        widgets.splice(index, 1);
+        loadSidebarWidgetsAdmin();
+    });
+}
+
+function addOrUpdateStructuredMenuItem() {
+    const rawInput = document.getElementById('menu-raw-input');
+    const urlInput = document.getElementById('menu-url-input');
+    const rawText = rawInput.value.trim();
+    const url = urlInput.value.trim() || '#';
+
+    if (!rawText) {
+        showCustomAlert("تنبيه", "الرجاء إدخال اسم العنصر مع الشرطات (مثال: _تقنية)!");
+        return;
+    }
+
+    let level = 1;
+    if (rawText.startsWith('___')) level = 3;
+    else if (rawText.startsWith('__')) level = 2;
+    
+    let cleanTitle = rawText.replace(/^_+\s*/, '');
+
+    let menu = globalData.menu;
+
+    if (editingMenuIndex !== null) {
+        menu[editingMenuIndex] = { rawText, title: cleanTitle, level, url };
+        editingMenuIndex = null;
+        document.getElementById('menu-add-btn').innerText = "إضافة للقائمة";
+        document.getElementById('menu-cancel-edit-btn').style.display = 'none';
+    } else {
+        menu.push({ rawText, title: cleanTitle, level, url });
+    }
+
+    rawInput.value = '';
+    urlInput.value = '';
+    menuHasChanges = true;
+    renderStructuredMenuAdmin();
+}
+
+function editStructuredItem(index) {
+    let menu = globalData.menu;
+    const item = menu[index];
+    if (!item) return;
+    document.getElementById('menu-raw-input').value = item.rawText;
+    document.getElementById('menu-url-input').value = item.url;
+    editingMenuIndex = index;
+    document.getElementById('menu-add-btn').innerText = "حفظ التعديل";
+    document.getElementById('menu-cancel-edit-btn').style.display = 'inline-block';
+}
+
+function resetMenuForm() {
+    editingMenuIndex = null;
+    document.getElementById('menu-raw-input').value = '';
+    document.getElementById('menu-url-input').value = '';
+    document.getElementById('menu-add-btn').innerText = "إضافة للقائمة";
+    document.getElementById('menu-cancel-edit-btn').style.display = 'none';
+}
+
+function deleteStructuredItem(index) {
+    let menu = globalData.menu;
+    menu.splice(index, 1);
+    menuHasChanges = true;
+    renderStructuredMenuAdmin();
+}
+
+let collapsedMenuIndices = new Set();
+
+function toggleMenuCollapse(index) {
+    if (collapsedMenuIndices.has(index)) {
+        collapsedMenuIndices.delete(index);
+    } else {
+        collapsedMenuIndices.add(index);
+    }
+    renderStructuredMenuAdmin();
+}
+
+function renderStructuredMenuAdmin() {
+    const container = document.getElementById('admin-menu-structured-list');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    let menu = globalData.menu;
+    if (menu.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">لا توجد عناصر مضافة بعد.</p>';
+        return;
+    }
+
+    let hideStackLevel = 999;
+
+    menu.forEach((item, index) => {
+        let currentLevel = item.level || 1;
+
+        if (currentLevel <= hideStackLevel) {
+            hideStackLevel = 999;
         }
 
-        function handleWidgetTypeSelection(type) {
-            const customGroup = document.getElementById('custom-text-group');
-            const contactGroup = document.getElementById('contact-fields-group');
-            const autoMsg = document.getElementById('auto-widget-msg');
-            const titleInput = document.getElementById('widget-title-input');
+        const isHiddenByParent = currentLevel > hideStackLevel;
+
+        let hasChildren = false;
+        if (index + 1 < menu.length) {
+            if ((menu[index + 1].level || 1) > currentLevel) {
+                hasChildren = true;
+            }
+        }
+
+        if (hasChildren && collapsedMenuIndices.has(index)) {
+            hideStackLevel = Math.min(hideStackLevel, currentLevel);
+        }
+
+        const row = document.createElement('div');
+        row.className = 'drag-item';
+        row.setAttribute('draggable', 'true');
+        row.dataset.index = index;
         
-            customGroup.style.display = 'none';
-            contactGroup.style.display = 'none';
-            autoMsg.style.display = 'none';
-            titleInput.disabled = false;
+        if (isHiddenByParent) {
+            row.style.cssText = "display: none; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;";
+        } else {
+            row.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem; transition: all 0.2s;";
+        }
         
-            if (type === 'custom') {
-                customGroup.style.display = 'block';
-                if (!titleInput.value) titleInput.value = "محتوى مخصص";
-            } else if (type === 'contact') {
-                contactGroup.style.display = 'block';
-                titleInput.value = "اتصل بنا";
-                titleInput.disabled = true;
-            } else {
-                autoMsg.style.display = 'block';
-                titleInput.disabled = true;
-                
-                if (type === 'recent') titleInput.value = "أحدث المواضيع";
-                else if (type === 'links') titleInput.value = "روابط سريعة";
-                else if (type === 'categories') titleInput.value = "التسميات والتصنيفات";
-                else if (type === 'pages') titleInput.value = "الصفحات الثابتة";
-                else if (type === 'popular') titleInput.value = "مشاركات مميزة";
-            }
+        let indent = (currentLevel - 1) * 25; 
+        
+        let collapseBtnHtml = '';
+        if (hasChildren) {
+            let isCollapsed = collapsedMenuIndices.has(index);
+            let iconSymbol = isCollapsed ? '+' : '-';
+            let btnBg = isCollapsed ? '#0284c7' : '#64748b';
+            collapseBtnHtml = `<button type="button" onclick="toggleMenuCollapse(${index})" style="background: ${btnBg}; color: #fff; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;" title="${isCollapsed ? 'إظهار الفروع' : 'إخفاء الفروع'}">${iconSymbol}</button>`;
+        } else {
+            collapseBtnHtml = `<span style="width: 20px; display: inline-block;"></span>`;
         }
 
-        function handleWidgetPosChange(pos) {
-            const sb = document.getElementById('widget-pos-sidebar');
-            const ft = document.getElementById('widget-pos-footer');
-            if (pos === 'sidebar' && sb.checked) ft.checked = false;
-            else if (pos === 'footer' && ft.checked) {
-                const widgets = globalData.widgets;
-                const footerCount = widgets.filter((w, idx) => w.location === 'footer' && idx !== editingWidgetIndex).length;
-                if (footerCount >= 4) {
-                    ft.checked = false;
-                    showCustomAlert("تنبيه", "عذراً، الحد الأقصى لودجات التذييل الأفقية هو 4 فقط!");
-                    return;
-                }
-                sb.checked = false;
-            }
-        }
+        row.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; margin-right: ${indent}px; flex: 1;">
+                <input type="checkbox" class="menu-item-checkbox" data-index="${index}" style="width: 16px; height: 16px; cursor: pointer;">
+                ${collapseBtnHtml}
+                <span style="color: var(--text-muted); cursor: grab;"><i class="fa-solid fa-grip-vertical"></i></span>
+                <span style="color: var(--accent-color); font-weight: bold;">${item.rawText}</span>
+                <span style="color: var(--text-muted); font-size: 0.75rem;">(رابط: ${item.url})</span>
+            </div>
+            <div style="display: flex; gap: 5px;">
+                <button type="button" class="btn-warning" onclick="editStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;">تعديل</button>
+                <button type="button" class="btn-danger" onclick="deleteStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-trash"></i></button>
+            </div>
+        `;
 
-        function handleWidgetMainAction() {
-            const titleInput = document.getElementById('widget-title-input');
-            const typeInput = document.getElementById('widget-type-input');
-            const contentInput = document.getElementById('widget-custom-text');
-            const footerPos = document.getElementById('widget-pos-footer');
-            const btn = document.getElementById('widget-main-action-btn');
+        row.addEventListener('dragstart', handleDragStart);
+        row.addEventListener('dragover', handleDragOver);
+        row.addEventListener('dragleave', handleDragLeave);
+        row.addEventListener('drop', handleDrop);
+        row.addEventListener('dragend', handleDragEnd);
 
-            if (titleInput.disabled) {
-                titleInput.disabled = false; typeInput.disabled = false;
-                contentInput.disabled = false; document.getElementById('widget-pos-sidebar').disabled = false;
-                footerPos.disabled = false; titleInput.focus();
-                btn.innerText = "حفظ التعديلات";
-                document.getElementById('widget-cancel-btn').style.display = 'inline-block';
-                return;
-            }
+        container.appendChild(row);
+    });
+}
 
-            const title = titleInput.value.trim();
-            if (!title) { showCustomAlert("تنبيه", "الرجاء إدخال عنوان الودجت!"); return; }
+let draggedIndices = [];
 
-            let widgets = globalData.widgets;
-            const location = footerPos.checked ? 'footer' : 'sidebar';
+function handleDragStart(e) {
+    const currentIndex = parseInt(this.dataset.index);
+    const checkboxes = document.querySelectorAll('.menu-item-checkbox');
+    let selected = [];
+    checkboxes.forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
 
-            if (editingWidgetIndex !== null) {
-                widgets[editingWidgetIndex] = { ...widgets[editingWidgetIndex], title, type: typeInput.value, content: contentInput.value.trim(), location };
-                editingWidgetIndex = null;
-            } else {
-                if (location === 'footer') {
-                    let footerWidgets = widgets.filter(w => w.location === 'footer');
-                    if (footerWidgets.length >= 4) {
-                        showCustomAlert("تنبيه", "الحد الأقصى لودجات الفوتر هو 4 ودجات أفقية!");
-                        return;
-                    }
-                }
-                widgets.push({ id: 'w_' + Date.now(), title, type: typeInput.value, content: contentInput.value.trim(), active: true, location });
-            }
+    let menu = globalData.menu;
+    let subItemsIndices = [currentIndex];
+    let baseLevel = menu[currentIndex].level || 1;
+    let idx = currentIndex + 1;
+    while (idx < menu.length && (menu[idx].level || 1) > baseLevel) {
+        subItemsIndices.push(idx);
+        idx++;
+    }
 
-            resetWidgetForm();
-            loadSidebarWidgetsAdmin();
-        }
-
-        function editWidget(index) {
-            const widgets = globalData.widgets;
-            const w = widgets[index];
-            if (!w) return;
-            editingWidgetIndex = index;
-
-            const titleInput = document.getElementById('widget-title-input');
-            const typeInput = document.getElementById('widget-type-input');
-            const contentInput = document.getElementById('widget-custom-text');
-            const sb = document.getElementById('widget-pos-sidebar');
-            const ft = document.getElementById('widget-pos-footer');
-
-            titleInput.disabled = false; typeInput.disabled = false; contentInput.disabled = false; sb.disabled = false; ft.disabled = false;
-            titleInput.value = w.title; typeInput.value = w.type || 'custom'; contentInput.value = w.content || '';
-            
-            if (w.location === 'footer') { ft.checked = true; sb.checked = false; }
-            else { sb.checked = true; ft.checked = false; }
-
-            document.getElementById('widget-main-action-btn').innerText = "حفظ التعديلات";
-            document.getElementById('widget-cancel-btn').style.display = 'inline-block';
-        }
-
-        function resetWidgetForm() {
-            editingWidgetIndex = null;
-            document.getElementById('widget-title-input').disabled = true;
-            document.getElementById('widget-type-input').disabled = true;
-            document.getElementById('widget-custom-text').disabled = true;
-            document.getElementById('widget-pos-sidebar').disabled = true;
-            document.getElementById('widget-pos-footer').disabled = true;
-            document.getElementById('widget-title-input').value = '';
-            document.getElementById('widget-custom-text').value = '';
-            document.getElementById('widget-main-action-btn').innerText = "إضافة ودجت جديد";
-            document.getElementById('widget-cancel-btn').style.display = 'none';
-        }
-
-        function toggleWidgetActive(index) {
-            let widgets = globalData.widgets;
-            if (widgets[index]) {
-                widgets[index].active = !widgets[index].active;
-            }
-        }
-
-        function removeSidebarWidget(index) {
-            showCustomAlert("تأكيد", "هل أنت متأكد من رغبتك في حذف هذا الودجت؟", () => {
-                let widgets = globalData.widgets;
-                widgets.splice(index, 1);
-                loadSidebarWidgetsAdmin();
-            });
-        }
-
-        function addOrUpdateStructuredMenuItem() {
-            const rawInput = document.getElementById('menu-raw-input');
-            const urlInput = document.getElementById('menu-url-input');
-            const rawText = rawInput.value.trim();
-            const url = urlInput.value.trim() || '#';
-
-            if (!rawText) {
-                showCustomAlert("تنبيه", "الرجاء إدخال اسم العنصر مع الشرطات (مثال: _تقنية)!");
-                return;
-            }
-
-            let level = 1;
-            if (rawText.startsWith('___')) level = 3;
-            else if (rawText.startsWith('__')) level = 2;
-            
-            let cleanTitle = rawText.replace(/^_+\s*/, '');
-
-            let menu = globalData.menu;
-
-            if (editingMenuIndex !== null) {
-                menu[editingMenuIndex] = { rawText, title: cleanTitle, level, url };
-                editingMenuIndex = null;
-                document.getElementById('menu-add-btn').innerText = "إضافة للقائمة";
-                document.getElementById('menu-cancel-edit-btn').style.display = 'none';
-            } else {
-                menu.push({ rawText, title: cleanTitle, level, url });
-            }
-
-            rawInput.value = '';
-            urlInput.value = '';
-            menuHasChanges = true;
-            renderStructuredMenuAdmin();
-        }
-
-        function editStructuredItem(index) {
-            let menu = globalData.menu;
-            const item = menu[index];
-            if (!item) return;
-            document.getElementById('menu-raw-input').value = item.rawText;
-            document.getElementById('menu-url-input').value = item.url;
-            editingMenuIndex = index;
-            document.getElementById('menu-add-btn').innerText = "حفظ التعديل";
-            document.getElementById('menu-cancel-edit-btn').style.display = 'inline-block';
-        }
-
-        function resetMenuForm() {
-            editingMenuIndex = null;
-            document.getElementById('menu-raw-input').value = '';
-            document.getElementById('menu-url-input').value = '';
-            document.getElementById('menu-add-btn').innerText = "إضافة للقائمة";
-            document.getElementById('menu-cancel-edit-btn').style.display = 'none';
-        }
-
-        function deleteStructuredItem(index) {
-            let menu = globalData.menu;
-            menu.splice(index, 1);
-            menuHasChanges = true;
-            renderStructuredMenuAdmin();
-        }
-
-        let collapsedMenuIndices = new Set();
-
-        function toggleMenuCollapse(index) {
-            if (collapsedMenuIndices.has(index)) {
-                collapsedMenuIndices.delete(index);
-            } else {
-                collapsedMenuIndices.add(index);
-            }
-            renderStructuredMenuAdmin();
-        }
-
-        function renderStructuredMenuAdmin() {
-            const container = document.getElementById('admin-menu-structured-list');
-            if (!container) return;
-            container.innerHTML = '';
-            
-            let menu = globalData.menu;
-            if (menu.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">لا توجد عناصر مضافة بعد.</p>';
-                return;
-            }
-
-            let hideStackLevel = 999;
-
-            menu.forEach((item, index) => {
-                let currentLevel = item.level || 1;
-
-                if (currentLevel <= hideStackLevel) {
-                    hideStackLevel = 999;
-                }
-
-                const isHiddenByParent = currentLevel > hideStackLevel;
-
-                let hasChildren = false;
-                if (index + 1 < menu.length) {
-                    if ((menu[index + 1].level || 1) > currentLevel) {
-                        hasChildren = true;
-                    }
-                }
-
-                if (hasChildren && collapsedMenuIndices.has(index)) {
-                    hideStackLevel = Math.min(hideStackLevel, currentLevel);
-                }
-
-                const row = document.createElement('div');
-                row.className = 'drag-item';
-                row.setAttribute('draggable', 'true');
-                row.dataset.index = index;
-                
-                if (isHiddenByParent) {
-                    row.style.cssText = "display: none; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;";
-                } else {
-                    row.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem; transition: all 0.2s;";
-                }
-                
-                let indent = (currentLevel - 1) * 25; 
-                
-                let collapseBtnHtml = '';
-                if (hasChildren) {
-                    let isCollapsed = collapsedMenuIndices.has(index);
-                    let iconSymbol = isCollapsed ? '+' : '-';
-                    let btnBg = isCollapsed ? '#0284c7' : '#64748b';
-                    collapseBtnHtml = `<button type="button" onclick="toggleMenuCollapse(${index})" style="background: ${btnBg}; color: #fff; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;" title="${isCollapsed ? 'إظهار الفروع' : 'إخفاء الفروع'}">${iconSymbol}</button>`;
-                } else {
-                    collapseBtnHtml = `<span style="width: 20px; display: inline-block;"></span>`;
-                }
-
-                row.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 8px; margin-right: ${indent}px; flex: 1;">
-                        <input type="checkbox" class="menu-item-checkbox" data-index="${index}" style="width: 16px; height: 16px; cursor: pointer;">
-                        ${collapseBtnHtml}
-                        <span style="color: var(--text-muted); cursor: grab;"><i class="fa-solid fa-grip-vertical"></i></span>
-                        <span style="color: var(--accent-color); font-weight: bold;">${item.rawText}</span>
-                        <span style="color: var(--text-muted); font-size: 0.75rem;">(رابط: ${item.url})</span>
-                    </div>
-                    <div style="display: flex; gap: 5px;">
-                        <button type="button" class="btn-warning" onclick="editStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;">تعديل</button>
-                        <button type="button" class="btn-danger" onclick="deleteStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-
-                row.addEventListener('dragstart', handleDragStart);
-                row.addEventListener('dragover', handleDragOver);
-                row.addEventListener('dragleave', handleDragLeave);
-                row.addEventListener('drop', handleDrop);
-                row.addEventListener('dragend', handleDragEnd);
-
-                container.appendChild(row);
-            });
-        }
-
-        let draggedIndices = [];
-
-        function handleDragStart(e) {
-            const currentIndex = parseInt(this.dataset.index);
-            const checkboxes = document.querySelectorAll('.menu-item-checkbox');
-            let selected = [];
-            checkboxes.forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
-
-            let menu = globalData.menu;
-            let subItemsIndices = [currentIndex];
-            let baseLevel = menu[currentIndex].level || 1;
-            let idx = currentIndex + 1;
-            while (idx < menu.length && (menu[idx].level || 1) > baseLevel) {
-                subItemsIndices.push(idx);
-                idx++;
-            }
-
-            if (selected.includes(currentIndex) && selected.length > 0) {
-                let allSelectedWithChildren = [];
-                selected.forEach(selIdx => {
-                    allSelectedWithChildren.push(selIdx);
-                    let sLevel = menu[selIdx].level || 1;
-                    let next = selIdx + 1;
-                    while (next < menu.length && (menu[next].level || 1) > sLevel) {
-                        allSelectedWithChildren.push(next);
-                        next++;
-                    }
-                });
-                draggedIndices = [...new Set(allSelectedWithChildren)].sort((a, b) => a - b);
-            } else {
-                draggedIndices = subItemsIndices;
-                const chk = this.querySelector('.menu-item-checkbox');
-                if (chk) chk.checked = true;
-            }
-            this.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            const targetRow = this;
-            const rect = targetRow.getBoundingClientRect();
-            const threshold = rect.height / 3;
-            const yClick = e.clientY - rect.top;
-
-            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
-            if (yClick < threshold) targetRow.classList.add('drop-indicator-top');
-            else if (yClick > rect.height - threshold) targetRow.classList.add('drop-indicator-bottom');
-            else targetRow.classList.add('drag-over-parent');
-        }
-
-        function handleDragLeave(e) {
-            this.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const targetRow = this;
-            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
-
-            const targetIndex = parseInt(targetRow.dataset.index);
-            if (draggedIndices.includes(targetIndex)) return;
-
-            const rect = targetRow.getBoundingClientRect();
-            const threshold = rect.height / 3;
-            const yClick = e.clientY - rect.top;
-
-            let dropMode = 'after';
-            if (yClick < threshold) dropMode = 'top';
-            else if (yClick > rect.height - threshold) dropMode = 'bottom';
-            else dropMode = 'child';
-
-            let menu = globalData.menu;
-            let itemsToMove = draggedIndices.map(i => menu[i]);
-            let remainingItems = menu.filter((_, idx) => !draggedIndices.includes(idx));
-            
-            let targetItemInRemaining = menu[targetIndex];
-            let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
-            if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
-
-            if (dropMode === 'top') {
-                remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
-            } else if (dropMode === 'bottom') {
-                remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
-            } else if (dropMode === 'child') {
-                let parentItem = targetItemInRemaining;
-                if (parentItem) {
-                    let levelDiff = (parentItem.level + 1) - itemsToMove[0].level;
-                    itemsToMove.forEach(it => {
-                        it.level = Math.max(1, it.level + levelDiff);
-                        it.rawText = '_'.repeat(it.level) + (it.title || 'عنصر');
-                    });
-                    remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
-                    targetRow.classList.add('pulse-highlight');
-                    setTimeout(() => targetRow.classList.remove('pulse-highlight'), 800);
-                }
-            }
-
-            menuHasChanges = true;
-            globalData.menu = remainingItems;
-            collapsedMenuIndices.clear();
-            renderStructuredMenuAdmin();
-        }
-
-        function handleDragEnd(e) {
-            document.querySelectorAll('.drag-item').forEach(item => {
-                item.classList.remove('dragging', 'drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
-            });
-            draggedIndices = [];
-        }
-
-        function saveAdsSettings() {
-            globalData.ads = {
-                topOn: document.getElementById('ad-top-on').checked,
-                topCode: document.getElementById('ad-top-code').value,
-                midOn: document.getElementById('ad-mid-on').checked,
-                midCode: document.getElementById('ad-mid-code').value,
-                botOn: document.getElementById('ad-bot-on').checked,
-                botCode: document.getElementById('ad-bot-code').value
-            };
-            showCustomAlert("نجاح", "تم حفظ إعدادات وشفرات الإعلانات!");
-        }
-
-        window.addEventListener('beforeunload', function (e) {
-            if (menuHasChanges) {
-                e.preventDefault();
-                e.returnValue = ''; 
+    if (selected.includes(currentIndex) && selected.length > 0) {
+        let allSelectedWithChildren = [];
+        selected.forEach(selIdx => {
+            allSelectedWithChildren.push(selIdx);
+            let sLevel = menu[selIdx].level || 1;
+            let next = selIdx + 1;
+            while (next < menu.length && (menu[next].level || 1) > sLevel) {
+                allSelectedWithChildren.push(next);
+                next++;
             }
         });
+        draggedIndices = [...new Set(allSelectedWithChildren)].sort((a, b) => a - b);
+    } else {
+        draggedIndices = subItemsIndices;
+        const chk = this.querySelector('.menu-item-checkbox');
+        if (chk) chk.checked = true;
+    }
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const targetRow = this;
+    const rect = targetRow.getBoundingClientRect();
+    const threshold = rect.height / 3;
+    const yClick = e.clientY - rect.top;
+
+    targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+    if (yClick < threshold) targetRow.classList.add('drop-indicator-top');
+    else if (yClick > rect.height - threshold) targetRow.classList.add('drop-indicator-bottom');
+    else targetRow.classList.add('drag-over-parent');
+}
+
+function handleDragLeave(e) {
+    this.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    const targetRow = this;
+    targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+
+    const targetIndex = parseInt(targetRow.dataset.index);
+    if (draggedIndices.includes(targetIndex)) return;
+
+    const rect = targetRow.getBoundingClientRect();
+    const threshold = rect.height / 3;
+    const yClick = e.clientY - rect.top;
+
+    let dropMode = 'after';
+    if (yClick < threshold) dropMode = 'top';
+    else if (yClick > rect.height - threshold) dropMode = 'bottom';
+    else dropMode = 'child';
+
+    let menu = globalData.menu;
+    let itemsToMove = draggedIndices.map(i => menu[i]);
+    let remainingItems = menu.filter((_, idx) => !draggedIndices.includes(idx));
+    
+    let targetItemInRemaining = menu[targetIndex];
+    let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
+    if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
+
+    if (dropMode === 'top') {
+        remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
+    } else if (dropMode === 'bottom') {
+        remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+    } else if (dropMode === 'child') {
+        let parentItem = targetItemInRemaining;
+        if (parentItem) {
+            let levelDiff = (parentItem.level + 1) - itemsToMove[0].level;
+            itemsToMove.forEach(it => {
+                it.level = Math.max(1, it.level + levelDiff);
+                it.rawText = '_'.repeat(it.level) + (it.title || 'عنصر');
+            });
+            remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+            targetRow.classList.add('pulse-highlight');
+            setTimeout(() => targetRow.classList.remove('pulse-highlight'), 800);
+        }
+    }
+
+    menuHasChanges = true;
+    globalData.menu = remainingItems;
+    collapsedMenuIndices.clear();
+    renderStructuredMenuAdmin();
+}
+
+function handleDragEnd(e) {
+    document.querySelectorAll('.drag-item').forEach(item => {
+        item.classList.remove('dragging', 'drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+    });
+    draggedIndices = [];
+}
+
+function saveAdsSettings() {
+    globalData.ads = {
+        topOn: document.getElementById('ad-top-on').checked,
+        topCode: document.getElementById('ad-top-code').value,
+        midOn: document.getElementById('ad-mid-on').checked,
+        midCode: document.getElementById('ad-mid-code').value,
+        botOn: document.getElementById('ad-bot-on').checked,
+        botCode: document.getElementById('ad-bot-code').value
+    };
+    showCustomAlert("نجاح", "تم حفظ إعدادات وشفرات الإعلانات!");
+}
+
+window.addEventListener('beforeunload', function (e) {
+    if (menuHasChanges) {
+        e.preventDefault();
+        e.returnValue = ''; 
+    }
+});
     </script>
 </body>
 </html>
