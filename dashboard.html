@@ -165,14 +165,7 @@
                     <label>رمز الوصول الشخصي (GitHub Token):</label>
                     <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxx">
                 </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>اسم المستخدم (GitHub Username):</label>
-                    <input type="text" id="gh-owner-input" placeholder="اسم المستخدم أو المؤسسة">
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>اسم المستودع (Repository Name):</label>
-                    <input type="text" id="gh-repo-input" placeholder="اسم المستودع (مثال: tech-dalil)">
-                </div>
+
                 <div style="display: flex; gap: 10px; margin-top: 5px;">
                     <button type="button" class="btn" onclick="saveGitHubSettings()" style="padding: 6px 15px;">حفظ إعدادات السحابة</button>
                     <button type="button" class="btn" onclick="saveAllChangesToServer()" style="background: #10b981; padding: 6px 15px;"><i class="fa-solid fa-cloud-arrow-up"></i> حفظ ومزامنة الكل للسيرفر الآن</button>
@@ -561,16 +554,18 @@ function initAdminUI() {
 }
 
 function saveGitHubSettings() {
-    const token = document.getElementById('gh-token-input').value.trim();
-    const owner = document.getElementById('gh-owner-input').value.trim();
-    const repo = document.getElementById('gh-repo-input').value.trim();
 
-    if (!globalData.settings.github) {
-        globalData.settings.github = {};
-    }
-    globalData.settings.github.token = token;
-    globalData.settings.github.owner = owner;
-    globalData.settings.github.repo = repo;
+                try {
+                const owner = "abdulazizalhaaj728-del";
+                const repo = "tech-dalil";
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json`);
+                if (res.ok) {
+                    const fileData = await res.json();
+                    globalFileSha = fileData.sha;
+                }
+            } catch (e) {
+                console.log("تعذر جلب ملف الـ SHA.");
+            }
 
     localStorage.setItem('tech_dalil_local_data', JSON.stringify(globalData));
     showCustomAlert("نجاح", "تم حفظ إعدادات جيت هب بنجاح!");
