@@ -819,7 +819,7 @@ function getShortTitle(title) {
     return words.length > 5 ? words.slice(0, 5).join(' ') + '...' : title;
 }
 
-// دالة فتح المقال بواسطة الـ Slug (معرفة بشكل عام في النطاق الرئيسي)
+// دالة فتح المقال بواسطة الـ Slug (مُصححة لضمان مطابقة المقالات الجديدة والقديمة)
 window.openPostBySlug = async function(slug) {
     const dynamicView = document.getElementById('dynamic-post-view');
     const dynamicContentBox = document.getElementById('dynamic-post-content-box');
@@ -843,11 +843,16 @@ window.openPostBySlug = async function(slug) {
     let menuTree = data.menu ? buildTree(data.menu) : [];
     let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
 
+    // تنظيف الـ slug المُستقبل وتوحيد صيغته للمقارنة الدقيقة
+    let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
+
     let post = rawPosts.find(p => {
-        let pSlug = (p.slug || '').replace('.html', '').trim();
-        let targetSlug = slug.replace('.html', '').trim();
-        let pUrl = (p.url || '').replace('.html', '').trim();
-        return pSlug === targetSlug || String(p.id || '') === targetSlug || pUrl.includes(targetSlug);
+        let pSlug = (p.slug || '').replace('.html', '').trim().toLowerCase();
+        let pId = String(p.id || '').trim();
+        let pUrl = (p.url || '').replace('.html', '').trim().toLowerCase();
+        
+        // مقارنة شاملة تغطي الـ slug، الـ id، أو تطابق نهايات الروابط
+        return pSlug === targetSlug || pId === targetSlug || pUrl.endsWith(targetSlug) || pUrl.includes(targetSlug);
     });
 
     if (post) {
@@ -901,7 +906,8 @@ window.openPostBySlug = async function(slug) {
             }
         }
 
-        function attachNavEvents() {
+        
+function attachNavEvents() {
             const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
             const nextArrowBtn = document.getElementById('custom-next-arrow-btn');
 
@@ -993,7 +999,7 @@ window.openPostBySlug = async function(slug) {
             </div>
         `;
 
-        history.pushState({ slug: slug }, post.title, `?article=${slug}`);
+        history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
         renderNavContainer();
 
         setTimeout(() => {
@@ -1039,20 +1045,13 @@ window.openPostBySlug = async function(slug) {
                 }
             }
         }, 100);
+    } else {
+        console.warn("المقال غير موجود بالمعرف أو الـ Slug:", slug);
     }
 };
 
-window.closePostView = function() {
-    const dynamicView = document.getElementById('dynamic-post-view');
-    const dynamicContentBox = document.getElementById('dynamic-post-content-box');
-    if (dynamicView && dynamicContentBox) {
-        dynamicView.style.display = 'none';
-        dynamicContentBox.innerHTML = '';
-        history.pushState({}, '', window.location.pathname || 'index.html');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-};
-
+        
+// تعديل معترض الأحداث العام لضمان استخراج الـ slug بشكل صحيح ودقيق للروابط الجديدة والقديمة
 document.addEventListener('DOMContentLoaded', () => {
     const backBtn = document.getElementById('back-to-home-btn');
     if (backBtn) {
@@ -1069,8 +1068,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const href = link.getAttribute('href');
             if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
                 e.preventDefault();
-                let slug = href.split('/').pop().replace('.html', '').replace('?article=', '').split('&')[0];
-                openPostBySlug(slug);
+                // استخراج وتنظيف الـ slug بدقة بغض النظر عن شكل الرابط
+                let cleanSlug = href;
+                if (href.includes('?article=')) {
+                    cleanSlug = href.split('?article=')[1];
+                } else {
+                    cleanSlug = href.split('/').pop();
+                }
+                cleanSlug = cleanSlug.replace('.html', '').split('&')[0].trim();
+                openPostBySlug(cleanSlug);
             }
         }
     });
@@ -1090,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
+        
 // دوال القائمة المنسدلة، السلايدر، والثيمات
 function buildTree(items) {
     let root = [];
