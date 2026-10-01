@@ -9,58 +9,71 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// استقبال البيانات المرسلة بصيغة JSON أو من نموذج مرسل (FormData)
+// استقبال البيانات المرسلة
 $inputJSON = file_get_contents('php://input');
 $data = json_decode($inputJSON, true);
 
-// إذا لم يتم إرسال بيانات JSON، جرب استقبالها عبر POST العادي
 if (empty($data)) {
     $data = $_POST;
 }
 
-// التحقق من وجود نوع البيانات المراد حفظها (مثلاً: مقال، إعدادات، ودجت)
+// تحديد القسم المراد حفظه (settings, articles, widgets, menus, ads)
 $type = isset($data['type']) ? trim($data['type']) : '';
 $content = isset($data['content']) ? $data['content'] : null;
 
-if (empty($type) || $content === null) {
+// الأنواع المسموحة لتجنب أي تلاعب بالمسارات (Path Traversal)
+$allowedTypes = ['settings', 'articles', 'widgets', 'menus', 'ads'];
+
+if (empty($type) || !in_array($type, $allowedTypes) || $content === null) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'بيانات غير كافية أو مفقودة.'], JSON_UNESCAPED_UNICODE);
+    echo json_encode(['status' => 'error', 'message' => 'بيانات غير كافية أو نوع غير مدعوم.'], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-// تحديد مجلد الحفظ (تأكد من وجود مجلد باسم data ومنحه صلاحيات الكتابة 755 أو 777 إذا لزم الأمر)
+// إعداد مجلد الحفظ
 $dataDir = __DIR__ . '/data/';
 if (!is_dir($dataDir)) {
     mkdir($dataDir, 0755, true);
 }
 
-// تحديد اسم الملف بناءً على النوع لمنع الوصول لملفات غير مسموحة (Path Traversal Protection)
-$allowedTypes = ['articles', 'settings', 'widgets'];
-if (!in_array($type, $allowedTypes)) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'نوع البيانات غير مدعوم.'], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
 $filename = $dataDir . $type . '.json';
 
-// تنقية أو تجهيز البيانات قبل الحفظ (حسب الحاجة)
-// ملاحظة: يُفضل إجراء التنقية الأساسية من جهة العميل (JavaScript) أيضاً
+// معالجة خاصة للمقالات لضمان نظافة وثبات الـ slug وتجنب أي مشاكل في الروابط
+if ($type === 'articles' && is_array($content)) {
+    foreach ($content as &$article) {
+        if (isset($article['title']) && (empty($article['slug']) || trim($article['slug']) === '')) {
+            // توليد slug آمن تلقائياً في حال لم يتم إرساله (أحرف إنجليزية، أرقام، وشرطات)
+            $slug = strtolower(trim($article['title']));
+            $slug = preg_replace('/[^\w\s-]/u', '', $slug);
+            $slug = preg_replace('/[\s_-]+/', '-', $slug);
+            $slug = trim($slug, '-');
+            // إذا كان العنوان عربياً بالكامل ولم ينتج slug إنجليزي، نستخدم معرفاً زمنياً أو نحتفظ بالنص مع ترميزه
+            if (empty($slug)) {
+                $slug = 'post-' . time() . '-' . rand(100, 999);
+            }
+            $article['slug'] = $slug;
+        } elseif (isset($article['slug'])) {
+            // تنظيف الـ slug المدخل يدوياً ليكون آمناً للرابط
+            $article['slug'] = trim(preg_replace('/[^\w\-]/u', '', $article['slug']));
+        }
+    }
+    unset($article);
+}
 
-// محاولة حفظ البيانات في ملف JSON بشكل منظّم وجميل (JSON_PRETTY_PRINT)
+// تحويل البيانات إلى JSON مع الحفاظ على التنسيق واللغة العربية
 $jsonData = json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
 if ($jsonData === false) {
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'فشل تحويل البيانات إلى صيغة JSON.'], JSON_UNESCAPED_UNICODE);
+    echo json_encode(['status' => 'error', 'message' => 'فشل معالجة البيانات.'], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-// استخدام قفل الملفات (LOCK_EX) لمنع التضارب عند حدوث طلبات حفظ متزامنة
+// الحفظ مع قفل الملف لمنع التضارب (LOCK_EX)
 if (file_put_contents($filename, $jsonData, LOCK_EX) !== false) {
     echo json_encode([
         'status' => 'success',
-        'message' => 'تم حفظ البيانات بنجاح.',
+        'message' => 'تم حفظ بيانات (' . $type . ') بنجاح.',
         'type' => $type
     ], JSON_UNESCAPED_UNICODE);
 } else {
