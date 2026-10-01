@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <meta charset="UT<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة</title>
@@ -133,25 +136,17 @@
 
         .mega-menu > li { position: relative; }
         .mega-menu > li:hover > .dropdown-menu { display: block; }
-
         .dropdown-menu li { position: relative; border-bottom: 1px solid var(--border-color); }
         .dropdown-menu li:last-child { border-bottom: none; }
-        .dropdown-menu li a { display: block; padding: 9px 15px; color: var(--text-main); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: 0.2s; }
-        .dropdown-menu li a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); padding-right: 20px; }
-        
-        .dropdown-menu li:hover > .dropdown-menu {
-            display: block;
-            position: absolute;
-            right: 100%;
-            top: -5px;
+
+        .dropdown-menu li a { 
+            display: block; padding: 9px 15px; color: var(--text-main); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: 0.2s; 
         }
+        .dropdown-menu li a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); padding-right: 20px; }
+        .dropdown-menu li:hover > .dropdown-menu { display: block; position: absolute; right: 100%; top: -5px; }
 
         .content img, .post-img, .featured-img, article img {
-            display: block !important;
-            margin: 15px auto !important;
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
+            display: block !important; margin: 15px auto !important; max-width: 100%; height: auto; border-radius: 8px;
         }
         
         .three-columns-grid { 
@@ -164,13 +159,7 @@
         .top-right-row { display: flex; gap: 15px; align-items: stretch; margin-bottom: 15px; }
 
         .square-slider-box {
-            flex: 1.6;
-            height: 310px;
-            position: relative;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
+            flex: 1.6; height: 310px; position: relative; border-radius: 12px; overflow: hidden; background: var(--card-bg); border: 1px solid var(--border-color);
         }
         .square-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.6s ease; background-size: cover; background-position: center; display: flex; align-items: flex-end; }
         .square-slide.active { opacity: 1; }
@@ -189,76 +178,28 @@
         .slider-next { left: 10px; }
 
         .news-mini-container { 
-            flex: 1;
-            background: var(--card-bg); 
-            border: 2px dashed var(--border-color); 
-            border-radius: 12px; 
-            height: 310px; 
-            padding: 15px; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            color: var(--text-muted); 
-            font-size: 0.9rem; 
-            box-sizing: border-box;
+            flex: 1; background: var(--card-bg); border: 2px dashed var(--border-color); border-radius: 12px; height: 310px; padding: 15px; display: flex; flex-direction: column; overflow: hidden; color: var(--text-muted); font-size: 0.9rem; box-sizing: border-box;
+        }
+
+        .news-ticker-wrapper {
+            width: 100%; background: var(--card-bg, #1e293b); border-bottom: 1px solid var(--border-color, #334155); padding: 8px 15px; margin-top: 0; margin-bottom: 15px; position: relative; z-index: 10; display: flex; align-items: center; border-radius: 6px;
         }
 
         .products-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 6px;
-            flex: 1;
-            min-height: 0;
+            display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 6px; flex: 1; min-height: 0;
         }
         
         .product-card {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            overflow: hidden;
-            position: relative;
-            transition: all 0.3s ease;
-            height: 100%;
+            background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none; overflow: hidden; position: relative; transition: all 0.3s ease; height: 100%;
         }
-        
-        .product-card:not(.empty):hover {
-            background-color: var(--card-bg);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
+        .product-card:not(.empty):hover { background-color: var(--card-bg); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); }
 
         .product-content {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 6px;
-            box-sizing: border-box;
-            gap: 4px;
+            width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box; gap: 4px;
         }
-        
-        .ad-game-thumb {
-            width: 100%;
-            height: 78px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        
-        .product-card span {
-            color: #ffffff;
-            font-size: 0.72rem;
-            text-align: center;
-            line-height: 1.2;
-        }
-        
-        .product-card.empty { opacity: 0.4; cursor: default; }
+        .ad-game-thumb { width: 100%; height: 78px; object-fit: cover; border-radius: 4px; }
+        .product-card span { color: #ffffff; font-size: 0.72rem; text-align: center; line-height: 1.2; }
+        .product-card.empty { opacity: 0.4; cursor: default; }    
 
         #dynamic-post-view .post-card,
         .dynamic-post-content-box {
@@ -281,22 +222,25 @@
         
         .dynamic-post-content-box h1, 
         .dynamic-post-content-box h2, 
-        .dynamic-post-content-box h3 {
-            color: #2C3E50 !important;
-            margin-bottom: 15px;
-        }
-        
+        .dynamic-post-content-box h3 { color: #2C3E50 !important; margin-bottom: 15px; }
         .dynamic-post-content-box p { margin-bottom: 15px; }
 
+        .back-to-home-btn {
+            display: inline-flex; align-items: center; gap: 6px; background: var(--primary-color); color: #fff; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;
+        }
+        .back-to-home-btn:hover { opacity: 0.85; }
+
         .left-sticky-sidebar { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
-            position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
         }
         .sidebar-widget { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
         .sidebar-widget h4, .sidebar-widget h3 { color: var(--accent-color); font-size: 0.95rem; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
         .sidebar-widget ul { list-style: none; }
         .sidebar-widget ul li { padding: 6px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; cursor: pointer; color: var(--text-main); }
         .sidebar-widget ul li:hover { color: var(--accent-color); }
+
+        .left-sticky-sidebar::-webkit-scrollbar { display: none; }
+        .left-sticky-sidebar { scrollbar-width: none; -ms-overflow-style: none; }
 
         .tags-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
         .tag-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
@@ -319,19 +263,19 @@
 
         .site-footer { width: 100%; margin: 15px auto 0; padding: 0; }
         .footer-container { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 12px; 
-            padding: 15px; 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px; 
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; 
         }
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
 
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
+
+        .site-main-menu, .site-main-menu ul, .site-main-menu li, .site-main-menu a, .dropdown-menu, .dropdown-menu li, .dropdown-menu a {
+            pointer-events: auto !important;
+        }
+        .site-main-menu li { position: relative; }
+        .site-main-menu li:hover > .dropdown-menu { display: block !important; pointer-events: auto !important; }
     </style>
 </head>
     
@@ -386,29 +330,33 @@
             </div>
         </div>
 
-        <!-- القائمة الرئيسية الأفقية -->
         <div class="main-menu-bar">
             <nav id="site-main-menu" class="mega-menu">
-                <a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
+                <li><a href="#">الرئيسية</a></li>
+                <li>
+                    <a href="#">البرمجيات ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">أنظمة الويب</a></li>
+                    </ul>
+                </li>
             </nav>
         </div>
-        
+
         <div id="site-ad-mid" style="width: 100%; margin: 15px auto; text-align: center;"></div>
         
         <div class="three-columns-grid" id="top-three-section">
             <div class="right-scrollable-section">
 
-                <!-- صندوق عرض المقال الديناميكي (يفتح بداخل الصندوق على اليمين) -->
+                <!-- صندوق عرض المقال الديناميكي -->
                 <div id="dynamic-post-view" style="display: none; width: 100%; margin-bottom: 20px;">
                     <article class="post-card" style="background-color: #F7F4EF !important; border: 1px solid #E2D8C5 !important; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                        <div id="dynamic-post-content-box">
-                            <!-- محتوى المقال المستدعى -->
-                        </div>
+                        <div id="dynamic-post-content-box"></div>
                     </article>
                 </div>
-                
-                <!-- صف يضم السلايدر وبجانبه صندوق المنتجات الرقمية -->
-                <div class="top-right-row">
+
+                <!-- صف السلايدر ومنتجات رقمية (سيتم إخفاؤهما تلقائياً عند فتح المقال عبر فئة hide-on-article) -->
+                <div class="top-right-row hide-on-article" id="home-slider-products-row">
+                    
                     <div class="square-slider-box" id="square-slider-wrapper">
                         <div class="square-slide active" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80');">
                             <div class="square-caption">
@@ -441,14 +389,15 @@
                             <div class="product-card empty"></div>
                         </div>
                     </div>
+        
                 </div>
         
-                <div class="tags-filter-section">
-                    <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 10px;">🏷️ تصفية حسب التسميات:</h3>
+                <div class="tags-filter-section hide-on-article">
+                    <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 10px;">🏷️️ تصفية حسب التسميات:</h3>
                     <div class="tags-bar" id="tags-filter-bar"></div>
                 </div>
         
-                <div class="main-posts-section" id="posts-list-section">
+                <div class="main-posts-section hide-on-article" id="posts-list-section">
                     <div id="posts-container"></div>
                 </div>
             </div>
@@ -484,32 +433,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         let menuTree = data.menu ? buildTree(data.menu) : [];
         let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
 
-        // 1. عرض المقالات في القائمة الرئيسية بالمنتصف / الأسفل
         const container = document.getElementById('posts-container');
         if (filteredPosts.length > 0) {
             if (container) {
                 container.innerHTML = filteredPosts.map(post => `
                     <div class="post-card">
                         <div class="post-title">
-                            <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}'); return false;">${post.title}</a>
+                            <a href="?article=${post.slug}">${post.title}</a>
                         </div>
                         <div class="post-meta">
                             <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
                         </div>
                         <div class="post-excerpt">${post.description || ''}</div>
-                        <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}'); return false;" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
+                        <a href="?article=${post.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                     </div>
                 `).join('');
             }
             
-            // 2. تفعيل السلايدر العلوي بأحدث المقالات
             const sliderWrapper = document.getElementById('square-slider-wrapper');
             const sliderPosts = filteredPosts.slice(0, 4);
             if (sliderWrapper && sliderPosts.length > 0) {
                 let sliderHtml = sliderPosts.map((p, idx) => `
                     <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
                         <div class="square-caption">
-                            <a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}'); return false;" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;">${p.title}</a>
+                            <a href="?article=${p.slug}" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;">${p.title}</a>
                             <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                         </div>
                     </div>
@@ -528,15 +475,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 3. بناء القوائم العلوية المنسدلة من بيانات لوحة التحكم
         if (data.menu && data.menu.length > 0) {
             const menuContainer = document.getElementById('site-main-menu');
             if (menuContainer) {
-                menuContainer.innerHTML = `<a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>` + generateMenuHtml(menuTree, false);
+                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
             }
         }
 
-        // 4. بناء الودجتس الجانبية وفي التذييل واستدعاء المقالات الحديثة بداخلها
         if (data.widgets && data.widgets.length > 0) {
             const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
             const footerWidgetsContainer = document.getElementById('site-footer-widgets');
@@ -548,17 +493,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (w.type === 'recent') {
                     let recentThree = sequencedPosts.slice(0, 3);
                     contentBox = '<ul class="recent-posts-list">' + recentThree.map(p => `
-                        <li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}'); return false;" style="font-size: 0.75rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>
+                        <li><a href="?article=${p.slug}" style="font-size: 0.68rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>
                     `).join('') + '</ul>';
                 } else if (w.type === 'links') {
-                    contentBox = `<div class="quick-links-box" style="font-size: 0.75rem;">${w.content || ''}</div>`;
+                    contentBox = `<div class="quick-links-box" style="font-size: 0.68rem;">${w.content || ''}</div>`;
                 } else {
-                    contentBox = `<div style="font-size: 0.75rem;">${w.content || ''}</div>`;
+                    contentBox = `<div style="font-size: 0.68rem;">${w.content || ''}</div>`;
                 }
 
                 let widgetBlock = `
                     <div class="widget-card" id="${w.id}">
-                        <h3 class="widget-title" style="font-size: 0.9rem; margin-bottom: 8px;">${w.title}</h3>
+                        <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">${w.title}</h3>
                         <div class="widget-content">${contentBox}</div>
                     </div>
                 `;
@@ -576,7 +521,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 5. الإعلانات
         if (data.ads) {
             if (data.ads.topOn && data.ads.topCode) {
                 const topAdBox = document.getElementById('site-ad-top');
@@ -592,7 +536,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // فحص الـ URL عند التحميل الأولي لعرض المقال داخل الصندوق الديناميكي إن وجد
         const urlParams = new URLSearchParams(window.location.search);
         const articleParam = urlParams.get('article');
         if (articleParam) {
@@ -605,7 +548,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// دالة ترتيب المقالات
 function getOrderedPosts(menuItems, allPosts) {
     let ordered = [];
     let visitedIds = new Set();
@@ -646,12 +588,15 @@ function getShortTitle(title) {
     return words.length > 5 ? words.slice(0, 5).join(' ') + '...' : title;
 }
 
-// دالة فتح المقال ديناميكياً داخل الصندوق المخصص على اليمين دون إعادة تحميل الصفحة
+// دالة فتح المقال مع إخفاء السلايدر والمحتويات الأخرى المعيقة لحركة الصندوق
 window.openPostBySlug = async function(slug) {
     const dynamicView = document.getElementById('dynamic-post-view');
     const dynamicContentBox = document.getElementById('dynamic-post-content-box');
     
     if (!dynamicView || !dynamicContentBox) return;
+
+    // إخفاء عناصر الصفحة الرئيسية (السلايدر، المنتجات، التسميات، القائمة الرئيسية للمقالات) لإفساح المجال كاملاً
+    document.querySelectorAll('.hide-on-article').forEach(el => el.style.display = 'none');
 
     let data = window.siteBlogData;
     if (!data) {
@@ -690,23 +635,124 @@ window.openPostBySlug = async function(slug) {
         let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
         let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
 
+        let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
+
+        window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
+        window._currentNavNextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
+
+        function renderNavContainer() {
+            let pPost = window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
+            let nPost = window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
+
+            // تم برمجة الأسهم بحيث تحرك اسم العنوان فقط دون جلبه، وجلب المقال يكون بالضغط على الرابط المجاور فقط
+            let pHtml = pPost ? `
+                <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
+                    <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="السهم السابق"><i class="fa-solid fa-arrow-right"></i></button>
+                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right;">
+                        <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${pPost.title}">${getShortTitle(pPost.title)}</a>
+                    </div>
+                </div>` : `<span></span>`;
+
+            let nHtml = nPost ? `
+                <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
+                    <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left;">
+                        <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nPost.title}">${getShortTitle(nPost.title)}</a>
+                    </div>
+                    <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="السهم التالي"><i class="fa-solid fa-arrow-left"></i></button>
+                </div>` : `<span></span>`;
+
+            const navBox = document.getElementById('bottom-navigation-wrapper');
+            if (navBox) {
+                navBox.innerHTML = `<div>${pHtml}</div><div>${nHtml}</div>`;
+                attachNavEvents();
+            }
+        }
+        
+        function attachNavEvents() {
+            const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
+            const nextArrowBtn = document.getElementById('custom-next-arrow-btn');
+
+            if (prevArrowBtn) {
+                prevArrowBtn.onclick = () => {
+                    if (window._currentNavPrevIndex > 0) {
+                        window._currentNavPrevIndex--;
+                        window._currentNavNextIndex = window._currentNavPrevIndex + 2 < sequencedPosts.length ? window._currentNavPrevIndex + 2 : -1;
+                    } else {
+                        window._currentNavPrevIndex = sequencedPosts.length - 1;
+                    }
+                    renderNavContainer();
+                };
+            }
+
+            if (nextArrowBtn) {
+                nextArrowBtn.onclick = () => {
+                    if (window._currentNavNextIndex !== -1 && window._currentNavNextIndex < sequencedPosts.length - 1) {
+                        window._currentNavNextIndex++;
+                        window._currentNavPrevIndex = window._currentNavNextIndex - 2 >= 0 ? window._currentNavNextIndex - 2 : -1;
+                    } else {
+                        window._currentNavNextIndex = 0;
+                    }
+                    renderNavContainer();
+                };
+            }
+        }
+
+        let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
+        let relatedHtml = '';
+        if (relatedPosts.length > 0) {
+            let linksList = relatedPosts.map(rp => `
+                <li style="margin-bottom: 8px;">
+                    <a href="?article=${rp.slug}" style="color: #4a3b32; background: rgba(210, 195, 170, 0.25); padding: 8px 12px; display: block; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 0.85rem;">
+                        <i class="fa-solid fa-bookmark" style="color: var(--primary-color); margin-left: 6px;"></i> ${rp.title}
+                    </a>
+                </li>
+            `).join('');
+
+            relatedHtml = `
+                <div style="margin: 35px 0; padding: 20px; background: rgba(245, 240, 230, 0.6); border: 1px solid #dcd3c1; border-radius: 8px;">
+                    <h3 style="color: #8c4a32; font-size: 1.05rem; margin-bottom: 12px; font-weight: 700; border-bottom: 2px solid #dcd3c1; padding-bottom: 6px;">
+                        <i class="fa-solid fa-fire"></i> شاهد أيضاً / مواضيع ذات صلة:
+                    </h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">${linksList}</ul>
+                </div>
+            `;
+        }
+
         let rawContent = post.content || post.description || '';
+        let contentParts = rawContent.split('</p>');
+        let middleIndex = Math.floor(contentParts.length / 2);
+        if (contentParts.length > 1) {
+            contentParts[middleIndex] += relatedHtml;
+            rawContent = contentParts.join('</p>');
+        } else {
+            rawContent += relatedHtml;
+        }
 
         dynamicContentBox.innerHTML = `
             <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                <button id="back-to-home-btn-inner" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+            </div>
+
+            <div id="toc-container" style="margin-bottom: 20px; border: 1px solid #dcd3c1; border-radius: 6px; background: rgba(245, 240, 230, 0.4);">
+                <div id="toc-header" style="padding: 8px 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #4a3b32; font-size: 0.85rem;">
+                    <span><i class="fa-solid fa-list-ul" style="color: var(--primary-color); margin-left: 8px;"></i> محتويات المقال</span>
+                    <i class="fa-solid fa-chevron-down" id="toc-arrow" style="transition: transform 0.3s;"></i>
+                </div>
+                <div id="toc-list-box" style="display: none; padding: 10px 20px; border-top: 1px solid #dcd3c1; max-height: 200px; overflow-y: auto;"></div>
             </div>
 
             <div style="padding: 0 15px;">
-                <h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
+                <h1 id="article-main-title-heading" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
                 <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 20px;">
                     <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍ ${post.author || 'إدارة المدونة'}</span>
                 </div>
                 ${topAd}
-                <div class="single-post-content" style="line-height: 1.8; color: #2C3E50; font-size: 0.9rem;">
+                <div class="single-post-content" id="article-main-content" style="line-height: 1.8; color: #2C3E50; font-size: 0.9rem;">
                     ${rawContent}
                 </div>
                 ${botAd}
+
+                <div id="bottom-navigation-wrapper" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
 
                 <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
                     <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
@@ -715,44 +761,57 @@ window.openPostBySlug = async function(slug) {
         `;
 
         history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
+        renderNavContainer();
     }
 };
 
+// دالة إغلاق صندوق المقال وإعادة إظهار محتويات الخلفية (السلايدر والعناصر الأخرى) في مكانها
 window.closePostView = function() {
     const dynamicView = document.getElementById('dynamic-post-view');
     const dynamicContentBox = document.getElementById('dynamic-post-content-box');
+    
     if (dynamicView && dynamicContentBox) {
         dynamicView.style.display = 'none';
         dynamicContentBox.innerHTML = '';
-        history.pushState({}, document.title, window.location.pathname);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // إعادة إظهار عناصر الصفحة الرئيسية المختفية
+    document.querySelectorAll('.hide-on-article').forEach(el => el.style.display = '');
+
+    history.pushState({}, '', window.location.pathname);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// اعتراض الروابط الداخلية لتعمل بسلاسة
-document.addEventListener('click', (e) => {
-    const link = e.target.closest('a');
-    if (link && link.getAttribute('href')) {
-        const href = link.getAttribute('href');
-        if (href.includes('?article=')) {
-            e.preventDefault();
-            let cleanSlug = href.split('?article=')[1].replace('.html', '').split('&')[0].trim();
-            openPostBySlug(cleanSlug);
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (link && link.getAttribute('href')) {
+            const href = link.getAttribute('href');
+            if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
+                e.preventDefault();
+                let cleanSlug = href;
+                if (href.includes('?article=')) {
+                    cleanSlug = href.split('?article=')[1];
+                } else {
+                    cleanSlug = href.split('/').pop();
+                }
+                cleanSlug = cleanSlug.replace('.html', '').split('&')[0].trim();
+                openPostBySlug(cleanSlug);
+            }
         }
-    }
+    });
+
+    window.addEventListener('popstate', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const article = urlParams.get('article');
+        if (!article) {
+            closePostView();
+        } else {
+            openPostBySlug(article);
+        }
+    });
 });
 
-window.addEventListener('popstate', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const article = urlParams.get('article');
-    if (!article) {
-        closePostView();
-    } else {
-        openPostBySlug(article);
-    }
-});
-
-// دوال القائمة المنسدلة والسلايدر والثيمات
 function buildTree(items) {
     let root = [];
     let stack = [{ level: 0, children: root }];
@@ -768,9 +827,9 @@ function buildTree(items) {
     return root;
 }
 
-function generateMenuHtml(nodes, isSub = false) {
+function generateMenuHtml(nodes, isRoot = false) {
     if (!nodes || nodes.length === 0) return '';
-    let html = isSub ? '<ul class="dropdown-menu">' : '';
+    let html = isRoot ? '' : '<ul class="dropdown-menu">';
     
     html += nodes.map(node => {
         let itemUrl = node.url || node.link || '#';
@@ -787,18 +846,18 @@ function generateMenuHtml(nodes, isSub = false) {
         }
 
         let hasChildren = node.children && node.children.length > 0;
-        let arrow = !isSub && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+        let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
         let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;"` : '';
 
         return `
             <li>
                 <a href="${finalHref}" ${clickAttr}>${node.title}${arrow}</a>
-                ${hasChildren ? generateMenuHtml(node.children, true) : ''}
+                ${hasChildren ? generateMenuHtml(node.children, false) : ''}
             </li>
         `;
     }).join('');
 
-    if (isSub) html += '</ul>';
+    if (!isRoot) html += '</ul>';
     return html;
 }
 
