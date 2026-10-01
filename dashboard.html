@@ -6,8 +6,27 @@
     <title>لوحة التحكم الشاملة | تكنو-دليل</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة Quill CSS -->
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
     <style>
+        .custom-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; opacity: 0; visibility: hidden; transition: all 0.25s ease;
+        }
+        .custom-modal-overlay.active { opacity: 1; visibility: visible; }
+        .custom-modal-box {
+            background: var(--card-bg, #1e293b); color: var(--text-main, #f8fafc);
+            border: 1px solid var(--border-color, #334155); border-radius: 14px;
+            padding: 25px; width: 90%; max-width: 380px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25); text-align: right; direction: rtl;
+        }
+        .custom-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .custom-modal-btn { padding: 8px 18px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer; border: none; }
+        .custom-modal-btn.confirm { background: var(--accent-color, #f59e0b); color: #fff; }
+        .custom-modal-btn.cancel { background: var(--border-color, #334155); color: var(--text-main, #f8fafc); }
+
         :root {
             --primary-color: #0284c7; --accent-color: #f59e0b;
             --bg-dark: #0f172a; --card-bg: #1e293b;
@@ -23,75 +42,1235 @@
         input, textarea, select { width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; font-size: 0.95rem; }
         textarea { height: 110px; resize: vertical; }
         .btn { background: var(--primary-color); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; }
+        .btn:hover { opacity: 0.9; }
+        .btn-danger { background: #ef4444; }
+        .btn-warning { background: #eab308; color: #000; }
         .section-box { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; margin-bottom: 25px; }
         .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: normal; }
         .checkbox-label input { width: auto; }
+        .widgets-table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.85rem; }
+        .widgets-table th { color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding: 8px; }
+        .widgets-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .item-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; }
         
-        .sticky-editor-header {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 10px 15px; margin-bottom: 10px;
+        .drag-item.drop-indicator-top { border-top: 2px solid var(--accent-color) !important; }
+        .drag-item.drop-indicator-bottom { border-bottom: 2px solid var(--accent-color) !important; }
+        .drag-item.drag-over-parent { background: rgba(245, 158, 11, 0.15) !important; border-left: 4px solid #ff9800 !important; }
+        .drag-item.dragging { opacity: 0.4; }
+
+        @keyframes fq-pulse {
+            0% { background-color: transparent; box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.7); }
+            70% { background-color: rgba(255, 87, 34, 0.3); box-shadow: 0 0 0 10px rgba(255, 87, 34, 0); }
+            100% { background-color: transparent; box-shadow: 0 0 0 0 rgba(255, 87, 34, 0); }
         }
-        .custom-font-bar { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
-        .font-tag-btn { background: var(--bg-dark); color: var(--text-main); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
-        .ql-container.ql-snow { background: var(--bg-dark); color: var(--text-main); border-color: var(--border-color); min-height: 250px; }
+        .pulse-highlight {
+            animation: fq-pulse 0.8s ease-in-out;
+            border: 2px solid #ff5722 !important;
+        }
+
+        /* تنسيقات المحرر النظيف */
+        .sticky-editor-header {
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            margin-bottom: 10px;
+        }
+        .custom-font-bar {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        .font-tag-btn {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .font-tag-btn:hover { background: var(--primary-color); border-color: var(--primary-color); }
+
+        .ql-toolbar.ql-snow { 
+            background: var(--bg-dark) !important; 
+            border-color: var(--border-color) !important; 
+            border-radius: 6px; 
+            direction: ltr; 
+        }
+        .ql-container.ql-snow { 
+            background: var(--bg-dark); 
+            color: var(--text-main); 
+            border-color: var(--border-color); 
+            border-bottom-left-radius: 6px; 
+            border-bottom-right-radius: 6px; 
+            min-height: 350px; 
+            font-size: 1.05rem; 
+            direction: rtl; 
+            text-align: right; 
+        }
+        .ql-editor { direction: rtl; text-align: right; min-height: 330px; }
+        .ql-snow .ql-stroke { stroke: var(--text-main); }
+        .ql-snow .ql-fill { fill: var(--text-main); }
+        .ql-snow .ql-picker { color: var(--text-main); }
+        .ql-font-cairo { font-family: 'Cairo', sans-serif !important; }
+        .ql-font-tajawal { font-family: 'Tajawal', sans-serif !important; }
+        .ql-font-amiri { font-family: 'Amiri', serif !important; }
+
+        /* تخصيص صندوق المقال ومنطقة الودجات بلون بيج دافئ ومريح للعين */
+        .post-card, #editor-container, .ql-container.ql-snow, #widget-custom-text, #widgets-list-box {
+            background-color: #F7F4EF !important;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png');
+            border: 1px solid #E2D8C5 !important;
+            border-radius: 12px;
+            color: #2C3E50 !important;
+        }
+        
+        /* ضبط محاذاة الخطوط لتكون مشدودة ومنسقة من الأطراف (Justify) وبخط مريح */
+        .ql-editor, .post-card p, .section-box textarea, input[type="text"] {
+            font-family: 'Cairo', 'Tajawal', sans-serif !important;
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            color: #2C3E50 !important;
+            line-height: 2 !important;
+        }
+        
+        /* تنسيق عناوين صواندي الكتابة */
+        .post-card h1, .post-card h2, .post-card h3 {
+            color: #2C3E50 !important;
+        }
     </style>
 </head>
 <body>
 
     <div class="admin-container">
-        <a href="#" style="color: var(--primary-color); text-decoration: none; font-weight: bold; display:inline-block; margin-bottom:15px;">← العودة للموقع الرئيسي</a>
-        <h2>لوحة التحكم الشاملة (تصميم هيكلي خالٍ من الحفظ)</h2>
+        <a href="index.html" style="color: var(--primary-color); text-decoration: none; font-weight: bold; display:inline-block; margin-bottom:15px;">← العودة للموقع الرئيسي</a>
+        <h2>لوحة التحكم الشاملة لمدونة تكنو-دليل</h2>
 
-        <div class="section-box" style="border-color: #38bdf8;">
-            <h3 style="color: #38bdf8;"><i class="fa-brands fa-github"></i> إعدادات الربط السحابي</h3>
-            <input type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" style="direction: ltr;" disabled>
-        </div>
-
+        <!-- إدارة شعار المدونة -->
         <div class="section-box">
             <h3>🖼️ إدارة شعار المدونة وأحجامه</h3>
-            <input type="file" style="margin-bottom:10px;" disabled>
+            <div id="admin-logo-preview" style="margin-bottom: 10px;"></div>
+            <input type="file" id="logo-file-input" accept="image/*" onchange="uploadLogoFile(this)" style="margin-bottom:10px;">
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;">
+                <select id="logo-size-selector" style="width: auto;">
+                    <option value="35px">صغير جداً (35 بكسل)</option>
+                    <option value="45px">صغير (45 بكسل)</option>
+                    <option value="55px" selected>متوسط افتراضي (55 بكسل)</option>
+                    <option value="75px">كبير (75 بكسل)</option>
+                    <option value="100px">كبير جداً (100 بكسل)</option>
+                </select>
+                <button type="button" class="btn" onclick="saveSelectedLogoSize()" style="padding: 6px 15px;">حفظ الحجم</button>
+                <button type="button" class="btn btn-danger" onclick="removeLogo()" style="padding: 6px 15px;">إزالة الشعار</button>
+            </div>
         </div>
 
+        <!-- الشريط المتحرك -->
         <div class="section-box">
             <h3>📢 إعدادات الشريط المتحرك</h3>
             <div class="form-group">
-                <label class="checkbox-label"><input type="checkbox"> إظهار الشريط المتحرك في الصفحة الرئيسية</label>
+                <label class="checkbox-label"><input type="checkbox" id="ticker-visible-toggle" onchange="saveTickerSetting()"> إظهار الشريط المتحرك في الصفحة الرئيسية</label>
             </div>
         </div>
 
+        <!-- نظام القوائم الذكي الهرمي -->
         <div class="section-box">
             <h3 style="color: var(--accent-color);">📋 نظام القوائم الذكي الهرمي</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
+                أدخل اسم العنصر والرابط، واستخدم الشرطات للتحديد: <code>_</code> (رئيسي) | <code>__</code> (فرعي).
+            </p>
             <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                <input type="text" placeholder="_تقنية أو __أول شرح" style="flex: 2;">
-                <input type="text" placeholder="الرابط" style="flex: 2;">
-                <button type="button" class="btn">إضافة للقائمة</button>
+                <input type="text" id="menu-raw-input" placeholder="_تقنية أو __أول شرح" style="flex: 2;">
+                <input type="text" id="menu-url-input" placeholder="الرابط (مثال: # أو رابط مقال)" style="flex: 2;">
+                <button type="button" class="btn" id="menu-add-btn" onclick="addOrUpdateStructuredMenuItem()">إضافة للقائمة</button>
+                <button type="button" class="btn" id="menu-cancel-edit-btn" onclick="resetMenuForm()" style="display:none; background:#64748b;">إلغاء</button>
+            </div>
+            <div id="admin-menu-structured-list" style="max-height: 300px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
+        </div>
+
+        <!-- ودجات الشريط الأيسر والتذييل -->
+        <div class="section-box">
+            <h3>⚙️ ودجات الشريط الأيسر (Sidebar) والتذييل (Footer)</h3>
+            <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
+                <div style="flex: 0.9; min-width: 260px;">
+                    <input type="hidden" id="editing-widget-index" value="">
+                    
+                    <div class="form-group">
+                        <label>نوع الودجت:</label>
+                        <select id="widget-type-input" onchange="handleWidgetTypeSelection(this.value)">
+                            <option value="recent">أحدث المواضيع</option>
+                            <option value="links">روابط سريعة</option>
+                            <option value="categories">التسميات / التصنيفات</option>
+                            <option value="pages">الصفحات الثابتة</option>
+                            <option value="popular">مشاركة مميزة</option>
+                            <option value="contact">معلومات التواصل (اتصل بنا)</option>
+                            <option value="custom">محتوى مخصص / HTML</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>عنوان الودجت:</label>
+                        <input type="text" id="widget-title-input" placeholder="عنوان الودجت...">
+                    </div>
+
+                    <!-- محتوى مخصص -->
+                    <div class="form-group" id="custom-text-group">
+                        <label>محتوى الودجت (نص / HTML):</label>
+                        <textarea id="widget-custom-text" rows="3" placeholder="محتوى الودجت..."></textarea>
+                    </div>
+
+                    <!-- نموذج اتصل بنا الذكي -->
+                    <div class="form-group" id="contact-fields-group" style="display: none;">
+                        <label style="color: var(--accent-color); margin-bottom: 6px; display: block;">معلومات الاتصال:</label>
+                        <div style="display: grid; gap: 8px;">
+                            <input type="text" id="contact-name" placeholder="اسم المسؤول أو الجهة..." style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color);">
+                            <input type="email" id="contact-email" placeholder="البريد الإلكتروني..." style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color);">
+                            <input type="text" id="contact-phone" placeholder="رقم الهاتف..." style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color);">
+                            <input type="text" id="contact-whatsapp" placeholder="رقم الواتساب..." style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color);">
+                            <input type="text" id="contact-telegram" placeholder="معرف تليجرام (Telegram)..." style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color);">
+                        </div>
+                    </div>
+
+                    <!-- رسالة توضيحية للأنواع التلقائية -->
+                    <div id="auto-widget-msg" style="display: none; padding: 10px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; font-size: 12px; color: #d97706; margin-bottom: 15px;">
+                        ℹ️ هذا الودج تلقائي بالكامل ومحتواه مغلق؛ سيقوم النظام بجلبه وعرضه تلقائياً.
+                    </div>
+
+                    <div class="form-group" style="display: flex; gap: 20px; margin: 15px 0;">
+                        <label class="checkbox-label"><input type="checkbox" id="widget-pos-sidebar" checked onchange="handleWidgetPosChange('sidebar')"> للشريط الأيسر</label>
+                        <label class="checkbox-label"><input type="checkbox" id="widget-pos-footer" onchange="handleWidgetPosChange('footer')"> للتذييل (أقصى 4 أفقية)</label>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn" id="widget-main-action-btn" onclick="handleWidgetMainAction()">إضافة ودجت جديد</button>
+                        <button type="button" class="btn" id="widget-cancel-btn" onclick="resetWidgetForm()" style="display:none; background:#64748b;">إلغاء</button>
+                    </div>
+                </div>
+                <div style="width: 1px; background: var(--border-color); align-self: stretch;"></div>
+                <div style="flex: 1.1; min-width: 320px;">
+                    <label style="color: var(--accent-color); margin-bottom: 8px;">قائمة الودجات المخزنة:</label>
+                    <div id="widgets-list-box" style="max-height: 250px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
+                </div>
             </div>
         </div>
 
+        <!-- إعلانات المقالات -->
+        <div class="section-box">
+            <h3>📢 إعلانات المقالات (سكريبتات الإعلانات)</h3>
+            <div class="form-group">
+                <label class="checkbox-label"><input type="checkbox" id="ad-top-on"> تفعيل إعلان أعلى المقال</label>
+                <textarea id="ad-top-code" placeholder="أدخل شفرة/سكريبت الإعلان هنا..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label"><input type="checkbox" id="ad-mid-on"> تفعيل إعلان منتصف المقال</label>
+                <textarea id="ad-mid-code" placeholder="أدخل شفرة/سكريبت الإعلان هنا..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label"><input type="checkbox" id="ad-bot-on"> تفعيل إعلان نهاية المقال</label>
+                <textarea id="ad-bot-code" placeholder="أدخل شفرة/سكريبت الإعلان هنا..."></textarea>
+            </div>
+            <button class="btn" onclick="saveAdsSettings()">حفظ إعدادات الإعلانات</button>
+        </div>
+
+        <!-- إدارة ونشر المقالات والصفحات (محرر Quill المتقدم) -->
         <div class="section-box">
             <h3>📝 إدارة ونشر المقالات والصفحات</h3>
-            <div class="form-group">
-                <label>العنوان:</label>
-                <input type="text" placeholder="عنوان المقال أو الصفحة">
+
+            <!-- 1. زر الإدارة الوحيد الظاهر افتراضياً -->
+            <div id="manager-trigger-wrapper" style="margin: 15px 0;">
+                <button type="button" class="btn" id="toggle-manager-btn" style="padding: 8px 16px; font-size: 0.9rem;">
+                    <i class="fa-solid fa-pen-to-square"></i> إدارة مقالة / صفحة
+                </button>
             </div>
-            
-            <div class="form-group">
-                <label>المحتوى:</label>
-                <div class="sticky-editor-header">
-                    <div class="custom-font-bar">
-                        <button type="button" class="font-tag-btn">خط كايرو</button>
-                        <button type="button" class="font-tag-btn">خط تجوال</button>
+
+            <!-- 2. حاوية الفورم الكاملة -->
+            <div id="article-manager-form-container" style="display: none; margin-top: 15px; background: rgba(255,255,255,0.01); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div class="form-group">
+                    <label>نوع المحتوى:</label>
+                    <select id="content-type-selector">
+                        <option value="post">مقالة (تظهر في المدونة والصفحة الرئيسية)</option>
+                        <option value="page">صفحة مستقلة (تظهر ضمن الصفحات العلوية ولا تنشر كمقالة)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>العنوان:</label>
+                    <input type="text" id="post-title" placeholder="عنوان المقال أو الصفحة">
+                </div>
+                
+                <div class="form-group">
+                    <label>التسمية أو التصنيف:</label>
+                    <input type="text" id="post-cat" placeholder="مثال: شبكات، برمجة">
+                </div>
+                
+                <div class="form-group">
+                    <label>وصف مختصر:</label>
+                    <input type="text" id="post-desc" placeholder="نبذة قصيرة">
+                </div>
+                
+                <div class="form-group">
+                    <label>رابط الصورة البارزة:</label>
+                    <input type="text" id="post-img" placeholder="https://...">
+                </div>
+                
+                <div class="form-group">
+                    <label>تاريخ النشر:</label>
+                    <input type="text" id="post-date">
+                </div>
+
+                <!-- حاوية المحرر وشريط الأدوات -->
+                <div class="form-group">
+                    <label>المحتوى:</label>
+                    <div class="sticky-editor-header">
+                        <div class="custom-font-bar">
+                            <span style="font-size: 0.8rem; color: var(--accent-color); margin-left: 5px;"><i class="fa-solid fa-font"></i> تغيير الخط للنص المظلل:</span>
+                            <button type="button" class="font-tag-btn" style="font-family: 'Cairo', sans-serif;" onclick="applyCustomFont('cairo')">خط كايرو</button>
+                            <button type="button" class="font-tag-btn" style="font-family: 'Tajawal', sans-serif;" onclick="applyCustomFont('tajawal')">خط تجوال</button>
+                            <button type="button" class="font-tag-btn" style="font-family: 'Amiri', serif;" onclick="applyCustomFont('amiri')">خط أميري</button>
+                            <button type="button" class="font-tag-btn" style="color: #94a3b8;" onclick="applyCustomFont(false)">إزالة الخط</button>
+                        </div>
+                    </div>
+                    <!-- حقل المحرر الصافي -->
+                    <div id="editor-container"></div>
+                </div>
+
+                <!-- حقل الرابط المتوقع وزر النسخ -->
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="flex: 1; display: flex; align-items: center; gap: 5px;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">رابط المقال:</span>
+                        <input type="text" id="article-slug-input" placeholder="slug-name" style="flex: 1; padding: 6px 10px; font-size: 0.85rem; background: var(--bg-dark); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 4px;" title="يمكنك تعديل اسم الرابط هنا، الرقم التسلسلي ثابت">
+                        <span id="article-id-badge" style="font-size: 0.75rem; color: var(--accent-color); background: rgba(2,132,199,0.1); padding: 4px 8px; border-radius: 4px; font-weight: bold;"></span>
+                    </div>
+                    <button type="button" class="btn" onclick="copyArticleLink()" style="background: #3b82f6; color: #fff; padding: 6px 12px; font-size: 0.8rem; white-space: nowrap;">
+                        <i class="fa-solid fa-copy"></i> نسخ الرابط
+                    </button>
+                </div>
+
+                <!-- 3. شريط الأزرار السفلي للفورم -->
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button type="button" class="btn" id="publish-btn" style="padding: 6px 14px; font-size: 0.85rem;">
+                            <i class="fa-solid fa-floppy-disk"></i> حفظ محلياً
+                        </button>
+                        <button type="button" class="btn" id="draft-toggle-btn" onclick="toggleArticleDraftStatus()" style="background: #f59e0b; color: #fff; padding: 6px 14px; font-size: 0.85rem;">
+                            <i class="fa-solid fa-file-lines"></i> مسودة
+                        </button>
+                        <button type="button" class="btn" id="cancel-manager-btn" style="background:#ef4444; color:#fff; padding: 6px 14px; font-size: 0.85rem;">
+                            <i class="fa-solid fa-xmark"></i> إلغاء الأمر
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-preview" onclick="previewPost()" style="padding: 6px 14px; font-size: 0.85rem; background:#6366f1; color:#fff;">
+                            <i class="fa-solid fa-eye"></i> معاينة
+                        </button>
                     </div>
                 </div>
-                <div id="editor-container"></div>
             </div>
-            <button class="btn" disabled>حفظ ونشر (معطل)</button>
+
+            <hr style="border:0; border-top:1px solid var(--border-color); margin: 20px 0;">
+            <h4>المقالات والصفحات المنشورة حالياً (تعديل أو حذف):</h4>
+            <div id="posts-admin-management-list" style="margin-top: 10px;"></div>
         </div>
     </div>
 
+    <!-- نافذة منبثقة للتنبيهات -->
+    <div id="custom-modal-container" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <h3 id="modal-title">تنبيه</h3>
+            <p id="modal-message">رسالة التنبيه...</p>
+            <div class="custom-modal-actions">
+                <button id="modal-ok-btn" class="custom-modal-btn confirm">حسناً</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مكتبة Quill.js الجافاسكريبت -->
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
     <script>
-        // تم إزالة كافة وظائف الحفظ والاسترجاع والربط بـ API والـ LocalStorage بناءً على رغبتك.
+        let globalData = {
+            settings: { logoUrl: "", logoHeight: "55px", tickerVisible: true },
+            menu: [],
+            widgets: [],
+            ads: { topOn: false, topCode: '', midOn: false, midCode: '', botOn: false, botCode: '' },
+            posts: [],
+            pages: []
+        };
+
+        let currentEditingPostId = null;
+        let editingWidgetIndex = null;
+        let editingMenuIndex = null;
+        let menuHasChanges = false;
+
+        let currentArticleIsDraft = false;
+        let slugAutoGeneratedFromContent = false;
+
+        function getData(key, def) { 
+            const v = localStorage.getItem(key); 
+            return v ? JSON.parse(v) : def; 
+        }
+
+        function showCustomAlert(title, message, callback) {
+            const overlay = document.getElementById('custom-modal-container');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            overlay.classList.add('active');
+            
+            const okBtn = document.getElementById('modal-ok-btn');
+            okBtn.onclick = function() {
+                overlay.classList.remove('active');
+                if (typeof callback === 'function') callback();
+            };
+        }
+
+        const arabicToEngKeywords = {
+            "مستقبل": "future", "التكنولوجيا": "technology", "تقنية": "tech",
+            "ذكاء": "ai", "اصطناعي": "artificial", "برمجة": "programming",
+            "شبكات": "networks", "تطوير": "development", "دليل": "guide",
+            "مدونة": "blog", "أحدث": "latest", "شرح": "tutorial", "كيف": "how-to"
+        };
+
+        function generateSlug(text) {
+            if (!text) return '';
+            let words = text.trim().split(/\s+/);
+            let translatedWords = words.map(word => {
+                let cleanWord = word.replace(/^[ال]+/, "").trim();
+                if (arabicToEngKeywords[cleanWord]) {
+                    return arabicToEngKeywords[cleanWord];
+                }
+                return word.replace(/[^\w]/g, '').toLowerCase();
+            }).filter(w => w.length > 0);
+
+            let baseSlug = translatedWords.slice(0, 3).join('-');
+            if (!baseSlug) {
+                baseSlug = "tech-post";
+            }
+            const uniqueId = Date.now().toString().slice(-5);
+            return `${baseSlug}-${uniqueId}.html`;
+        }
+
+        // إعداد محرر Quill
+        var Font = Quill.import('formats/font');
+        Font.whitelist = ['cairo', 'tajawal', 'amiri', false];
+        Quill.register(Font, true);
+
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ color: [] }, { background: [] }],
+                    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['link', 'blockquote', 'code-block'],
+                    ['clean']
+                ]
+            }
+        });
+
+        function applyCustomFont(fontName) {
+            const range = quill.getSelection();
+            if (range) {
+                quill.formatText(range.index, range.length, 'font', fontName);
+            } else {
+                showCustomAlert("تنبيه", "الرجاء تظليل النص المراد تغيير خطه أولاً.");
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedSize = localStorage.getItem('tech_logo_height');
+            const selector = document.getElementById('logo-size-selector');
+            if (selector && savedSize) selector.value = savedSize;
+
+            const tickerToggle = document.getElementById('ticker-visible-toggle');
+            if(tickerToggle) tickerToggle.checked = getData('tech_ticker_visible', true);
+            
+            const postDateEl = document.getElementById('post-date');
+            if(postDateEl) postDateEl.value = new Date().toLocaleDateString('ar-SA');
+
+            const customTextEl = document.getElementById('widget-custom-text');
+            if(customTextEl) customTextEl.value = localStorage.getItem('tech_sidebar_custom_text') || '';
+
+            const toggleBtn = document.getElementById('toggle-manager-btn');
+            if (toggleBtn) toggleBtn.addEventListener('click', openArticleManager);
+
+            const cancelBtn = document.getElementById('cancel-manager-btn');
+            if (cancelBtn) cancelBtn.addEventListener('click', closeArticleManager);
+
+            const publishBtn = document.getElementById('publish-btn');
+            if (publishBtn) publishBtn.addEventListener('click', saveOrUpdatePost);
+
+            const titleInputEl = document.getElementById('post-title');
+            if (titleInputEl) {
+                titleInputEl.addEventListener('input', function() {
+                    const slugInput = document.getElementById('article-slug-input');
+                    if (slugInput && (!currentEditingPostId || !slugInput.disabled)) {
+                        slugInput.value = generateSlug(this.value);
+                    }
+                });
+            }
+
+            quill.on('text-change', function(delta, oldDelta, source) {
+                let slugInput = document.getElementById('article-slug-input');
+                if (slugInput && (!currentEditingPostId || !slugInput.disabled) && !slugInput.value && source === 'user') {
+                    let textText = quill.getText().trim();
+                    if (textText.length > 3 && !slugAutoGeneratedFromContent) {
+                        let firstWords = textText.split(/\s+/).slice(0, 4).join(' ');
+                        slugInput.value = generateSlug(firstWords);
+                        slugAutoGeneratedFromContent = true;
+                    }
+                }
+            });
+
+            initAdminUI();
+        });
+
+        function initAdminUI() {
+            globalData.posts = getData('tech_dalil_posts', []);
+            globalData.pages = getData('tech_static_pages', []);
+            globalData.menu = getData('tech_menu', []);
+            globalData.widgets = getData('tech_widgets', []);
+
+            loadSidebarWidgetsAdmin();
+            renderStructuredMenuAdmin();
+            loadPostsAdminList();
+        }
+        
+        function openArticleManager() {
+            document.getElementById('manager-trigger-wrapper').style.display = 'none';
+            document.getElementById('article-manager-form-container').style.display = 'block';
+        }
+
+        function closeArticleManager() {
+            document.getElementById('article-manager-form-container').style.display = 'none';
+            document.getElementById('manager-trigger-wrapper').style.display = 'block';
+            resetPostForm();
+        }
+
+        function saveOrUpdatePost() {
+            const title = document.getElementById('post-title').value.trim();
+            const category = document.getElementById('post-cat').value.trim() || "عام";
+            const description = document.getElementById('post-desc').value.trim();
+            const image = document.getElementById('post-img').value.trim();
+            const date = document.getElementById('post-date').value.trim() || new Date().toLocaleDateString('ar-SA');
+            const content = typeof quill !== 'undefined' ? quill.root.innerHTML : '';
+            const slugInput = document.getElementById('article-slug-input');
+            
+            let slug = slugInput ? slugInput.value.trim() : (title ? generateSlug(title) : 'post');
+            slug = slug.endsWith('.html') ? slug : slug + '.html';
+        
+            if (!title || content === '<p><br></p>' || !content.trim()) { 
+                showCustomAlert("تنبيه", "الرجاء إدخال عنوان ومحتوى المقال بشكل صحيح!");
+                return; 
+            }
+
+            const fileId = currentEditingPostId ? currentEditingPostId : ('post_' + Date.now());
+            
+            const postObj = {
+                id: fileId,
+                title,
+                category,
+                description: description || title,
+                image,
+                date,
+                content,
+                slug,
+                isDraft: currentArticleIsDraft,
+                isPublished: true,
+                url: `articles/${slug}`
+            };
+
+            let posts = getData('tech_dalil_posts', []);
+            if (currentEditingPostId) {
+                const idx = posts.findIndex(p => p.id === currentEditingPostId);
+                if (idx !== -1) posts[idx] = postObj;
+                else posts.unshift(postObj);
+            } else {
+                posts.unshift(postObj);
+            }
+            localStorage.setItem('tech_dalil_posts', JSON.stringify(posts));
+
+            showCustomAlert("نجاح", "تم حفظ المقال محلياً بنجاح!");
+            closeArticleManager();
+            loadPostsAdminList();
+        }
+
+        function resetPostForm() {
+            currentEditingPostId = null;
+            currentArticleIsDraft = false;
+            slugAutoGeneratedFromContent = false;
+            document.getElementById('content-type-selector').value = "post";
+            document.getElementById('post-title').value = "";
+            document.getElementById('post-cat').value = "";
+            document.getElementById('post-desc').value = "";
+            document.getElementById('post-img').value = "";
+            document.getElementById('post-date').value = new Date().toLocaleDateString('ar-SA');
+            if (typeof quill !== 'undefined') quill.setText("");
+            
+            initArticleSlugField(null);
+
+            const publishBtn = document.getElementById('publish-btn');
+            if (publishBtn) {
+                publishBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> حفظ محلياً';
+            }
+        }
+
+        function initArticleSlugField(post) {
+            const slugInput = document.getElementById('article-slug-input');
+            const idBadge = document.getElementById('article-id-badge');
+            const draftBtn = document.getElementById('draft-toggle-btn');
+        
+            if (!slugInput) return;
+        
+            if (!post || !post.isPublished) {
+                slugInput.disabled = false;
+                idBadge.innerText = `#${post ? post.id : 'جديد'}`;
+                currentArticleIsDraft = false;
+                if (draftBtn) {
+                    draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+                    draftBtn.style.background = '#f59e0b';
+                }
+                if (!post) {
+                    slugInput.value = "";
+                    return;
+                }
+            } else {
+                slugInput.disabled = true;
+                idBadge.innerText = `#${post.id}`;
+            }
+            slugInput.value = post && post.slug ? post.slug : '';
+        }
+
+        function toggleArticleDraftStatus() {
+            currentArticleIsDraft = !currentArticleIsDraft;
+            const draftBtn = document.getElementById('draft-toggle-btn');
+            
+            if (currentArticleIsDraft) {
+                draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
+                draftBtn.style.background = '#10b981';
+                showCustomAlert("تنبيه", "تم تحويل المقال إلى وضع (مسودة).");
+            } else {
+                draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+                draftBtn.style.background = '#f59e0b';
+                showCustomAlert("تنبيه", "تم تغيير الوضع إلى (نشر).");
+            }
+        }
+
+        function copyArticleLink() {
+            const slugInput = document.getElementById('article-slug-input');
+            if (!slugInput) return;
+        
+            const slugValue = slugInput.value.trim() || 'post.html';
+            let fileName = slugValue.endsWith('.html') ? slugValue : slugValue + '.html';
+            let fullLink = `${window.location.origin}/articles/${fileName}`;
+        
+            navigator.clipboard.writeText(fullLink).then(() => {
+                showCustomAlert("تم النسخ", "تم نسخ رابط المقالة بنجاح إلى الحافظة!");
+            });
+        }
+
+        function loadPostsAdminList() {
+            const posts = getData('tech_dalil_posts', []);
+            const pages = getData('tech_static_pages', []);
+            const container = document.getElementById('posts-admin-management-list');
+            if(!container) return;
+            container.innerHTML = "";
+            
+            if(posts.length === 0 && pages.length === 0) { 
+                container.innerHTML = "<p style='color:var(--text-muted); font-size:0.85rem;'>لا توجد مقالات أو صفحات منشورة.</p>"; 
+                return; 
+            }
+
+            posts.forEach((p) => {
+                let statusBadge = p.isDraft ? '<span style="color:#f59e0b; font-size:0.75rem;">(مسودة)</span>' : '<span style="color:#10b981; font-size:0.75rem;">(منشور)</span>';
+                container.innerHTML += `
+                    <div class="item-row">
+                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title} ${statusBadge} (${p.date})</span>
+                        <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'post')">تعديل</button>
+                        <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'post')">حذف</button>
+                    </div>`;
+            });
+
+            pages.forEach((p) => {
+                container.innerHTML += `
+                    <div class="item-row">
+                        <span style="flex:1; font-size:0.9rem; color:var(--accent-color);"><b>[صفحة علوية]</b> ${p.title}</span>
+                        <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'page')">تعديل</button>
+                        <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'page')">حذف</button>
+                    </div>`;
+            });
+        }
+
+        function deletePost(id, type) {
+            showCustomAlert("تأكيد", "هل أنت متأكد من الحذف النهائي؟", () => {
+                if(type === 'page') {
+                    let pages = getData('tech_static_pages', []);
+                    pages = pages.filter(p => p.id !== id);
+                    localStorage.setItem('tech_static_pages', JSON.stringify(pages));
+                } else {
+                    let posts = getData('tech_dalil_posts', []);
+                    posts = posts.filter(p => p.id !== id);
+                    localStorage.setItem('tech_dalil_posts', JSON.stringify(posts));
+                }
+                
+                if (currentEditingPostId === id) resetPostForm();
+                loadPostsAdminList();
+            });
+        }
+
+        function editPost(id, type) {
+            currentEditingPostId = id;
+            openArticleManager();
+            if(type === 'page') {
+                const pages = getData('tech_static_pages', []);
+                const p = pages.find(item => item.id === id);
+                if(!p) return;
+                document.getElementById('content-type-selector').value = "page";
+                document.getElementById('post-title').value = p.title;
+                document.getElementById('post-cat').value = "";
+                document.getElementById('post-desc').value = "";
+                document.getElementById('post-img').value = "";
+                quill.root.innerHTML = p.content || "";
+                initArticleSlugField(p);
+            } else {
+                const posts = getData('tech_dalil_posts', []);
+                const p = posts.find(item => item.id === id);
+                if(!p) return;
+                document.getElementById('content-type-selector').value = "post";
+                document.getElementById('post-title').value = p.title;
+                document.getElementById('post-cat').value = p.category || "";
+                document.getElementById('post-desc').value = p.description || "";
+                document.getElementById('post-img').value = p.image || "";
+                document.getElementById('post-date').value = p.date || "";
+                quill.root.innerHTML = p.content || "";
+                initArticleSlugField(p);
+            }
+            
+            const publishBtn = document.getElementById('publish-btn');
+            if(publishBtn) {
+                publishBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تحديث محلياً';
+            }
+
+            const managerContainer = document.getElementById('article-manager-form-container');
+            if (managerContainer) {
+                managerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function previewPost() {
+            const title = document.getElementById('post-title').value.trim() || "عنوان تجريبي للمحتوى";
+            const content = quill.root.innerHTML;
+            const previewWin = window.open('', '_blank');
+            previewWin.document.write(`
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>معاينة: ${title}</title>
+                    <style>
+                        body { font-family: 'Cairo', sans-serif; padding: 40px; background: #0f172a; color: #f8fafc; line-height: 1.8; }
+                        .container { max-width: 800px; margin: auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; }
+                        h1 { color: #f59e0b; border-bottom: 2px solid #0284c7; padding-bottom: 15px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h1>${title}</h1>
+                        <div>${content}</div>
+                    </div>
+                </body>
+                </html>
+            `);
+            previewWin.document.close();
+        }
+
+        function uploadLogoFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    localStorage.setItem('tech_logo_url', e.target.result);
+                    showCustomAlert("نجاح", "تم رفع الشعار وتخزينه محلياً!");
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeLogo() {
+            localStorage.removeItem('tech_logo_url');
+            showCustomAlert("نجاح", "تمت إزالة الشعار محلياً!");
+        }
+
+        function saveSelectedLogoSize() {
+            const selector = document.getElementById('logo-size-selector');
+            if (!selector) return;
+            localStorage.setItem('tech_logo_height', selector.value);
+            showCustomAlert("نجاح", "تم حفظ حجم الشعار محلياً!");
+        }
+
+        function saveTickerSetting() {
+            const tickerToggle = document.getElementById('ticker-visible-toggle');
+            if (!tickerToggle) return;
+            localStorage.setItem('tech_ticker_visible', tickerToggle.checked);
+            showCustomAlert("نجاح", "تم حفظ إعداد الشريط المتحرك محلياً!");
+        }
+
+        function loadSidebarWidgetsAdmin() {
+            const widgets = getData('tech_widgets', []);
+            const listBox = document.getElementById('widgets-list-box');
+            if(!listBox) return;
+            
+            if (widgets.length === 0) {
+                listBox.innerHTML = '<p style="font-size: 0.85rem; background: var(--bg-dark); color: var(--text-muted); text-align:center;">لا توجد ودجات مخزنة.</p>';
+                return;
+            }
+
+            let html = `<table class="widgets-table"><thead><tr><th>العنوان</th><th>المكان</th><th>تفعيل</th><th>إدارة</th></tr></thead><tbody>`;
+            widgets.forEach((w, index) => {
+                let loc = w.location === 'footer' ? 'التذييل (أفقي)' : 'الشريط الأيسر';
+                html += `<tr>
+                    <td>${w.title}</td>
+                    <td style="color: var(--text-muted);">${loc}</td>
+                    <td><input type="checkbox" ${w.active ? 'checked' : ''} onchange="toggleWidgetActive(${index})"></td>
+                    <td>
+                        <button type="button" class="btn-warning" onclick="editWidget(${index})" style="padding: 2px 6px; font-size: 0.75rem; border:none; border-radius:3px; cursor:pointer;">تعديل</button>
+                        <button type="button" class="btn-danger" onclick="removeSidebarWidget(${index})" style="padding: 2px 6px; font-size: 0.75rem; border:none; border-radius:3px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+            html += `</tbody></table>`;
+            listBox.innerHTML = html;
+        }
+
+        function handleWidgetTypeSelection(type) {
+            const customGroup = document.getElementById('custom-text-group');
+            const contactGroup = document.getElementById('contact-fields-group');
+            const autoMsg = document.getElementById('auto-widget-msg');
+            const titleInput = document.getElementById('widget-title-input');
+        
+            customGroup.style.display = 'none';
+            contactGroup.style.display = 'none';
+            autoMsg.style.display = 'none';
+            titleInput.disabled = false;
+        
+            if (type === 'custom') {
+                customGroup.style.display = 'block';
+                if (!titleInput.value) titleInput.value = "محتوى مخصص";
+            } else if (type === 'contact') {
+                contactGroup.style.display = 'block';
+                titleInput.value = "اتصل بنا";
+                titleInput.disabled = true;
+            } else {
+                autoMsg.style.display = 'block';
+                titleInput.disabled = true;
+                
+                if (type === 'recent') titleInput.value = "أحدث المواضيع";
+                else if (type === 'links') titleInput.value = "روابط سريعة";
+                else if (type === 'categories') titleInput.value = "التسميات والتصنيفات";
+                else if (type === 'pages') titleInput.value = "الصفحات الثابتة";
+                else if (type === 'popular') titleInput.value = "مشاركات مميزة";
+            }
+        }
+
+        function handleWidgetPosChange(pos) {
+            const sb = document.getElementById('widget-pos-sidebar');
+            const ft = document.getElementById('widget-pos-footer');
+            if (pos === 'sidebar' && sb.checked) ft.checked = false;
+            else if (pos === 'footer' && ft.checked) {
+                const widgets = getData('tech_widgets', []);
+                const footerCount = widgets.filter((w, idx) => w.location === 'footer' && idx !== editingWidgetIndex).length;
+                if (footerCount >= 4) {
+                    ft.checked = false;
+                    showCustomAlert("تنبيه", "عذراً، الحد الأقصى لودجات التذييل الأفقية هو 4 فقط!");
+                    return;
+                }
+                sb.checked = false;
+            }
+        }
+
+        function handleWidgetMainAction() {
+            const titleInput = document.getElementById('widget-title-input');
+            const typeInput = document.getElementById('widget-type-input');
+            const contentInput = document.getElementById('widget-custom-text');
+            const footerPos = document.getElementById('widget-pos-footer');
+            const btn = document.getElementById('widget-main-action-btn');
+
+            if (titleInput.disabled) {
+                titleInput.disabled = false; typeInput.disabled = false;
+                contentInput.disabled = false; document.getElementById('widget-pos-sidebar').disabled = false;
+                footerPos.disabled = false; titleInput.focus();
+                btn.innerText = "حفظ التعديلات";
+                document.getElementById('widget-cancel-btn').style.display = 'inline-block';
+                return;
+            }
+
+            const title = titleInput.value.trim();
+            if (!title) { showCustomAlert("تنبيه", "الرجاء إدخال عنوان الودجت!"); return; }
+
+            let widgets = getData('tech_widgets', []);
+            const location = footerPos.checked ? 'footer' : 'sidebar';
+
+            if (editingWidgetIndex !== null) {
+                widgets[editingWidgetIndex] = { ...widgets[editingWidgetIndex], title, type: typeInput.value, content: contentInput.value.trim(), location };
+                editingWidgetIndex = null;
+            } else {
+                if (location === 'footer') {
+                    let footerWidgets = widgets.filter(w => w.location === 'footer');
+                    if (footerWidgets.length >= 4) {
+                        showCustomAlert("تنبيه", "الحد الأقصى لودجات الفوتر هو 4 ودجات أفقية!");
+                        return;
+                    }
+                }
+                widgets.push({ id: 'w_' + Date.now(), title, type: typeInput.value, content: contentInput.value.trim(), active: true, location });
+            }
+
+            localStorage.setItem('tech_widgets', JSON.stringify(widgets));
+            resetWidgetForm();
+            loadSidebarWidgetsAdmin();
+        }
+
+        function editWidget(index) {
+            const widgets = getData('tech_widgets', []);
+            const w = widgets[index];
+            if (!w) return;
+            editingWidgetIndex = index;
+
+            const titleInput = document.getElementById('widget-title-input');
+            const typeInput = document.getElementById('widget-type-input');
+            const contentInput = document.getElementById('widget-custom-text');
+            const sb = document.getElementById('widget-pos-sidebar');
+            const ft = document.getElementById('widget-pos-footer');
+
+            titleInput.disabled = false; typeInput.disabled = false; contentInput.disabled = false; sb.disabled = false; ft.disabled = false;
+            titleInput.value = w.title; typeInput.value = w.type || 'custom'; contentInput.value = w.content || '';
+            
+            if (w.location === 'footer') { ft.checked = true; sb.checked = false; }
+            else { sb.checked = true; ft.checked = false; }
+
+            document.getElementById('widget-main-action-btn').innerText = "حفظ التعديلات";
+            document.getElementById('widget-cancel-btn').style.display = 'inline-block';
+        }
+
+        function resetWidgetForm() {
+            editingWidgetIndex = null;
+            document.getElementById('widget-title-input').disabled = true;
+            document.getElementById('widget-type-input').disabled = true;
+            document.getElementById('widget-custom-text').disabled = true;
+            document.getElementById('widget-pos-sidebar').disabled = true;
+            document.getElementById('widget-pos-footer').disabled = true;
+            document.getElementById('widget-title-input').value = '';
+            document.getElementById('widget-custom-text').value = '';
+            document.getElementById('widget-main-action-btn').innerText = "إضافة ودجت جديد";
+            document.getElementById('widget-cancel-btn').style.display = 'none';
+        }
+
+        function toggleWidgetActive(index) {
+            let widgets = getData('tech_widgets', []);
+            if (widgets[index]) {
+                widgets[index].active = !widgets[index].active;
+                localStorage.setItem('tech_widgets', JSON.stringify(widgets));
+            }
+        }
+
+        function removeSidebarWidget(index) {
+            showCustomAlert("تأكيد", "هل أنت متأكد من رغبتك في حذف هذا الودجت؟", () => {
+                let widgets = getData('tech_widgets', []);
+                widgets.splice(index, 1);
+                localStorage.setItem('tech_widgets', JSON.stringify(widgets));
+                loadSidebarWidgetsAdmin();
+            });
+        }
+
+        function addOrUpdateStructuredMenuItem() {
+            const rawInput = document.getElementById('menu-raw-input');
+            const urlInput = document.getElementById('menu-url-input');
+            const rawText = rawInput.value.trim();
+            const url = urlInput.value.trim() || '#';
+
+            if (!rawText) {
+                showCustomAlert("تنبيه", "الرجاء إدخال اسم العنصر مع الشرطات (مثال: _تقنية)!");
+                return;
+            }
+
+            let level = 1;
+            if (rawText.startsWith('___')) level = 3;
+            else if (rawText.startsWith('__')) level = 2;
+            
+            let cleanTitle = rawText.replace(/^_+\s*/, '');
+
+            let menu = getData('tech_menu', []);
+
+            if (editingMenuIndex !== null) {
+                menu[editingMenuIndex] = { rawText, title: cleanTitle, level, url };
+                editingMenuIndex = null;
+                document.getElementById('menu-add-btn').innerText = "إضافة للقائمة";
+                document.getElementById('menu-cancel-edit-btn').style.display = 'none';
+            } else {
+                menu.push({ rawText, title: cleanTitle, level, url });
+            }
+
+            localStorage.setItem('tech_menu', JSON.stringify(menu));
+            rawInput.value = '';
+            urlInput.value = '';
+            menuHasChanges = true;
+            renderStructuredMenuAdmin();
+        }
+
+        function editStructuredItem(index) {
+            let menu = getData('tech_menu', []);
+            const item = menu[index];
+            if (!item) return;
+            document.getElementById('menu-raw-input').value = item.rawText;
+            document.getElementById('menu-url-input').value = item.url;
+            editingMenuIndex = index;
+            document.getElementById('menu-add-btn').innerText = "حفظ التعديل";
+            document.getElementById('menu-cancel-edit-btn').style.display = 'inline-block';
+        }
+
+        function resetMenuForm() {
+            editingMenuIndex = null;
+            document.getElementById('menu-raw-input').value = '';
+            document.getElementById('menu-url-input').value = '';
+            document.getElementById('menu-add-btn').innerText = "إضافة للقائمة";
+            document.getElementById('menu-cancel-edit-btn').style.display = 'none';
+        }
+
+        function deleteStructuredItem(index) {
+            let menu = getData('tech_menu', []);
+            menu.splice(index, 1);
+            localStorage.setItem('tech_menu', JSON.stringify(menu));
+            menuHasChanges = true;
+            renderStructuredMenuAdmin();
+        }
+
+        let collapsedMenuIndices = new Set();
+
+        function toggleMenuCollapse(index) {
+            if (collapsedMenuIndices.has(index)) {
+                collapsedMenuIndices.delete(index);
+            } else {
+                collapsedMenuIndices.add(index);
+            }
+            renderStructuredMenuAdmin();
+        }
+
+        function renderStructuredMenuAdmin() {
+            const container = document.getElementById('admin-menu-structured-list');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            let menu = getData('tech_menu', []);
+            if (menu.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">لا توجد عناصر مضافة بعد.</p>';
+                return;
+            }
+
+            let hideStackLevel = 999;
+
+            menu.forEach((item, index) => {
+                let currentLevel = item.level || 1;
+
+                if (currentLevel <= hideStackLevel) {
+                    hideStackLevel = 999;
+                }
+
+                const isHiddenByParent = currentLevel > hideStackLevel;
+
+                let hasChildren = false;
+                if (index + 1 < menu.length) {
+                    if ((menu[index + 1].level || 1) > currentLevel) {
+                        hasChildren = true;
+                    }
+                }
+
+                if (hasChildren && collapsedMenuIndices.has(index)) {
+                    hideStackLevel = Math.min(hideStackLevel, currentLevel);
+                }
+
+                const row = document.createElement('div');
+                row.className = 'drag-item';
+                row.setAttribute('draggable', 'true');
+                row.dataset.index = index;
+                
+                if (isHiddenByParent) {
+                    row.style.cssText = "display: none; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;";
+                } else {
+                    row.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem; transition: all 0.2s;";
+                }
+                
+                let indent = (currentLevel - 1) * 25; 
+                
+                let collapseBtnHtml = '';
+                if (hasChildren) {
+                    let isCollapsed = collapsedMenuIndices.has(index);
+                    let iconSymbol = isCollapsed ? '+' : '-';
+                    let btnBg = isCollapsed ? '#0284c7' : '#64748b';
+                    collapseBtnHtml = `<button type="button" onclick="toggleMenuCollapse(${index})" style="background: ${btnBg}; color: #fff; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;" title="${isCollapsed ? 'إظهار الفروع' : 'إخفاء الفروع'}">${iconSymbol}</button>`;
+                } else {
+                    collapseBtnHtml = `<span style="width: 20px; display: inline-block;"></span>`;
+                }
+
+                row.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px; margin-right: ${indent}px; flex: 1;">
+                        <input type="checkbox" class="menu-item-checkbox" data-index="${index}" style="width: 16px; height: 16px; cursor: pointer;">
+                        ${collapseBtnHtml}
+                        <span style="color: var(--text-muted); cursor: grab;"><i class="fa-solid fa-grip-vertical"></i></span>
+                        <span style="color: var(--accent-color); font-weight: bold;">${item.rawText}</span>
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">(رابط: ${item.url})</span>
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <button type="button" class="btn-warning" onclick="editStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;">تعديل</button>
+                        <button type="button" class="btn-danger" onclick="deleteStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+
+                row.addEventListener('dragstart', handleDragStart);
+                row.addEventListener('dragover', handleDragOver);
+                row.addEventListener('dragleave', handleDragLeave);
+                row.addEventListener('drop', handleDrop);
+                row.addEventListener('dragend', handleDragEnd);
+
+                container.appendChild(row);
+            });
+        }
+
+        let draggedIndices = [];
+
+        function handleDragStart(e) {
+            const currentIndex = parseInt(this.dataset.index);
+            const checkboxes = document.querySelectorAll('.menu-item-checkbox');
+            let selected = [];
+            checkboxes.forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
+
+            let menu = getData('tech_menu', []);
+            let subItemsIndices = [currentIndex];
+            let baseLevel = menu[currentIndex].level || 1;
+            let idx = currentIndex + 1;
+            while (idx < menu.length && (menu[idx].level || 1) > baseLevel) {
+                subItemsIndices.push(idx);
+                idx++;
+            }
+
+            if (selected.includes(currentIndex) && selected.length > 0) {
+                let allSelectedWithChildren = [];
+                selected.forEach(selIdx => {
+                    allSelectedWithChildren.push(selIdx);
+                    let sLevel = menu[selIdx].level || 1;
+                    let next = selIdx + 1;
+                    while (next < menu.length && (menu[next].level || 1) > sLevel) {
+                        allSelectedWithChildren.push(next);
+                        next++;
+                    }
+                });
+                draggedIndices = [...new Set(allSelectedWithChildren)].sort((a, b) => a - b);
+            } else {
+                draggedIndices = subItemsIndices;
+                const chk = this.querySelector('.menu-item-checkbox');
+                if (chk) chk.checked = true;
+            }
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const targetRow = this;
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            if (yClick < threshold) targetRow.classList.add('drop-indicator-top');
+            else if (yClick > rect.height - threshold) targetRow.classList.add('drop-indicator-bottom');
+            else targetRow.classList.add('drag-over-parent');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const targetRow = this;
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+
+            const targetIndex = parseInt(targetRow.dataset.index);
+            if (draggedIndices.includes(targetIndex)) return;
+
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            let dropMode = 'after';
+            if (yClick < threshold) dropMode = 'top';
+            else if (yClick > rect.height - threshold) dropMode = 'bottom';
+            else dropMode = 'child';
+
+            let menu = getData('tech_menu', []);
+            let itemsToMove = draggedIndices.map(i => menu[i]);
+            let remainingItems = menu.filter((_, idx) => !draggedIndices.includes(idx));
+            
+            let targetItemInRemaining = menu[targetIndex];
+            let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
+            if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
+
+            if (dropMode === 'top') {
+                remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
+            } else if (dropMode === 'bottom') {
+                remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+            } else if (dropMode === 'child') {
+                let parentItem = targetItemInRemaining;
+                if (parentItem) {
+                    let levelDiff = (parentItem.level + 1) - itemsToMove[0].level;
+                    itemsToMove.forEach(it => {
+                        it.level = Math.max(1, it.level + levelDiff);
+                        it.rawText = '_'.repeat(it.level) + (it.title || 'عنصر');
+                    });
+                    remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+                    targetRow.classList.add('pulse-highlight');
+                    setTimeout(() => targetRow.classList.remove('pulse-highlight'), 800);
+                }
+            }
+
+            menuHasChanges = true;
+            localStorage.setItem('tech_menu', JSON.stringify(remainingItems));
+            collapsedMenuIndices.clear();
+            renderStructuredMenuAdmin();
+        }
+
+        function handleDragEnd(e) {
+            document.querySelectorAll('.drag-item').forEach(item => {
+                item.classList.remove('dragging', 'drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            });
+            draggedIndices = [];
+        }
+
+        function saveAdsSettings() {
+            let ads = {
+                topOn: document.getElementById('ad-top-on').checked,
+                topCode: document.getElementById('ad-top-code').value,
+                midOn: document.getElementById('ad-mid-on').checked,
+                midCode: document.getElementById('ad-mid-code').value,
+                botOn: document.getElementById('ad-bot-on').checked,
+                botCode: document.getElementById('ad-bot-code').value
+            };
+            localStorage.setItem('tech_ads', JSON.stringify(ads));
+            showCustomAlert("نجاح", "تم حفظ إعدادات وشفرات الإعلانات محلياً!");
+        }
+
+        window.addEventListener('beforeunload', function (e) {
+            if (menuHasChanges) {
+                e.preventDefault();
+                e.returnValue = ''; 
+            }
+        });
     </script>
 </body>
 </html>
