@@ -777,6 +777,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+        
 // دالة ترتيب المقالات
 function getOrderedPosts(menuItems, allPosts) {
     let ordered = [];
@@ -1107,30 +1108,42 @@ function buildTree(items) {
 }
 
 function generateMenuHtml(nodes, isRoot = false) {
-    if (nodes.length === 0) return '';
+    if (!nodes || nodes.length === 0) return '';
     let html = isRoot ? '' : '<ul class="dropdown-menu">';
+    
     html += nodes.map(node => {
         let itemUrl = node.url || node.link || '#';
         let finalHref = itemUrl;
-        if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//')) {
-            if (itemUrl.endsWith('.html') && !itemUrl.includes('post.html')) {
-                let cleanName = itemUrl.replace('articles/', '').replace('.html', '');
-                finalHref = `?article=${cleanName}`;
+        let isInternalPost = false;
+        let cleanSlug = '';
+
+        if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//') && !itemUrl.startsWith('javascript:')) {
+            // تنظيف الرابط لاستخراج الـ slug الحقيقي بغض النظر عن صيغته القديمة
+            cleanSlug = itemUrl.split('/').pop().replace('.html', '').replace('?article=', '').trim();
+            if (cleanSlug) {
+                finalHref = `?article=${cleanSlug}`;
+                isInternalPost = true;
             }
         }
+
         let hasChildren = node.children && node.children.length > 0;
         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+        
+        // إذا كان رابط مقال داخلي، نضيف خاصية أو معالج لضمان فتحه بديناميكية عبر openPostBySlug
+        let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;"` : '';
+
         return `
             <li>
-                <a href="${finalHref}">${node.title}${arrow}</a>
+                <a href="${finalHref}" ${clickAttr}>${node.title}${arrow}</a>
                 ${hasChildren ? generateMenuHtml(node.children, false) : ''}
             </li>
         `;
     }).join('');
+
     if (!isRoot) html += '</ul>';
     return html;
 }
-
+        
 function initSliderLogic() {
     const slides = document.querySelectorAll('.square-slide');
     if (slides.length === 0) return;
