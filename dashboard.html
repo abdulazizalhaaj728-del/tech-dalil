@@ -738,7 +738,17 @@
             document.getElementById('ticker-visible-toggle').checked = getData('tech_ticker_visible', true);
             document.getElementById('post-date').value = new Date().toLocaleDateString('ar-SA');
 
-            document.getElementById('toggle-manager-btn').addEventListener('click', openArticleManager);
+            //document.getElementById('toggle-manager-btn').addEventListener('click', openArticleManager);
+
+            const toggleBtn = document.getElementById('toggle-manager-btn');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openArticleManager();
+                });
+            }
+
+            
             document.getElementById('publish-btn').addEventListener('click', saveOrUpdatePost);
 
             document.getElementById('post-title').addEventListener('input', function() {
@@ -779,18 +789,24 @@
             loadPostsAdminList();
         }
         
-        function openArticleManager() {
-            document.getElementById('manager-trigger-wrapper').style.display = 'none';
-            document.getElementById('article-manager-form-container').style.display = 'block';
-            document.getElementById('publish-btn').disabled = true;
-        }
+function openArticleManager() {
+    const triggerWrapper = document.getElementById('manager-trigger-wrapper');
+    const formContainer = document.getElementById('article-manager-form-container');
+    const publishBtn = document.getElementById('publish-btn');
+    
+    if (triggerWrapper) triggerWrapper.style.display = 'none';
+    if (formContainer) formContainer.style.display = 'block';
+    if (publishBtn) publishBtn.disabled = true;
+}
 
-        function closeArticleManager() {
-            document.getElementById('article-manager-form-container').style.display = 'none';
-            document.getElementById('manager-trigger-wrapper').style.display = 'block';
-            resetPostForm();
-        }
-
+function closeArticleManager() {
+    const triggerWrapper = document.getElementById('manager-trigger-wrapper');
+    const formContainer = document.getElementById('article-manager-form-container');
+    
+    if (formContainer) formContainer.style.display = 'none';
+    if (triggerWrapper) triggerWrapper.style.display = 'block';
+    resetPostForm();
+}
         async function saveOrUpdatePost() {
             const title = document.getElementById('post-title').value.trim();
             const category = document.getElementById('post-cat').value.trim() || "عام";
