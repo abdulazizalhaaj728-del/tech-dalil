@@ -4,7 +4,14 @@
         "logoHeight": "100px",
         "tickerVisible": true
     },
-    "menu": [],
+    "menu": [
+        {
+            "title": "ghfghfgh",
+            "url": "articles/ghfghfgh-19445.html",
+            "level": 3,
+            "rawText": "ghfghfgh"
+        }
+    ],
     "widgets": [
         {
             "id": "w_1790878213264",
@@ -23,6 +30,20 @@
         "botOn": false,
         "botCode": ""
     },
-    "posts": [],
+    "posts": [
+        {
+            "id": "post_1790949941394",
+            "title": "ghfghfgh",
+            "category": "مقالات تقنية",
+            "description": "fghfghfghf",
+            "image": "",
+            "date": "٢‏/١٠‏/٢٠٢٦",
+            "content": "<p>fghfhfhxgxfxhhfx</p>",
+            "slug": "ghfghfgh-19445.html",
+            "isDraft": false,
+            "isPublished": true,
+            "url": "articles/ghfghfgh-19445.html"
+        }
+    ],
     "pages": []
 }
