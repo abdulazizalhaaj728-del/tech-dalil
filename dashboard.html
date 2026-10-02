@@ -127,7 +127,7 @@
         .ql-font-tajawal { font-family: 'Tajawal', sans-serif !important; }
         .ql-font-amiri { font-family: 'Amiri', serif !important; }
 
-        /* تنسيق الجداول المدمجة داخل المحرر والمعاينة لضمان عدم تلاصق النصوص */
+        /* تنسيق الجداول المدمجة داخل المحرر والمعاينة */
         .ql-editor table, .post-card table {
             width: 100% !important;
             border-collapse: collapse !important;
@@ -173,54 +173,7 @@
             background-image: none !important;
             border: 1px solid var(--border-color) !important;
             color: var(--text-main) !important;
-
-
-            /* -----------------عمل جدول في المحرر ------------------*/
-            <table class="custom-editor-table">
-              <thead>
-                <tr>
-                  <th>عنوان عمود 1</th>
-                  <th>عنوان عمود 2</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>بيانات خلية 1</td>
-                  <td>بيانات خلية 2</td>
-                </tr>
-              </tbody>
-            </table>
-            
-            <style>
-            .custom-editor-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin: 10px 0;
-            }
-            .custom-editor-table th, .custom-editor-table des, .custom-editor-table td {
-              border: 1px solid #ddd;
-              padding: 8px 12px;
-              text-align: right;
-            }
-            .custom-editor-table th {
-              background-color: #f5f5f5;
-              font-weight: bold;
-            }
-
-
-
-            .ql-editor table {
-              width: 100%;
-              border-collapse: collapse;
-              margin: 10px 0;
-            }
-            .ql-editor td, .ql-editor th {
-              border: 1px solid #ccc;
-              padding: 8px;
-              min-width: 50px;
-            }
         }
-        /*-----------------------------------انتهى الجدول--------------------------------*/
     </style>
 </head>
 <body>
@@ -232,7 +185,7 @@
         <!-- إعدادات ربط GitHub -->
         <div class="section-box" style="border-color: #38bdf8;">
             <h3 style="color: #38bdf8;"><i class="fa-brands fa-github"></i> إعدادات الربط السحابي (GitHub Token)</h3>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">أدخل رمز الصلاحية الخاص بك لكي تتمكن اللوحة من حفظ التغييرات مباشرة في ملف <code>data.json</code> أونلاين:</p>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">أدخل رمز الصلاحية الخاص بك لكي تتمكن اللوحة من حفظ التغييرات مباشرة في ملف <code>data.json</code> أونلاين[cite: 4]:</p>
             <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" style="direction: ltr;">
         </div>
 
@@ -266,7 +219,7 @@
         <div class="section-box">
             <h3 style="color: var(--accent-color);">📋 نظام القوائم الذكي الهرمي</h3>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
-                أدخل اسم العنصر والرابط، واستخدم الشرطات للتحديد: <code>_</code> (رئيسي) | <code>__</code> (فرعي).
+                أدخل اسم العنصر والرابط، واستخدم الشرطات للتحديد: <code>_</code> (رئيسي) | <code>__</code> (فرعي)[cite: 4].
             </p>
             <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                 <input type="text" id="menu-raw-input" placeholder="_تقنية أو __أول شرح" style="flex: 2;">
@@ -282,7 +235,7 @@
 
         <!-- ودجات الشريط الأيسر والتذييل -->
         <div class="section-box">
-            <h3>⚙️️ ودجات الشريط الأيسر (Sidebar) والتذييل (Footer)</h3>
+            <h3>⚙ ودجات الشريط الأيسر (Sidebar) والتذييل (Footer)</h3>
             <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
                 <div style="flex: 0.9; min-width: 260px;">
                     <input type="hidden" id="editing-widget-index" value="">
@@ -413,7 +366,7 @@
                 <div class="form-group">
                     <label>المحتوى:</label>
                     <div class="sticky-editor-header">
-                        <button type="button" id="insert-table-btn" class="btn btn-secondary">إدراج جدول منظم 2×2</button>
+                        <button type="button" id="insert-table-btn" class="btn btn-secondary" style="background:var(--primary-color);">إدراج جدول منظم 2×2</button>
                         <div class="custom-font-bar">
                             <span style="font-size: 0.8rem; color: var(--accent-color); margin-left: 5px;"><i class="fa-solid fa-font"></i> تغيير الخط للنص المظلل:</span>
                             <button type="button" class="font-tag-btn" style="font-family: 'Cairo', sans-serif;" onclick="applyCustomFont('cairo')">خط كايرو</button>
@@ -489,7 +442,6 @@
         let menuHasChanges = false;
         let globalFileSha = "";
         let currentArticleIsDraft = false;
-        let slugAutoGeneratedFromContent = false;
 
         function getData(key, def) { 
             const v = localStorage.getItem(key); 
@@ -656,8 +608,8 @@
             console.warn("تنبيه: تعذر تسجيل الخطوط المخصصة في Quill.", e);
         }
 
-        // إعداد محرر Quill مع تفعيل الجداول بشكل سليم
-        var quillOptions = {
+        // إعداد محرر Quill الموحد
+        var quill = new Quill('#editor-container', {
             theme: 'snow',
             modules: {
                 toolbar: [
@@ -669,26 +621,9 @@
                     ['link', 'image', 'clean']
                 ]
             }
-        };
-
-        var quill = new Quill('#editor-container', quillOptions);
-
-        // --------- للجدول -------------------
-        const quill = new Quill('#editor', {
-          theme: 'snow',
-          modules: {
-            toolbar: [
-              ['bold', 'italic', 'underline'],
-              ['image', 'link'],
-              [{ 'table': 'O' }], // زر إدراج الجداول
-              [{ 'list': 'ordered'}, { 'list': 'bullet' }]
-            ],
-            table: true // تفعيل وحدة الجداول الأساسية في كويل
-          }
         });
-        //---------------------------------------
-        
-        // دالة إدراج جدول منظم ونظيف (يدعم اللصق النظيف من الخارج تلقائياً عبر الـ Clipboard)
+
+        // دالة إدراج جدول منظم ونظيف
         document.getElementById('insert-table-btn').addEventListener('click', function() {
             let range = quill.getSelection();
             let index = range ? range.index : quill.getLength();
@@ -735,49 +670,6 @@
         let activeImage = null;
         const editorWrapper = document.getElementById('editor-container');
 
-        import ImageResize from 'quill-image-resize-module';
-        Quill.register('modules/imageResize', ImageResize);
-        const quill = new Quill('#editor', {
-          theme: 'snow',
-          modules: {
-            toolbar: toolbarOptions,
-            imageResize: {
-              modules: ['Resize', 'DisplaySize', 'Toolbar'],
-              // تخصيص زر التغيير أو الاستبدال عند الضغط على الصورة
-              tools: {
-                // زر مخصص للتغيير/الاستبدال
-                changer: {
-                  aria: 'Change Image',
-                  handler: (evt, button, activeEle) => {
-                    // إظهار خيار للمستخدم: إما رابط أو رفع من الجهاز
-                    let choice = prompt("اختر طريقة الاستبدال:\n1- أدخل رابط الصورة (URL)\n2- اكتب 'file' لرفع ملف من الكمبيوتر", "1");
-                    
-                    if (choice === "1" || choice === null) {
-                      let newUrl = prompt("أدخل رابط الصورة الجديد:");
-                      if (newUrl) activeEle.setAttribute('src', newUrl);
-                    } else if (choice === "file" || choice === '2') {
-                      // فتح نافذة اختيار ملف من الحاسوب
-                      let fileInput = document.createElement('input');
-                      fileInput.type = 'file';
-                      fileInput.accept = 'image/*';
-                      fileInput.onchange = e => {
-                        let file = e.target.files[0];
-                        if (file) {
-                          let reader = new FileReader();
-                          reader.onload = event => {
-                            activeEle.setAttribute('src', event.target.result);
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      };
-                      fileInput.click();
-                    }
-                  }
-                }
-              }
-            }
-          }
-        });
         if (editorWrapper) {
             const imgToolbar = document.createElement('div');
             imgToolbar.id = 'custom-image-toolbar';
@@ -843,41 +735,6 @@
             if (range) quill.formatText(range.index, range.length, 'font', fontName);
             else showCustomAlert("تنبيه", "تظليل النص مطلوب أولاً.");
         }
-
-        function generateArticleIndexFromHeadings() {
-            const container = document.getElementById('article-index-container');
-            if (!container) return;
-            const editorContent = quill.root;
-            const headings = editorContent.querySelectorAll('h1, h2, h3');
-            
-            if (headings.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">لا توجد عناوين فرعية في المقال بعد.</p>';
-                return;
-            }
-
-            let htmlList = '<ul style="list-style-type: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">';
-            headings.forEach((heading, idx) => {
-                if (!heading.id) heading.id = 'article-heading-' + idx;
-                let text = heading.innerText;
-                let level = heading.tagName.toLowerCase();
-                let indentClass = level === 'h3' ? 'margin-right: 15px;' : (level === 'h2' ? 'margin-right: 8px;' : '');
-
-                htmlList += `
-                    <li style="${indentClass}">
-                        <a href="#${heading.id}" onclick="event.preventDefault(); document.getElementById('${heading.id}').scrollIntoView({behavior: 'smooth'});" 
-                           style="color: var(--primary-color); text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: color 0.2s; display: inline-flex; align-items: center; gap: 6px;">
-                            <i class="fa-solid fa-chevron-left" style="font-size: 0.7rem; opacity: 0.7;"></i> ${text}
-                        </a>
-                    </li>
-                `;
-            });
-            htmlList += '</ul>';
-            container.innerHTML = htmlList;
-        }
-
-        quill.on('text-change', function() {
-            generateArticleIndexFromHeadings();
-        });
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedSize = localStorage.getItem('tech_logo_height');
@@ -1085,7 +942,7 @@
         }
 
         function previewPost() {
-            const title = document.getElementById('post-title').value.trim() || "عنوان تجريبي";
+            const title = document.getElementById('post-title'].value.trim() || "عنوان تجريبي";
             const previewWin = window.open('', '_blank');
             previewWin.document.write(`<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>معاينة</title></head><body style="background:#0f172a;color:#fff;padding:30px;font-family:Cairo"><h1>${title}</h1><div>${quill.root.innerHTML}</div></body></html>`);
             previewWin.document.close();
@@ -1266,8 +1123,8 @@
         function addOrUpdateStructuredMenuItem() {
             const rawInput = document.getElementById('menu-raw-input');
             const urlInput = document.getElementById('menu-url-input');
-            const rawText = rawInput ? rawInput.value.trim() : document.getElementById('menu-raw-input').value.trim();
-            const url = urlInput ? (urlInput.value.trim() || '#') : (document.getElementById('menu-url-input').value.trim() || '#');
+            const rawText = rawInput ? rawInput.value.trim() : '';
+            const url = urlInput ? (urlInput.value.trim() || '#') : '#';
 
             if (!rawText) {
                 showCustomAlert("تنبيه", "الرجاء إدخال اسم العنصر مع الشرطات (مثال: _تقنية)!");
@@ -1293,8 +1150,8 @@
                 globalData.menu.push({ rawText, title: cleanTitle, level, url });
             }
 
-            if (document.getElementById('menu-raw-input')) document.getElementById('menu-raw-input').value = '';
-            if (document.getElementById('menu-url-input')) document.getElementById('menu-url-input').value = '';
+            if (rawInput) rawInput.value = '';
+            if (urlInput) urlInput.value = '';
             menuHasChanges = true;
             renderStructuredMenuAdmin();
         }
