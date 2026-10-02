@@ -942,7 +942,7 @@
         }
 
         function previewPost() {
-            const title = document.getElementById('post-title'].value.trim() || "عنوان تجريبي";
+            const title = document.getElementById('post-title').value.trim() || "عنوان تجريبي";
             const previewWin = window.open('', '_blank');
             previewWin.document.write(`<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>معاينة</title></head><body style="background:#0f172a;color:#fff;padding:30px;font-family:Cairo"><h1>${title}</h1><div>${quill.root.innerHTML}</div></body></html>`);
             previewWin.document.close();
