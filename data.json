@@ -18,10 +18,10 @@
             "url": "#"
         },
         {
-            "rawText": "___دليل بناء حاسوب شخصي",
-            "title": "دليل بناء حاسوب شخصي",
+            "rawText": "___دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟",
+            "title": "دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟",
             "level": 3,
-            "url": "https://tech-dalil.com/articles/guide-pc-building-26352.html"
+            "url": "?article=guide-pc-building-26352.html"
         },
         {
             "rawText": "___أعطال الحاسب الآلي وكيفية إصلاحها",
@@ -52,12 +52,6 @@
             "title": "شرح عمل تطبيق بوصلة بواسطة Android studio",
             "level": 3,
             "url": "https://tech-dalil/articles/android-studio-19419.html"
-        },
-        {
-            "title": "دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟",
-            "url": "?article=guide-pc-building-26352.html",
-            "level": 3,
-            "rawText": "دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟"
         }
     ],
     "widgets": [
