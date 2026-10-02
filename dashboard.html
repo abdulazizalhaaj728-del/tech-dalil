@@ -924,6 +924,25 @@ document.getElementById('insert-table-btn').addEventListener('click', function()
         }
 
         function loadPostsAdminList() {
+
+            // تصفية القائمة وإزالة أي تكرارات بناءً على الـ Slug بغض النظر عن شكل الرابط
+            if (globalData && Array.isArray(globalData.menu)) {
+                const seenSlugs = new Set();
+                globalData.menu = globalData.menu.filter(item => {
+                    if (!item.url) return true;
+                    
+                    // استخراج اسم الملف أو الـ slug الأخير من الرابط (سواء كان كاملاً أو نسبياً)
+                    let slug = item.url.split('/').pop().replace('?article=', '').trim();
+                    
+                    if (seenSlugs.has(slug)) {
+                        return false; // إذا كان متكرراً، يتم حذفه من العرض
+                    }
+                    
+                    seenSlugs.add(slug);
+                    return true;
+                });
+            }
+            
             const posts = getData('tech_dalil_posts', []);
             const pages = getData('tech_static_pages', []);
             const container = document.getElementById('posts-admin-management-list');
