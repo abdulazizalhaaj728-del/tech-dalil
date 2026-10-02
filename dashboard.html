@@ -580,37 +580,60 @@
             </html>`;
         }
 
-var Font = Quill.import('formats/font');
+try {
+    // محاولة تسجيل الخطوط بأمان
+    var Font = Quill.import('formats/font');
+    if (Font) {
         Font.whitelist = ['cairo', 'tajawal', 'amiri', false];
         Quill.register(Font, true);
+    }
+} catch (e) {
+    console.warn("تنبيه: تعذر تسجيل الخطوط المخصصة في Quill، يتم استخدام الخطوط الافتراضية.", e);
+}
 
-        // إعداد محرر Quill مع تفعيل وحدات الجداول والصور وتنسيق الأسطر
-        var quill = new Quill('#editor-container', {
-            theme: 'snow',
-            modules: {
-                toolbar: {
-                    container: [
-                        [{ header: [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline'],
-                        [{ color: [] }, { background: [] }],
-                        [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        ['link', 'image', 'table', 'clean']
-                    ],
-                    handlers: {
-                        'table': function() {
-                            // تفعيل إدراج جدول تفاعلي
-                            let tableModule = this.quill.getModule('table');
-                            if (tableModule) {
-                                tableModule.insertTable(2, 2);
-                            }
+// إعداد محرر Quill مع حماية لوحدة الجداول
+var quillOptions = {
+    theme: 'snow',
+    modules: {
+        toolbar: {
+            container: [
+                [{ header: [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ color: [] }, { background: [] }],
+                [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                ['link', 'image', 'table', 'clean']
+            ],
+            handlers: {
+                'table': function() {
+                    try {
+                        let tableModule = this.quill.getModule('table');
+                        if (tableModule && typeof tableModule.insertTable === 'function') {
+                            tableModule.insertTable(2, 2);
+                        } else {
+                            console.error("وحدة الجداول غير محملة أو غير مفعلة بشكل صحيح في Quill.");
+                            alert("يرجى التأكد من تضمين ملفات وحدة الجداول الخاصة بـ Quill.");
                         }
+                    } catch (err) {
+                        console.error("خطأ أثناء إدراج الجدول:", err);
                     }
-                },
-                table: true
+                }
             }
-        });
+        }
+    }
+};
 
+// تفعيل وحدة الجداول فقط إذا كانت مدعومة ومتاحة لمنع توقف السكريبت
+if (typeof Quill.import('modules/table') !== 'undefined') {
+    quillOptions.modules.table = true;
+}
+
+// إنشاء كائن المحرر
+var quill = new Quill('#editor-container', quillOptions);
+
+
+
+        
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedSize = localStorage.getItem('tech_logo_height');
