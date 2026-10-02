@@ -754,12 +754,14 @@ var Font = Quill.import('formats/font');
             document.getElementById('ticker-visible-toggle').checked = getData('tech_ticker_visible', true);
             document.getElementById('post-date').value = new Date().toLocaleDateString('ar-SA');
 
-            // استخدام تفويض الأحداث للزر لضمان استجابته دائماً حتى لو تم تحديث DOM
-            document.addEventListener('click', function(e) {
-                if (e.target && (e.target.id === 'toggle-manager-btn' || e.target.closest('#toggle-manager-btn'))) {
+            // تفعيل زر فتح نموذج إضافة وتعديل المقالة/الصفحة بشكل مباشر وصحيح
+            const toggleManagerBtn = document.getElementById('toggle-manager-btn');
+            if (toggleManagerBtn) {
+                toggleManagerBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
                     openArticleManager();
-                }
-            });
+                });
+            }
             
             document.getElementById('publish-btn').addEventListener('click', saveOrUpdatePost);
 
