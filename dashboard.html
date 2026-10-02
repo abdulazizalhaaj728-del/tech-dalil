@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- مكتبة Quill CSS مع دعم الجداول -->
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+
     <style>
         .custom-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -172,7 +173,54 @@
             background-image: none !important;
             border: 1px solid var(--border-color) !important;
             color: var(--text-main) !important;
+
+
+            /* -----------------عمل جدول في المحرر ------------------*/
+            <table class="custom-editor-table">
+              <thead>
+                <tr>
+                  <th>عنوان عمود 1</th>
+                  <th>عنوان عمود 2</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>بيانات خلية 1</td>
+                  <td>بيانات خلية 2</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <style>
+            .custom-editor-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin: 10px 0;
+            }
+            .custom-editor-table th, .custom-editor-table des, .custom-editor-table td {
+              border: 1px solid #ddd;
+              padding: 8px 12px;
+              text-align: right;
+            }
+            .custom-editor-table th {
+              background-color: #f5f5f5;
+              font-weight: bold;
+            }
+
+
+
+            .ql-editor table {
+              width: 100%;
+              border-collapse: collapse;
+              margin: 10px 0;
+            }
+            .ql-editor td, .ql-editor th {
+              border: 1px solid #ccc;
+              padding: 8px;
+              min-width: 50px;
+            }
         }
+        /*-----------------------------------انتهى الجدول--------------------------------*/
     </style>
 </head>
 <body>
@@ -625,6 +673,21 @@
 
         var quill = new Quill('#editor-container', quillOptions);
 
+        // --------- للجدول -------------------
+        const quill = new Quill('#editor', {
+          theme: 'snow',
+          modules: {
+            toolbar: [
+              ['bold', 'italic', 'underline'],
+              ['image', 'link'],
+              [{ 'table': 'O' }], // زر إدراج الجداول
+              [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+            ],
+            table: true // تفعيل وحدة الجداول الأساسية في كويل
+          }
+        });
+        //---------------------------------------
+        
         // دالة إدراج جدول منظم ونظيف (يدعم اللصق النظيف من الخارج تلقائياً عبر الـ Clipboard)
         document.getElementById('insert-table-btn').addEventListener('click', function() {
             let range = quill.getSelection();
@@ -671,7 +734,50 @@
 
         let activeImage = null;
         const editorWrapper = document.getElementById('editor-container');
-        
+
+        import ImageResize from 'quill-image-resize-module';
+        Quill.register('modules/imageResize', ImageResize);
+        const quill = new Quill('#editor', {
+          theme: 'snow',
+          modules: {
+            toolbar: toolbarOptions,
+            imageResize: {
+              modules: ['Resize', 'DisplaySize', 'Toolbar'],
+              // تخصيص زر التغيير أو الاستبدال عند الضغط على الصورة
+              tools: {
+                // زر مخصص للتغيير/الاستبدال
+                changer: {
+                  aria: 'Change Image',
+                  handler: (evt, button, activeEle) => {
+                    // إظهار خيار للمستخدم: إما رابط أو رفع من الجهاز
+                    let choice = prompt("اختر طريقة الاستبدال:\n1- أدخل رابط الصورة (URL)\n2- اكتب 'file' لرفع ملف من الكمبيوتر", "1");
+                    
+                    if (choice === "1" || choice === null) {
+                      let newUrl = prompt("أدخل رابط الصورة الجديد:");
+                      if (newUrl) activeEle.setAttribute('src', newUrl);
+                    } else if (choice === "file" || choice === '2') {
+                      // فتح نافذة اختيار ملف من الحاسوب
+                      let fileInput = document.createElement('input');
+                      fileInput.type = 'file';
+                      fileInput.accept = 'image/*';
+                      fileInput.onchange = e => {
+                        let file = e.target.files[0];
+                        if (file) {
+                          let reader = new FileReader();
+                          reader.onload = event => {
+                            activeEle.setAttribute('src', event.target.result);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      };
+                      fileInput.click();
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
         if (editorWrapper) {
             const imgToolbar = document.createElement('div');
             imgToolbar.id = 'custom-image-toolbar';
