@@ -625,29 +625,28 @@
             Quill.register('modules/imageResize', ImageResize.default || ImageResize);
         }
 
-        // إعداد محرر Quill الموحد مع تفعيل الجداول وتغيير حجم الصور
-        var quill = new Quill('#editor-container', {
-            theme: 'snow',
-            modules: {
-                toolbar: [
-                    [{ header: [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline'],
-                    [{ color: [] }, { background: [] }],
-                    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    ['link', 'image', 'table', 'clean']
-                ],
-                imageResize: {
-                    displayStyles: {
-                        backgroundColor: 'black',
-                        border: 'none',
-                        color: 'white'
-                    },
-                    modules: ['Resize', 'DisplaySize', 'Toolbar']
+    // إعداد محرر Quill الموحد
+    var quill = new Quill('#editor-container', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ color: [] }, { background: [] }],
+                [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                ['link', 'image', 'clean'] // تم استبعاد table المؤقتة لمنع خطأ التحميل
+            ],
+            imageResize: {
+                displayStyles: {
+                    backgroundColor: 'black',
+                    border: 'none',
+                    color: 'white'
                 },
-                table: true
+                modules: ['Resize', 'DisplaySize', 'Toolbar']
             }
-        });
+        }
+    });
 
         // جعل شريط أدوات المحرر ثابتاً في أعلى الشاشة عند التمرير
         window.addEventListener('scroll', function() {
@@ -1380,8 +1379,6 @@ function closeArticleManager() {
 
         <!-- مكتبة Quill الأساسية -->
         <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-        <!-- سكربت الجداول -->
-        <script src="https://cdn.jsdelivr.net/npm/quill-table@1.0.1/dist/quill.table.min.js"></script>
         <!-- مكتبة تعديل حجم الصور -->
         <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
 
