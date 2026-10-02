@@ -1417,20 +1417,44 @@ function addOrUpdateStructuredMenuItem() {
         }
 
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const newBtn = document.getElementById('brand-new-manager-btn');
-            if (newBtn) {
-                newBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // التأكد من استدعاء الدالة المسؤولة عن فتح النموذج
-                    if (typeof openArticleManager === 'function') {
-                        openArticleManager();
-                    } else {
-                        alert('الدالة openArticleManager غير موجودة، تأكد من اسم الدالة الأصلية');
-                    }
-                });
-            }
-        });
+// 1. تعريف الدالة المسؤولة عن فتح واجهة إدارة المقالات والصفحات
+function openArticleManager() {
+    const managerModal = document.getElementById('article-manager-modal') || document.getElementById('manager-container');
+    if (managerModal) {
+        managerModal.style.display = 'block';
+        managerModal.classList.add('active');
+    } else {
+        // إذا كان العنصر مخفياً أو يحمل معرّفاً مختلفاً، يمكنك تعديل المعرّف هنا
+        console.log("تم استدعاء مدير المقالات، يرجى التأكد من معرّف حاوية المدير في الـ HTML.");
+        // مثال افتراضي لعرض نافذة إذا وجد عنصر تحكم عام
+        alert("جاري فتح لوحة إدارة المقالات...");
+    }
+}
+
+// 2. تفعيل الزر القديم والجديد لضمان استجابتهما فوراً عند النقر
+document.addEventListener('DOMContentLoaded', function() {
+    // تفعيل أي زر يعتمد على معرفات الإدارة المعتادة
+    const targetIds = ['toggle-manager-btn', 'brand-new-manager-btn'];
+    
+    targetIds.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openArticleManager();
+            });
+        }
+    });
+
+    // تفويض الأحداث العامة تحسُّباً لأي أزرار يتم إنشاؤها ديناميكياً
+    document.addEventListener('click', function(e) {
+        if (e.target && (e.target.id === 'toggle-manager-btn' || e.target.id === 'brand-new-manager-btn' || e.target.closest('#toggle-manager-btn') || e.target.closest('#brand-new-manager-btn'))) {
+            e.preventDefault();
+            openArticleManager();
+        }
+    });
+});
         
     </script>
 </body>
