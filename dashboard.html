@@ -299,26 +299,17 @@
                 <textarea id="ad-bot-code" placeholder="أدخل شفرة/سكريبت الإعلان هنا..."></textarea>
             </div>
             <button class="btn" onclick="saveAdsSettings()">حفظ إعدادات الإعلانات للسيرفر</button>
-           
         </div>
 
         <!-- إدارة ونشر المقالات والصفحات -->
         <div class="section-box">
             <h3>📝 إدارة ونشر المقالات والصفحات</h3>
 
-            <div id="manager-trigger-wrapper" style="margin: 15px 0; position: relative; z-index: 99;">
-                <button type="button" class="btn toggle-manager-action-btn" id="toggle-manager-btn" style="padding: 8px 16px; font-size: 0.9rem; cursor: pointer; pointer-events: auto;">
+            <div id="manager-trigger-wrapper" style="margin: 15px 0;">
+                <button type="button" class="btn" id="toggle-manager-btn" style="padding: 8px 16px; font-size: 0.9rem;">
                     <i class="fa-solid fa-pen-to-square"></i> إدارة مقالة / صفحة
                 </button>
             </div>
-
-
-            <div style="margin: 20px 0; text-align: right;">
-                <button type="button" id="brand-new-manager-btn" style="background-color: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <i class="fa-solid fa-file-pen"></i> فتح مدير المقالات والصفحات الجديد
-                </button>
-            </div>
-            
 
             <div id="article-manager-form-container" style="display: none; margin-top: 15px; background: rgba(255,255,255,0.01); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
                 <div class="form-group">
@@ -589,124 +580,14 @@
             </html>`;
         }
 
-var Font = Quill.import('formats/font');
+        var Font = Quill.import('formats/font');
         Font.whitelist = ['cairo', 'tajawal', 'amiri', false];
         Quill.register(Font, true);
 
-        // إعداد محرر Quill مع تفعيل وحدات الجداول والصور وتنسيق الأسطر
         var quill = new Quill('#editor-container', {
             theme: 'snow',
-            modules: {
-                toolbar: {
-                    container: [
-                        [{ header: [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline'],
-                        [{ color: [] }, { background: [] }],
-                        [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        ['link', 'image', 'table', 'clean']
-                    ],
-                    handlers: {
-                        'table': function() {
-                            // تفعيل إدراج جدول تفاعلي
-                            let tableModule = this.quill.getModule('table');
-                            if (tableModule) {
-                                tableModule.insertTable(2, 2);
-                            }
-                        }
-                    }
-                },
-                table: true
-            }
+            modules: { toolbar: [[{ header: [1, 2, 3, false] }], ['bold', 'italic', 'underline'], [{ color: [] }, { background: [] }], [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }], ['link', 'clean']] }
         });
-
-        // جعل شريط أدوات المحرر ثابتاً في أعلى الشاشة عند التمرير للأسفل
-        window.addEventListener('scroll', function() {
-            const toolbar = document.querySelector('.ql-toolbar');
-            const editorContainer = document.getElementById('editor-container');
-            if (!toolbar || !editorContainer) return;
-            
-            const rect = editorContainer.getBoundingClientRect();
-            const toolbarHeight = toolbar.offsetHeight;
-            
-            if (rect.top < 0 && rect.bottom > toolbarHeight * 2) {
-                toolbar.style.position = 'fixed';
-                toolbar.style.top = '0';
-                toolbar.style.left = '0';
-                toolbar.style.right = '0';
-                toolbar.style.zIndex = '1000';
-                toolbar.style.background = '#ffffff';
-                toolbar.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-            } else {
-                toolbar.style.position = 'static';
-                toolbar.style.boxShadow = 'none';
-            }
-        });
-
-        // نظام تفاعل الصور (إضافة روابط، تسمية بديلة، وحذف وتغيير)
-        let activeImage = null;
-        const editorWrapper = document.getElementById('editor-container');
-        
-        if (editorWrapper) {
-            // إنشاء صندوق الأدوات العائم للصورة
-            const imgToolbar = document.createElement('div');
-            imgToolbar.id = 'custom-image-toolbar';
-            imgToolbar.style.cssText = 'display:none; position:absolute; background:#1e293b; color:#fff; padding:6px 12px; border-radius:6px; z-index:2000; gap:8px; align-items:center; font-size:12px; box-shadow:0 4px 12px rgba(0,0,0,0.2);';
-            imgToolbar.innerHTML = `
-                <button type="button" id="img-link-btn" style="background:#0284c7; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">إضافة/تعديل رابط</button>
-                <button type="button" id="img-alt-btn" style="background:#64748b; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">التسمية البديلة</button>
-                <button type="button" id="img-del-btn" style="background:#ef4444; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;"><i class="fa-solid fa-trash"></i> حذف</button>
-            `;
-            document.body.appendChild(imgToolbar);
-
-            editorWrapper.addEventListener('click', function(e) {
-                if (e.target && e.target.tagName === 'IMG') {
-                    activeImage = e.target;
-                    const rect = activeImage.getBoundingClientRect();
-                    imgToolbar.style.display = 'flex';
-                    imgToolbar.style.top = (window.scrollY + rect.top - 40) + 'px';
-                    imgToolbar.style.left = (window.scrollX + rect.left) + 'px';
-                } else if (!imgToolbar.contains(e.target)) {
-                    imgToolbar.style.display = 'none';
-                }
-            });
-
-            document.getElementById('img-del-btn').addEventListener('click', function() {
-                if (activeImage) {
-                    activeImage.remove();
-                    imgToolbar.style.display = 'none';
-                    menuHasChanges = true;
-                }
-            });
-
-            document.getElementById('img-link-btn').addEventListener('click', function() {
-                if (!activeImage) return;
-                let currentLink = activeImage.getAttribute('data-url') || '';
-                let newUrl = prompt("أدخل رابط الانتقال عند الضغط على الصورة:", currentLink);
-                if (newUrl !== null) {
-                    if (newUrl.trim() === '') {
-                        activeImage.removeAttribute('data-url');
-                        activeImage.style.cursor = 'default';
-                    } else {
-                        activeImage.setAttribute('data-url', newUrl);
-                        activeImage.style.cursor = 'pointer';
-                        activeImage.onclick = function() { window.open(newUrl, '_blank'); };
-                    }
-                    menuHasChanges = true;
-                }
-            });
-
-            document.getElementById('img-alt-btn').addEventListener('click', function() {
-                if (!activeImage) return;
-                let currentAlt = activeImage.getAttribute('alt') || '';
-                let newAlt = prompt("أدخل التسمية البديلة (Alt Text) للصورة:", currentAlt);
-                if (newAlt !== null) {
-                    activeImage.setAttribute('alt', newAlt);
-                    activeImage.title = newAlt;
-                    menuHasChanges = true;
-                }
-            });
-        }
 
         function applyCustomFont(fontName) {
             const range = quill.getSelection();
@@ -714,64 +595,13 @@ var Font = Quill.import('formats/font');
             else showCustomAlert("تنبيه", "تظليل النص مطلوب أولاً.");
         }
 
-        // دالة استخراج وتوليد محتويات المقال (Table of Contents) ديناميكياً من العناوين الفرعية داخل المقال
-        function generateArticleIndexFromHeadings() {
-            const container = document.getElementById('article-index-container');
-            if (!container) return;
-            
-            const editorContent = quill.root;
-            const headings = editorContent.querySelectorAll('h1, h2, h3');
-            
-            if (headings.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">لا توجد عناوين فرعية في المقال بعد.</p>';
-                return;
-            }
-
-            let htmlList = '<ul style="list-style-type: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">';
-            headings.forEach((heading, idx) => {
-                // وضع معرفات فريدة للعناوين لتمكين النزول إليها بسلاسة
-                if (!heading.id) {
-                    heading.id = 'article-heading-' + idx;
-                }
-                let text = heading.innerText;
-                let level = heading.tagName.toLowerCase();
-                let indentClass = level === 'h3' ? 'margin-right: 15px;' : (level === 'h2' ? 'margin-right: 8px;' : '');
-
-                htmlList += `
-                    <li style="${indentClass}">
-                        <a href="#${heading.id}" onclick="event.preventDefault(); document.getElementById('${heading.id}').scrollIntoView({behavior: 'smooth'});" 
-                           style="color: var(--primary-color); text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: color 0.2s; display: inline-flex; align-items: center; gap: 6px;">
-                            <i class="fa-solid fa-chevron-left" style="font-size: 0.7rem; opacity: 0.7;"></i> ${text}
-                        </a>
-                    </li>
-                `;
-            });
-            htmlList += '</ul>';
-            container.innerHTML = htmlList;
-        }
-
-        // تحديث الفهرس عند كل تعديل في المحتوى
-        quill.on('text-change', function() {
-            generateArticleIndexFromHeadings();
-        });
-
-
-        
         window.addEventListener('DOMContentLoaded', () => {
             const savedSize = localStorage.getItem('tech_logo_height');
             if (savedSize) document.getElementById('logo-size-selector').value = savedSize;
             document.getElementById('ticker-visible-toggle').checked = getData('tech_ticker_visible', true);
             document.getElementById('post-date').value = new Date().toLocaleDateString('ar-SA');
 
-            // تفعيل زر فتح نموذج إضافة وتعديل المقالة/الصفحة بشكل مباشر وصحيح
-            const toggleManagerBtn = document.getElementById('toggle-manager-btn');
-            if (toggleManagerBtn) {
-                toggleManagerBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openArticleManager();
-                });
-            }
-            
+            document.getElementById('toggle-manager-btn').addEventListener('click', openArticleManager);
             document.getElementById('publish-btn').addEventListener('click', saveOrUpdatePost);
 
             document.getElementById('post-title').addEventListener('input', function() {
@@ -1415,47 +1245,6 @@ function addOrUpdateStructuredMenuItem() {
             globalData.ads.botCode = document.getElementById('ad-bot-code').value;
             saveServerData("تم حفظ إعدادات وشفرات الإعلانات بنجاح[cite: 7]!");
         }
-
-
-// 1. تعريف الدالة المسؤولة عن فتح واجهة إدارة المقالات والصفحات
-function openArticleManager() {
-    const managerModal = document.getElementById('article-manager-modal') || document.getElementById('manager-container');
-    if (managerModal) {
-        managerModal.style.display = 'block';
-        managerModal.classList.add('active');
-    } else {
-        // إذا كان العنصر مخفياً أو يحمل معرّفاً مختلفاً، يمكنك تعديل المعرّف هنا
-        console.log("تم استدعاء مدير المقالات، يرجى التأكد من معرّف حاوية المدير في الـ HTML.");
-        // مثال افتراضي لعرض نافذة إذا وجد عنصر تحكم عام
-        alert("جاري فتح لوحة إدارة المقالات...");
-    }
-}
-
-// 2. تفعيل الزر القديم والجديد لضمان استجابتهما فوراً عند النقر
-document.addEventListener('DOMContentLoaded', function() {
-    // تفعيل أي زر يعتمد على معرفات الإدارة المعتادة
-    const targetIds = ['toggle-manager-btn', 'brand-new-manager-btn'];
-    
-    targetIds.forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                openArticleManager();
-            });
-        }
-    });
-
-    // تفويض الأحداث العامة تحسُّباً لأي أزرار يتم إنشاؤها ديناميكياً
-    document.addEventListener('click', function(e) {
-        if (e.target && (e.target.id === 'toggle-manager-btn' || e.target.id === 'brand-new-manager-btn' || e.target.closest('#toggle-manager-btn') || e.target.closest('#brand-new-manager-btn'))) {
-            e.preventDefault();
-            openArticleManager();
-        }
-    });
-});
-        
     </script>
 </body>
 </html>
