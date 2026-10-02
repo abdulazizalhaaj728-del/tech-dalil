@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- مكتبة Quill CSS مع دعم الجداول -->
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+    <!-- مكتبة التحكم بحجم الصور -->
+    <link href="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.css" rel="stylesheet">
 
     <style>
         .custom-modal-overlay {
@@ -127,24 +129,24 @@
         .ql-font-tajawal { font-family: 'Tajawal', sans-serif !important; }
         .ql-font-amiri { font-family: 'Amiri', serif !important; }
 
-        /* تنسيق الجداول المدمجة داخل المحرر والمعاينة */
+        /* تنسيق الجداول الحقيقية داخل المحرر والمعاينة لضمان ظهور الخلايا بوضوح */
         .ql-editor table, .post-card table {
             width: 100% !important;
             border-collapse: collapse !important;
             margin: 15px 0 !important;
-            background-color: #ffffff;
-            color: #1e293b;
+            background-color: #ffffff !important;
+            color: #1e293b !important;
         }
         .ql-editor table td, .ql-editor table th,
         .post-card table td, .post-card table th {
-            border: 1px solid #cbd5e1 !important;
+            border: 2px solid #94a3b8 !important;
             padding: 10px 12px !important;
             text-align: center !important;
             vertical-align: middle !important;
         }
         .ql-editor table th, .post-card table th {
-            background-color: #f1f5f9 !important;
-            font-weight: bold;
+            background-color: #e2e8f0 !important;
+            font-weight: bold !important;
         }
 
         /* تخصيص صندوق المقال ومنطقة الودجات بلون بيج دافئ ومريح للعين */
@@ -180,12 +182,12 @@
 
     <div class="admin-container">
         <a href="index.html" style="color: var(--primary-color); text-decoration: none; font-weight: bold; display:inline-block; margin-bottom:15px;">← العودة للموقع الرئيسي</a>
-        <h2>لوحة التحكم الشاملة لمدونة تكنو-دليل</h2>
+        <h2>لوحة التحكم الشاملة لمدونة تكنو-دليل[cite: 7]</h2>
 
         <!-- إعدادات ربط GitHub -->
         <div class="section-box" style="border-color: #38bdf8;">
             <h3 style="color: #38bdf8;"><i class="fa-brands fa-github"></i> إعدادات الربط السحابي (GitHub Token)</h3>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">أدخل رمز الصلاحية الخاص بك لكي تتمكن اللوحة من حفظ التغييرات مباشرة في ملف <code>data.json</code> أونلاين[cite: 4]:</p>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">أدخل رمز الصلاحية الخاص بك لكي تتمكن اللوحة من حفظ التغييرات مباشرة في ملف <code>data.json</code> أونلاين[cite: 4, 7]:</p>
             <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" style="direction: ltr;">
         </div>
 
@@ -219,7 +221,7 @@
         <div class="section-box">
             <h3 style="color: var(--accent-color);">📋 نظام القوائم الذكي الهرمي</h3>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
-                أدخل اسم العنصر والرابط، واستخدم الشرطات للتحديد: <code>_</code> (رئيسي) | <code>__</code> (فرعي)[cite: 4].
+                أدخل اسم العنصر والرابط، واستخدم الشرطات للتحديد: <code>_</code> (رئيسي) | <code>__</code> (فرعي)[cite: 4, 7].
             </p>
             <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                 <input type="text" id="menu-raw-input" placeholder="_تقنية أو __أول شرح" style="flex: 2;">
@@ -366,7 +368,6 @@
                 <div class="form-group">
                     <label>المحتوى:</label>
                     <div class="sticky-editor-header">
-                        <button type="button" id="insert-table-btn" class="btn btn-secondary" style="background:var(--primary-color);">إدراج جدول منظم 2×2</button>
                         <div class="custom-font-bar">
                             <span style="font-size: 0.8rem; color: var(--accent-color); margin-left: 5px;"><i class="fa-solid fa-font"></i> تغيير الخط للنص المظلل:</span>
                             <button type="button" class="font-tag-btn" style="font-family: 'Cairo', sans-serif;" onclick="applyCustomFont('cairo')">خط كايرو</button>
@@ -410,7 +411,7 @@
             </div>
 
             <hr style="border:0; border-top:1px solid var(--border-color); margin: 20px 0;">
-            <h4>المقالات المنشورة (أحدث 5 ظاهرة والباقي عبر شريط تمرير سكرول):</h4>
+            <h4>المقالات المنشورة (أحدث 5 ظاهرة والباقي عبر شريط تمرير سكرول):[cite: 7]</h4>
             <div id="posts-admin-management-list" style="margin-top: 10px; max-height: 280px; overflow-y: auto; padding-left: 5px;"></div>
         </div>
     </div>
@@ -428,6 +429,8 @@
 
     <!-- مكتبة Quill.js -->
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <!-- مكتبة تعديل حجم الصور -->
+    <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
     <script>
         let globalData = {
             settings: { logoUrl: "", logoHeight: "55px", tickerVisible: true },
@@ -608,7 +611,12 @@
             console.warn("تنبيه: تعذر تسجيل الخطوط المخصصة في Quill.", e);
         }
 
-        // إعداد محرر Quill الموحد
+        // تسجيل أداة تغيير حجم الصور المدمجة
+        if (typeof ImageResize !== 'undefined') {
+            Quill.register('modules/imageResize', ImageResize.default || ImageResize);
+        }
+
+        // إعداد محرر Quill الموحد مع تفعيل الجداول وتغيير حجم الصور
         var quill = new Quill('#editor-container', {
             theme: 'snow',
             modules: {
@@ -618,30 +626,18 @@
                     [{ color: [] }, { background: [] }],
                     [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
                     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    ['link', 'image', 'clean']
-                ]
+                    ['link', 'image', 'table', 'clean']
+                ],
+                imageResize: {
+                    displayStyles: {
+                        backgroundColor: 'black',
+                        border: 'none',
+                        color: 'white'
+                    },
+                    modules: ['Resize', 'DisplaySize', 'Toolbar']
+                },
+                table: true
             }
-        });
-
-        // دالة إدراج جدول منظم ونظيف
-        document.getElementById('insert-table-btn').addEventListener('click', function() {
-            let range = quill.getSelection();
-            let index = range ? range.index : quill.getLength();
-            
-            let tableHTML = `
-                <table style="width: 100%; border-collapse: collapse; margin: 15px 0; background: #fff; color: #1e293b;">
-                    <tr>
-                        <td style="border: 1px solid #cbd5e1; padding: 10px; text-align: center; background: #f1f5f9; font-weight: bold;">عنوان عمود 1</td>
-                        <td style="border: 1px solid #cbd5e1; padding: 10px; text-align: center; background: #f1f5f9; font-weight: bold;">عنوان عمود 2</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #cbd5e1; padding: 10px; text-align: center;">بيانات خلية 1</td>
-                        <td style="border: 1px solid #cbd5e1; padding: 10px; text-align: center;">بيانات خلية 2</td>
-                    </tr>
-                </table>
-                <p><br></p>
-            `;
-            quill.clipboard.dangerouslyPasteHTML(index, tableHTML);
         });
 
         // جعل شريط أدوات المحرر ثابتاً في أعلى الشاشة عند التمرير
