@@ -12,58 +12,46 @@
             "url": "#"
         },
         {
-            "rawText": "برمجة الحاسب الآلي",
-            "title": "برمجة الحاسب الآلي",
-            "level": 1,
+            "rawText": "__تركيب وصيانة الحاسب الآلي",
+            "title": "تركيب وصيانة الحاسب الآلي",
+            "level": 2,
             "url": "#"
         },
         {
-            "rawText": "لغات برمجة التطبيقات والألعاب",
-            "title": "لغات برمجة التطبيقات والألعاب",
-            "level": 1,
-            "url": "https://tech-dalil.com/articles/guide-programming-how-to-86302.html"
+            "rawText": "___دليل بناء حاسوب شخصي",
+            "title": "دليل بناء حاسوب شخصي",
+            "level": 3,
+            "url": "#"
         },
         {
-            "title": "دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء تطبيقات الجوال وتطوير الألعاب؟",
-            "url": "?article=guide-programming-how-to-86302.html",
+            "rawText": "___أعطال الحاسب الآلي وكيفية إصلاحها",
+            "title": "أعطال الحاسب الآلي وكيفية إصلاحها",
             "level": 3,
-            "rawText": "دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء تطبيقات الجوال وتطوير الألعاب؟"
+            "url": "#"
+        },
+        {
+            "rawText": "___شبكات الحاسب الآلي",
+            "title": "شبكات الحاسب الآلي",
+            "level": 3,
+            "url": "#"
+        },
+        {
+            "rawText": "__برمجة الحاسب الآلي",
+            "title": "برمجة الحاسب الآلي",
+            "level": 2,
+            "url": "#"
+        },
+        {
+            "rawText": "___لغات برمجة التطبيقات والألعاب",
+            "title": "لغات برمجة التطبيقات والألعاب",
+            "level": 3,
+            "url": "https://tech-dalil.com/articles/guide-programming-how-to-86302.html"
         },
         {
             "rawText": "___شرح عمل تطبيق بوصلة بواسطة Android studio",
             "title": "شرح عمل تطبيق بوصلة بواسطة Android studio",
             "level": 3,
             "url": "https://tech-dalil.com/articles/android-studio-19419.html"
-        },
-        {
-            "title": "عمل تطبيق بوصلة بواسطة Android studio",
-            "url": "?article=android-studio-19419.html",
-            "level": 3,
-            "rawText": "عمل تطبيق بوصلة بواسطة Android studio"
-        },
-        {
-            "rawText": "تركيب وصيانة الحاسب الآلي",
-            "title": "تركيب وصيانة الحاسب الآلي",
-            "level": 1,
-            "url": "#"
-        },
-        {
-            "rawText": "__دليل بناء حاسوب شخصي",
-            "title": "دليل بناء حاسوب شخصي",
-            "level": 2,
-            "url": "#"
-        },
-        {
-            "rawText": "__أعطال الحاسب الآلي وكيفية إصلاحها",
-            "title": "أعطال الحاسب الآلي وكيفية إصلاحها",
-            "level": 2,
-            "url": "#"
-        },
-        {
-            "rawText": "__شبكات الحاسب الآلي",
-            "title": "شبكات الحاسب الآلي",
-            "level": 2,
-            "url": "#"
         }
     ],
     "widgets": [
