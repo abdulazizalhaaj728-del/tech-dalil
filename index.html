@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة</title>
@@ -23,16 +24,17 @@
             display: flex;
             flex-direction: column;
             transition: background 0.3s, color 0.3s;
-            padding: 10px;
+            padding: 10px; /* مسافة متساوية للخارج من جميع الجهات */
         }
 
+        /* الإطار الثخين المحيط بكامل المدونة من الحافة للحافة */
         .site-outer-frame {
             max-width: 1230px;
             width: 100%;
             margin: 0 auto;
             border: 1px solid gray;
             border-radius: 0px;
-            padding: 10px;
+            padding: 10px; /* جعل المسافة الداخلية للإطار متساوية تماماً (من الأعلى والأسفل واليمين واليسار) */
             background: var(--bg-color);
             box-shadow: 0 0 0px rgba(0, 0, 0, 0);
             display: flex;
@@ -40,6 +42,8 @@
             flex-grow: 1;
         }
 
+        /* الثيمات والألوان */
+        /* استبدل سطر متغيرات الثيمات في قسم الـ style بهذا الكود لتفعيل اللون الأساسي في كل ثيم */
         body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --primary-color: #0284c7; --accent-color: #0284c7; --border-color: #334155; }
         body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --primary-color: #38bdf8; --accent-color: #38bdf8; --border-color: #1d4ed8; }
         body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --primary-color: #e04885; --accent-color: #e04885; --border-color: #5c2438; }
@@ -47,6 +51,7 @@
         body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; }
         body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; }
 
+        /* استبدال تنسيقات عنوان صندوق المنتجات ومربعات الشبكة لتتفاعل مع الثيم */
         .section-title {
             text-align: center;
             color: var(--text-main);
@@ -58,6 +63,7 @@
             border-radius: 6px;
         }
         
+        /* شريط التحكم العلوي */
         .top-bar {
             background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 8px 20px;
             display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-size: 0.85rem;
@@ -82,6 +88,7 @@
         .top-social a { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; transition: color 0.2s; }
         .top-social a:hover { color: var(--accent-color); }
 
+        /* الترويسة الرئيسية والشعار المقيد */
         header {
             background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);
             border-bottom: 2px solid var(--primary-color); padding: 10px;
@@ -96,6 +103,7 @@
         .header-center h1 span { color: var(--primary-color); }
         .header-center p { color: var(--text-muted); font-size: 0.95rem; }
 
+        /* الشريط الإخباري */
         .ticker-wrapper { width: 100%; margin: 15px auto 0; padding: 0; }
         .ticker-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 15px; display: flex; align-items: center; position: relative; overflow: hidden; }
         .ticker-title { background: var(--accent-color); color: #000; padding: 5px 12px; font-size: 0.85rem; font-weight: 700; border-radius: 4px; margin-left: 15px; flex-shrink: 0; z-index: 5; position: relative; }
@@ -109,17 +117,19 @@
             100% { transform: translateX(100%); opacity: 0; } 
         }
 
+/* القائمة الرئيسية */
         .main-menu-bar { width: 100%; margin: 10px auto 0; padding: 0; position: sticky; top: 0; z-index: 999; }
         .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; }
         .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
        
+        /* الحاوية الأساسية للقوائم الفرعية (تتبع لون الثيم) */
         .dropdown-menu {
             position: absolute;
             top: 100%;
             right: 0;
             min-width: 200px;
-            background: var(--card-bg);
+            background: var(--card-bg); /* متوافقة مع الثيم */
             border: 1px solid var(--border-color);
             border-radius: 8px;
             list-style: none;
@@ -130,20 +140,58 @@
             padding: 5px 0;
         }
 
-        .mega-menu > li { position: relative; }
-        .mega-menu > li:hover > .dropdown-menu { display: block; }
-        .dropdown-menu li { position: relative; border-bottom: 1px solid var(--border-color); }
-        .dropdown-menu li:last-child { border-bottom: none; }
+        .mega-menu > li { 
+            position: relative; 
+        }
 
+        /* إظهار القائمة الفرعية للمستوى الأول تحت الأب مباشرة */
+        .mega-menu > li:hover > .dropdown-menu { 
+            display: block; 
+        }
+
+        .dropdown-menu li { 
+            position: relative; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        
+        .dropdown-menu li:last-child {
+            border-bottom: none;
+        }
+
+        /* تنسيق روابط القوائم الفرعية لتتاسب مع حجم وألوان الخطوط العامة */
         .dropdown-menu li a { 
-            display: block; padding: 9px 15px; color: var(--text-main); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: 0.2s; 
+            display: block; 
+            padding: 9px 15px; 
+            color: var(--text-main); 
+            text-decoration: none; 
+            font-size: 12.5px; 
+            font-weight: 600;
+            transition: 0.2s; 
         }
-        .dropdown-menu li a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); padding-right: 20px; }
-        .dropdown-menu li:hover > .dropdown-menu { display: block; position: absolute; right: 100%; top: -5px; }
+        
+        .dropdown-menu li a:hover { 
+            background: rgba(2, 132, 199, 0.2); 
+            color: var(--accent-color); 
+            padding-right: 20px; 
+        }
+        
+        /* دعم ظهور القوائم الفرعية للأحفاد وتزحفها لليسار لتستقر تحت العنصر الأب بجانب مساحته */
+        .dropdown-menu li:hover > .dropdown-menu {
+            display: block;
+            position: absolute;
+            right: 100%; /* تزحف بمقدار عرض العنصر الأب تماماً نحو اليسار في اتجاه الـ RTL */
+            top: -5px;   /* محاذاة دقيقة مع أعلى العنصر الأب */
+        }
 
-        .content img, .post-img, .featured-img, article img {
-            display: block !important; margin: 15px auto !important; max-width: 100%; height: auto; border-radius: 8px;
-        }
+
+     /* توسيط الصور وتقليل المسافات الفاصلة بينها وبين النصوص */
+    .content img, .post-img, .featured-img, article img {
+    display: block !important;
+    margin: 15px auto !important; /* توسيط الصورة وجعل المسافة علوية وسفلية مقللة إلى 15 بكسل فقط */
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
         
         .three-columns-grid { 
             width: 100%; margin: 20px auto 0; padding: 0; 
@@ -152,16 +200,27 @@
         @media (max-width: 950px) { .three-columns-grid { grid-template-columns: 1fr; } }
 
         .right-scrollable-section { width: 100%; }
+     
+        //.top-right-row { display: grid; grid-template-columns: 1fr 320px; gap: 20px; margin-bottom: 20px; }
+        //@media(max-width: 768px) { .top-right-row { grid-template-columns: 1fr; } }
+
         .top-right-row { display: flex; gap: 15px; align-items: stretch; margin-bottom: 15px; }
 
-        .square-slider-box {
-            flex: 1.6; height: 310px; position: relative; border-radius: 12px; overflow: hidden; background: var(--card-bg); border: 1px solid var(--border-color);
-        }
+        .square-slider-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; height: 310px; position: relative; }
         .square-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.6s ease; background-size: cover; background-position: center; display: flex; align-items: flex-end; }
         .square-slide.active { opacity: 1; }
         .square-caption { background: linear-gradient(to top, rgba(15,23,42,0.95), transparent); width: 100%; padding: 15px; z-index: 2; }
         .square-title { font-size: 1.05rem; color: var(--accent-color); font-weight: 700; margin-bottom: 5px; cursor: pointer; }
         .square-desc { font-size: 0.75rem; color: #cbd5e1; }
+
+        /* تخصيص السلايدر ليأخذ المساحة المناسبة */
+        .square-slider-box {
+            flex: 1.6; /* يأخذ مساحة أوسع قليلاً */
+            height: 310px; /* ارتفاع ثابت ليتطابق مع صندوق المنتجات */
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+        }
 
         .slider-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
@@ -173,29 +232,110 @@
         .slider-prev { right: 10px; }
         .slider-next { left: 10px; }
 
-        .news-mini-container { 
-            flex: 1; background: var(--card-bg); border: 2px dashed var(--border-color); border-radius: 12px; height: 310px; padding: 15px; display: flex; flex-direction: column; overflow: hidden; color: var(--text-muted); font-size: 0.9rem; box-sizing: border-box;
+/* صندوق المنتجات الرقمية بجانبه */
+    .news-mini-container { 
+        flex: 1; /* يأخذ المساحة المتبقية */
+        background: var(--card-bg); 
+        border: 2px dashed var(--border-color); 
+        border-radius: 12px; 
+        height: 310px; /* نفس ارتفاع السلايدر تماماً */
+        padding: 15px; 
+        display: flex; 
+        flex-direction: column; 
+        overflow: hidden; 
+        color: var(--text-muted); 
+        font-size: 0.9rem; 
+        box-sizing: border-box;
+    }
+
+        /* تنسيق حاوية الشريط الإخباري لضمان استقلاليته وعدم تداخله */
+.news-ticker-wrapper {
+    width: 100%;
+    background: var(--card-bg, #1e293b);
+    border-bottom: 1px solid var(--border-color, #334155);
+    padding: 8px 15px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+}
+
+    .section-title {
+        text-align: center;
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: bold;
+        margin-bottom: 8px;
+        background-color:  var(--bg-color); //#1b4d3e;
+        padding: 5px;
+        border-radius: 6px;
+    }
+    
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 6px;
+        flex: 1;
+        min-height: 0;
+    }
+    
+    .product-card {
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        overflow: hidden;
+        position: relative;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+        .product-card:not(.empty):hover {
+            background-color: var(--card-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
-        .news-ticker-wrapper {
-            width: 100%; background: var(--card-bg, #1e293b); border-bottom: 1px solid var(--border-color, #334155); padding: 8px 15px; margin-top: 0; margin-bottom: 15px; position: relative; z-index: 10; display: flex; align-items: center; border-radius: 6px;
-        }
-
-        .products-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 6px; flex: 1; min-height: 0;
+    /* تعديل حاوية المحتوى لتكون عمودية (صورة بالأعلى وتحتها النص) */
+        .product-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            box-sizing: border-box;
+            gap: 4px; /* مسافة بسيطة بين الصورة والنص */
         }
         
-        .product-card {
-            background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none; overflow: hidden; position: relative; transition: all 0.3s ease; height: 100%;
+        .ad-game-thumb {
+            width: 100%;
+            height: 78px; /* ارتفاع مخصص للصورة لترك مساحة للنص تحتها */
+            object-fit: cover;
+            border-radius: 4px;
         }
-        .product-card:not(.empty):hover { background-color: var(--card-bg); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); }
+        
+        .product-card span {
+            color: #ffffff;
+            font-size: 0.72rem; /* حجم خط مناسب ومقروء داخل المربع الصغير */
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        .product-card.empty {
+            opacity: 0.4;
+            cursor: default;
+        }    
 
-        .product-content {
-            width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box; gap: 4px;
-        }
-        .ad-game-thumb { width: 100%; height: 78px; object-fit: cover; border-radius: 4px; }
-        .product-card span { color: #ffffff; font-size: 0.72rem; text-align: center; line-height: 1.2; }
-        .product-card.empty { opacity: 0.4; cursor: default; }    
+
 
         /* تخصيص صندوق المقال ومنطقة العرض بلون بيج دافئ ومريح للعين */
         #dynamic-post-view .post-card,
@@ -238,8 +378,12 @@
         }
         .back-to-home-btn:hover { opacity: 0.85; }
 
+
+        
+
         .left-sticky-sidebar { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
+            position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
         }
         .sidebar-widget { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
         .sidebar-widget h4, .sidebar-widget h3 { color: var(--accent-color); font-size: 0.95rem; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
@@ -270,43 +414,70 @@
         .recent-posts-list li a:hover { color: var(--accent-color); }
 
         .site-footer { width: 100%; margin: 15px auto 0; padding: 0; }
-        .footer-container { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; 
-        }
+        
         .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
         .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
 
-        @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
-
-        .site-main-menu, .site-main-menu ul, .site-main-menu li, .site-main-menu a, .dropdown-menu, .dropdown-menu li, .dropdown-menu a {
-            pointer-events: auto !important;
+        /* تنسيق منطقة التذييل لتصبح شبكة من 4 أعمدة متساوية أفقياً */
+        .site-footer { width: 100%; margin: 15px auto 0; padding: 0; }
+        
+        /* جعل حاوية التذييل شبكة ثابتة من 4 أعمدة متساوية تماماً */
+        .footer-container { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 15px; 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); /* 4 أعمدة أفقية متساوية دائماً */
+            gap: 20px; 
         }
-        .site-main-menu li { position: relative; }
-        .site-main-menu li:hover > .dropdown-menu { display: block !important; pointer-events: auto !important; }
 
+        .footer-bottom-bar { text-align: center; padding: 15px; margin-top: 15px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.85rem; background: var(--card-bg); border-radius: 8px; }
+        .secret-c { cursor: pointer; display: inline-block; padding: 0 2px; font-weight: bold; }
 
-        /* تنسيق أيقونات الأسهم بجانب عناوين المقالات أو القوائم */
-        .recent-posts-list li a i,
-        .sidebar-widget ul li i,
-        .post-title i {
-            margin-left: 8px; /* مسافة بسيطة بين السهم والعنوان بناءً على اللغة العربية */
-            font-size: 0.85rem;
-            color: var(--accent-color, var(--primary-color));
-            display: inline-block;
-            transition: transform 0.2s ease;
+        /* التجاوب مع الشاشات الصغيرة والهواتف */
+        @media (max-width: 900px) {
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr); /* عمودان في الأجهزة المتوسطة */
+            }
         }
         
-        /* حركة جمالية عند المرور على السهم أو العنوان */
-        .recent-posts-list li a:hover i,
-        .sidebar-widget ul li:hover i {
-            transform: translateX(-3px); /* يتحرك السهم قليلاً لليمين في الواجهات العربية */
+        @media (max-width: 600px) {
+            .footer-container {
+                grid-template-columns: 1fr; /* عمود واحد في الهواتف الضيقة */
+            }
         }
+
+
+        /* ضمان تفاعل واستجابة القوائم المنسدلة وكافة عناصرها للنقر تماماً */
+        .site-main-menu, 
+        .site-main-menu ul, 
+        .site-main-menu li, 
+        .site-main-menu a,
+        .dropdown-menu,
+        .dropdown-menu li,
+        .dropdown-menu a {
+            pointer-events: auto !important;
+        }
+        
+        /* التأكد من أن القوائم المنسدلة تظهر فوق العناصر وتستقبل النقرات عند التحويم أو الاستخدام */
+        .site-main-menu li {
+            position: relative;
+        }
+        
+        .site-main-menu li:hover > .dropdown-menu {
+            display: block !important;
+            pointer-events: auto !important;
+        }
+
+        
+        
     </style>
 </head>
     
 <body class="theme-default">
 
+    <!-- بداية الإطار الخارجي الثخين الشامل لكل المدونة -->
     <div class="site-outer-frame">
 
         <div id="site-ad-top" style="width: 100%; margin: 10px auto; text-align: center;"></div>
@@ -356,18 +527,37 @@
             </div>
         </div>
 
+        <!--    
         <div class="main-menu-bar">
             <nav id="site-main-menu" class="mega-menu">
-                <li><a href="#">الرئيسية</a></li>
-                <li>
-                    <a href="#">البرمجيات ▾</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">أنظمة الويب</a></li>
-                    </ul>
-                </li>
+                <a href="index.html"><i class="fa-solid fa-house"></i> الرئيسية</a>
+                <a href="blog.html"><i class="fa-solid fa-book-open"></i> المدونة</a>
             </nav>
-        </div>
+        </div> 
+-->
 
+        
+
+    <!-- القائمة الرئيسية الأفقية -->
+    <div class="main-menu-bar">
+        <nav id="site-main-menu" class="mega-menu">
+            <li><a href="#">الرئيسية</a></li>
+            <li>
+                <a href="#">البرمجيات ▾</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">أنظمة الويب</a></li>
+                </ul>
+            </li>
+            <li>
+        </nav>
+    </div>
+
+
+
+
+
+        
+        
         <div id="site-ad-mid" style="width: 100%; margin: 15px auto; text-align: center;"></div>
         
         <div class="three-columns-grid" id="top-three-section">
@@ -376,6 +566,7 @@
                 <!-- صندوق عرض المقال الديناميكي (مخفي افتراضياً ولا يظهر إلا عند الضغط على أي مقال) -->
                 <div id="dynamic-post-view" style="display: none; width: 100%; margin-bottom: 20px;">
                     <article class="post-card" style="background-color: #F7F4EF !important; border: 1px solid #E2D8C5 !important; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
+
                         
                         <!-- مكان تچیيز وتحميل محتوى المقال -->
                         <div id="dynamic-post-content-box">
@@ -384,10 +575,11 @@
                     </article>
                 </div>
 
-
-                <!-- صف السلايدر ومنتجات رقمية (سيتم إخفاؤهما تلقائياً عند فتح المقال عبر فئة hide-on-article) -->
-                <div class="top-right-row hide-on-article" id="home-slider-products-row">
+                
+                <!-- صف يضم السلايدر وبجانبه صندوق المنتجات الرقمية -->
+                <div class="top-right-row">
                     
+                    <!-- 1. السلايدر (تم تقليل عرضه ليناسب المساحة) -->
                     <div class="square-slider-box" id="square-slider-wrapper">
                         <div class="square-slide active" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80');">
                             <div class="square-caption">
@@ -399,9 +591,11 @@
                         <button class="slider-arrow slider-next" id="slider-next-btn"><i class="fa-solid fa-chevron-left"></i></button>
                     </div>
         
+                    <!-- 2. صندوق المنتجات الرقمية (بجانب السلايدر مباشرة وبنفس الارتفاع) -->
                     <div class="news-mini-container" id="side-news-summaries">
                         <div class="section-title">منتجات رقمية</div>
                         <div class="products-grid">
+                            <!-- المربع الأول: اللعبة -->
                             <a href="game.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
                                 <div class="product-content">
                                     <img src="https://tech-dalil.com/4.png" alt="لعبة تحدي الثقافة التعليمية" class="ad-game-thumb">
@@ -409,6 +603,7 @@
                                 </div>
                             </a>
         
+                            <!-- المربع الثاني: الاختبار -->
                             <a href="test.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
                                 <div class="product-content">
                                     <img src="https://tech-dalil.com/6.png" alt="اختبار تحدي الثقافة" class="ad-game-thumb">
@@ -416,6 +611,7 @@
                                 </div>
                             </a>
         
+                            <!-- مربعات فارغة للاستخدام المستقبلي -->
                             <div class="product-card empty"></div>
                             <div class="product-card empty"></div>
                         </div>
@@ -423,12 +619,12 @@
         
                 </div>
         
-                <div class="tags-filter-section hide-on-article">
-                    <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 10px;">🏷️️ تصفية حسب التسميات:</h3>
+                <div class="tags-filter-section">
+                    <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 10px;">🏷️ تصفية حسب التسميات:</h3>
                     <div class="tags-bar" id="tags-filter-bar"></div>
                 </div>
         
-                <div class="main-posts-section hide-on-article" id="posts-list-section">
+                <div class="main-posts-section" id="posts-list-section">
                     <div id="posts-container"></div>
                 </div>
             </div>
@@ -438,6 +634,7 @@
             </div>
         </div>
 
+        
         <div id="site-ad-bot" style="width: 100%; margin: 15px auto; text-align: center;"></div>
 
         <footer class="site-footer">
@@ -447,7 +644,7 @@
             </div>
         </footer>
 
-    </div>
+    </div><!-- نهاية الإطار الخارجي الشامل -->
     
     <script>
 document.addEventListener('DOMContentLoaded', async () => {
@@ -567,6 +764,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // فحص الـ URL عند التحميل الأولي لعرض المقال إن وجد
         const urlParams = new URLSearchParams(window.location.search);
         const articleParam = urlParams.get('article');
         if (articleParam) {
@@ -579,6 +777,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+        
+// دالة ترتيب المقالات
 function getOrderedPosts(menuItems, allPosts) {
     let ordered = [];
     let visitedIds = new Set();
@@ -619,15 +819,12 @@ function getShortTitle(title) {
     return words.length > 5 ? words.slice(0, 5).join(' ') + '...' : title;
 }
 
-// دالة فتح المقال مع إخفاء السلايدر والمحتويات الأخرى المعيقة لحركة الصندوق
+// دالة فتح المقال بواسطة الـ Slug (مُصححة لضمان مطابقة المقالات الجديدة والقديمة)
 window.openPostBySlug = async function(slug) {
     const dynamicView = document.getElementById('dynamic-post-view');
     const dynamicContentBox = document.getElementById('dynamic-post-content-box');
     
     if (!dynamicView || !dynamicContentBox) return;
-
-    // إخفاء عناصر الصفحة الرئيسية (السلايدر، المنتجات، التسميات، القائمة الرئيسية للمقالات) لإفساح المجال كاملاً
-    document.querySelectorAll('.hide-on-article').forEach(el => el.style.display = 'none');
 
     let data = window.siteBlogData;
     if (!data) {
@@ -646,12 +843,15 @@ window.openPostBySlug = async function(slug) {
     let menuTree = data.menu ? buildTree(data.menu) : [];
     let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
 
+    // تنظيف الـ slug المُستقبل وتوحيد صيغته للمقارنة الدقيقة
     let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
 
     let post = rawPosts.find(p => {
         let pSlug = (p.slug || '').replace('.html', '').trim().toLowerCase();
         let pId = String(p.id || '').trim();
         let pUrl = (p.url || '').replace('.html', '').trim().toLowerCase();
+        
+        // مقارنة شاملة تغطي الـ slug، الـ id، أو تطابق نهايات الروابط
         return pSlug === targetSlug || pId === targetSlug || pUrl.endsWith(targetSlug) || pUrl.includes(targetSlug);
     });
 
@@ -659,7 +859,15 @@ window.openPostBySlug = async function(slug) {
         dynamicView.style.display = 'block';
 
         setTimeout(() => {
-            window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
+            const titleHeading = document.getElementById('article-main-title-heading');
+            if (titleHeading) {
+                const headerOffset = 185;
+                const elementPosition = titleHeading.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            } else {
+                window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
+            }
         }, 50);
 
         let ads = data.ads || {};
@@ -699,7 +907,7 @@ window.openPostBySlug = async function(slug) {
         }
 
         
-        function attachNavEvents() {
+function attachNavEvents() {
             const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
             const nextArrowBtn = document.getElementById('custom-next-arrow-btn');
 
@@ -727,7 +935,6 @@ window.openPostBySlug = async function(slug) {
                 };
             }
         }
-
 
         let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
         let relatedHtml = '';
@@ -794,33 +1001,74 @@ window.openPostBySlug = async function(slug) {
 
         history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
         renderNavContainer();
+
+        setTimeout(() => {
+            const tocHeader = document.getElementById('toc-header');
+            const tocListBox = document.getElementById('toc-list-box');
+            const tocArrow = document.getElementById('toc-arrow');
+            const articleContent = document.getElementById('article-main-content');
+
+            if (tocHeader && tocListBox && articleContent) {
+                tocHeader.onclick = () => {
+                    let isVisible = tocListBox.style.display === 'block';
+                    tocListBox.style.display = isVisible ? 'none' : 'block';
+                    tocArrow.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+                };
+
+                const headings = articleContent.querySelectorAll('h2, h3');
+                if (headings.length > 0) {
+                    let tocHtml = '<ul style="list-style: none; padding: 0; margin: 0;">';
+                    headings.forEach((heading, idx) => {
+                        if (!heading.id) heading.id = 'heading-' + idx;
+                        let indent = heading.tagName === 'H3' ? 'margin-right: 15px;' : '';
+                        tocHtml += `<li style="margin-bottom: 6px; ${indent}">
+                            <a href="#${heading.id}" class="toc-link" style="color: var(--accent-color); text-decoration: none; font-size: 0.85rem;">• ${heading.innerText}</a>
+                        </li>`;
+                    });
+                    tocHtml += '</ul>';
+                    tocListBox.innerHTML = tocHtml;
+
+                    tocListBox.querySelectorAll('.toc-link').forEach(link => {
+                        link.onclick = (e) => {
+                            e.preventDefault();
+                            const targetId = link.getAttribute('href').substring(1);
+                            const targetEl = document.getElementById(targetId);
+                            if (targetEl) {
+                                targetEl.scrollIntoView({ behavior: 'smooth' });
+                                tocListBox.style.display = 'none';
+                                tocArrow.style.transform = 'rotate(0deg)';
+                            }
+                        };
+                    });
+                } else {
+                    tocListBox.innerHTML = '<p style="font-size: 0.8rem; color: #777; margin: 0;">لا توجد عناوين فرعية في هذا المقال.</p>';
+                }
+            }
+        }, 100);
+    } else {
+        console.warn("المقال غير موجود بالمعرف أو الـ Slug:", slug);
     }
 };
 
-// دالة إغلاق صندوق المقال وإعادة إظهار محتويات الخلفية (السلايدر والعناصر الأخرى) في مكانها
-window.closePostView = function() {
-    const dynamicView = document.getElementById('dynamic-post-view');
-    const dynamicContentBox = document.getElementById('dynamic-post-content-box');
-    
-    if (dynamicView && dynamicContentBox) {
-        dynamicView.style.display = 'none';
-        dynamicContentBox.innerHTML = '';
-    }
-
-    // إعادة إظهار عناصر الصفحة الرئيسية المختفية
-    document.querySelectorAll('.hide-on-article').forEach(el => el.style.display = '');
-
-    history.pushState({}, '', window.location.pathname);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
+        
+// تعديل معترض الأحداث العام لضمان استخراج الـ slug بشكل صحيح ودقيق للروابط الجديدة والقديمة
 document.addEventListener('DOMContentLoaded', () => {
+    const backBtn = document.getElementById('back-to-home-btn');
+    if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closePostView();
+        });
+    }
+
+    // اعتراض الروابط الداخلية لفتح المقالات ديناميكياً بدون إعادة تحميل الصفحة
     document.addEventListener('click', (e) => {
         const link = e.target.closest('a');
         if (link && link.getAttribute('href')) {
             const href = link.getAttribute('href');
             if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
                 e.preventDefault();
+                // استخراج وتنظيف الـ slug بدقة بغض النظر عن شكل الرابط
                 let cleanSlug = href;
                 if (href.includes('?article=')) {
                     cleanSlug = href.split('?article=')[1];
@@ -837,13 +1085,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const article = urlParams.get('article');
         if (!article) {
-            closePostView();
+            const dynamicView = document.getElementById('dynamic-post-view');
+            const dynamicContentBox = document.getElementById('dynamic-post-content-box');
+            if (dynamicView && dynamicContentBox) {
+                dynamicView.style.display = 'none';
+                dynamicContentBox.innerHTML = '';
+            }
         } else {
             openPostBySlug(article);
         }
     });
 });
-
+        
+// دوال القائمة المنسدلة، السلايدر، والثيمات
 function buildTree(items) {
     let root = [];
     let stack = [{ level: 0, children: root }];
@@ -870,6 +1124,7 @@ function generateMenuHtml(nodes, isRoot = false) {
         let cleanSlug = '';
 
         if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//') && !itemUrl.startsWith('javascript:')) {
+            // تنظيف الرابط لاستخراج الـ slug الحقيقي بغض النظر عن صيغته القديمة
             cleanSlug = itemUrl.split('/').pop().replace('.html', '').replace('?article=', '').trim();
             if (cleanSlug) {
                 finalHref = `?article=${cleanSlug}`;
@@ -879,6 +1134,8 @@ function generateMenuHtml(nodes, isRoot = false) {
 
         let hasChildren = node.children && node.children.length > 0;
         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
+        
+        // إذا كان رابط مقال داخلي، نضيف خاصية أو معالج لضمان فتحه بديناميكية عبر openPostBySlug
         let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;"` : '';
 
         return `
@@ -892,7 +1149,7 @@ function generateMenuHtml(nodes, isRoot = false) {
     if (!isRoot) html += '</ul>';
     return html;
 }
-
+        
 function initSliderLogic() {
     const slides = document.querySelectorAll('.square-slide');
     if (slides.length === 0) return;
@@ -998,6 +1255,7 @@ if (secretTrigger) {
         }
     });
 }
+    
     </script>
 </body>
 </html>
