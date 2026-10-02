@@ -513,7 +513,7 @@
                     else globalData.posts.unshift(postToSave);
 
                     if (!globalData.menu) globalData.menu = [];
-                    let articleUrl = `?article=${postToSave.slug}`;
+                    let articleUrl = `articles/${postToSave.slug}`;
                     if (!globalData.menu.some(item => item.url && item.url.includes(postToSave.slug))) {
                         globalData.menu.push({ title: postToSave.title, url: articleUrl, level: 3, rawText: postToSave.title });
                     }
@@ -783,13 +783,27 @@ var quill = new Quill('#editor-container', quillOptions);
             document.getElementById('toggle-manager-btn').addEventListener('click', openArticleManager);
             document.getElementById('publish-btn').addEventListener('click', saveOrUpdatePost);
 
-            document.getElementById('insert-table-btn').addEventListener('click', function() {
-                let range = quill.getSelection();
-                let index = range ? range.index : quill.getLength();
-                
-                // إدراج هيكل جدول HTML بسيط ومباشر داخل محرر Quill
-                quill.clipboard.dangerouslyPasteHTML(index, '<table border="1" style="width:100%; border-collapse: collapse;"><tr><td>خلية 1</td><td>خلية 2</td></tr><tr><td>خلية 3</td><td>خلية 4</td></tr></table><p><br></p>');
-            });
+document.getElementById('insert-table-btn').addEventListener('click', function() {
+    let range = quill.getSelection();
+    let index = range ? range.index : quill.getLength();
+    
+            // جدول منسق بحدود واضحة ومسافات داخلية تمنع تلاصق النصوص
+            let tableHTML = `
+                <table style="width:100%; border-collapse: collapse; margin: 15px 0;" border="1">
+                    <tr>
+                        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">خلية 1</td>
+                        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">خلية 2</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">خلية 3</td>
+                        <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">خلية 4</td>
+                    </tr>
+                </table>
+                <p><br></p>
+            `;
+            
+            quill.clipboard.dangerouslyPasteHTML(index, tableHTML);
+        });
 
             document.getElementById('post-title').addEventListener('input', function() {
                 const slugInput = document.getElementById('article-slug-input');
