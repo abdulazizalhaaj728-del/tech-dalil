@@ -4,56 +4,7 @@
         "logoHeight": "100px",
         "tickerVisible": true
     },
-    "menu": [
-        {
-            "rawText": "علوم الحاسب الآلي",
-            "title": "علوم الحاسب الآلي",
-            "level": 1,
-            "url": "#"
-        },
-        {
-            "rawText": "__تركيب وصيانة الحاسب الآلي",
-            "title": "تركيب وصيانة الحاسب الآلي",
-            "level": 2,
-            "url": "#"
-        },
-        {
-            "rawText": "___دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟",
-            "title": "دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟",
-            "level": 3,
-            "url": "?article=guide-pc-building-26352.html"
-        },
-        {
-            "rawText": "___أعطال الحاسب الآلي وكيفية إصلاحها",
-            "title": "أعطال الحاسب الآلي وكيفية إصلاحها",
-            "level": 3,
-            "url": "#"
-        },
-        {
-            "rawText": "___شبكات الحاسب الآلي",
-            "title": "شبكات الحاسب الآلي",
-            "level": 3,
-            "url": "#"
-        },
-        {
-            "rawText": "__برمجة الحاسب الآلي",
-            "title": "برمجة الحاسب الآلي",
-            "level": 2,
-            "url": "#"
-        },
-        {
-            "rawText": "___لغات برمجة التطبيقات والألعاب",
-            "title": "لغات برمجة التطبيقات والألعاب",
-            "level": 3,
-            "url": "https://tech-dalil.com/articles/guide-programming-how-to-86302.html"
-        },
-        {
-            "rawText": "___شرح عمل تطبيق بوصلة بواسطة Android studio",
-            "title": "شرح عمل تطبيق بوصلة بواسطة Android studio",
-            "level": 3,
-            "url": "https://tech-dalil/articles/android-studio-19419.html"
-        }
-    ],
+    "menu": [],
     "widgets": [
         {
             "id": "w_1790878213264",
