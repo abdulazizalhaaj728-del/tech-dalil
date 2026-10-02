@@ -4,14 +4,7 @@
         "logoHeight": "100px",
         "tickerVisible": true
     },
-    "menu": [
-        {
-            "title": "ghfghfgh",
-            "url": "articles/ghfghfgh-19445.html",
-            "level": 3,
-            "rawText": "ghfghfgh"
-        }
-    ],
+    "menu": [],
     "widgets": [
         {
             "id": "w_1790878213264",
