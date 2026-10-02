@@ -30,20 +30,6 @@
         "botOn": false,
         "botCode": ""
     },
-    "posts": [
-        {
-            "id": "post_1790949941394",
-            "title": "ghfghfgh",
-            "category": "مقالات تقنية",
-            "description": "fghfghfghf",
-            "image": "",
-            "date": "٢‏/١٠‏/٢٠٢٦",
-            "content": "<p>fghfhfhxgxfxhhfx</p>",
-            "slug": "ghfghfgh-19445.html",
-            "isDraft": false,
-            "isPublished": true,
-            "url": "articles/ghfghfgh-19445.html"
-        }
-    ],
+    "posts": [],
     "pages": []
 }
