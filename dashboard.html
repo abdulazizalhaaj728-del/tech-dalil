@@ -348,6 +348,7 @@
                 <div class="form-group">
                     <label>المحتوى:</label>
                     <div class="sticky-editor-header">
+                        <button type="button" id="insert-table-btn" class="btn btn-secondary">إدراج جدول 2×2</button>
                         <div class="custom-font-bar">
                             <span style="font-size: 0.8rem; color: var(--accent-color); margin-left: 5px;"><i class="fa-solid fa-font"></i> تغيير الخط للنص المظلل:</span>
                             <button type="button" class="font-tag-btn" style="font-family: 'Cairo', sans-serif;" onclick="applyCustomFont('cairo')">خط كايرو</button>
@@ -781,6 +782,14 @@ var quill = new Quill('#editor-container', quillOptions);
 
             document.getElementById('toggle-manager-btn').addEventListener('click', openArticleManager);
             document.getElementById('publish-btn').addEventListener('click', saveOrUpdatePost);
+
+            document.getElementById('insert-table-btn').addEventListener('click', function() {
+                let range = quill.getSelection();
+                let index = range ? range.index : quill.getLength();
+                
+                // إدراج هيكل جدول HTML بسيط ومباشر داخل محرر Quill
+                quill.clipboard.dangerouslyPasteHTML(index, '<table border="1" style="width:100%; border-collapse: collapse;"><tr><td>خلية 1</td><td>خلية 2</td></tr><tr><td>خلية 3</td><td>خلية 4</td></tr></table><p><br></p>');
+            });
 
             document.getElementById('post-title').addEventListener('input', function() {
                 const slugInput = document.getElementById('article-slug-input');
