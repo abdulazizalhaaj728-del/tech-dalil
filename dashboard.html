@@ -299,20 +299,18 @@
                 <textarea id="ad-bot-code" placeholder="أدخل شفرة/سكريبت الإعلان هنا..."></textarea>
             </div>
             <button class="btn" onclick="saveAdsSettings()">حفظ إعدادات الإعلانات للسيرفر</button>
-
-                        <div id="manager-trigger-wrapper" style="margin: 15px 0; position: relative; z-index: 99;">
-                <button type="button" class="btn toggle-manager-action-btn" id="toggle-manager-btn" style="padding: 8px 16px; font-size: 0.9rem; cursor: pointer; pointer-events: auto;">
-                    <i class="fa-solid fa-pen-to-square"></i> إدارة مقالة / صفحة
-                </button>
-            </div>
-            
+           
         </div>
 
         <!-- إدارة ونشر المقالات والصفحات -->
         <div class="section-box">
             <h3>📝 إدارة ونشر المقالات والصفحات</h3>
 
-
+            <div id="manager-trigger-wrapper" style="margin: 15px 0; position: relative; z-index: 99;">
+                <button type="button" class="btn toggle-manager-action-btn" id="toggle-manager-btn" style="padding: 8px 16px; font-size: 0.9rem; cursor: pointer; pointer-events: auto;">
+                    <i class="fa-solid fa-pen-to-square"></i> إدارة مقالة / صفحة
+                </button>
+            </div>
 
             <div id="article-manager-form-container" style="display: none; margin-top: 15px; background: rgba(255,255,255,0.01); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
                 <div class="form-group">
@@ -1409,6 +1407,24 @@ function addOrUpdateStructuredMenuItem() {
             globalData.ads.botCode = document.getElementById('ad-bot-code').value;
             saveServerData("تم حفظ إعدادات وشفرات الإعلانات بنجاح[cite: 7]!");
         }
+
+
+        // الاستماع للنقرات على مستوى المستند بالكامل والبحث عن صنف الزر الجديد لضمان عدم تعطلها نهائياً
+        document.addEventListener('click', function(e) {
+            const targetBtn = e.target.closest('.toggle-manager-action-btn');
+            if (targetBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // التحقق من وجود الدالة قبل استدعائها لمنع الأخطاء
+                if (typeof openArticleManager === 'function') {
+                    openArticleManager();
+                } else {
+                    console.error("الدالة openArticleManager غير معرفة!");
+                }
+            }
+        });
+        
     </script>
 </body>
 </html>
