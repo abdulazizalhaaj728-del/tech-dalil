@@ -312,6 +312,14 @@
                 </button>
             </div>
 
+
+            <div style="margin: 20px 0; text-align: right;">
+                <button type="button" id="brand-new-manager-btn" style="background-color: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <i class="fa-solid fa-file-pen"></i> فتح مدير المقالات والصفحات الجديد
+                </button>
+            </div>
+            
+
             <div id="article-manager-form-container" style="display: none; margin-top: 15px; background: rgba(255,255,255,0.01); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
                 <div class="form-group">
                     <label>نوع المحتوى:</label>
@@ -1409,19 +1417,18 @@ function addOrUpdateStructuredMenuItem() {
         }
 
 
-        // الاستماع للنقرات على مستوى المستند بالكامل والبحث عن صنف الزر الجديد لضمان عدم تعطلها نهائياً
-        document.addEventListener('click', function(e) {
-            const targetBtn = e.target.closest('.toggle-manager-action-btn');
-            if (targetBtn) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // التحقق من وجود الدالة قبل استدعائها لمنع الأخطاء
-                if (typeof openArticleManager === 'function') {
-                    openArticleManager();
-                } else {
-                    console.error("الدالة openArticleManager غير معرفة!");
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            const newBtn = document.getElementById('brand-new-manager-btn');
+            if (newBtn) {
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // التأكد من استدعاء الدالة المسؤولة عن فتح النموذج
+                    if (typeof openArticleManager === 'function') {
+                        openArticleManager();
+                    } else {
+                        alert('الدالة openArticleManager غير موجودة، تأكد من اسم الدالة الأصلية');
+                    }
+                });
             }
         });
         
