@@ -38,7 +38,7 @@
         h2 { color: var(--accent-color); margin-bottom: 20px; border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; }
         h3 { color: var(--primary-color); margin-bottom: 12px; font-size: 1.1rem; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #fff; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
         input, textarea, select { width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; font-size: 0.95rem; }
         textarea { height: 110px; resize: vertical; }
         .btn { background: var(--primary-color); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; }
@@ -46,7 +46,7 @@
         .btn-danger { background: #ef4444; }
         .btn-warning { background: #eab308; color: #000; }
         .section-box { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; margin-bottom: 25px; }
-        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: normal; color: #fff; }
+        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: normal; }
         .checkbox-label input { width: auto; }
         .widgets-table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.85rem; }
         .widgets-table th { color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding: 8px; }
@@ -68,23 +68,56 @@
             border: 2px solid #ff5722 !important;
         }
 
+        /* تنسيقات المحرر النظيف */
         .sticky-editor-header {
-            position: sticky; top: 10px; z-index: 1000;
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 10px 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); margin-bottom: 10px;
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            margin-bottom: 10px;
         }
         .custom-font-bar {
-            display: flex; gap: 6px; align-items: center; margin-bottom: 8px;
-            padding-bottom: 8px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
         }
         .font-tag-btn {
-            background: var(--bg-dark); color: var(--text-main); border: 1px solid var(--border-color);
-            padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 600;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
         }
         .font-tag-btn:hover { background: var(--primary-color); border-color: var(--primary-color); }
 
-        .ql-toolbar.ql-snow { background: var(--bg-dark) !important; border-color: var(--border-color) !important; border-radius: 6px; direction: ltr; }
-        .ql-container.ql-snow { background: var(--bg-dark); color: var(--text-main); border-color: var(--border-color); border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; min-height: 350px; font-size: 1.05rem; direction: rtl; text-align: right; }
+        .ql-toolbar.ql-snow { 
+            background: var(--bg-dark) !important; 
+            border-color: var(--border-color) !important; 
+            border-radius: 6px; 
+            direction: ltr; 
+        }
+        .ql-container.ql-snow { 
+            background: var(--bg-dark); 
+            color: var(--text-main); 
+            border-color: var(--border-color); 
+            border-bottom-left-radius: 6px; 
+            border-bottom-right-radius: 6px; 
+            min-height: 350px; 
+            font-size: 1.05rem; 
+            direction: rtl; 
+            text-align: right; 
+        }
         .ql-editor { direction: rtl; text-align: right; min-height: 330px; }
         .ql-snow .ql-stroke { stroke: var(--text-main); }
         .ql-snow .ql-fill { fill: var(--text-main); }
@@ -93,18 +126,28 @@
         .ql-font-tajawal { font-family: 'Tajawal', sans-serif !important; }
         .ql-font-amiri { font-family: 'Amiri', serif !important; }
 
-        .post-card, #editor-container, .ql-container.ql-snow, #widget-custom-text {
+        /* تخصيص صندوق المقال ومنطقة الودجات بلون بيج دافئ ومريح للعين */
+        .post-card, #editor-container, .ql-container.ql-snow, #widget-custom-text, #widgets-list-box {
             background-color: #F7F4EF !important;
             background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png');
-            border: 1px solid #E2D8C5 !important; border-radius: 12px; color: #2C3E50 !important;
+            border: 1px solid #E2D8C5 !important;
+            border-radius: 12px;
+            color: #2C3E50 !important;
         }
         
+        /* ضبط محاذاة الخطوط لتكون مشدودة ومنسقة من الأطراف (Justify) وبخط مريح */
         .ql-editor, .post-card p, .section-box textarea, input[type="text"] {
             font-family: 'Cairo', 'Tajawal', sans-serif !important;
-            text-align: justify !important; text-justify: inter-word !important;
-            color: #2C3E50 !important; line-height: 2 !important;
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            color: #2C3E50 !important;
+            line-height: 2 !important;
         }
-        .post-card h1, .post-card h2, .post-card h3 { color: #2C3E50 !important; }
+        
+        /* تنسيق عناوين صواندي الكتابة */
+        .post-card h1, .post-card h2, .post-card h3 {
+            color: #2C3E50 !important;
+        }
         
         /* تعديل خلفية صندوق الودجات لتتطابق مع بقية اللوحة */
         #widgets-list-box {
@@ -926,27 +969,40 @@
             saveServerData("تم حفظ إعدادات الودجات بنجاح[cite: 7]!");
         });
 
-        function addOrUpdateStructuredMenuItem() {
-            const rawText = document.getElementById('menu-raw-input').value.trim();
-            const url = document.getElementById('menu-url-input').value.trim() || '#';
-            if (!rawText) return;
+function addOrUpdateStructuredMenuItem() {
+            const rawInput = document.getElementById('menu-raw-input');
+            const urlInput = document.getElementById('menu-url-input');
+            const rawText = rawInput ? rawInput.value.trim() : document.getElementById('menu-raw-input').value.trim();
+            const url = urlInput ? (urlInput.value.trim() || '#') : (document.getElementById('menu-url-input').value.trim() || '#');
+
+            if (!rawText) {
+                if (typeof showCustomAlert === 'function') {
+                    showCustomAlert("تنبيه", "الرجاء إدخال اسم العنصر مع الشرطات (مثال: _تقنية)!");
+                }
+                return;
+            }
 
             let level = 1;
             if (rawText.startsWith('___')) level = 3;
             else if (rawText.startsWith('__')) level = 2;
+            
             let cleanTitle = rawText.replace(/^_+\s*/, '');
 
             if (!globalData.menu) globalData.menu = [];
+
             if (editingMenuIndex !== null) {
                 globalData.menu[editingMenuIndex] = { rawText, title: cleanTitle, level, url };
                 editingMenuIndex = null;
-                document.getElementById('menu-add-btn').innerText = "إضافة للقائمة";
-                document.getElementById('menu-cancel-edit-btn').style.display = 'none';
+                const addBtn = document.getElementById('menu-add-btn');
+                const cancelBtn = document.getElementById('menu-cancel-edit-btn');
+                if (addBtn) addBtn.innerText = "إضافة للقائمة";
+                if (cancelBtn) cancelBtn.style.display = 'none';
             } else {
                 globalData.menu.push({ rawText, title: cleanTitle, level, url });
             }
-            document.getElementById('menu-raw-input').value = '';
-            document.getElementById('menu-url-input').value = '';
+
+            if (document.getElementById('menu-raw-input')) document.getElementById('menu-raw-input').value = '';
+            if (document.getElementById('menu-url-input')) document.getElementById('menu-url-input').value = '';
             menuHasChanges = true;
             renderStructuredMenuAdmin();
         }
@@ -976,9 +1032,13 @@
         }
 
         let collapsedMenuIndices = new Set();
+
         function toggleMenuCollapse(index) {
-            if (collapsedMenuIndices.has(index)) collapsedMenuIndices.delete(index);
-            else collapsedMenuIndices.add(index);
+            if (collapsedMenuIndices.has(index)) {
+                collapsedMenuIndices.delete(index);
+            } else {
+                collapsedMenuIndices.add(index);
+            }
             renderStructuredMenuAdmin();
         }
 
@@ -993,22 +1053,49 @@
             }
 
             let hideStackLevel = 999;
+
             globalData.menu.forEach((item, index) => {
                 let currentLevel = item.level || 1;
-                if (currentLevel <= hideStackLevel) hideStackLevel = 999;
+
+                if (currentLevel <= hideStackLevel) {
+                    hideStackLevel = 999;
+                }
+
                 const isHiddenByParent = currentLevel > hideStackLevel;
 
-                let hasChildren = (index + 1 < globalData.menu.length) && ((globalData.menu[index + 1].level || 1) > currentLevel);
-                if (hasChildren && collapsedMenuIndices.has(index)) hideStackLevel = Math.min(hideStackLevel, currentLevel);
+                let hasChildren = false;
+                if (index + 1 < globalData.menu.length) {
+                    if ((globalData.menu[index + 1].level || 1) > currentLevel) {
+                        hasChildren = true;
+                    }
+                }
+
+                if (hasChildren && collapsedMenuIndices.has(index)) {
+                    hideStackLevel = Math.min(hideStackLevel, currentLevel);
+                }
 
                 const row = document.createElement('div');
                 row.className = 'drag-item';
                 row.setAttribute('draggable', 'true');
                 row.dataset.index = index;
-                row.style.cssText = `display: ${isHiddenByParent ? 'none' : 'flex'}; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;`;
+                
+                if (isHiddenByParent) {
+                    row.style.cssText = "display: none; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;";
+                } else {
+                    row.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem; transition: all 0.2s;";
+                }
                 
                 let indent = (currentLevel - 1) * 25; 
-                let collapseBtnHtml = hasChildren ? `<button type="button" onclick="toggleMenuCollapse(${index})" style="background: ${collapsedMenuIndices.has(index) ? '#0284c7' : '#64748b'}; color: #fff; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;">${collapsedMenuIndices.has(index) ? '+' : '-'}</button>` : `<span style="width: 20px; display: inline-block;"></span>`;
+                
+                let collapseBtnHtml = '';
+                if (hasChildren) {
+                    let isCollapsed = collapsedMenuIndices.has(index);
+                    let iconSymbol = isCollapsed ? '+' : '-';
+                    let btnBg = isCollapsed ? '#0284c7' : '#64748b';
+                    collapseBtnHtml = `<button type="button" onclick="toggleMenuCollapse(${index})" style="background: ${btnBg}; color: #fff; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;" title="${isCollapsed ? 'إظهار الفروع' : 'إخفاء الفروع'}">${iconSymbol}</button>`;
+                } else {
+                    collapseBtnHtml = `<span style="width: 20px; display: inline-block;"></span>`;
+                }
 
                 row.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; margin-right: ${indent}px; flex: 1;">
@@ -1029,15 +1116,18 @@
                 row.addEventListener('dragleave', handleDragLeave);
                 row.addEventListener('drop', handleDrop);
                 row.addEventListener('dragend', handleDragEnd);
+
                 container.appendChild(row);
             });
         }
 
         let draggedIndices = [];
+
         function handleDragStart(e) {
             const currentIndex = parseInt(this.dataset.index);
+            const checkboxes = document.querySelectorAll('.menu-item-checkbox');
             let selected = [];
-            document.querySelectorAll('.menu-item-checkbox').forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
+            checkboxes.forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
 
             let subItemsIndices = [currentIndex];
             let baseLevel = globalData.menu[currentIndex].level || 1;
@@ -1046,32 +1136,105 @@
                 subItemsIndices.push(idx);
                 idx++;
             }
-            draggedIndices = subItemsIndices;
+
+            if (selected.includes(currentIndex) && selected.length > 0) {
+                let allSelectedWithChildren = [];
+                selected.forEach(selIdx => {
+                    allSelectedWithChildren.push(selIdx);
+                    let sLevel = globalData.menu[selIdx].level || 1;
+                    let next = selIdx + 1;
+                    while (next < globalData.menu.length && (globalData.menu[next].level || 1) > sLevel) {
+                        allSelectedWithChildren.push(next);
+                        next++;
+                    }
+                });
+                draggedIndices = [...new Set(allSelectedWithChildren)].sort((a, b) => a - b);
+            } else {
+                draggedIndices = subItemsIndices;
+                const chk = this.querySelector('.menu-item-checkbox');
+                if (chk) chk.checked = true;
+            }
             this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
         }
 
-        function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
-        function handleDragLeave(e) {}
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const targetRow = this;
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            if (yClick < threshold) targetRow.classList.add('drop-indicator-top');
+            else if (yClick > rect.height - threshold) targetRow.classList.add('drop-indicator-bottom');
+            else targetRow.classList.add('drag-over-parent');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+        }
+
         function handleDrop(e) {
             e.preventDefault();
-            const targetIndex = parseInt(this.dataset.index);
+            const targetRow = this;
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+
+            const targetIndex = parseInt(targetRow.dataset.index);
             if (draggedIndices.includes(targetIndex)) return;
+
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            let dropMode = 'after';
+            if (yClick < threshold) dropMode = 'top';
+            else if (yClick > rect.height - threshold) dropMode = 'bottom';
+            else dropMode = 'child';
 
             let itemsToMove = draggedIndices.map(i => globalData.menu[i]);
             let remainingItems = globalData.menu.filter((_, idx) => !draggedIndices.includes(idx));
-            let newTargetIdx = remainingItems.indexOf(globalData.menu[targetIndex]);
+            
+            let targetItemInRemaining = globalData.menu[targetIndex];
+            let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
             if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
 
-            remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+            if (dropMode === 'top') {
+                remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
+            } else if (dropMode === 'bottom') {
+                let insertPos = newTargetIdx + 1;
+                while (insertPos < remainingItems.length && (remainingItems[insertPos].level || 1) > (targetItemInRemaining.level || 1)) {
+                    insertPos++;
+                }
+                remainingItems.splice(insertPos, 0, ...itemsToMove);
+            } else if (dropMode === 'child') {
+                let parentItem = targetItemInRemaining;
+                if (parentItem) {
+                    let levelDiff = (parentItem.level + 1) - itemsToMove[0].level;
+                    itemsToMove.forEach(it => {
+                        it.level = Math.max(1, it.level + levelDiff);
+                        it.rawText = '_'.repeat(it.level) + (it.title || 'عنصر');
+                    });
+                    remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+                    targetRow.classList.add('pulse-highlight');
+                    setTimeout(() => targetRow.classList.remove('pulse-highlight'), 800);
+                }
+            }
+
             menuHasChanges = true;
             globalData.menu = remainingItems;
+            collapsedMenuIndices.clear();
             renderStructuredMenuAdmin();
         }
+
         function handleDragEnd(e) {
-            document.querySelectorAll('.drag-item').forEach(item => item.classList.remove('dragging'));
+            document.querySelectorAll('.drag-item').forEach(item => {
+                item.classList.remove('dragging', 'drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            });
             draggedIndices = [];
         }
-
+        
         function saveAdsSettings() {
             if(!globalData.ads) globalData.ads = {};
             globalData.ads.topOn = document.getElementById('ad-top-on').checked;
