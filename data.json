@@ -60,22 +60,22 @@
             "url": "https://tech-dalil.com/articles/networks-networks-16340.html"
         },
         {
-            "rawText": "برمجة الحاسب الآلي",
+            "rawText": "__برمجة الحاسب الآلي",
             "title": "برمجة الحاسب الآلي",
-            "level": 1,
+            "level": 2,
             "url": "#"
         },
         {
             "title": "دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء تطبيقات الجوال وتطوير الألعاب؟",
             "url": "articles/guide-programming-how-to-15236.html",
-            "level": 2,
-            "rawText": "__دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء تطبيقات الجوال وتطوير الألعاب؟"
+            "level": 3,
+            "rawText": "___دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء تطبيقات الجوال وتطوير الألعاب؟"
         },
         {
             "title": "عمل تطبيق بوصلة بواسطة Android studio",
             "url": "articles/android-studio-72369.html",
-            "level": 2,
-            "rawText": "__عمل تطبيق بوصلة بواسطة Android studio"
+            "level": 3,
+            "rawText": "___عمل تطبيق بوصلة بواسطة Android studio"
         }
     ],
     "widgets": [
