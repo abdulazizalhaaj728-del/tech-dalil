@@ -30,6 +30,24 @@
             "url": "https://tech-dalil.com/articles/2026-how-to-03964.html"
         },
         {
+            "rawText": "علوم الحاسب الآلي",
+            "title": "علوم الحاسب الآلي",
+            "level": 1,
+            "url": "#"
+        },
+        {
+            "rawText": "__تركيب وصيانة الحاسب الآلي",
+            "title": "تركيب وصيانة الحاسب الآلي",
+            "level": 2,
+            "url": "#"
+        },
+        {
+            "title": "دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟",
+            "url": "articles/guide-pc-building-39617.html",
+            "level": 3,
+            "rawText": "___دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟"
+        },
+        {
             "title": "أعطال الحاسب الآلي وكيفية إصلاحها",
             "url": "articles/tech-post-99447.html",
             "level": 3,
@@ -42,22 +60,22 @@
             "url": "https://tech-dalil.com/articles/networks-networks-16340.html"
         },
         {
-            "title": "عمل تطبيق بوصلة بواسطة Android studio",
-            "url": "articles/android-studio-72369.html",
-            "level": 3,
-            "rawText": "___عمل تطبيق بوصلة بواسطة Android studio"
+            "rawText": "برمجة الحاسب الآلي",
+            "title": "برمجة الحاسب الآلي",
+            "level": 1,
+            "url": "#"
         },
         {
             "title": "دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء تطبيقات الجوال وتطوير الألعاب؟",
             "url": "articles/guide-programming-how-to-15236.html",
-            "level": 3,
-            "rawText": "دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء تطبيقات الجوال وتطوير الألعاب؟"
+            "level": 2,
+            "rawText": "__دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء تطبيقات الجوال وتطوير الألعاب؟"
         },
         {
-            "title": "دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟",
-            "url": "articles/guide-pc-building-39617.html",
-            "level": 3,
-            "rawText": "دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟"
+            "title": "عمل تطبيق بوصلة بواسطة Android studio",
+            "url": "articles/android-studio-72369.html",
+            "level": 2,
+            "rawText": "__عمل تطبيق بوصلة بواسطة Android studio"
         }
     ],
     "widgets": [
