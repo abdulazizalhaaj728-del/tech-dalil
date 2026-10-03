@@ -587,6 +587,9 @@
             } catch (e) {}
         }
         async function saveServerData(successMsg, postToSave = null) {
+            // 1. تصحيح وتنظيم المستويات والشرطات قبل الحفظ لضمان عدم ضياعها
+            normalizeMenuLevelsBeforeSave();
+            
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
                 showCustomAlert("تنبيه هام", "الرجاء إدخال رمز الصلاحية (GitHub Token) أولاً!");
@@ -1511,6 +1514,33 @@
             });
             draggedIndices = [];
         }
+
+        function normalizeMenuLevelsBeforeSave() {
+            if (!globalData.menu || !globalData.menu.length) return;
+            
+            // تصحيح مستويات القائمة بناءً على التدفق الهرمي المنطقي
+            // (لا يمكن لعنصر أن يرتفع أكثر من مستوى واحد عن العنصر الذي يسبقه)
+            let previousLevel = 1;
+            
+            globalData.menu.forEach((item, index) => {
+                let currentLevel = item.level || 1;
+                
+                // منع القفزات غير المنطقية في المستويات (مثلاً من 1 إلى 3 مباشرة بدون 2)
+                if (currentLevel > previousLevel + 1) {
+                    currentLevel = previousLevel + 1;
+                }
+                
+                item.level = currentLevel;
+                let cleanTitle = (item.title || item.rawText || '').replace(/^_+\s*/, '');
+                item.title = cleanTitle;
+                item.rawText = '_'.repeat(currentLevel) + ' ' + cleanTitle;
+                
+                previousLevel = currentLevel;
+            });
+        }
+        
+        
+        
         
         function saveAdsSettings() {
             if(!globalData.ads) globalData.ads = {};
