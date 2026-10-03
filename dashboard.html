@@ -519,8 +519,8 @@
             return `${baseSlug}-${Date.now().toString().slice(-5)}.html`;
         }
 
-        async function loadServerData() {
-            // 1. التحميل الأولي الفوري من التخزين المحلي (LocalStorage)
+async function loadServerData() {
+            // 1. التحميل الأولي الفوري من التخزين المحلي (LocalStorage) لكل العناصر بما فيها القوائم
             let localPosts = getData('tech_dalil_posts', []);
             let localPages = getData('tech_static_pages', []);
             let localMenu = getData('tech_menu', []);
@@ -534,7 +534,7 @@
             initAdminUI();
             loadPostsAdminList();
         
-            // 2. طلب التحميل من السحابة والدمج الذكي (تخطي الموجود محلياً)
+            // 2. طلب التحميل من السحابة والدمج الذكي
             try {
                 const response = await fetch('data.json?t=' + Date.now());
                 if (response.ok) {
@@ -542,7 +542,7 @@
                     if (serverData) {
                         let hasNewUpdates = false;
         
-                        // دمج المقالات بذكاء: إذا وُجد المقال محلياً (برقم الـ id أو الـ slug) يتم تخطيه، وإلا يتم إضافته من السحابة
+                        // دمج المقالات
                         if (serverData.posts && Array.isArray(serverData.posts)) {
                             serverData.posts.forEach(serverPost => {
                                 let existsLocally = globalData.posts.some(p => p.id === serverPost.id || p.slug === serverPost.slug);
@@ -556,7 +556,7 @@
                             }
                         }
         
-                        // نفس الشيء للpages والwidgets إن أردت تطبيق الدمج الذكي عليها
+                        // دمج الصفحات
                         if (serverData.pages && Array.isArray(serverData.pages)) {
                             serverData.pages.forEach(serverPage => {
                                 if (!globalData.pages.some(p => p.id === serverPage.id)) {
@@ -564,6 +564,14 @@
                                 }
                             });
                             localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
+                        }
+
+                        // دمج القوائم من السحابة إذا كانت موجودة محلياً فارغة وليست بالسحابة
+                        if (serverData.menu && Array.isArray(serverData.menu) && serverData.menu.length > 0) {
+                            if (!globalData.menu || globalData.menu.length === 0) {
+                                globalData.menu = serverData.menu;
+                                localStorage.setItem('tech_menu', JSON.stringify(globalData.menu));
+                            }
                         }
         
                         // تحديث الواجهة بعد فحص السحابة
@@ -586,6 +594,7 @@
                 }
             } catch (e) {}
         }
+
         async function saveServerData(successMsg, postToSave = null) {
             // 1. تصحيح وتنظيم المستويات والشرطات قبل الحفظ لضمان عدم ضياعها
             normalizeMenuLevelsBeforeSave();
@@ -602,16 +611,24 @@
                 
                 globalData.posts = getData('tech_dalil_posts', globalData.posts || []);
                 globalData.pages = getData('tech_static_pages', globalData.pages || []);
+                globalData.menu = globalData.menu || []; // التأكد من وجود القوائم
                 
+                // حفظ كافة البيانات محلياً (بما فيها القوائم و الـ Widgets) لضمان عدم اختفائها أبداً عند التحديث
+                localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
+                localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
+                localStorage.setItem('tech_menu', JSON.stringify(globalData.menu));
+                localStorage.setItem('tech_widgets', JSON.stringify(globalData.widgets || []));
+        
                 if (postToSave) {
                     const existingIndex = globalData.posts.findIndex(p => p.id == postToSave.id);
                     if (existingIndex !== -1) globalData.posts[existingIndex] = postToSave;
                     else globalData.posts.unshift(postToSave);
 
-                    if (!globalData.menu) globalData.menu = [];
                     let articleUrl = `articles/${postToSave.slug}`;
                     if (!globalData.menu.some(item => item.url && item.url.includes(postToSave.slug))) {
-                        globalData.menu.push({ title: postToSave.title, url: articleUrl, level: 3, rawText: postToSave.title });
+                        globalData.menu.push({ title: postToSave.title, url: articleUrl, level: 3, rawText: '___ ' + postToSave.title });
+                        normalizeMenuLevelsBeforeSave();
+                        localStorage.setItem('tech_menu', JSON.stringify(globalData.menu));
                     }
                 }
             
@@ -649,8 +666,9 @@
                         });
                     }
             
-                    showCustomAlert("نجاح", successMsg || "تم الحفظ بنجاح على السحابة!");
+                    showCustomAlert("نجاح", successMsg || "تم الحفظ بنجاح على السحابة والتخزين المحلي!");
                     menuHasChanges = false;
+                    renderStructuredMenuAdmin();
                 } else {
                     showCustomAlert("خطأ", "فشل الحفظ: تأكد من صحة الـ Token.");
                 }
@@ -659,6 +677,7 @@
             }
         }
 
+        
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
             <html lang="ar" dir="rtl">
