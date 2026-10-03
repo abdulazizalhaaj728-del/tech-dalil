@@ -201,6 +201,18 @@
             background-color: #f1f1f1 !important;
             font-weight: bold !important;
         }
+
+        /* جعل الجدول يتقيد بالعرض الثابت ويسمح بالتحكم في الأعمدة */
+        table {
+            table-layout: fixed;
+            width: 100%;
+        }
+        
+        /* تحديد عرض مبدئي للأعمدة (يمكنك تغيير النسبة حسب رغبتك) */
+        td, th {
+            overflow: hidden;
+            word-wrap: break-word;
+        }
     </style>
 </head>
 <body>
@@ -829,6 +841,13 @@
             }
         }
 
+        // فرضا أنك تريد حذف الجدول بالكامل عند الضغط على زر
+        let tableElement = document.querySelector('table'); // حدد الجدول
+        if (tableElement) {
+            tableElement.remove(); // يقوم بحذف الجدول وكل الإطارات المحيطة به نهائياً
+        }
+
+        
         function initAdminUI() {
             if (globalData.settings?.logoHeight) document.getElementById('logo-size-selector').value = globalData.settings.logoHeight;
             if (globalData.settings?.tickerVisible !== undefined) document.getElementById('ticker-visible-toggle').checked = globalData.settings.tickerVisible;
