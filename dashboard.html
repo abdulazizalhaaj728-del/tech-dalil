@@ -779,41 +779,40 @@
             });
 
 
-            function insertCustomTable() {
-                const range = quill.getSelection();
-                const tableHTML = `
-                    <div style="width: 100%; overflow-x: auto; margin: 15px 0;">
-                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #ccc; text-align: right; background-color: #fff;">
-                            <thead>
-                                <tr style="background-color: #007bff; color: #ffffff;">
-                                    <th style="padding: 10px; border: 1px solid #ddd; width: 33%;">العنوان 1</th>
-                                    <th style="padding: 10px; border: 1px solid #ddd; width: 33%;">العنوان 2</th>
-                                    <th style="padding: 10px; border: 1px solid #ddd; width: 33%;">العنوان 3</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style="padding: 10px; border: 1px solid #ddd;">بيانات 1</td>
-                                    <td style="padding: 10px; border: 1px solid #ddd;">بيانات 2</td>
-                                    <td style="padding: 10px; border: 1px solid #ddd;">بيانات 3</td>
-                                </tr>
-                                <tr style="background-color: #f9f9f9;">
-                                    <td style="padding: 10px; border: 1px solid #ddd;">بيانات 4</td>
-                                    <td style="padding: 10px; border: 1px solid #ddd;">بيانات 5</td>
-                                    <td style="padding: 10px; border: 1px solid #ddd;">بيانات 6</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div><p><br></p>`;
-                
-                if (range) {
-                    quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
-                } else {
-                    const length = quill.getLength();
-                    quill.clipboard.dangerouslyPasteHTML(length, tableHTML);
-                }
-            }
+        function insertCustomTable() {
+            const range = quill.getSelection();
+            const tableHTML = `
+                <div style="width: 100%; overflow-x: auto; margin: 15px 0;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #ccc; text-align: right; background-color: #fff;">
+                        <thead>
+                            <tr style="background-color: #007bff; color: #ffffff;">
+                                <th style="padding: 10px; border: 1px solid #ddd; width: 33%;">العنوان 1</th>
+                                <th style="padding: 10px; border: 1px solid #ddd; width: 33%;">العنوان 2</th>
+                                <th style="padding: 10px; border: 1px solid #ddd; width: 33%;">العنوان 3</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">بيانات 1</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">بيانات 2</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">بيانات 3</td>
+                            </tr>
+                            <tr style="background-color: #f9f9f9;">
+                                <td style="padding: 10px; border: 1px solid #ddd;">بيانات 4</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">بيانات 5</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">بيانات 6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><p><br></p>`;
             
+            if (range) {
+                quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
+            } else {
+                const length = quill.getLength();
+                quill.clipboard.dangerouslyPasteHTML(length, tableHTML);
+            }
+        }            
 
             loadServerData();
         });
