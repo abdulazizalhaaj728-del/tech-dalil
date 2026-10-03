@@ -629,7 +629,6 @@ window.openPostBySlug = async function(slug) {
     
     if (!dynamicView || !dynamicContentBox) return;
 
-    // إخفاء عناصر الصفحة الرئيسية (السلايدر، المنتجات، التسميات، القائمة الرئيسية للمقالات) لإفساح المجال كاملاً
     document.querySelectorAll('.hide-on-article').forEach(el => el.style.display = 'none');
 
     let data = window.siteBlogData;
@@ -649,13 +648,25 @@ window.openPostBySlug = async function(slug) {
     let menuTree = data.menu ? buildTree(data.menu) : [];
     let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
 
+    // تنظيف الـ slug القادم وضبطه بدقة للمقارنة
     let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
+    if (targetSlug.includes('?article=')) {
+        targetSlug = targetSlug.split('?article=')[1];
+    }
+    targetSlug = targetSlug.split('/').pop().trim();
 
+    // البحث الدقيق عن المقال المطابق في القائمة
     let post = rawPosts.find(p => {
         let pSlug = (p.slug || '').replace('.html', '').trim().toLowerCase();
         let pId = String(p.id || '').trim();
         let pUrl = (p.url || '').replace('.html', '').trim().toLowerCase();
-        return pSlug === targetSlug || pId === targetSlug || pUrl.endsWith(targetSlug) || pUrl.includes(targetSlug);
+        let pUrlFile = pUrl.split('/').pop();
+
+        return pSlug === targetSlug || 
+               pId === targetSlug || 
+               pUrl === targetSlug || 
+               pUrlFile === targetSlug ||
+               targetSlug.includes(pSlug);
     });
 
     if (post) {
@@ -700,7 +711,6 @@ window.openPostBySlug = async function(slug) {
                 attachNavEvents();
             }
         }
-
         
         function attachNavEvents() {
             const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
@@ -730,7 +740,6 @@ window.openPostBySlug = async function(slug) {
                 };
             }
         }
-
 
         let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
         let relatedHtml = '';
@@ -799,7 +808,6 @@ window.openPostBySlug = async function(slug) {
         renderNavContainer();
     }
 };
-
 // دالة إغلاق صندوق المقال وإعادة إظهار محتويات الخلفية (السلايدر والعناصر الأخرى) في مكانها
 window.closePostView = function() {
     const dynamicView = document.getElementById('dynamic-post-view');
