@@ -520,34 +520,72 @@
         }
 
         async function loadServerData() {
+            // 1. التحميل الأولي الفوري من التخزين المحلي (LocalStorage)
+            let localPosts = getData('tech_dalil_posts', []);
+            let localPages = getData('tech_static_pages', []);
+            let localMenu = getData('tech_menu', []);
+            let localWidgets = getData('tech_widgets', []);
+        
+            globalData.posts = localPosts;
+            globalData.pages = localPages;
+            globalData.menu = localMenu;
+            globalData.widgets = localWidgets;
+        
+            initAdminUI();
+            loadPostsAdminList();
+        
+            // 2. طلب التحميل من السحابة والدمج الذكي (تخطي الموجود محلياً)
             try {
                 const response = await fetch('data.json?t=' + Date.now());
                 if (response.ok) {
-                    const data = await response.json();
-                    if (data) {
-                        globalData = data;
-                        if (data.posts) localStorage.setItem('tech_dalil_posts', JSON.stringify(data.posts));
-                        if (data.pages) localStorage.setItem('tech_static_pages', JSON.stringify(data.pages));
-                        if (data.menu) localStorage.setItem('tech_menu', JSON.stringify(data.menu));
-                        if (data.widgets) localStorage.setItem('tech_widgets', JSON.stringify(data.widgets));
+                    const serverData = await response.json();
+                    if (serverData) {
+                        let hasNewUpdates = false;
+        
+                        // دمج المقالات بذكاء: إذا وُجد المقال محلياً (برقم الـ id أو الـ slug) يتم تخطيه، وإلا يتم إضافته من السحابة
+                        if (serverData.posts && Array.isArray(serverData.posts)) {
+                            serverData.posts.forEach(serverPost => {
+                                let existsLocally = globalData.posts.some(p => p.id === serverPost.id || p.slug === serverPost.slug);
+                                if (!existsLocally) {
+                                    globalData.posts.push(serverPost);
+                                    hasNewUpdates = true;
+                                }
+                            });
+                            if (hasNewUpdates) {
+                                localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
+                            }
+                        }
+        
+                        // نفس الشيء للpages والwidgets إن أردت تطبيق الدمج الذكي عليها
+                        if (serverData.pages && Array.isArray(serverData.pages)) {
+                            serverData.pages.forEach(serverPage => {
+                                if (!globalData.pages.some(p => p.id === serverPage.id)) {
+                                    globalData.pages.push(serverPage);
+                                }
+                            });
+                            localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
+                        }
+        
+                        // تحديث الواجهة بعد فحص السحابة
+                        initAdminUI();
+                        loadPostsAdminList();
                     }
                 }
             } catch (err) {
-                console.log("الاعتماد على التخزين المحلي.");
+                console.log("الاعتماد الكامل على التخزين المحلي لعدم توفر الاتصال بالسحابة.");
             }
         
+            // جلب الـ SHA الخاص بـ GitHub للتحديثات اللاحقة
             try {
-                const res = await fetch(`https://api.github.com/repos/abdulazizalhaaj728-del/tech-dalil/contents/data.json`);
+                const owner = "abdulazizalhaaj728-del";
+                const repo = "tech-dalil";
+                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json`);
                 if (res.ok) {
                     const fileData = await res.json();
                     globalFileSha = fileData.sha;
                 }
             } catch (e) {}
-        
-            initAdminUI();
-            loadPostsAdminList();
         }
-
         async function saveServerData(successMsg, postToSave = null) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
@@ -1224,45 +1262,64 @@
             const urlInput = document.getElementById('menu-url-input');
             const rawText = rawInput ? rawInput.value.trim() : '';
             const url = urlInput ? (urlInput.value.trim() || '#') : '#';
-
+        
             if (!rawText) {
                 showCustomAlert("تنبيه", "الرجاء إدخال اسم العنصر مع الشرطات (مثال: _تقنية)!");
                 return;
             }
-
+        
+            if (!globalData.menu) globalData.menu = [];
+        
+            // حساب المستوى بدقة بناءً على الشرطات البادئة
             let level = 1;
             if (rawText.startsWith('___')) level = 3;
             else if (rawText.startsWith('__')) level = 2;
-            
+            else if (rawText.startsWith('_')) level = 1;
+            // إذا أردت حساب عدد الشرطات ديناميكياً لأكثر من 3 مستويات:
+            // let match = rawText.match(/^(_+)/);
+            // if (match) level = match[1].length;
+        
             let cleanTitle = rawText.replace(/^_+\s*/, '');
-
-            if (!globalData.menu) globalData.menu = [];
-
-            if (editingMenuIndex !== null) {
-                globalData.menu[editingMenuIndex] = { rawText, title: cleanTitle, level, url };
+            let finalRawText = '_'.repeat(level) + ' ' + cleanTitle;
+        
+            if (editingMenuIndex !== null && editingMenuIndex >= 0 && editingMenuIndex < globalData.menu.length) {
+                // حالة التعديل على عنصر موجود
+                globalData.menu[editingMenuIndex] = { rawText: finalRawText, title: cleanTitle, level, url };
                 editingMenuIndex = null;
+                
                 const addBtn = document.getElementById('menu-add-btn');
                 const cancelBtn = document.getElementById('menu-cancel-edit-btn');
                 if (addBtn) addBtn.innerText = "إضافة للقائمة";
                 if (cancelBtn) cancelBtn.style.display = 'none';
             } else {
-                globalData.menu.push({ rawText, title: cleanTitle, level, url });
+                // حالة إضافة عنصر جديد لأول مرة
+                globalData.menu.push({ rawText: finalRawText, title: cleanTitle, level, url });
             }
-
+        
+            // تفريغ الحقول وتحديث الواجهة
             if (rawInput) rawInput.value = '';
             if (urlInput) urlInput.value = '';
             menuHasChanges = true;
             renderStructuredMenuAdmin();
         }
-
+        
         function editStructuredItem(index) {
             const item = globalData.menu[index];
             if (!item) return;
-            document.getElementById('menu-raw-input').value = item.rawText;
-            document.getElementById('menu-url-input').value = item.url;
+            
+            const rawInput = document.getElementById('menu-raw-input');
+            const urlInput = document.getElementById('menu-url-input');
+            
+            if (rawInput) rawInput.value = item.rawText;
+            if (urlInput) urlInput.value = item.url;
+            
             editingMenuIndex = index;
-            document.getElementById('menu-add-btn').innerText = "حفظ التعديل";
-            document.getElementById('menu-cancel-edit-btn').style.display = 'inline-block';
+            
+            const addBtn = document.getElementById('menu-add-btn');
+            const cancelBtn = document.getElementById('menu-cancel-edit-btn');
+            
+            if (addBtn) addBtn.innerText = "حفظ التعديل";
+            if (cancelBtn) cancelBtn.style.display = 'inline-block';
         }
 
         function resetMenuForm() {
@@ -1356,22 +1413,35 @@
         function handleDragStart(e) {
             const currentIndex = parseInt(this.dataset.index);
             const checkboxes = document.querySelectorAll('.menu-item-checkbox');
-            let selected = [];
-            checkboxes.forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
-
-            let subItemsIndices = [currentIndex];
-            let baseLevel = globalData.menu[currentIndex].level || 1;
-            let idx = currentIndex + 1;
-            while (idx < globalData.menu.length && (globalData.menu[idx].level || 1) > baseLevel) {
-                subItemsIndices.push(idx);
-                idx++;
+            let selectedIndices = [];
+            
+            checkboxes.forEach(chk => { 
+                if (chk.checked) selectedIndices.push(parseInt(chk.dataset.index)); 
+            });
+        
+            // إذا لم يكن العنصر المسحوب ضمن المحددين، نعتبره هو العنصر المستهدف وحده مع أبنائه
+            if (!selectedIndices.includes(currentIndex)) {
+                selectedIndices = [currentIndex];
             }
-
-            draggedIndices = subItemsIndices;
+        
+            // تجميع العناصر المحددة مع كل أبنائها التابعة لها هرمياً
+            let allIndicesToMove = new Set();
+            selectedIndices.forEach(idx => {
+                allIndicesToMove.add(idx);
+                let baseLevel = globalData.menu[idx].level || 1;
+                let nextIdx = idx + 1;
+                while (nextIdx < globalData.menu.length && (globalData.menu[nextIdx].level || 1) > baseLevel) {
+                    allIndicesToMove.add(nextIdx);
+                    nextIdx++;
+                }
+            });
+        
+            // ترتيب المؤشرات تصاعدياً للحفاظ على الترتيب الأصلي
+            draggedIndices = Array.from(allIndicesToMove).sort((a, b) => a - b);
             this.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
         }
-
+        
         function handleDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
@@ -1394,23 +1464,23 @@
             e.preventDefault();
             const targetRow = this;
             targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
-
+        
             const targetIndex = parseInt(targetRow.dataset.index);
             if (draggedIndices.includes(targetIndex)) return;
-
+        
             const rect = targetRow.getBoundingClientRect();
             const threshold = rect.height / 3;
             const yClick = e.clientY - rect.top;
-
+        
             let dropMode = yClick < threshold ? 'top' : (yClick > rect.height - threshold ? 'bottom' : 'child');
-
+        
             let itemsToMove = draggedIndices.map(i => globalData.menu[i]);
             let remainingItems = globalData.menu.filter((_, idx) => !draggedIndices.includes(idx));
             
             let targetItemInRemaining = globalData.menu[targetIndex];
             let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
             if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
-
+        
             if (dropMode === 'top') {
                 remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
             } else if (dropMode === 'bottom') {
@@ -1423,17 +1493,18 @@
                 let levelDiff = (targetItemInRemaining.level + 1) - itemsToMove[0].level;
                 itemsToMove.forEach(it => {
                     it.level = Math.max(1, it.level + levelDiff);
-                    it.rawText = '_'.repeat(it.level) + (it.title || 'عنصر');
+                    it.rawText = '_'.repeat(it.level) + ' ' + (it.title || 'عنصر');
                 });
                 remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
             }
-
+        
             menuHasChanges = true;
             globalData.menu = remainingItems;
-            collapsedMenuIndices.clear();
+            
+            // تم إزالة السطر: collapsedMenuIndices.clear(); لكي تظل القوائم المقفلة على حالها!
             renderStructuredMenuAdmin();
         }
-
+                
         function handleDragEnd(e) {
             document.querySelectorAll('.drag-item').forEach(item => {
                 item.classList.remove('dragging', 'drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
