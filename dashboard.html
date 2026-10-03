@@ -674,6 +674,24 @@
         }
     });
 
+
+        // مراقبة عملية اللصق داخل محرر Quill وإجبار الجداول على أخذ الحدود والخطوط
+        quill.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+            // إذا كان العنصر الملصق عبارة عن جدول أو جزء منه
+            if (node.tagName === 'TABLE' || node.tagName === 'TD' || node.tagName === 'TH' || node.tagName === 'TR') {
+                // تطبيق تنسيقات الحدود مباشرة على العناصر الملصقة
+                node.style.border = '1px solid #000000';
+                node.style.borderCollapse = 'collapse';
+                if (node.tagName === 'TD' || node.tagName === 'TH') {
+                    node.style.border = '1px solid #000000';
+                    node.style.padding = '8px';
+                }
+            }
+            return delta;
+        });
+        
+        
+        
         // جعل شريط أدوات المحرر ثابتاً في أعلى الشاشة عند التمرير
         window.addEventListener('scroll', function() {
             const toolbar = document.querySelector('.ql-toolbar');
