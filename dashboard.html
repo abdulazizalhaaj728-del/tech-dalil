@@ -560,9 +560,12 @@
                 
                 globalData.posts = getData('tech_dalil_posts', globalData.posts || []);
                 globalData.pages = getData('tech_static_pages', globalData.pages || []);
-                
+
                 localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
                 localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
+                localStorage.setItem('tech_logo_url', JSON.stringify(globalData.settings?.logoUrl || ""));
+                localStorage.setItem('tech_logo_height', JSON.stringify(globalData.settings?.logoHeight || ""));
+                localStorage.setItem('tech_ticker_visible', JSON.stringify(globalData.settings?.tickerVisible || false));
                 localStorage.setItem('tech_widgets', JSON.stringify(globalData.widgets || []));
         
                 if (postToSave) {
