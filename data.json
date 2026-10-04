@@ -67,14 +67,5 @@
         }
     ],
     "pages": [],
-    "widgets": [
-        {
-            "id": "w_1791100695579",
-            "title": "اتصل بنا",
-            "type": "contact",
-            "content": "",
-            "active": true,
-            "location": "sidebar"
-        }
-    ]
+    "widgets": []
 }
