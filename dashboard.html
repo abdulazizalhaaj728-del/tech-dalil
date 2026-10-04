@@ -280,11 +280,11 @@
                     <div class="form-group" id="contact-fields-group" style="display: none;">
                         <label style="color: var(--accent-color); margin-bottom: 6px; display: block;">معلومات الاتصال (اترك الفارغ ليتم إخفاؤه تلقائياً):</label>
                         <div style="display: grid; gap: 8px;">
-                            <input type="text" id="contact-name" placeholder="اسم المسؤول أو الجهة..." disabled>
-                            <input type="email" id="contact-email" placeholder="البريد الإلكتروني..." disabled>
-                            <input type="text" id="contact-phone" placeholder="رقم الهاتف..." disabled>
-                            <input type="text" id="contact-whatsapp" placeholder="رقم الواتساب..." disabled>
-                            <input type="text" id="contact-telegram" placeholder="معرف تليجرام (Telegram)..." disabled>
+                            <input type="text" id="contact-name" placeholder="اسم المسؤول أو الجهة...">
+                            <input type="email" id="contact-email" placeholder="البريد الإلكتروني...">
+                            <input type="text" id="contact-phone" placeholder="رقم الهاتف...">
+                            <input type="text" id="contact-whatsapp" placeholder="رقم الواتساب...">
+                            <input type="text" id="contact-telegram" placeholder="معرف تليجرام (Telegram)...">
                         </div>
                     </div>
 
@@ -1153,6 +1153,7 @@
                 document.getElementById('widget-pos-footer').checked = false;
             }
 
+            document.getElementById('widget-main-action-attributes')...
             document.getElementById('widget-main-action-btn').innerText = "حفظ التعديلات";
             document.getElementById('widget-cancel-btn').style.display = 'inline-block';
         }
