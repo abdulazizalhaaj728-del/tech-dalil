@@ -1,26 +1,4 @@
 {
-    "settings": {
-        "logoUrl": "",
-        "logoHeight": "55px",
-        "tickerVisible": true
-    },
-    "menu": [
-        {
-            "rawText": "_ علوم الحاسب الآلي",
-            "title": "علوم الحاسب الآلي",
-            "level": 1,
-            "url": "#"
-        }
-    ],
-    "widgets": [],
-    "ads": {
-        "topOn": false,
-        "topCode": "",
-        "midOn": false,
-        "midCode": "",
-        "botOn": false,
-        "botCode": ""
-    },
     "posts": [
         {
             "id": "post_1791049423860",
@@ -75,5 +53,7 @@
             "url": "articles/networks-networks-16340.html"
         }
     ],
-    "pages": []
+    "pages": [],
+    "menu": [],
+    "widgets": []
 }
