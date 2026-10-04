@@ -6,8 +6,12 @@
     <title>لوحة التحكم الشاملة | تكنو-دليل</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- مكتبة Quill CSS -->
+    
+    <!-- مكتبات Quill الأساسية والجداول والصور المحسنة -->
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quill-table@1.0.1/dist/quill.table.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.css" rel="stylesheet">
+
     <style>
         .custom-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -68,56 +72,25 @@
             border: 2px solid #ff5722 !important;
         }
 
-        /* تنسيقات المحرر النظيف */
+        /* تنسيقات المحرر المحسن */
         .sticky-editor-header {
-            position: sticky;
-            top: 10px;
-            z-index: 1000;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            position: sticky; top: 10px; z-index: 1000;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 10px 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.6);
             margin-bottom: 10px;
         }
         .custom-font-bar {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            flex-wrap: wrap;
+            display: flex; gap: 6px; align-items: center; margin-bottom: 8px;
+            padding-bottom: 8px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap;
         }
         .font-tag-btn {
-            background: var(--bg-dark);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-weight: 600;
+            background: var(--bg-dark); color: var(--text-main); border: 1px solid var(--border-color);
+            padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 600;
         }
         .font-tag-btn:hover { background: var(--primary-color); border-color: var(--primary-color); }
 
-        .ql-toolbar.ql-snow { 
-            background: var(--bg-dark) !important; 
-            border-color: var(--border-color) !important; 
-            border-radius: 6px; 
-            direction: ltr; 
-        }
-        .ql-container.ql-snow { 
-            background: var(--bg-dark); 
-            color: var(--text-main); 
-            border-color: var(--border-color); 
-            border-bottom-left-radius: 6px; 
-            border-bottom-right-radius: 6px; 
-            min-height: 350px; 
-            font-size: 1.05rem; 
-            direction: rtl; 
-            text-align: right; 
-        }
+        .ql-toolbar.ql-snow { background: var(--bg-dark) !important; border-color: var(--border-color) !important; border-radius: 6px; direction: ltr; }
+        .ql-container.ql-snow { background: var(--bg-dark); color: var(--text-main); border-color: var(--border-color); border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; min-height: 350px; font-size: 1.05rem; direction: rtl; text-align: right; }
         .ql-editor { direction: rtl; text-align: right; min-height: 330px; }
         .ql-snow .ql-stroke { stroke: var(--text-main); }
         .ql-snow .ql-fill { fill: var(--text-main); }
@@ -219,12 +192,11 @@
                 <div style="flex: 1.1; min-width: 320px;">
                     <label style="color: var(--accent-color); margin-bottom: 8px;">قائمة الودجات المخزنة:</label>
                     <div id="widgets-list-box" style="max-height: 250px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
-                    
                     <div style="margin-top: 15px; text-align: center;">
-                    <button id="save-widgets-btn" style="background: var(--primary-color); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px; width: 100%;">
-                        <i class="fa-solid fa-floppy-disk"></i> حفظ الودجات بالشكل الحالي
-                    </button>
-                </div>
+                        <button id="save-widgets-btn" style="background: var(--primary-color); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px; width: 100%;">
+                            <i class="fa-solid fa-floppy-disk"></i> حفظ الودجات بالشكل الحالي
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -247,9 +219,9 @@
             <button class="btn" onclick="saveAdsSettings()">حفظ إعدادات الإعلانات للسيرفر</button>
         </div>
 
-        <!-- إدارة ونشر المقالات والصفحات (محرر Quill المتقدم) -->
+        <!-- إدارة ونشر المقالات والصفحات (المحرر المحسن الكامل بالجداول والصور والروابط) -->
         <div class="section-box">
-            <h3>📝 إدارة ونشر المقالات والصفحات</h3>
+            <h3>📝 إدارة ونشر المقالات والصفحات (المحرر المحسن)</h3>
 
             <!-- 1. زر الإدارة الوحيد الظاهر افتراضياً -->
             <div id="manager-trigger-wrapper" style="margin: 15px 0;">
@@ -293,7 +265,7 @@
                     <input type="text" id="post-date">
                 </div>
 
-                <!-- حاوية المحرر وشريط الأدوات -->
+                <!-- حاوية المحرر وشريط الأدوات المحسن -->
                 <div class="form-group">
                     <label>المحتوى:</label>
                     <div class="sticky-editor-header">
@@ -309,8 +281,7 @@
                     <div id="editor-container"></div>
                 </div>
 
-
-<!-- حقل الرابط المتوقع وزر النسخ -->
+                <!-- حقل الرابط المتوقع وزر النسخ -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
                     <div style="flex: 1; display: flex; align-items: center; gap: 5px;">
                         <span style="font-size: 0.8rem; color: var(--text-muted);">رابط المقال:</span>
@@ -325,13 +296,13 @@
                 <!-- 3. شريط الأزرار السفلي للفورم -->
                 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 15px;">
                     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <button type="button" class="btn" id="publish-btn" style="padding: 6px 14px; font-size: 0.85rem;" disabled>
+                        <button type="button" class="btn" id="publish-btn" onclick="saveOrUpdatePost()" style="padding: 6px 14px; font-size: 0.85rem;" disabled>
                             <i class="fa-solid fa-floppy-disk"></i> حفظ ونشر
                         </button>
                         <button type="button" class="btn" id="draft-toggle-btn" onclick="toggleArticleDraftStatus()" style="background: #f59e0b; color: #fff; padding: 6px 14px; font-size: 0.85rem;">
                             <i class="fa-solid fa-file-lines"></i> مسودة
                         </button>
-                        <button type="button" class="btn" id="cancel-manager-btn" style="background:#ef4444; color:#fff; padding: 6px 14px; font-size: 0.85rem;">
+                        <button type="button" class="btn" id="cancel-manager-btn" onclick="closeArticleManager()" style="background:#ef4444; color:#fff; padding: 6px 14px; font-size: 0.85rem;">
                             <i class="fa-solid fa-xmark"></i> إلغاء الأمر
                         </button>
                     </div>
@@ -341,9 +312,7 @@
                         </button>
                     </div>
                 </div>
-                
-
-                
+            </div>
 
             <hr style="border:0; border-top:1px solid var(--border-color); margin: 20px 0;">
             <h4>المقالات والصفحات المنشورة حالياً (تعديل أو حذف):</h4>
@@ -362,8 +331,9 @@
         </div>
     </div>
 
-    <!-- مكتبة Quill.js الجافاسكريبت -->
+    <!-- مكتبات Quill والجداول والصور -->
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
     <script>
         let globalData = {
             settings: { logoUrl: "", logoHeight: "55px", tickerVisible: true },
@@ -379,6 +349,7 @@
         let editingMenuIndex = null;
         let menuHasChanges = false;
         let globalFileSha = "";
+        let currentArticleIsDraft = false;
 
         function getData(key, def) { 
             const v = localStorage.getItem(key); 
@@ -430,7 +401,7 @@
             initAdminUI();
         }
 
-async function saveServerData(successMsg, postToSave = null) {
+        async function saveServerData(successMsg, postToSave = null) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
                 showCustomAlert("تنبيه هامة", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
@@ -448,7 +419,6 @@ async function saveServerData(successMsg, postToSave = null) {
                 const contentString = JSON.stringify(globalData, null, 4);
                 const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
 
-                // 1. حفظ ملف data.json الأساسي
                 const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
                     method: 'PUT',
                     headers: {
@@ -465,36 +435,7 @@ async function saveServerData(successMsg, postToSave = null) {
                 const result = await response.json();
                 if (response.ok) {
                     globalFileSha = result.content.sha;
-
-                    // 2. إذا تم تمرير مقال، قم بتوليد ورفع ملف الـ HTML المستقل الخاص به في مجلد posts/
-                    if (postToSave) {
-                        const fileName = `posts/${postToSave.id}.html`;
-                        const htmlContent = generateArticleHtml(postToSave);
-                        const encodedHtml = btoa(unescape(encodeURIComponent(htmlContent)));
-
-                        // التحقق مما إذا كان الملف موجوداً مسبقاً لجلب الـ SHA الخاص به للتحديث
-                        let htmlSha = "";
-                        const resHtml = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`);
-                        if (resHtml.ok) {
-                            const hData = await resHtml.json();
-                            htmlSha = hData.sha;
-                        }
-
-                        await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Authorization': `token ${token}`,
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                message: `Generate/Update static HTML page for: ${postToSave.title}`,
-                                content: encodedHtml,
-                                sha: htmlSha || undefined
-                            })
-                        });
-                    }
-
-                    showCustomAlert("نجاح", successMsg || "تم الحفظ والنشر وتوليد صفحة المقال المستقلة بنجاح على السحابة!");
+                    showCustomAlert("نجاح", successMsg || "تم الحفظ والتحديث بنجاح على السحابة!");
                     menuHasChanges = false;
                 } else {
                     showCustomAlert("خطأ في الحفظ", "فشل الحفظ: تأكد من صحة الـ Token. (" + (result.message || "") + ")");
@@ -505,47 +446,7 @@ async function saveServerData(successMsg, postToSave = null) {
             }
         }
 
-
-
-        function generateArticleHtml(post) {
-            return `<!DOCTYPE html>
-            <html lang="ar" dir="rtl">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${post.title} | تكنو-دليل</title>
-                <meta name="description" content="${post.description || post.title}">
-                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-                <link rel="stylesheet" href="../style.css">
-                <style>
-                    body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; line-height: 1.8; }
-                    .article-container { max-width: 800px; margin: 40px auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-                    h1 { color: #f59e0b; margin-bottom: 15px; }
-                    .meta-info { font-size: 0.85rem; color: #94a3b8; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-                    .featured-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; }
-                    .content-body { font-size: 1.05rem; color: #f8fafc; }
-                    .back-btn { display: inline-block; margin-bottom: 20px; color: #0284c7; text-decoration: none; font-weight: bold; }
-                </style>
-            </head>
-            <body>
-                <div class="article-container">
-                    <a href="../index.html" class="back-btn">← العودة للرئيسية</a>
-                    <span style="background: #0284c7; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem;">${post.category || 'تقنية'}</span>
-                    <h1>${post.title}</h1>
-                    <div class="meta-info">تاريخ النشر: ${post.date}</div>
-                    ${post.image ? `<img src="${post.image}" alt="${post.title}" class="featured-img">` : ''}
-                    <div class="content-body">
-                        ${post.content}
-                    </div>
-                </div>
-            </body>
-            </html>`;
-            }
-
-
-        
-        // إعداد محرر Quill السليم
+        // إعداد محرر Quill المحسن مع دعم الخطوط
         var Font = Quill.import('formats/font');
         Font.whitelist = ['cairo', 'tajawal', 'amiri', false];
         Quill.register(Font, true);
@@ -591,17 +492,12 @@ async function saveServerData(successMsg, postToSave = null) {
             const toggleBtn = document.getElementById('toggle-manager-btn');
             if (toggleBtn) toggleBtn.addEventListener('click', openArticleManager);
 
-            const cancelBtn = document.getElementById('cancel-manager-btn');
-            if (cancelBtn) cancelBtn.addEventListener('click', closeArticleManager);
-
-            const publishBtn = document.getElementById('publish-btn');
-            if (publishBtn) publishBtn.addEventListener('click', saveOrUpdatePost);
-
             setTimeout(() => {
                 if (typeof quill !== 'undefined') {
                     let originalContent = quill.root.innerHTML;
                     quill.on('text-change', function() {
                         let currentContent = quill.root.innerHTML;
+                        const publishBtn = document.getElementById('publish-btn');
                         if (publishBtn) {
                             publishBtn.disabled = (currentContent === originalContent);
                         }
@@ -627,18 +523,10 @@ async function saveServerData(successMsg, postToSave = null) {
                 document.getElementById('ad-bot-on').checked = globalData.ads.botOn || false;
                 document.getElementById('ad-bot-code').value = globalData.ads.botCode || '';
             }
-            if (globalData.posts && globalData.posts.length > 0) {
-                localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
-            }
-            if (globalData.pages && globalData.pages.length > 0) {
-                localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
-            }
-            if (globalData.menu && globalData.menu.length > 0) {
-                localStorage.setItem('tech_menu', JSON.stringify(globalData.menu));
-            }
-            if (globalData.widgets && globalData.widgets.length > 0) {
-                localStorage.setItem('tech_widgets', JSON.stringify(globalData.widgets));
-            }
+            if (globalData.posts) localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
+            if (globalData.pages) localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
+            if (globalData.menu) localStorage.setItem('tech_menu', JSON.stringify(globalData.menu));
+            if (globalData.widgets) localStorage.setItem('tech_widgets', JSON.stringify(globalData.widgets));
 
             loadSidebarWidgetsAdmin();
             renderStructuredMenuAdmin();
@@ -658,7 +546,7 @@ async function saveServerData(successMsg, postToSave = null) {
             resetPostForm();
         }
 
-        // --- دالة حفظ أو تحديث المقالة بصيغة HTML على GitHub مباشرة ---
+        // --- حفظ أو تحديث المقالة بصيغة HTML المستقلة على GitHub مع تفعيل الـ Slug ---
         async function saveOrUpdatePost() {
             const title = document.getElementById('post-title').value.trim();
             const category = document.getElementById('post-cat').value.trim() || "عام";
@@ -666,6 +554,8 @@ async function saveServerData(successMsg, postToSave = null) {
             const image = document.getElementById('post-img').value.trim();
             const date = document.getElementById('post-date').value.trim() || new Date().toLocaleDateString('ar-SA');
             const content = typeof quill !== 'undefined' ? quill.root.innerHTML : '';
+            const slugInputVal = document.getElementById('article-slug-input').value.trim() || title.replace(/\s+/g, '-');
+            const contentType = document.getElementById('content-type-selector').value;
         
             if (!title || content === '<p><br></p>' || !content.trim()) { 
                 showCustomAlert("تنبيه", "الرجاء إدخال عنوان ومحتوى المقال بشكل صحيح!");
@@ -681,11 +571,10 @@ async function saveServerData(successMsg, postToSave = null) {
             const owner = "abdulazizalhaaj728-del";
             const repo = "tech-dalil";
             const fileId = currentEditingPostId ? currentEditingPostId : ('post_' + Date.now());
-            const fileName = `${fileId}.html`;
-            const htmlPath = `articles/${fileName}`;
+            const fileName = `${slugInputVal}-${fileId.replace('post_', '')}.html`;
+            const htmlPath = contentType === 'post' ? `articles/${fileName}` : `pages/${fileName}`;
             const jsonPath = "data.json";
         
-            // 1. بناء هيكل ملف الـ HTML المستقل للمقالة
             const articleHtmlContent = `<!DOCTYPE html>
         <html lang="ar" dir="rtl">
         <head>
@@ -708,7 +597,7 @@ async function saveServerData(successMsg, postToSave = null) {
         </head>
         <body>
             <div class="container">
-                <a href="index.html" class="back-link">← العودة للموقع الرئيسي</a>
+                <a href="../index.html" class="back-link">← العودة للموقع الرئيسي</a>
                 <h1>${title}</h1>
                 <div class="meta-info"><i class="fa-solid fa-calendar"></i> ${date} | <i class="fa-solid fa-tag"></i> ${category}</div>
                 ${image ? `<img src="${image}" alt="${title}" class="post-img">` : ''}
@@ -718,9 +607,8 @@ async function saveServerData(successMsg, postToSave = null) {
         </html>`;
         
             try {
-                showCustomAlert("جاري النشر", "يتم رفع صفحة HTML وتحديث السلايدر في قاعدة البيانات...");
+                showCustomAlert("جاري النشر", "يتم رفع صفحة HTML وتحديث قاعدة البيانات...");
         
-                // الخطوة أ: رفع ملف الـ HTML المستقل للمجلد articles/
                 let htmlSha = "";
                 try {
                     const checkRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${htmlPath}`);
@@ -743,7 +631,6 @@ async function saveServerData(successMsg, postToSave = null) {
         
                 if (!htmlResponse.ok) throw new Error("فشل رفع ملف الـ HTML الخاص بالمقال.");
         
-                // الخطوة ب: جلب ملف data.json وتحديثه برابط المقال الجديد ليظهر في السلايدر
                 let jsonSha = "";
                 let siteData = { posts: [], pages: [] };
         
@@ -757,52 +644,60 @@ async function saveServerData(successMsg, postToSave = null) {
                 } catch (e) {}
         
                 if (!siteData.posts) siteData.posts = [];
+                if (!siteData.pages) siteData.pages = [];
         
-                const newPostEntry = {
+                const newEntry = {
                     id: fileId,
                     title,
                     category,
                     description: description || title,
                     image,
                     date,
-                    url: htmlPath // هذا هو الرابط الذي سيستخدمه السلايدر والواجهة لتوجيه الزوار لملف الـ HTML
+                    slug: slugInputVal,
+                    url: htmlPath,
+                    isDraft: currentArticleIsDraft,
+                    isPublished: true
                 };
         
-                if (currentEditingPostId) {
-                    siteData.posts = siteData.posts.map(p => p.id === currentEditingPostId ? newPostEntry : p);
+                if (contentType === 'post') {
+                    if (currentEditingPostId) {
+                        siteData.posts = siteData.posts.map(p => p.id === currentEditingPostId ? newEntry : p);
+                    } else {
+                        siteData.posts.unshift(newEntry);
+                    }
                 } else {
-                    siteData.posts.unshift(newPostEntry); // إضافته في المقدمة ليظهر أولاً في السلايدر
+                    if (currentEditingPostId) {
+                        siteData.pages = siteData.pages.map(p => p.id === currentEditingPostId ? newEntry : p);
+                    } else {
+                        siteData.pages.unshift(newEntry);
+                    }
                 }
         
-                // الخطوة ج: رفع ملف data.json المحدث إلى GitHub
                 const updatedJsonContent = btoa(unescape(encodeURIComponent(JSON.stringify(siteData, null, 2))));
                 const jsonUpdateRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${jsonPath}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: `Update data.json slider reference for: ${title}`,
+                        message: `Update data.json reference for: ${title}`,
                         content: updatedJsonContent,
                         sha: jsonSha || undefined
                     })
                 });
         
                 if (jsonUpdateRes.ok) {
-                    showCustomAlert("نجاح النشر", "تم حفظ ملف الـ HTML وتحديث السلايدر والواجهة بنجاح تام!", () => {
+                    showCustomAlert("نجاح النشر", "تم الحفظ والنشر وتوليد صفحة المقال بنجاح تام!", () => {
                         closeArticleManager();
-                        if (typeof loadPostsAdminList === 'function') loadPostsAdminList();
+                        loadPostsAdminList();
                     });
                 } else {
                     throw new Error("فشل تحديث ملف البيانات الرئيسي data.json.");
                 }
-        
             } catch (err) {
                 console.error(err);
                 showCustomAlert("خطأ", "حدث خطأ أثناء النشر: " + err.message);
             }
         }
-                
-        
-        
+
         function resetPostForm() {
             currentEditingPostId = null;
             document.getElementById('content-type-selector').value = "post";
@@ -811,6 +706,9 @@ async function saveServerData(successMsg, postToSave = null) {
             document.getElementById('post-desc').value = "";
             document.getElementById('post-img').value = "";
             document.getElementById('post-date').value = new Date().toLocaleDateString('ar-SA');
+            document.getElementById('article-slug-input').value = "";
+            document.getElementById('article-slug-input').disabled = false;
+            document.getElementById('article-id-badge').innerText = "#جديد";
             if (typeof quill !== 'undefined') quill.setText("");
             
             const publishBtn = document.getElementById('publish-btn');
@@ -833,9 +731,10 @@ async function saveServerData(successMsg, postToSave = null) {
             }
 
             posts.forEach((p) => {
+                let statusBadge = p.isDraft ? "<span style='color:#f59e0b;'>(مسودة)</span>" : "<span style='color:#10b981;'>(منشور)</span>";
                 container.innerHTML += `
                     <div class="item-row">
-                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title} (${p.date})</span>
+                        <span style="flex:1; font-size:0.9rem;"><b>[مقالة]</b> ${p.title} ${statusBadge} (${p.date})</span>
                         <button type="button" class="btn" style="background:#eab308; padding:5px 10px; font-size:0.8rem;" onclick="editPost('${p.id}', 'post')">تعديل</button>
                         <button type="button" class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deletePost('${p.id}', 'post')">حذف</button>
                     </div>`;
@@ -882,6 +781,8 @@ async function saveServerData(successMsg, postToSave = null) {
                 document.getElementById('post-cat').value = "";
                 document.getElementById('post-desc').value = "";
                 document.getElementById('post-img').value = "";
+                document.getElementById('article-slug-input').value = p.slug || "";
+                document.getElementById('article-id-badge').innerText = `#${p.id.replace('post_', '')}`;
                 quill.root.innerHTML = p.content || "";
             } else {
                 const posts = getData('tech_dalil_posts', []);
@@ -893,6 +794,18 @@ async function saveServerData(successMsg, postToSave = null) {
                 document.getElementById('post-desc').value = p.description || "";
                 document.getElementById('post-img').value = p.image || "";
                 document.getElementById('post-date').value = p.date || "";
+                document.getElementById('article-slug-input').value = p.slug || "";
+                document.getElementById('article-id-badge').innerText = `#${p.id.replace('post_', '')}`;
+                
+                currentArticleIsDraft = p.isDraft || false;
+                const draftBtn = document.getElementById('draft-toggle-btn');
+                if (currentArticleIsDraft) {
+                    draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
+                    draftBtn.style.background = '#10b981';
+                } else {
+                    draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+                    draftBtn.style.background = '#f59e0b';
+                }
                 quill.root.innerHTML = p.content || "";
             }
             
@@ -902,6 +815,30 @@ async function saveServerData(successMsg, postToSave = null) {
                 publishBtn.disabled = false;
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleArticleDraftStatus() {
+            currentArticleIsDraft = !currentArticleIsDraft;
+            const draftBtn = document.getElementById('draft-toggle-btn');
+            if (currentArticleIsDraft) {
+                draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
+                draftBtn.style.background = '#10b981';
+                showCustomAlert("تنبيه", "تم تحويل المقال إلى وضع (مسودة).");
+            } else {
+                draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+                draftBtn.style.background = '#f59e0b';
+                showCustomAlert("تنبيه", "تم تغيير الوضع إلى (نشر).");
+            }
+        }
+
+        function copyArticleLink() {
+            const slugInput = document.getElementById('article-slug-input');
+            const idBadge = document.getElementById('article-id-badge');
+            if (!slugInput) return;
+            let fullLink = `${window.location.origin}/articles/${slugInput.value.trim()}-${idBadge.innerText.replace('#', '')}.html`;
+            navigator.clipboard.writeText(fullLink).then(() => {
+                showCustomAlert("تم النسخ", "تم نسخ رابط المقالة بنجاح إلى الحافظة!");
+            });
         }
 
         function previewPost() {
@@ -1083,7 +1020,6 @@ async function saveServerData(successMsg, postToSave = null) {
         function toggleWidgetActive(index) {
             if (globalData.widgets && globalData.widgets[index]) {
                 globalData.widgets[index].active = !globalData.widgets[index].active;
-                //saveServerData("تم تحديث حالة الودجت على السحابة!");
             }
         }
 
@@ -1091,20 +1027,14 @@ async function saveServerData(successMsg, postToSave = null) {
             showCustomAlert("تأكيد", "هل أنت متأكد من رغبتك في حذف هذا الودجت؟", () => {
                 globalData.widgets.splice(index, 1);
                 loadSidebarWidgetsAdmin();
-               // saveServerData("تم حذف الودجت وتحديث السحابة بنجاح!");
             });
         }
 
-        // تفعيل زر الحفظ اليدوي للودجات
         document.getElementById('save-widgets-btn').addEventListener('click', () => {
-            // استدعاء دالة الحفظ المعتادة لديك مباشرة
             if (typeof saveServerData === 'function') {
                 saveServerData("تم حفظ إعدادات الودجات بنجاح!");
-            } else {
-                console.error("دالة الحفظ saveServerData غير متوفرة.");
             }
         });
-        
 
         function addOrUpdateStructuredMenuItem() {
             const rawInput = document.getElementById('menu-raw-input');
@@ -1164,7 +1094,6 @@ async function saveServerData(successMsg, postToSave = null) {
             renderStructuredMenuAdmin();
         }
 
-// مصفوفة لحفظ مؤشرات العناصر المطوية (التي تحتوي على علامة زائد)
         let collapsedMenuIndices = new Set();
 
         function toggleMenuCollapse(index) {
@@ -1186,21 +1115,15 @@ async function saveServerData(successMsg, postToSave = null) {
                 return;
             }
 
-            // فحص العناصر المخفية بسبب طي عنصر أب أعلى منها
             let hideStackLevel = 999;
 
             globalData.menu.forEach((item, index) => {
                 let currentLevel = item.level || 1;
-
-                // إذا كان المستوى الحالي أقل من أو يساوي مستوى الإخفاء، نلغي الإخفاء
                 if (currentLevel <= hideStackLevel) {
                     hideStackLevel = 999;
                 }
-
-                // هل هذا العنصر مخفي لأن أحد أبنائه/أبائه مطوي؟
                 const isHiddenByParent = currentLevel > hideStackLevel;
 
-                // هل هذا العنصر يمتلك أهالي/أبناء تلي مباشرة ومستواها أكبر؟
                 let hasChildren = false;
                 if (index + 1 < globalData.menu.length) {
                     if ((globalData.menu[index + 1].level || 1) > currentLevel) {
@@ -1217,7 +1140,6 @@ async function saveServerData(successMsg, postToSave = null) {
                 row.setAttribute('draggable', 'true');
                 row.dataset.index = index;
                 
-                // إذا كان مخفياً بواسطة أب مطوي، نجعل عرضه مختفياً تماماً
                 if (isHiddenByParent) {
                     row.style.cssText = "display: none; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;";
                 } else {
@@ -1225,8 +1147,6 @@ async function saveServerData(successMsg, postToSave = null) {
                 }
                 
                 let indent = (currentLevel - 1) * 25; 
-                
-                // زر الزائد والناقص إذا كان العنصر يمتلك فروعاً
                 let collapseBtnHtml = '';
                 if (hasChildren) {
                     let isCollapsed = collapsedMenuIndices.has(index);
@@ -1261,8 +1181,7 @@ async function saveServerData(successMsg, postToSave = null) {
             });
         }
 
-        
-let draggedIndices = [];
+        let draggedIndices = [];
 
         function handleDragStart(e) {
             const currentIndex = parseInt(this.dataset.index);
@@ -1270,7 +1189,6 @@ let draggedIndices = [];
             let selected = [];
             checkboxes.forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
 
-            // تحديد العنصر مع كافة أفرعه وأحفاده التابعين له تلقائياً إذا تم سحبه
             let subItemsIndices = [currentIndex];
             let baseLevel = globalData.menu[currentIndex].level || 1;
             let idx = currentIndex + 1;
@@ -1280,7 +1198,6 @@ let draggedIndices = [];
             }
 
             if (selected.includes(currentIndex) && selected.length > 0) {
-                // إذا كان هناك عناصر محددة بالمربع، نجمعها مع أفرعها
                 let allSelectedWithChildren = [];
                 selected.forEach(selIdx => {
                     allSelectedWithChildren.push(selIdx);
@@ -1301,62 +1218,6 @@ let draggedIndices = [];
             e.dataTransfer.effectAllowed = 'move';
         }
 
-        function handleDrop(e) {
-            e.preventDefault();
-            const targetRow = this;
-            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
-
-            const targetIndex = parseInt(targetRow.dataset.index);
-            if (draggedIndices.includes(targetIndex)) return;
-
-            const rect = targetRow.getBoundingClientRect();
-            const threshold = rect.height / 3;
-            const yClick = e.clientY - rect.top;
-
-            let dropMode = 'after';
-            if (yClick < threshold) dropMode = 'top';
-            else if (yClick > rect.height - threshold) dropMode = 'bottom';
-            else dropMode = 'child';
-
-            // استخراج العناصر المسحوبة بكامل أفرعها وأحفادها بنفس الترتيب تماماً
-            let itemsToMove = draggedIndices.map(i => globalData.menu[i]);
-            let remainingItems = globalData.menu.filter((_, idx) => !draggedIndices.includes(idx));
-            
-            let targetItemInRemaining = globalData.menu[targetIndex];
-            let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
-            if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
-
-            if (dropMode === 'top') {
-                remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
-            } else if (dropMode === 'bottom') {
-                // إذا كان الهدف يمتلك أفرعاً، نتجاوز أفرعه ونضع العنصر بعد نهايتهم لكي لا نفصل الأب عن ابنه بالخطأ
-                let insertPos = newTargetIdx + 1;
-                while (insertPos < remainingItems.length && (remainingItems[insertPos].level || 1) > (targetItemInRemaining.level || 1)) {
-                    insertPos++;
-                }
-                remainingItems.splice(insertPos, 0, ...itemsToMove);
-            } else if (dropMode === 'child') {
-                let parentItem = targetItemInRemaining;
-                if (parentItem) {
-                    let levelDiff = (parentItem.level + 1) - itemsToMove[0].level;
-                    itemsToMove.forEach(it => {
-                        it.level = Math.max(1, it.level + levelDiff);
-                        it.rawText = '_'.repeat(it.level) + (it.title || 'عنصر');
-                    });
-                    remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
-                    targetRow.classList.add('pulse-highlight');
-                    setTimeout(() => targetRow.classList.remove('pulse-highlight'), 800);
-                }
-            }
-
-            menuHasChanges = true;
-            globalData.menu = remainingItems;
-            collapsedMenuIndices.clear(); // إعادة تعيين الطي لتجنب اختلاف الفهارس المؤقتة بعد الترتيب
-            renderStructuredMenuAdmin();
-        }
-
-
-        
         function handleDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
@@ -1402,7 +1263,11 @@ let draggedIndices = [];
             if (dropMode === 'top') {
                 remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
             } else if (dropMode === 'bottom') {
-                remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+                let insertPos = newTargetIdx + 1;
+                while (insertPos < remainingItems.length && (remainingItems[insertPos].level || 1) > (targetItemInRemaining.level || 1)) {
+                    insertPos++;
+                }
+                remainingItems.splice(insertPos, 0, ...itemsToMove);
             } else if (dropMode === 'child') {
                 let parentItem = targetItemInRemaining;
                 if (parentItem) {
@@ -1419,6 +1284,7 @@ let draggedIndices = [];
 
             menuHasChanges = true;
             globalData.menu = remainingItems;
+            collapsedMenuIndices.clear();
             renderStructuredMenuAdmin();
         }
 
@@ -1447,119 +1313,6 @@ let draggedIndices = [];
                 e.returnValue = ''; 
             }
         });
-
-
-                    // دالة لتوليد كود صفحة HTML المستقلة للمقال
-            function generateArticleHtml(post) {
-                return `<!DOCTYPE html>
-            <html lang="ar" dir="rtl">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${post.title} | تكنو-دليل</title>
-                <meta name="description" content="${post.description || post.title}">
-                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-                <link rel="stylesheet" href="../style.css"> <!-- اربطه بملف التصميم الرئيسي لديك -->
-                <style>
-                    body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; line-height: 1.8; }
-                    .article-container { max-width: 800px; margin: 40px auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-                    h1 { color: #f59e0b; margin-bottom: 15px; }
-                    .meta-info { font-size: 0.85rem; color: #94a3b8; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-                    .featured-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; }
-                    .content-body { font-size: 1.05rem; color: #f8fafc; }
-                    .back-btn { display: inline-block; margin-bottom: 20px; color: #0284c7; text-decoration: none; font-weight: bold; }
-                </style>
-            </head>
-            <body>
-                <div class="article-container">
-                    <a href="../index.html" class="back-btn">← العودة للرئيسية</a>
-                    <span style="background: #0284c7; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem;">${post.category || 'تقنية'}</span>
-                    <h1>${post.title}</h1>
-                    <div class="meta-info">تاريخ النشر: ${post.date}</div>
-                    ${post.image ? `<img src="${post.image}" alt="${post.title}" class="featured-img">` : ''}
-                    <div class="content-body">
-                        ${post.content}
-                    </div>
-                </div>
-            </body>
-            </html>`;
-            }
-
-            // متغير لتتبع حالة المسودة الحالية للمقال المفتوح
-            let currentArticleIsDraft = false;
-            
-            // دالة تهيئة حقل الرابط عند فتح المقال للتعديل أو الإنشاء
-            function initArticleSlugField(post) {
-                const slugInput = document.getElementById('article-slug-input');
-                const idBadge = document.getElementById('article-id-badge');
-                const draftBtn = document.getElementById('draft-toggle-btn');
-            
-                if (!slugInput) return;
-            
-                // إذا كان المقال جديداً كلياً ولم يُنشر من قبل
-                if (!post || !post.isPublished) {
-                    slugInput.disabled = false;
-                    idBadge.innerText = `#${post ? post.id : 'جديد'}`;
-                    currentArticleIsDraft = false;
-                    if (draftBtn) {
-                        draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
-                        draftBtn.style.background = '#f59e0b';
-                    }
-                } else {
-                    // إذا كان مقالاً قديماً ومنشوراً من قبل (يمنع تعديل الرابط نهائياً للثبات)
-                    slugInput.disabled = true;
-                    slugInput.title = "عذراً، لا يمكن تعديل رابط مقال تم نشره مسبقاً للحفاظ على الروابط";
-                    idBadge.innerText = `#${post.id}`;
-                    
-                    currentArticleIsDraft = post.isDraft || false;
-                    if (draftBtn) {
-                        if (currentArticleIsDraft) {
-                            draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
-                            draftBtn.style.background = '#10b981';
-                        } else {
-                            draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
-                            draftBtn.style.background = '#f59e0b';
-                        }
-                    }
-                }
-                
-                // تعيين القيمة الحالية في الحقل
-                slugInput.value = post && post.slug ? post.slug : (post ? post.title.replace(/\s+/g, '-') : '');
-            }
-            
-            // دالة تبديل حالة مسودة / نشر
-            function toggleArticleDraftStatus() {
-                currentArticleIsDraft = !currentArticleIsDraft;
-                const draftBtn = document.getElementById('draft-toggle-btn');
-                
-                if (currentArticleIsDraft) {
-                    draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
-                    draftBtn.style.background = '#10b981'; // أخضر للنشر
-                    showCustomAlert("تنبيه", "تم تحويل المقال إلى وضع (مسودة). لن يظهر للعامة حتى تقوم بنشره.");
-                } else {
-                    draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
-                    draftBtn.style.background = '#f59e0b'; // برتقالي للمسودة
-                    showCustomAlert("تنبيه", "تم تغيير الوضع إلى (نشر). سيصبح متاحاً للعامة عند الضغط على حفظ ونشر.");
-                }
-            }
-            
-            // دالة نسخ رابط المقالة
-            function copyArticleLink() {
-                const slugInput = document.getElementById('article-slug-input');
-                const idBadge = document.getElementById('article-id-badge');
-                if (!slugInput) return;
-            
-                let fullLink = `${window.location.origin}/posts/${slugInput.value.trim()}-${idBadge.innerText.replace('#', '')}.html`;
-                
-                navigator.clipboard.writeText(fullLink).then(() => {
-                    showCustomAlert("تم النسخ", "تم نسخ رابط المقالة بنجاح إلى الحافظة!");
-                }).catch(err => {
-                    console.error('فشل النسخ:', err);
-                });
-            }
-
-        
     </script>
 </body>
 </html>
