@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- مكتبات Quill الأساسية والجداول والصور المحسنة -->
+    <!-- مكتبات Quill الأساسية والجداول المتقدمة وتغيير حجم الصور -->
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/quill-table@1.0.1/dist/quill.table.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/quill-table-better@1.1.0/dist/quill-table-better.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.css" rel="stylesheet">
 
     <style>
@@ -72,7 +72,7 @@
             border: 2px solid #ff5722 !important;
         }
 
-        /* تنسيقات المحرر المحسن */
+        /* تنسيقات المحرر المحسن الشامل */
         .sticky-editor-header {
             position: sticky; top: 10px; z-index: 1000;
             background: var(--card-bg); border: 1px solid var(--border-color);
@@ -90,8 +90,8 @@
         .font-tag-btn:hover { background: var(--primary-color); border-color: var(--primary-color); }
 
         .ql-toolbar.ql-snow { background: var(--bg-dark) !important; border-color: var(--border-color) !important; border-radius: 6px; direction: ltr; }
-        .ql-container.ql-snow { background: var(--bg-dark); color: var(--text-main); border-color: var(--border-color); border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; min-height: 350px; font-size: 1.05rem; direction: rtl; text-align: right; }
-        .ql-editor { direction: rtl; text-align: right; min-height: 330px; }
+        .ql-container.ql-snow { background: var(--bg-dark); color: var(--text-main); border-color: var(--border-color); border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; min-height: 380px; font-size: 1.05rem; direction: rtl; text-align: right; }
+        .ql-editor { direction: rtl; text-align: right; min-height: 360px; }
         .ql-snow .ql-stroke { stroke: var(--text-main); }
         .ql-snow .ql-fill { fill: var(--text-main); }
         .ql-snow .ql-picker { color: var(--text-main); }
@@ -219,9 +219,9 @@
             <button class="btn" onclick="saveAdsSettings()">حفظ إعدادات الإعلانات للسيرفر</button>
         </div>
 
-        <!-- إدارة ونشر المقالات والصفحات (المحرر المحسن الكامل بالجداول والصور والروابط) -->
+        <!-- إدارة ونشر المقالات والصفحات (المحرر المحسن الشامل) -->
         <div class="section-box">
-            <h3>📝 إدارة ونشر المقالات والصفحات (المحرر المحسن)</h3>
+            <h3>📝 إدارة ونشر المقالات والصفحات (المحرر المحسن الشامل)</h3>
 
             <!-- 1. زر الإدارة الوحيد الظاهر افتراضياً -->
             <div id="manager-trigger-wrapper" style="margin: 15px 0;">
@@ -230,7 +230,7 @@
                 </button>
             </div>
 
-            <!-- 2. حاوية الفورم الكاملة -->
+            <!-- 2. حاوية الفورم الكاملة للمحرر -->
             <div id="article-manager-form-container" style="display: none; margin-top: 15px; background: rgba(255,255,255,0.01); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
                 <div class="form-group">
                     <label>نوع المحتوى:</label>
@@ -265,12 +265,12 @@
                     <input type="text" id="post-date">
                 </div>
 
-                <!-- حاوية المحرر وشريط الأدوات المحسن -->
+                <!-- شريط الخطوط المخصص وأدوات المحرر الاحترافي -->
                 <div class="form-group">
                     <label>المحتوى:</label>
                     <div class="sticky-editor-header">
                         <div class="custom-font-bar">
-                            <span style="font-size: 0.8rem; color: var(--accent-color); margin-left: 5px;"><i class="fa-solid fa-font"></i> تغيير الخط للنص المظلل:</span>
+                            <span style="font-size: 0.8rem; color: var(--accent-color); margin-left: 5px;"><i class="fa-solid fa-font"></i> تغيير خط النص المظلل:</span>
                             <button type="button" class="font-tag-btn" style="font-family: 'Cairo', sans-serif;" onclick="applyCustomFont('cairo')">خط كايرو</button>
                             <button type="button" class="font-tag-btn" style="font-family: 'Tajawal', sans-serif;" onclick="applyCustomFont('tajawal')">خط تجوال</button>
                             <button type="button" class="font-tag-btn" style="font-family: 'Amiri', serif;" onclick="applyCustomFont('amiri')">خط أميري</button>
@@ -331,8 +331,9 @@
         </div>
     </div>
 
-    <!-- مكتبات Quill والجداول والصور -->
+    <!-- مكتبات Quill والجداول المتقدمة وتغيير حجم الصور -->
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script src="https://unpkg.com/quill-table-better@1.1.0/dist/quill-table-better.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
     <script>
         let globalData = {
@@ -401,7 +402,7 @@
             initAdminUI();
         }
 
-        async function saveServerData(successMsg, postToSave = null) {
+        async function saveServerData(successMsg) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
                 showCustomAlert("تنبيه هامة", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى لوحة التحكم أولاً لتمكين الحفظ على السحابة!");
@@ -446,23 +447,44 @@
             }
         }
 
-        // إعداد محرر Quill المحسن مع دعم الخطوط
+        // تسجيل خطوط النصوص وقدرات المحرر المتقدمة
         var Font = Quill.import('formats/font');
         Font.whitelist = ['cairo', 'tajawal', 'amiri', false];
         Quill.register(Font, true);
+        Quill.register({'modules/imageResize': ImageResize}, true);
+        Quill.register({'modules/tableBetter': quillTableBetter}, true);
 
         var quill = new Quill('#editor-container', {
             theme: 'snow',
             modules: {
-                toolbar: [
-                    [{ header: [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ color: [] }, { background: [] }],
-                    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    ['link', 'blockquote', 'code-block'],
-                    ['clean']
-                ]
+                tableBetter: {
+                    operationMenu: {
+                        items: {
+                            insertRowAbove: 'إجادة سطر للأعلى',
+                            insertRowBelow: 'إجادة سطر للأسفل',
+                            insertColumnLeft: 'إجادة عمود لليسار',
+                            insertColumnRight: 'إجادة عمود لليمين',
+                            deleteRow: 'حذف السطر',
+                            deleteColumn: 'حذف العمود',
+                            deleteTable: 'حذف الجدول بالكامل'
+                        }
+                    }
+                },
+                imageResize: {
+                    parchment: Quill.import('parchment'),
+                    modules: ['Resize', 'DisplaySize']
+                },
+                toolbar: {
+                    container: [
+                        [{ header: [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ color: [] }, { background: [] }],
+                        [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        ['link', 'image', 'video'],
+                        ['clean']
+                    ]
+                }
             }
         });
 
