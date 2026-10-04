@@ -574,7 +574,7 @@ async function loadServerData() {
             } catch (e) {}
         }
         
-        async function saveServerData(successMsg, postToSave = null) {
+async function saveServerData(successMsg, postToSave = null) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
                 showCustomAlert("تنبيه هام", "الرجاء إدخال رمز الصلاحية (GitHub Token) أولاً!");
@@ -585,16 +585,23 @@ async function loadServerData() {
                 const owner = "abdulazizalhaaj728-del";
                 const repo = "tech-dalil";
                 
+                // جلب أحدث SHA لملف data.json مباشرة قبل عملية الحفظ لتفادي رفض الطلب من جيت هاب
+                try {
+                    const resSha = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json?t=` + Date.now(), { cache: 'no-store' });
+                    if (resSha.ok) {
+                        const fileData = await resSha.json();
+                        globalFileSha = fileData.sha;
+                    }
+                } catch (e) {}
+
                 globalData.posts = getData('tech_dalil_posts', globalData.posts || []);
                 globalData.pages = getData('tech_static_pages', globalData.pages || []);
                 
-                // التأكد من تهيئة كائن الإعدادات وجلب القيم الحالية
                 if (!globalData.settings) globalData.settings = {};
                 globalData.settings.logoUrl = getData('tech_logo_url', globalData.settings.logoUrl || "");
                 globalData.settings.logoHeight = getData('tech_logo_height', globalData.settings.logoHeight || "");
                 globalData.settings.tickerVisible = getData('tech_ticker_visible', globalData.settings.tickerVisible ?? false);
 
-                // حفظ القيم في LocalStorage
                 localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
                 localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
                 localStorage.setItem('tech_logo_url', JSON.stringify(globalData.settings.logoUrl));
@@ -608,12 +615,11 @@ async function loadServerData() {
                     else globalData.posts.unshift(postToSave);
                 }
         
-                // إضافة حقل settings ليتم إرساله وحفظه داخل ملف data.json
                 let payloadData = {
                     posts: globalData.posts,
                     pages: globalData.pages,
                     widgets: globalData.widgets || [],
-                    settings: globalData.settings // <-- إرسال إعدادات الشعار والشريط
+                    settings: globalData.settings
                 };
 
                 const contentString = JSON.stringify(payloadData, null, 4);
@@ -622,7 +628,7 @@ async function loadServerData() {
                 const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "Update data via Admin Panel", content: encodedContent, sha: globalFileSha })
+                    body: JSON.stringify({ message: "Update settings and data via Admin Panel", content: encodedContent, sha: globalFileSha })
                 });
             
                 const result = await response.json();
@@ -660,6 +666,7 @@ async function loadServerData() {
                 showCustomAlert("خطأ اتصال", "تعذر الاتصال بخوادم GitHub.");
             }
         }
+
         
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
