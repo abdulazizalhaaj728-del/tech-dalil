@@ -472,14 +472,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // --- 2. التحكم في إظهار أو إخفاء الشعار (Logo) ---
-        const siteLogoEl = document.getElementById('site-logo'); // تأكد من مطابقتها لـ ID الشعار في الـ HTML لديك
-        if (siteLogoEl) {
-            if (data.settings && data.settings.showLogo === false) {
+        // --- 2. التحكم في الشعار (Logo) وإظهاره وتعيين خصائصه ---
+        const siteLogoEl = document.getElementById('site-logo'); 
+        if (siteLogoEl && data.settings) {
+            // التحقق من خيار الإظهار/الإخفاء
+            if (data.settings.showLogo === false) {
                 siteLogoEl.style.display = 'none';
             } else {
                 siteLogoEl.style.display = 'block';
+                
+                // تعيين رابط الشعار (Base64) إذا كان موجوداً
+                if (data.settings.logoUrl) {
+                    siteLogoEl.src = data.settings.logoUrl;
+                }
+                
+                // تعيين الارتفاع إذا كان محددماً في الإعدادات
+                if (data.settings.logoHeight) {
+                    siteLogoEl.style.height = data.settings.logoHeight;
+                }
             }
         }
+        //----------------------------------------
         
         let rawPosts = data.posts || [];
         let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
