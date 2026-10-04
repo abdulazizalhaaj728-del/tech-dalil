@@ -75,6 +75,14 @@
             "content": "",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1791112460836",
+            "title": "مشاركات مميزة",
+            "type": "popular",
+            "content": "",
+            "active": true,
+            "location": "sidebar"
         }
     ]
 }
