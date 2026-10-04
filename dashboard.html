@@ -520,83 +520,82 @@
         }
 
 async function loadServerData() {
-            // 1. التحميل الأولي الفوري من التخزين المحلي (LocalStorage) لكل العناصر بما فيها القوائم
-            let localPosts = getData('tech_dalil_posts', []);
-            let localPages = getData('tech_static_pages', []);
-            let localMenu = getData('tech_menu', []);
-            let localWidgets = getData('tech_widgets', []);
-        
-            globalData.posts = localPosts;
-            globalData.pages = localPages;
-            globalData.menu = localMenu;
-            globalData.widgets = localWidgets;
-        
-            initAdminUI();
-            loadPostsAdminList();
-        
-            // 2. طلب التحميل من السحابة والدمج الذكي
-            try {
-                const response = await fetch('data.json?t=' + Date.now());
-                if (response.ok) {
-                    const serverData = await response.json();
-                    if (serverData) {
-                        let hasNewUpdates = false;
-        
-                        // دمج المقالات
-                        if (serverData.posts && Array.isArray(serverData.posts)) {
-                            serverData.posts.forEach(serverPost => {
-                                let existsLocally = globalData.posts.some(p => p.id === serverPost.id || p.slug === serverPost.slug);
-                                if (!existsLocally) {
-                                    globalData.posts.push(serverPost);
-                                    hasNewUpdates = true;
-                                }
-                            });
-                            if (hasNewUpdates) {
-                                localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
-                            }
-                        }
-        
-                        // دمج الصفحات
-                        if (serverData.pages && Array.isArray(serverData.pages)) {
-                            serverData.pages.forEach(serverPage => {
-                                if (!globalData.pages.some(p => p.id === serverPage.id)) {
-                                    globalData.pages.push(serverPage);
-                                }
-                            });
-                            localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
-                        }
+    // 1. التحميل المحلي للمقالات والصفحات والودجتس فقط (إذا أردت بقاءها محلياً)
+    let localPosts = getData('tech_dalil_posts', []);
+    let localPages = getData('tech_static_pages', []);
+    let localWidgets = getData('tech_widgets', []);
 
-                        // دمج القوائم من السحابة إذا كانت موجودة محلياً فارغة وليست بالسحابة
-                        if (serverData.menu && Array.isArray(serverData.menu) && serverData.menu.length > 0) {
-                            if (!globalData.menu || globalData.menu.length === 0) {
-                                globalData.menu = serverData.menu;
-                                localStorage.setItem('tech_menu', JSON.stringify(globalData.menu));
-                            }
-                        }
+    globalData.posts = localPosts;
+    globalData.pages = localPages;
+    globalData.widgets = localWidgets;
+    globalData.menu = []; // نبدئها فارغة ريثما تأتي من السيرفر مباشرة
+
+    initAdminUI();
+    loadPostsAdminList();
+
+    // 2. الجلب المباشر والإجباري للقوائم وباقي البيانات من ملف السيرفر (مع منع الكاش)
+    try {
+        const response = await fetch('data.json?v=' + Date.now(), {
+            cache: 'no-store' // منع المتصفح من تخزين الملف مؤقتاً
+        });
         
-                        // تحديث الواجهة بعد فحص السحابة
-                        initAdminUI();
-                        loadPostsAdminList();
-                    }
+        if (response.ok) {
+            const serverData = await response.json();
+            if (serverData) {
+                // جلب القوائم مباشرة من السيرفر حصراً دون دمج محلي معقد
+                if (serverData.menu && Array.isArray(serverData.menu)) {
+                    globalData.menu = serverData.menu;
                 }
-            } catch (err) {
-                console.log("الاعتماد الكامل على التخزين المحلي لعدم توفر الاتصال بالسحابة.");
+
+                // دمج المقالات والصفحات إذا لزم الأمر
+                if (serverData.posts && Array.isArray(serverData.posts)) {
+                    serverData.posts.forEach(serverPost => {
+                        let existsLocally = globalData.posts.some(p => p.id === serverPost.id || p.slug === serverPost.slug);
+                        if (!existsLocally) {
+                            globalData.posts.push(serverPost);
+                        }
+                    });
+                }
+
+                if (serverData.pages && Array.isArray(serverData.pages)) {
+                    serverData.pages.forEach(serverPage => {
+                        if (!globalData.pages.some(p => p.id === serverPage.id)) {
+                            globalData.pages.push(serverPage);
+                        }
+                    });
+                }
+
+                // مسح أي أثر قديم مخزن محلياً للقوائم لضمان عدم تداخلها
+                localStorage.removeItem('tech_menu');
+
+                // تحديث الواجهة بالعبيانات الطازجة القادمة من السيرفر
+                initAdminUI();
+                if (typeof renderStructuredMenuAdmin === 'function') {
+                    renderStructuredMenuAdmin();
+                }
+                loadPostsAdminList();
             }
-        
-            // جلب الـ SHA الخاص بـ GitHub للتحديثات اللاحقة
-            try {
-                const owner = "abdulazizalhaaj728-del";
-                const repo = "tech-dalil";
-                const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json`);
-                if (res.ok) {
-                    const fileData = await res.json();
-                    globalFileSha = fileData.sha;
-                }
-            } catch (e) {}
         }
+    } catch (err) {
+        console.log("تعذر الاتصال بالسيرفر لجلب القوائم.");
+    }
 
-        async function saveServerData(successMsg, postToSave = null) {
-            // 1. تصحيح وتنظيم المستويات والشرطات قبل الحفظ لضمان عدم ضياعها
+    // جلب الـ SHA الخاص بـ GitHub للتحديثات اللاحقة
+    try {
+        const owner = "abdulazizalhaaj728-del";
+        const repo = "tech-dalil";
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json?t=` + Date.now(), {
+            cache: 'no-store'
+        });
+        if (res.ok) {
+            const fileData = await res.json();
+            globalFileSha = fileData.sha;
+        }
+    } catch (e) {}
+}
+        
+async function saveServerData(successMsg, postToSave = null) {
+            // 1. تصحيح وتنظيم المستويات والشرطات للقوائم قبل الحفظ
             normalizeMenuLevelsBeforeSave();
             
             const token = document.getElementById('gh-token-input').value.trim();
@@ -609,15 +608,16 @@ async function loadServerData() {
                 const owner = "abdulazizalhaaj728-del";
                 const repo = "tech-dalil";
                 
+                // جلب المقالات والصفحات محلياً كالمعتاد، ولكن بدون حفظ القوائم محلياً
                 globalData.posts = getData('tech_dalil_posts', globalData.posts || []);
                 globalData.pages = getData('tech_static_pages', globalData.pages || []);
-                globalData.menu = globalData.menu || []; // التأكد من وجود القوائم
+                globalData.menu = globalData.menu || []; // القوائم الحالية فقط في الذاكرة
                 
-                // حفظ كافة البيانات محلياً (بما فيها القوائم و الـ Widgets) لضمان عدم اختفائها أبداً عند التحديث
+                // حفظ المقالات والصفحات والودجتس فقط محلياً (تم حذف حفظ tech_menu لمنع تعارض الكاش)
                 localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
                 localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
-                localStorage.setItem('tech_menu', JSON.stringify(globalData.menu));
                 localStorage.setItem('tech_widgets', JSON.stringify(globalData.widgets || []));
+                localStorage.removeItem('tech_menu'); // مسح أي أثر محلي قديم للقوائم
         
                 if (postToSave) {
                     const existingIndex = globalData.posts.findIndex(p => p.id == postToSave.id);
@@ -628,17 +628,24 @@ async function loadServerData() {
                     if (!globalData.menu.some(item => item.url && item.url.includes(postToSave.slug))) {
                         globalData.menu.push({ title: postToSave.title, url: articleUrl, level: 3, rawText: '___ ' + postToSave.title });
                         normalizeMenuLevelsBeforeSave();
-                        localStorage.setItem('tech_menu', JSON.stringify(globalData.menu));
                     }
                 }
             
-                const contentString = JSON.stringify(globalData, null, 4);
+                // تجهيز الهيكل الكامل للإرسال للسيرفر
+                let payloadData = {
+                    posts: globalData.posts,
+                    pages: globalData.pages,
+                    menu: globalData.menu, // القوائم المحدثة حالياً
+                    widgets: globalData.widgets || []
+                };
+
+                const contentString = JSON.stringify(payloadData, null, 4);
                 const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
             
                 const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data.json`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: "Update via Admin Panel", content: encodedContent, sha: globalFileSha })
+                    body: JSON.stringify({ message: "Update menu and data via Admin Panel", content: encodedContent, sha: globalFileSha })
                 });
             
                 const result = await response.json();
@@ -666,9 +673,14 @@ async function loadServerData() {
                         });
                     }
             
-                    showCustomAlert("نجاح", successMsg || "تم الحفظ بنجاح على السحابة والتخزين المحلي!");
+                    showCustomAlert("نجاح", successMsg || "تم حفظ القوائم والبيانات على السحابة مباشرة!");
                     menuHasChanges = false;
-                    renderStructuredMenuAdmin();
+                    
+                    // إعادة تحميل الصفحة بعد ثانية واحدة لإجبار المتصفح على جلب النسخة الطازجة وتلافي الكاش تماماً
+                    setTimeout(() => {
+                        window.location.reload(true);
+                    }, 1200);
+
                 } else {
                     showCustomAlert("خطأ", "فشل الحفظ: تأكد من صحة الـ Token.");
                 }
@@ -676,7 +688,7 @@ async function loadServerData() {
                 showCustomAlert("خطأ اتصال", "تعذر الاتصال بخوادم GitHub.");
             }
         }
-
+        
         
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
