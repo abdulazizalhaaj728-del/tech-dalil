@@ -498,14 +498,22 @@
             return `${baseSlug}-${Date.now().toString().slice(-5)}.html`;
         }
 
-        async function loadServerData() {
+async function loadServerData() {
             let localPosts = getData('tech_dalil_posts', []);
             let localPages = getData('tech_static_pages', []);
             let localWidgets = getData('tech_widgets', []);
+            
+            // جلب إعدادات الشعار والشريط من التخزين المحلي كقيمة أولية
+            let localSettings = {
+                logoUrl: getData('tech_logo_url', ""),
+                logoHeight: getData('tech_logo_height', ""),
+                tickerVisible: getData('tech_ticker_visible', true)
+            };
 
             globalData.posts = localPosts;
             globalData.pages = localPages;
             globalData.widgets = localWidgets;
+            globalData.settings = localSettings;
 
             initAdminUI();
             loadPostsAdminList();
@@ -515,6 +523,7 @@
                 if (response.ok) {
                     const serverData = await response.json();
                     if (serverData) {
+                        // دمج المقالات من السيرفر
                         if (serverData.posts && Array.isArray(serverData.posts)) {
                             serverData.posts.forEach(serverPost => {
                                 let existsLocally = globalData.posts.some(p => p.id === serverPost.id || p.slug === serverPost.slug);
@@ -522,10 +531,28 @@
                             });
                         }
 
+                        // دمج الصفحات الثابتة من السيرفر
                         if (serverData.pages && Array.isArray(serverData.pages)) {
                             serverData.pages.forEach(serverPage => {
                                 if (!globalData.pages.some(p => p.id === serverPage.id)) globalData.pages.push(serverPage);
                             });
+                        }
+
+                        // التصحيح الهام: جلب إعدادات السيرفر (الشعار والشريط والإعلانات) وتحديثها
+                        if (serverData.settings) {
+                            globalData.settings = { ...globalData.settings, ...serverData.settings };
+                            // تحديث LocalStorage بالإعدادات القادمة من السيرفر
+                            if (serverData.settings.logoUrl !== undefined) localStorage.setItem('tech_logo_url', JSON.stringify(serverData.settings.logoUrl));
+                            if (serverData.settings.logoHeight !== undefined) localStorage.setItem('tech_logo_height', JSON.stringify(serverData.settings.logoHeight));
+                            if (serverData.settings.tickerVisible !== undefined) localStorage.setItem('tech_ticker_visible', JSON.stringify(serverData.settings.tickerVisible));
+                        }
+
+                        if (serverData.ads) {
+                            globalData.ads = serverData.ads;
+                        }
+
+                        if (serverData.widgets && Array.isArray(serverData.widgets)) {
+                            globalData.widgets = serverData.widgets;
                         }
 
                         initAdminUI();
@@ -554,7 +581,7 @@
                 return;
             }
         
-try {
+            try {
                 const owner = "abdulazizalhaaj728-del";
                 const repo = "tech-dalil";
                 
@@ -586,7 +613,7 @@ try {
                     posts: globalData.posts,
                     pages: globalData.pages,
                     widgets: globalData.widgets || [],
-                    settings: globalData.settings // <-- تم إضافتها هنا لتظهر في ملف الـ JSON
+                    settings: globalData.settings // <-- إرسال إعدادات الشعار والشريط
                 };
 
                 const contentString = JSON.stringify(payloadData, null, 4);
