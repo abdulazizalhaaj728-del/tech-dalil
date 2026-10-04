@@ -139,5 +139,13 @@
             "level": 3,
             "url": "android-studio-72369.html"
         }
-    ]
+    ],
+    "ads": {
+        "topOn": true,
+        "topCode": "",
+        "midOn": true,
+        "midCode": "",
+        "botOn": true,
+        "botCode": ""
+    }
 }
