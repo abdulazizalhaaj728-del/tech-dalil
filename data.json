@@ -93,33 +93,33 @@
             "url": "tech-post-99447.html"
         },
         {
-            "rawText": "____دليل بناء حاسوب شخصي.",
+            "rawText": "___دليل بناء حاسوب شخصي.",
             "title": "دليل بناء حاسوب شخصي.",
-            "level": 4,
+            "level": 3,
             "url": "guide-pc-building-39617.html"
         },
         {
-            "rawText": "____الشبكات Networks",
+            "rawText": "___الشبكات Networks",
             "title": "الشبكات Networks",
-            "level": 4,
+            "level": 3,
             "url": "networks-networks-16340.html"
         },
         {
-            "rawText": "برمجة الحاسب الآلي",
+            "rawText": "__برمجة الحاسب الآلي",
             "title": "برمجة الحاسب الآلي",
-            "level": 1,
+            "level": 2,
             "url": "#"
         },
         {
-            "rawText": "دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء التطبيقات",
+            "rawText": "___دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء التطبيقات",
             "title": "دليل لغات البرمجة لعام : كيف تختار اللغة الأنسب لبناء التطبيقات",
-            "level": 1,
+            "level": 3,
             "url": "guide-programming-how-to-15236.html"
         },
         {
-            "rawText": "عمل تطبيق بوصلة بواسطة Android studio",
+            "rawText": "___عمل تطبيق بوصلة بواسطة Android studio",
             "title": "عمل تطبيق بوصلة بواسطة Android studio",
-            "level": 1,
+            "level": 3,
             "url": "android-studio-72369.html"
         }
     ]
