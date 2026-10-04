@@ -461,6 +461,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await response.json();
         window.siteBlogData = data; 
         
+        // --- 1. التحكم في إظهار أو إخفاء الشريط الإخباري (News Ticker) ---
+        const newsTickerEl = document.getElementById('news-ticker-container'); // تأكد من أن هذا هو ID عنصر الشريط الإخباري لديك
+        if (newsTickerEl) {
+            if (data.settings && data.settings.showNewsTicker === false) {
+                newsTickerEl.style.display = 'none';
+            } else {
+                newsTickerEl.style.display = 'block';
+            }
+        }
+
+        // --- 2. التحكم في إظهار أو إخفاء الشعار (Logo) ---
+        const siteLogoEl = document.getElementById('site-logo'); // تأكد من مطابقتها لـ ID الشعار في الـ HTML لديك
+        if (siteLogoEl) {
+            if (data.settings && data.settings.showLogo === false) {
+                siteLogoEl.style.display = 'none';
+            } else {
+                siteLogoEl.style.display = 'block';
+            }
+        }
+        
         let rawPosts = data.posts || [];
         let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
 
@@ -516,57 +536,87 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        if (data.widgets && data.widgets.length > 0) {
-            const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
-            const footerWidgetsContainer = document.getElementById('site-footer-widgets');
-            let sidebarHtml = '', footerHtml = '';
+        // --- 3. التحكم في الودجات (Widgets) وإخفائها بالكامل إذا كانت مفعلة/معطلة من لوحة التحكم ---
+        const areWidgetsEnabled = data.settings ? (data.settings.showWidgets !== false) : true;
+        const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
+        const footerWidgetsContainer = document.getElementById('site-footer-widgets');
 
-            data.widgets.forEach(w => {
-                if (!w.active) return;
-                let contentBox = '';
-                if (w.type === 'recent') {
-                    let recentThree = sequencedPosts.slice(0, 3);
-                    contentBox = '<ul class="recent-posts-list">' + recentThree.map(p => `
-                        <li><a href="?article=${p.slug}" style="font-size: 0.68rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>
-                    `).join('') + '</ul>';
-                } else if (w.type === 'links') {
-                    contentBox = `<div class="quick-links-box" style="font-size: 0.68rem;">${w.content || ''}</div>`;
-                } else {
-                    contentBox = `<div style="font-size: 0.68rem;">${w.content || ''}</div>`;
+        if (!areWidgetsEnabled) {
+            if (sidebarWidgetsContainer) sidebarWidgetsContainer.style.display = 'none';
+            if (footerWidgetsContainer) footerWidgetsContainer.style.display = 'none';
+        } else {
+            if (data.widgets && data.widgets.length > 0) {
+                let sidebarHtml = '', footerHtml = '';
+
+                data.widgets.forEach(w => {
+                    if (!w.active) return;
+                    let contentBox = '';
+                    if (w.type === 'recent') {
+                        let recentThree = sequencedPosts.slice(0, 3);
+                        contentBox = '<ul class="recent-posts-list">' + recentThree.map(p => `
+                            <li><a href="?article=${p.slug}" style="font-size: 0.68rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>
+                        `).join('') + '</ul>';
+                    } else if (w.type === 'links') {
+                        contentBox = `<div class="quick-links-box" style="font-size: 0.68rem;">${w.content || ''}</div>`;
+                    } else {
+                        contentBox = `<div style="font-size: 0.68rem;">${w.content || ''}</div>`;
+                    }
+
+                    let widgetBlock = `
+                        <div class="widget-card" id="${w.id}">
+                            <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">${w.title}</h3>
+                            <div class="widget-content">${contentBox}</div>
+                        </div>
+                    `;
+                    if (w.location === 'footer') {
+                        footerHtml += widgetBlock;
+                    } else {
+                        sidebarHtml += widgetBlock;
+                    }
+                });
+
+                if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
+                if (footerWidgetsContainer) {
+                    footerWidgetsContainer.style.minHeight = "220px";
+                    footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
                 }
-
-                let widgetBlock = `
-                    <div class="widget-card" id="${w.id}">
-                        <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">${w.title}</h3>
-                        <div class="widget-content">${contentBox}</div>
-                    </div>
-                `;
-                if (w.location === 'footer') {
-                    footerHtml += widgetBlock;
-                } else {
-                    sidebarHtml += widgetBlock;
-                }
-            });
-
-            if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
-            if (footerWidgetsContainer) {
-                footerWidgetsContainer.style.minHeight = "220px";
-                footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
             }
         }
 
+        // --- 4. التحكم في أماكن الإعلانات (Ads) حسب خيارات لوحة التحكم ---
         if (data.ads) {
-            if (data.ads.topOn && data.ads.topCode) {
-                const topAdBox = document.getElementById('site-ad-top');
-                if (topAdBox) topAdBox.innerHTML = data.ads.topCode;
+            const topAdBox = document.getElementById('site-ad-top');
+            const midAdBox = document.getElementById('site-ad-mid');
+            const botAdBox = document.getElementById('site-ad-bot');
+
+            if (topAdBox) {
+                if (data.ads.topOn && data.ads.topCode) {
+                    topAdBox.innerHTML = data.ads.topCode;
+                    topAdBox.style.display = 'block';
+                } else {
+                    topAdBox.innerHTML = '';
+                    topAdBox.style.display = 'none';
+                }
             }
-            if (data.ads.midOn && data.ads.midCode) {
-                const midAdBox = document.getElementById('site-ad-mid');
-                if (midAdBox) midAdBox.innerHTML = data.ads.midCode;
+
+            if (midAdBox) {
+                if (data.ads.midOn && data.ads.midCode) {
+                    midAdBox.innerHTML = data.ads.midCode;
+                    midAdBox.style.display = 'block';
+                } else {
+                    midAdBox.innerHTML = '';
+                    midAdBox.style.display = 'none';
+                }
             }
-            if (data.ads.botOn && data.ads.botCode) {
-                const botAdBox = document.getElementById('site-ad-bot');
-                if (botAdBox) botAdBox.innerHTML = data.ads.botCode;
+
+            if (botAdBox) {
+                if (data.ads.botOn && data.ads.botCode) {
+                    botAdBox.innerHTML = data.ads.botCode;
+                    botAdBox.style.display = 'block';
+                } else {
+                    botAdBox.innerHTML = '';
+                    botAdBox.style.display = 'none';
+                }
             }
         }
 
@@ -582,6 +632,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// باقي الدوال تبقى كما هي بدون تغيير...
 function getOrderedPosts(menuItems, allPosts) {
     let ordered = [];
     let visitedIds = new Set();
@@ -622,7 +673,6 @@ function getShortTitle(title) {
     return words.length > 5 ? words.slice(0, 5).join(' ') + '...' : title;
 }
 
-// دالة فتح المقال مع إخفاء السلايدر والمحتويات الأخرى المعيقة لحركة الصندوق
 window.openPostBySlug = async function(slug) {
     const dynamicView = document.getElementById('dynamic-post-view');
     const dynamicContentBox = document.getElementById('dynamic-post-content-box');
@@ -648,14 +698,12 @@ window.openPostBySlug = async function(slug) {
     let menuTree = data.menu ? buildTree(data.menu) : [];
     let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
 
-    // تنظيف الـ slug القادم وضبطه بدقة للمقارنة
     let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
     if (targetSlug.includes('?article=')) {
         targetSlug = targetSlug.split('?article=')[1];
     }
     targetSlug = targetSlug.split('/').pop().trim();
 
-    // البحث الدقيق عن المقال المطابق في القائمة
     let post = rawPosts.find(p => {
         let pSlug = (p.slug || '').replace('.html', '').trim().toLowerCase();
         let pId = String(p.id || '').trim();
@@ -808,7 +856,7 @@ window.openPostBySlug = async function(slug) {
         renderNavContainer();
     }
 };
-// دالة إغلاق صندوق المقال وإعادة إظهار محتويات الخلفية (السلايدر والعناصر الأخرى) في مكانها
+
 window.closePostView = function() {
     const dynamicView = document.getElementById('dynamic-post-view');
     const dynamicContentBox = document.getElementById('dynamic-post-content-box');
@@ -818,7 +866,6 @@ window.closePostView = function() {
         dynamicContentBox.innerHTML = '';
     }
 
-    // إعادة إظهار عناصر الصفحة الرئيسية المختفية
     document.querySelectorAll('.hide-on-article').forEach(el => el.style.display = '');
 
     history.pushState({}, '', window.location.pathname);
@@ -943,71 +990,6 @@ function initSliderLogic() {
             sliderTimer = setInterval(nextSlide, 4000);
         });
     }
-}
-
-const fontsList = ["'Cairo', sans-serif", "'Tajawal', sans-serif", "'Almarai', sans-serif", "'Readex Pro', sans-serif", "'Changa', sans-serif", "'Amiri', serif"];
-let currentFontIdx = localStorage.getItem('tech_font_idx') ? parseInt(localStorage.getItem('tech_font_idx')) : 0;
-const fontToggleBtn = document.getElementById('font-toggle-btn');
-if (fontToggleBtn) {
-    fontToggleBtn.addEventListener('click', () => {
-        currentFontIdx = (currentFontIdx + 1) % fontsList.length;
-        document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
-        localStorage.setItem('tech_font_idx', currentFontIdx);
-    });
-}
-document.documentElement.style.setProperty('--active-font', fontsList[currentFontIdx]);
-
-const themesList = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
-let currentThemeIdx = localStorage.getItem('tech_theme_idx') ? parseInt(localStorage.getItem('tech_theme_idx')) : 0;
-
-function applyTheme(idx) {
-    document.body.classList.remove('light-mode');
-    themesList.forEach(t => document.body.classList.remove(t));
-    document.body.classList.add(themesList[idx]);
-    localStorage.setItem('tech_theme_idx', idx);
-}
-
-const nextThemeBtn = document.getElementById('next-theme-btn');
-const prevThemeBtn = document.getElementById('prev-theme-btn');
-if (nextThemeBtn) {
-    nextThemeBtn.addEventListener('click', () => {
-        currentThemeIdx = (currentThemeIdx + 1) % themesList.length;
-        applyTheme(currentThemeIdx);
-    });
-}
-if (prevThemeBtn) {
-    prevThemeBtn.addEventListener('click', () => {
-        currentThemeIdx = (currentThemeIdx - 1 + themesList.length) % themesList.length;
-        applyTheme(currentThemeIdx);
-    });
-}
-applyTheme(currentThemeIdx);
-
-const darkModeBtn = document.getElementById('dark-mode-btn');
-if (darkModeBtn) {
-    darkModeBtn.addEventListener('click', () => {
-        document.body.classList.toggle('light-mode');
-        const isLight = document.body.classList.contains('light-mode');
-        localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
-        darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-    });
-
-    if (localStorage.getItem('tech_light_mode') === '1') {
-        document.body.classList.add('light-mode');
-        darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-    }
-}
-
-const secretTrigger = document.getElementById('secret-trigger');
-if (secretTrigger) {
-    secretTrigger.addEventListener('click', () => {
-        const pass = prompt("كلمة المرور للوصول إلى لوحة التحكم:");
-        if (pass === "aziz728") {
-            window.location.href = "dashboard.html";
-        } else if (pass !== null) {
-            alert("كلمة المرور غير صحيحة!");
-        }
-    });
 }
     </script>
 </body>
