@@ -96,26 +96,27 @@
         .ql-snow .ql-stroke { stroke: var(--text-main); }
         .ql-snow .ql-fill { fill: var(--text-main); }
         .ql-snow .ql-picker { color: var(--text-main); }
+        .ql-font-cairo { font-family: 'Cairo', sans-serif !important; }
+        .ql-font-tajawal { font-family: 'Tajawal', sans-serif !important; }
+        .ql-font-amiri { font-family: 'Amiri', serif !important; }
 
         .ql-editor table, .post-card table {
             width: 100% !important; border-collapse: collapse !important; margin: 15px 0 !important; background-color: #ffffff !important; color: #1e293b !important;
         }
-        .ql-editor table td, .ql-editor table th, .post-card table td, .post-card table th {
+        .ql-editor table td, .ql-editor table th,
+        .post-card table td, .post-card table th {
             border: 2px solid #94a3b8 !important; padding: 10px 12px !important; text-align: center !important; vertical-align: middle !important;
         }
         .ql-editor table th, .post-card table th { background-color: #e2e8f0 !important; font-weight: bold !important; }
 
         .post-card, #editor-container, .ql-container.ql-snow, #widget-custom-text, #widgets-list-box {
             background-color: #F7F4EF !important;
-            background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png');
             border: 1px solid #E2D8C5 !important; border-radius: 12px; color: #2C3E50 !important;
         }
         .ql-editor, .post-card p, .section-box textarea, input[type="text"] {
             font-family: 'Cairo', 'Tajawal', sans-serif !important; text-align: justify !important; color: #2C3E50 !important; line-height: 2 !important;
         }
-        #widgets-list-box {
-            background: var(--bg-dark) !important; background-image: none !important; border: 1px solid var(--border-color) !important; color: var(--text-main) !important;
-        }
+        #widgets-list-box { background: var(--bg-dark) !important; border: 1px solid var(--border-color) !important; color: var(--text-main) !important; }
     </style>
 </head>
 <body>
@@ -240,7 +241,6 @@
         <!-- إدارة ونشر المقالات والصفحات -->
         <div class="section-box">
             <h3>📝 إدارة ونشر المقالات والصفحات</h3>
-
             <div id="manager-trigger-wrapper" style="margin: 15px 0;">
                 <button type="button" class="btn" id="toggle-manager-btn" style="padding: 8px 16px; font-size: 0.9rem;">
                     <i class="fa-solid fa-pen-to-square"></i> إدارة مقالة / صفحة
@@ -255,27 +255,22 @@
                         <option value="page">صفحة مستقلة (تظهر ضمن الصفحات العلوية ولا تنشر كمقالة)</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
                     <label>العنوان:</label>
                     <input type="text" id="post-title" placeholder="عنوان المقال أو الصفحة">
                 </div>
-                
                 <div class="form-group">
                     <label>التسمية أو التصنيف:</label>
                     <input type="text" id="post-cat" placeholder="مثال: شبكات، برمجة">
                 </div>
-                
                 <div class="form-group">
                     <label>وصف مختصر:</label>
                     <input type="text" id="post-desc" placeholder="نبذة قصيرة">
                 </div>
-                
                 <div class="form-group">
                     <label>رابط الصورة البارزة:</label>
                     <input type="text" id="post-img" placeholder="https://...">
                 </div>
-                
                 <div class="form-group">
                     <label>تاريخ النشر:</label>
                     <input type="text" id="post-date">
@@ -347,6 +342,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
     <script>
         let globalData = {
             settings: { logoUrl: "", logoHeight: "55px", tickerVisible: true },
@@ -400,7 +397,6 @@
             return `${baseSlug}-${Date.now().toString().slice(-5)}.html`;
         }
 
-        // --- الدالة المحدثة لجلب البيانات (متوافقة مع دالة الحفظ وسحب البيانات من GitHub) ---
         async function loadServerData() {
             const token = document.getElementById('gh-token-input').value.trim();
             const owner = "abdulazizalhaaj728-del";
@@ -416,22 +412,37 @@
                         const fileData = await response.json();
                         globalFileSha = fileData.sha;
                         const decodedContent = decodeURIComponent(escape(atob(fileData.content)));
-                        const remoteData = JSON.parse(decodedContent);
-                        
-                        if (remoteData) {
-                            globalData = Object.assign(globalData, remoteData);
-                        }
+                        globalData = JSON.parse(decodedContent);
                     }
-                } catch (err) {
-                    console.warn("تعذر جلب البيانات من السيرفر، يتم الاعتماد على التخزين المحلي:", err);
+                } catch (e) {
+                    console.warn("تعذر جلب البيانات من السيرفر، يتم الاعتماد على التخزين المحلي.", e);
                 }
             }
 
-            // دمج وتحديث البيانات محلياً وعبر السيرفر
-            globalData.posts = globalData.posts && globalData.posts.length > 0 ? globalData.posts : getData('tech_dalil_posts', []);
-            globalData.pages = globalData.pages && globalData.pages.length > 0 ? globalData.pages : getData('tech_static_pages', []);
-            globalData.widgets = globalData.widgets && globalData.widgets.length > 0 ? globalData.widgets : getData('tech_widgets', []);
-            globalData.menu = globalData.menu && globalData.menu.length > 0 ? globalData.menu : getData('tech_menu', []);
+            // مزامنة البيانات المسترجعة مع التخزين المحلي وضمان عدم فقدان أي جزء
+            if (!globalData.posts || globalData.posts.length === 0) {
+                globalData.posts = getData('tech_dalil_posts', []);
+            } else {
+                localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
+            }
+
+            if (!globalData.pages || globalData.pages.length === 0) {
+                globalData.pages = getData('tech_static_pages', []);
+            } else {
+                localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
+            }
+
+            if (!globalData.widgets || globalData.widgets.length === 0) {
+                globalData.widgets = getData('tech_widgets', []);
+            } else {
+                localStorage.setItem('tech_widgets', JSON.stringify(globalData.widgets));
+            }
+
+            if (!globalData.menu || globalData.menu.length === 0) {
+                globalData.menu = getData('tech_menu', []);
+            } else {
+                localStorage.setItem('tech_menu', JSON.stringify(globalData.menu));
+            }
 
             initAdminUI();
             loadPostsAdminList();
@@ -529,14 +540,28 @@
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>${post.title} | تكنو-دليل</title>
+                <meta name="description" content="${post.description || post.title}">
+                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
                 <link rel="stylesheet" href="../style.css">
+                <style>
+                    body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; line-height: 1.8; }
+                    .article-container { max-width: 800px; margin: 40px auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+                    h1 { color: #f59e0b; margin-bottom: 15px; }
+                    .meta-info { font-size: 0.85rem; color: #94a3b8; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+                    .featured-img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; }
+                    .content-body { font-size: 1.05rem; color: #f8fafc; }
+                    .back-btn { display: inline-block; margin-bottom: 20px; color: #0284c7; text-decoration: none; font-weight: bold; }
+                </style>
             </head>
             <body>
-                <div class="container" style="max-width:800px; margin:40px auto; background:#1e293b; padding:30px; border-radius:12px; color:#f8fafc;">
-                    <a href="../index.html" style="color:#0284c7; text-decoration:none;">← العودة للموقع</a>
-                    <h1 style="color:#f59e0b; margin-top:15px;">${post.title}</h1>
-                    <p style="color:#94a3b8; font-size:0.85rem;">${post.date}</p>
-                    <div style="margin-top:20px;">${post.content}</div>
+                <div class="article-container">
+                    <a href="../index.html" class="back-btn">← العودة للرئيسية</a>
+                    <span style="background: #0284c7; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem;">${post.category || 'تقنية'}</span>
+                    <h1>${post.title}</h1>
+                    <div class="meta-info">تاريخ النشر: ${post.date}</div>
+                    ${post.image ? `<img src="${post.image}" alt="${post.title}" class="featured-img">` : ''}
+                    <div class="content-body">${post.content}</div>
                 </div>
             </body>
             </html>`;
@@ -574,6 +599,108 @@
             }
         });
 
+        quill.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+            if (node.tagName === 'TABLE' || node.tagName === 'TD' || node.tagName === 'TH' || node.tagName === 'TR') {
+                node.style.border = '1px solid #000000';
+                node.style.borderCollapse = 'collapse';
+                if (node.tagName === 'TD' || node.tagName === 'TH') {
+                    node.style.border = '1px solid #000000';
+                    node.style.padding = '8px';
+                }
+            }
+            return delta;
+        });
+        
+        window.addEventListener('scroll', function() {
+            const toolbar = document.querySelector('.ql-toolbar');
+            const editorContainer = document.getElementById('editor-container');
+            if (!toolbar || !editorContainer) return;
+            const rect = editorContainer.getBoundingClientRect();
+            const toolbarHeight = toolbar.offsetHeight;
+            
+            if (rect.top < 0 && rect.bottom > toolbarHeight * 2) {
+                toolbar.style.position = 'fixed';
+                toolbar.style.top = '0';
+                toolbar.style.left = '0';
+                toolbar.style.right = '0';
+                toolbar.style.zIndex = '1000';
+                toolbar.style.background = '#ffffff';
+                toolbar.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+            } else {
+                toolbar.style.position = 'static';
+                toolbar.style.boxShadow = 'none';
+            }
+        });
+
+        let activeImage = null;
+        const editorWrapper = document.getElementById('editor-container');
+
+        if (editorWrapper) {
+            const imgToolbar = document.createElement('div');
+            imgToolbar.id = 'custom-image-toolbar';
+            imgToolbar.style.cssText = 'display:none; position:absolute; background:#1e293b; color:#fff; padding:6px 12px; border-radius:6px; z-index:2000; gap:8px; align-items:center; font-size:12px; box-shadow:0 4px 12px rgba(0,0,0,0.2);';
+            imgToolbar.innerHTML = `
+                <button type="button" id="img-link-btn" style="background:#0284c7; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">إضافة/تعديل رابط</button>
+                <button type="button" id="img-alt-btn" style="background:#64748b; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">التسمية البديلة</button>
+                <button type="button" id="img-del-btn" style="background:#ef4444; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;"><i class="fa-solid fa-trash"></i> حذف</button>
+            `;
+            document.body.appendChild(imgToolbar);
+
+            editorWrapper.addEventListener('click', function(e) {
+                if (e.target && e.target.tagName === 'IMG') {
+                    activeImage = e.target;
+                    const rect = activeImage.getBoundingClientRect();
+                    imgToolbar.style.display = 'flex';
+                    imgToolbar.style.top = (window.scrollY + rect.top - 40) + 'px';
+                    imgToolbar.style.left = (window.scrollX + rect.left) + 'px';
+                } else if (!imgToolbar.contains(e.target)) {
+                    imgToolbar.style.display = 'none';
+                }
+            });
+
+            document.getElementById('img-del-btn').addEventListener('click', function() {
+                if (activeImage) {
+                    activeImage.remove();
+                    imgToolbar.style.display = 'none';
+                    menuHasChanges = true;
+                }
+            });
+
+            document.getElementById('img-link-btn').addEventListener('click', function() {
+                if (!activeImage) return;
+                let currentLink = activeImage.getAttribute('data-url') || '';
+                let newUrl = prompt("أدخل رابط الانتقال عند الضغط على الصورة:", currentLink);
+                if (newUrl !== null) {
+                    if (newUrl.trim() === '') {
+                        activeImage.removeAttribute('data-url');
+                        activeImage.style.cursor = 'default';
+                    } else {
+                        activeImage.setAttribute('data-url', newUrl);
+                        activeImage.style.cursor = 'pointer';
+                        activeImage.onclick = function() { window.open(newUrl, '_blank'); };
+                    }
+                    menuHasChanges = true;
+                }
+            });
+
+            document.getElementById('img-alt-btn').addEventListener('click', function() {
+                if (!activeImage) return;
+                let currentAlt = activeImage.getAttribute('alt') || '';
+                let newAlt = prompt("أدخل التسمية البديلة (Alt Text) للصورة:", currentAlt);
+                if (newAlt !== null) {
+                    activeImage.setAttribute('alt', newAlt);
+                    activeImage.title = newAlt;
+                    menuHasChanges = true;
+                }
+            });
+        }
+
+        function applyCustomFont(fontName) {
+            const range = quill.getSelection();
+            if (range) quill.formatText(range.index, range.length, 'font', fontName);
+            else showCustomAlert("تنبيه", "تظليل النص مطلوب أولاً.");
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             const savedSize = localStorage.getItem('tech_logo_height');
             const selector = document.getElementById('logo-size-selector');
@@ -584,6 +711,9 @@
             
             const postDateEl = document.getElementById('post-date');
             if(postDateEl) postDateEl.value = new Date().toLocaleDateString('ar-SA');
+
+            const customTextEl = document.getElementById('widget-custom-text');
+            if(customTextEl) customTextEl.value = localStorage.getItem('tech_sidebar_custom_text') || '';
 
             const toggleBtn = document.getElementById('toggle-manager-btn');
             if (toggleBtn) {
@@ -600,6 +730,15 @@
             document.getElementById('post-title').addEventListener('input', function() {
                 const slugInput = document.getElementById('article-slug-input');
                 if (slugInput && (!currentEditingPostId || !slugInput.disabled)) slugInput.value = generateSlug(this.value);
+            });
+
+            quill.on('text-change', (delta, oldDelta, source) => {
+                let slugInput = document.getElementById('article-slug-input');
+                if (slugInput && (!currentEditingPostId || !slugInput.disabled) && !slugInput.value && source === 'user') {
+                    let textText = quill.getText().trim();
+                    if (textText.length > 3) slugInput.value = generateSlug(textText.split(/\s+/).slice(0, 3).join(' '));
+                }
+                document.getElementById('publish-btn').disabled = false;
             });
 
             loadServerData();
@@ -626,14 +765,21 @@
         }
 
         function openArticleManager() {
-            document.getElementById('manager-trigger-wrapper').style.display = 'none';
-            document.getElementById('article-manager-form-container').style.display = 'block';
-            document.getElementById('publish-btn').disabled = true;
+            const triggerWrapper = document.getElementById('manager-trigger-wrapper');
+            const formContainer = document.getElementById('article-manager-form-container');
+            const publishBtn = document.getElementById('publish-btn');
+            
+            if (triggerWrapper) triggerWrapper.style.display = 'none';
+            if (formContainer) formContainer.style.display = 'block';
+            if (publishBtn) publishBtn.disabled = true;
         }
 
         function closeArticleManager() {
-            document.getElementById('article-manager-form-container').style.display = 'none';
-            document.getElementById('manager-trigger-wrapper').style.display = 'block';
+            const triggerWrapper = document.getElementById('manager-trigger-wrapper');
+            const formContainer = document.getElementById('article-manager-form-container');
+            
+            if (formContainer) formContainer.style.display = 'none';
+            if (triggerWrapper) triggerWrapper.style.display = 'block';
             resetPostForm();
         }
 
@@ -655,12 +801,28 @@
             }
         
             const fileId = currentEditingPostId ? currentEditingPostId : ('post_' + Date.now());
+            const contentType = document.getElementById('content-type-selector').value;
+            
             const postObj = {
                 id: fileId, title, category, description: description || title,
                 image, date, content, slug, isDraft: currentArticleIsDraft, isPublished: true, url: `articles/${slug}`
             };
+
+            if (contentType === 'page') {
+                if(!globalData.pages) globalData.pages = [];
+                const existingIdx = globalData.pages.findIndex(p => p.id === fileId);
+                if(existingIdx !== -1) globalData.pages[existingIdx] = postObj;
+                else globalData.pages.unshift(postObj);
+                localStorage.setItem('tech_static_pages', JSON.stringify(globalData.pages));
+            } else {
+                if(!globalData.posts) globalData.posts = [];
+                const existingIdx = globalData.posts.findIndex(p => p.id === fileId);
+                if(existingIdx !== -1) globalData.posts[existingIdx] = postObj;
+                else globalData.posts.unshift(postObj);
+                localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
+            }
         
-            await saveServerData("تم النشر وتوليد الصفحة بنجاح!", postObj);
+            await saveServerData("تم الحفظ والنشر وتوليد صفحة المقال المستقلة بنجاح على السحابة!", postObj);
             closeArticleManager();
             loadPostsAdminList();
         }        
@@ -683,17 +845,46 @@
         function initArticleSlugField(post) {
             const slugInput = document.getElementById('article-slug-input');
             const idBadge = document.getElementById('article-id-badge');
+            const draftBtn = document.getElementById('draft-toggle-btn');
             if (!slugInput) return;
-            slugInput.disabled = !!(post && post.isPublished);
-            idBadge.innerText = `#${post ? post.id : 'جديد'}`;
+
+            if (!post || !post.isPublished) {
+                slugInput.disabled = false;
+                idBadge.innerText = `#${post ? post.id : 'جديد'}`;
+                currentArticleIsDraft = false;
+                if (draftBtn) {
+                    draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+                    draftBtn.style.background = '#f59e0b';
+                }
+            } else {
+                slugInput.disabled = true;
+                idBadge.innerText = `#${post.id}`;
+                currentArticleIsDraft = post.isDraft || false;
+                if (draftBtn) {
+                    if (currentArticleIsDraft) {
+                        draftBtn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
+                        draftBtn.style.background = '#10b981';
+                    } else {
+                        draftBtn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+                        draftBtn.style.background = '#f59e0b';
+                    }
+                }
+            }
             slugInput.value = post && post.slug ? post.slug : '';
         }
 
         function toggleArticleDraftStatus() {
             currentArticleIsDraft = !currentArticleIsDraft;
             const btn = document.getElementById('draft-toggle-btn');
-            btn.innerHTML = currentArticleIsDraft ? `<i class="fa-solid fa-globe"></i> نشر` : `<i class="fa-solid fa-file-lines"></i> مسودة`;
-            btn.style.background = currentArticleIsDraft ? '#10b981' : '#f59e0b';
+            if (currentArticleIsDraft) {
+                btn.innerHTML = `<i class="fa-solid fa-globe"></i> نشر`;
+                btn.style.background = '#10b981';
+                showCustomAlert("تنبيه", "تم تحويل المقال إلى وضع (مسودة).");
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-file-lines"></i> مسودة`;
+                btn.style.background = '#f59e0b';
+                showCustomAlert("تنبيه", "تم تحويل المقال إلى وضع (نشر).");
+            }
         }
 
         function copyArticleLink() {
@@ -769,6 +960,7 @@
             const publishBtn = document.getElementById('publish-btn');
             publishBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تحديث المحتوى';
             publishBtn.disabled = false;
+            document.getElementById('article-manager-form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function previewPost() {
@@ -780,9 +972,32 @@
 
         function insertCustomTable() {
             const range = quill.getSelection();
-            const tableHTML = `<div style="overflow-x:auto; margin: 15px 0;"><table border="1" style="width:100%; border-collapse:collapse; text-align:right;"><thead><tr style="background:#007bff;color:#fff;"><th style="padding:10px;border:1px solid #ddd;">العنوان 1</th><th style="padding:10px;border:1px solid #ddd;">العنوان 2</th></tr></thead><tbody><tr><td style="padding:8px;border:1px solid #ddd;">بيانات 1</td><td style="padding:8px;border:1px solid #ddd;">بيانات 2</td></tr></tbody></table></div><p></p>`;
-            if (range) quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
-            else quill.clipboard.dangerouslyPasteHTML(quill.getLength(), tableHTML);
+            const tableHTML = `
+                <div style="overflow-x:auto; margin: 15px 0;">
+                    <table border="1" style="width:100%; border-collapse:collapse; text-align:right; font-family:inherit;">
+                        <thead>
+                            <tr style="background-color: #007bff; color: white;">
+                                <th style="padding: 10px; border: 1px solid #ddd;">العنوان 1</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">العنوان 2</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">العنوان 3</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">بيانات 1</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">بيانات 2</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">بيانات 3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><p></p>`;
+            
+            if (range) {
+                quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
+            } else {
+                const length = quill.getLength();
+                quill.clipboard.dangerouslyPasteHTML(length, tableHTML);
+            }
         }
 
         function uploadLogoFile(input) {
@@ -796,11 +1011,13 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
         function removeLogo() {
             if(!globalData.settings) globalData.settings = {};
             globalData.settings.logoUrl = "";
             saveServerData("تمت إزالة الشعار وتحديث السحابة بنجاح!");
         }
+
         function saveSelectedLogoSize() {
             const selector = document.getElementById('logo-size-selector');
             if (!selector) return;
@@ -849,7 +1066,15 @@
             const sb = document.getElementById('widget-pos-sidebar');
             const ft = document.getElementById('widget-pos-footer');
             if (pos === 'sidebar' && sb.checked) ft.checked = false;
-            else if (pos === 'footer' && ft.checked) sb.checked = false;
+            else if (pos === 'footer' && ft.checked) {
+                const footerCount = (globalData.widgets || []).filter((w, idx) => w.location === 'footer' && idx !== editingWidgetIndex).length;
+                if (footerCount >= 4) {
+                    ft.checked = false;
+                    showCustomAlert("تنبيه", "عذراً، الحد الأقصى لودجات التذييل الأفقية هو 4 فقط!");
+                    return;
+                }
+                sb.checked = false;
+            }
         }
 
         function handleWidgetMainAction() {
@@ -878,6 +1103,13 @@
                 globalData.widgets[editingWidgetIndex] = { ...globalData.widgets[editingWidgetIndex], title, type: typeInput.value, content: contentInput.value.trim(), location };
                 editingWidgetIndex = null;
             } else {
+                if (location === 'footer') {
+                    let footerWidgets = globalData.widgets.filter(w => w.location === 'footer');
+                    if (footerWidgets.length >= 4) {
+                        showCustomAlert("تنبيه", "الحد الأقصى لودجات الفوتر هو 4 ودجات أفقية!");
+                        return;
+                    }
+                }
                 globalData.widgets.push({ id: 'w_' + Date.now(), title, type: typeInput.value, content: contentInput.value.trim(), active: true, location });
             }
 
@@ -934,7 +1166,9 @@
         }
 
         document.getElementById('save-widgets-btn').addEventListener('click', () => {
-            saveServerData("تم حفظ إعدادات الودجات بنجاح!");
+            if (typeof saveServerData === 'function') {
+                saveServerData("تم حفظ إعدادات الودجات بنجاح!");
+            }
         });
 
         function addOrUpdateStructuredMenuItem() {
@@ -953,6 +1187,7 @@
             else if (rawText.startsWith('__')) level = 2;
             
             let cleanTitle = rawText.replace(/^_+\s*/, '');
+
             if (!globalData.menu) globalData.menu = [];
 
             if (editingMenuIndex !== null) {
@@ -995,9 +1230,13 @@
         }
 
         let collapsedMenuIndices = new Set();
+
         function toggleMenuCollapse(index) {
-            if (collapsedMenuIndices.has(index)) collapsedMenuIndices.delete(index);
-            else collapsedMenuIndices.add(index);
+            if (collapsedMenuIndices.has(index)) {
+                collapsedMenuIndices.delete(index);
+            } else {
+                collapsedMenuIndices.add(index);
+            }
             renderStructuredMenuAdmin();
         }
 
@@ -1012,14 +1251,21 @@
             }
 
             let hideStackLevel = 999;
+
             globalData.menu.forEach((item, index) => {
                 let currentLevel = item.level || 1;
-                if (currentLevel <= hideStackLevel) hideStackLevel = 999;
+
+                if (currentLevel <= hideStackLevel) {
+                    hideStackLevel = 999;
+                }
+
                 const isHiddenByParent = currentLevel > hideStackLevel;
 
                 let hasChildren = false;
-                if (index + 1 < globalData.menu.length && (globalData.menu[index + 1].level || 1) > currentLevel) {
-                    hasChildren = true;
+                if (index + 1 < globalData.menu.length) {
+                    if ((globalData.menu[index + 1].level || 1) > currentLevel) {
+                        hasChildren = true;
+                    }
                 }
 
                 if (hasChildren && collapsedMenuIndices.has(index)) {
@@ -1030,10 +1276,23 @@
                 row.className = 'drag-item';
                 row.setAttribute('draggable', 'true');
                 row.dataset.index = index;
-                row.style.cssText = isHiddenByParent ? "display: none;" : "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;";
+                
+                if (isHiddenByParent) {
+                    row.style.cssText = "display: none; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;";
+                } else {
+                    row.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem; transition: all 0.2s;";
+                }
                 
                 let indent = (currentLevel - 1) * 25; 
-                let collapseBtnHtml = hasChildren ? `<button type="button" onclick="toggleMenuCollapse(${index})" style="background: ${collapsedMenuIndices.has(index) ? '#0284c7' : '#64748b'}; color: #fff; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;">${collapsedMenuIndices.has(index) ? '+' : '-'}</button>` : `<span style="width: 20px; display: inline-block;"></span>`;
+                let collapseBtnHtml = '';
+                if (hasChildren) {
+                    let isCollapsed = collapsedMenuIndices.has(index);
+                    let iconSymbol = isCollapsed ? '+' : '-';
+                    let btnBg = isCollapsed ? '#0284c7' : '#64748b';
+                    collapseBtnHtml = `<button type="button" onclick="toggleMenuCollapse(${index})" style="background: ${btnBg}; color: #fff; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;" title="${isCollapsed ? 'إظهار الفروع' : 'إخفاء الفروع'}">${iconSymbol}</button>`;
+                } else {
+                    collapseBtnHtml = `<span style="width: 20px; display: inline-block;"></span>`;
+                }
 
                 row.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; margin-right: ${indent}px; flex: 1;">
@@ -1048,8 +1307,129 @@
                         <button type="button" class="btn-danger" onclick="deleteStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
+
+                row.addEventListener('dragstart', handleDragStart);
+                row.addEventListener('dragover', handleDragOver);
+                row.addEventListener('dragleave', handleDragLeave);
+                row.addEventListener('drop', handleDrop);
+                row.addEventListener('dragend', handleDragEnd);
+
                 container.appendChild(row);
             });
+        }
+
+        let draggedIndices = [];
+
+        function handleDragStart(e) {
+            const currentIndex = parseInt(this.dataset.index);
+            const checkboxes = document.querySelectorAll('.menu-item-checkbox');
+            let selected = [];
+            checkboxes.forEach(chk => { if (chk.checked) selected.push(parseInt(chk.dataset.index)); });
+
+            let subItemsIndices = [currentIndex];
+            let baseLevel = globalData.menu[currentIndex].level || 1;
+            let idx = currentIndex + 1;
+            while (idx < globalData.menu.length && (globalData.menu[idx].level || 1) > baseLevel) {
+                subItemsIndices.push(idx);
+                idx++;
+            }
+
+            if (selected.includes(currentIndex) && selected.length > 0) {
+                let allSelectedWithChildren = [];
+                selected.forEach(selIdx => {
+                    allSelectedWithChildren.push(selIdx);
+                    let sLevel = globalData.menu[selIdx].level || 1;
+                    let next = selIdx + 1;
+                    while (next < globalData.menu.length && (globalData.menu[next].level || 1) > sLevel) {
+                        allSelectedWithChildren.push(next);
+                        next++;
+                    }
+                });
+                draggedIndices = [...new Set(allSelectedWithChildren)].sort((a, b) => a - b);
+            } else {
+                draggedIndices = subItemsIndices;
+                const chk = this.querySelector('.menu-item-checkbox');
+                if (chk) chk.checked = true;
+            }
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const targetRow = this;
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            if (yClick < threshold) targetRow.classList.add('drop-indicator-top');
+            else if (yClick > rect.height - threshold) targetRow.classList.add('drop-indicator-bottom');
+            else targetRow.classList.add('drag-over-parent');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const targetRow = this;
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+
+            const targetIndex = parseInt(targetRow.dataset.index);
+            if (draggedIndices.includes(targetIndex)) return;
+
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            let dropMode = 'after';
+            if (yClick < threshold) dropMode = 'top';
+            else if (yClick > rect.height - threshold) dropMode = 'bottom';
+            else dropMode = 'child';
+
+            let itemsToMove = draggedIndices.map(i => globalData.menu[i]);
+            let remainingItems = globalData.menu.filter((_, idx) => !draggedIndices.includes(idx));
+            
+            let targetItemInRemaining = globalData.menu[targetIndex];
+            let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
+            if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
+
+            if (dropMode === 'top') {
+                remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
+            } else if (dropMode === 'bottom') {
+                let insertPos = newTargetIdx + 1;
+                while (insertPos < remainingItems.length && (remainingItems[insertPos].level || 1) > (targetItemInRemaining.level || 1)) {
+                    insertPos++;
+                }
+                remainingItems.splice(insertPos, 0, ...itemsToMove);
+            } else if (dropMode === 'child') {
+                let parentItem = targetItemInRemaining;
+                if (parentItem) {
+                    let levelDiff = (parentItem.level + 1) - itemsToMove[0].level;
+                    itemsToMove.forEach(it => {
+                        it.level = Math.max(1, it.level + levelDiff);
+                        it.rawText = '_'.repeat(it.level) + (it.title || 'عنصر');
+                    });
+                    remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+                    targetRow.classList.add('pulse-highlight');
+                    setTimeout(() => targetRow.classList.remove('pulse-highlight'), 800);
+                }
+            }
+
+            menuHasChanges = true;
+            globalData.menu = remainingItems;
+            collapsedMenuIndices.clear();
+            renderStructuredMenuAdmin();
+        }
+
+        function handleDragEnd(e) {
+            document.querySelectorAll('.drag-item').forEach(item => {
+                item.classList.remove('dragging', 'drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            });
+            draggedIndices = [];
         }
 
         function saveAdsSettings() {
