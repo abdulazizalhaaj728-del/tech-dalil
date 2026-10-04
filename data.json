@@ -1,15 +1,6 @@
 {
     "posts": [
         {
-            "id": "post_1791129800848",
-            "title": "ghfghfgh",
-            "category": "شروحات تعليمية",
-            "description": "fghfghfghf",
-            "image": "",
-            "date": "٤‏/١٠‏/٢٠٢٦",
-            "url": "articles/post_1791129800848.html"
-        },
-        {
             "id": "post_1791049423860",
             "title": "دليل بناء حاسوب شخصي (PC Building) : كيف تختار القطع المثالية لميزانيتك؟",
             "category": "علوم الحاسب الآلي",
