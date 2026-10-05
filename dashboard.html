@@ -158,6 +158,15 @@
             font-weight: bold !important;
         }
 
+
+        .ql-editor img {
+            cursor: grab;
+            resize: both;
+        }
+        .ql-editor img:active {
+            cursor: grabbing;
+        }
+        
         /* تخصيص صندوق المقال ومنطقة الودجات بلون بيج دافئ ومريح للعين */
         .post-card, #editor-container, .ql-container.ql-snow, #widget-custom-text, #widgets-list-box {
             background-color: #F7F4EF !important;
@@ -465,8 +474,7 @@
     <!-- مكتبة تعديل حجم الصور -->
     <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
    
-    
-    <script>
+    <script>     
         let globalData = {
             settings: { logoUrl: "", logoHeight: "55px", tickerVisible: true },
             menu: [], widgets: [],
@@ -759,6 +767,8 @@ var quill = new Quill('#editor-container', {
             }
         });
 
+        quill.root.addEventListener('dragover', (e) => e.preventDefault());
+        
         window.addEventListener('DOMContentLoaded', () => {
             const tokenInput = document.getElementById('gh-token-input');
             tokenInput.value = localStorage.getItem('tech_gh_token') || '';
@@ -1267,6 +1277,10 @@ var quill = new Quill('#editor-container', {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
             const targetRow = this;
+            
+            // تجاهل العناصر المخفية تماماً لمنع التداخل
+            if (targetRow.style.display === 'none') return;
+
             const rect = targetRow.getBoundingClientRect();
             const threshold = rect.height / 3;
             const yClick = e.clientY - rect.top;
