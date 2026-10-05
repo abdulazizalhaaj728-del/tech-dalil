@@ -7,14 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Quill Snow Theme -->
-    <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
-    <!-- مكتبة الجداول Quill Table Module -->
-    <link href="https://cdn.jsdelivr.net/npm/quill-table@1.0.1/dist/quill.table.min.css" rel="stylesheet">        
-    <!-- مكتبة التحكم بحجم الصور -->
-    <link href="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.css" rel="stylesheet">
     <!-- مكتبة Quill الأساسية والتصميم -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    <!-- مكتبة التحكم بحجم الصور -->
+    <link href="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
     <style>
@@ -61,21 +57,6 @@
         .widgets-table th { color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding: 8px; }
         .widgets-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .item-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; }
-        
-        .drag-item.drop-indicator-top { border-top: 2px solid var(--accent-color) !important; }
-        .drag-item.drop-indicator-bottom { border-bottom: 2px solid var(--accent-color) !important; }
-        .drag-item.drag-over-parent { background: rgba(245, 158, 11, 0.15) !important; border-left: 4px solid #ff9800 !important; }
-        .drag-item.dragging { opacity: 0.4; }
-
-        @keyframes fq-pulse {
-            0% { background-color: transparent; box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.7); }
-            70% { background-color: rgba(255, 87, 34, 0.3); box-shadow: 0 0 0 10px rgba(255, 87, 34, 0); }
-            100% { background-color: transparent; box-shadow: 0 0 0 0 rgba(255, 87, 34, 0); }
-        }
-        .pulse-highlight {
-            animation: fq-pulse 0.8s ease-in-out;
-            border: 2px solid #ff5722 !important;
-        }
 
         .sticky-editor-header {
             position: sticky; top: 10px; z-index: 1000;
@@ -98,27 +79,6 @@
         .ql-snow .ql-stroke { stroke: var(--text-main); }
         .ql-snow .ql-fill { fill: var(--text-main); }
         .ql-snow .ql-picker { color: var(--text-main); }
-        
-        .ql-editor table, .post-card table, .post-content table {
-            width: 100% !important; border-collapse: collapse !important; margin: 15px 0 !important; background-color: #ffffff !important; color: #1e293b !important;
-        }
-        .ql-editor table td, .ql-editor table th, .post-card table td, .post-card table th, .post-content th, .post-content td {
-            border: 1px solid #94a3b8 !important; padding: 10px 12px !important; text-align: center !important; vertical-align: middle !important;
-        }
-        .ql-editor table th, .post-card table th, .post-content th {
-            background-color: #e2e8f0 !important; font-weight: bold !important;
-        }
-
-        .post-card, #editor-container, .ql-container.ql-snow, #widget-custom-text, #widgets-list-box {
-            background-color: #F7F4EF !important; background-image: url('https://www.transparenttextures.com/patterns/cream-pixels.png');
-            border: 1px solid #E2D8C5 !important; border-radius: 12px; color: #2C3E50 !important;
-        }
-        .ql-editor, .post-card p, .section-box textarea, input[type="text"] {
-            font-family: 'Cairo', 'Tajawal', sans-serif !important; text-align: justify !important; text-justify: inter-word !important; color: #2C3E50 !important; line-height: 2 !important;
-        }
-        #widgets-list-box {
-            background: var(--bg-dark) !important; background-image: none !important; border: 1px solid var(--border-color) !important; color: var(--text-main) !important;
-        }
     </style>
 </head>
 <body>
@@ -241,7 +201,7 @@
             <button class="btn" onclick="saveGeneralSettings('ads')">حفظ إعدادات الإعلانات منفصلة للسيرفر</button>
         </div>
 
-        <!-- إدارة ونشر المقالات والصفحات (منطقة حفظ مستقلة تماماً) -->
+        <!-- إدارة ونشر المقالات والصفحات -->
         <div class="section-box" style="border-color: var(--accent-color);">
             <h3>📝 إدارة ونشر المقالات والصفحات (منطقة حفظ مستقلة)</h3>
 
@@ -307,7 +267,6 @@
                     <div style="flex: 1; display: flex; align-items: center; gap: 5px;">
                         <span style="font-size: 0.8rem; color: var(--text-muted);">رابط المقال:</span>
                         <input type="text" id="article-slug-input" placeholder="slug-name" style="flex: 1; padding: 6px 10px; font-size: 0.85rem; background: var(--bg-dark); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 4px;">
-                        <span id="article-id-badge" style="font-size: 0.75rem; color: var(--accent-color); background: rgba(2,132,199,0.1); padding: 4px 8px; border-radius: 4px; font-weight: bold;"></span>
                     </div>
                     <button type="button" class="btn" onclick="copyArticleLink()" style="background: #3b82f6; color: #fff; padding: 6px 12px; font-size: 0.8rem; white-space: nowrap;">
                         <i class="fa-solid fa-copy"></i> نسخ الرابط
@@ -365,12 +324,6 @@
         let menuHasChanges = false;
         let globalFileSha = "";
         let currentArticleIsDraft = false;
-        let collapsedMenuIndices = new Set();
-
-        function getData(key, def) { 
-            const v = localStorage.getItem(key); 
-            return v ? JSON.parse(v) : def; 
-        }
 
         function showCustomAlert(title, message, callback) {
             const overlay = document.getElementById('custom-modal-container');
@@ -427,16 +380,15 @@
                 }
             }
 
-            globalData.posts = globalData.posts && globalData.posts.length > 0 ? globalData.posts : getData('tech_dalil_posts', []);
-            globalData.pages = globalData.pages && globalData.pages.length > 0 ? globalData.pages : getData('tech_static_pages', []);
-            globalData.widgets = globalData.widgets && globalData.widgets.length > 0 ? globalData.widgets : getData('tech_widgets', []);
-            globalData.menu = globalData.menu && globalData.menu.length > 0 ? globalData.menu : getData('tech_menu', []);
+            globalData.posts = globalData.posts && globalData.posts.length > 0 ? globalData.posts : JSON.parse(localStorage.getItem('tech_dalil_posts') || '[]');
+            globalData.pages = globalData.pages && globalData.pages.length > 0 ? globalData.pages : JSON.parse(localStorage.getItem('tech_static_pages') || '[]');
+            globalData.widgets = globalData.widgets && globalData.widgets.length > 0 ? globalData.widgets : JSON.parse(localStorage.getItem('tech_widgets') || '[]');
+            globalData.menu = globalData.menu && globalData.menu.length > 0 ? globalData.menu : JSON.parse(localStorage.getItem('tech_menu') || '[]');
 
             initAdminUI();
             loadPostsAdminList();
         }
 
-        // دالة حفظ منفصلة للإعدادات العامة، الودجات، الإعلانات، الشعار، والقوائم
         async function saveGeneralSettings(sectionType) {
             const token = document.getElementById('gh-token-input').value.trim();
             if (!token) {
@@ -449,6 +401,15 @@
             const path = "data.json";
 
             try {
+                // جلب أحدث SHA تفادياً لأخطاء التعارض
+                const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                if (getRes.ok) {
+                    const sData = await getRes.json();
+                    globalFileSha = sData.sha;
+                }
+
                 const contentString = JSON.stringify(globalData, null, 4);
                 const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
 
@@ -479,7 +440,6 @@
             }
         }
 
-        // دالة حفظ مستقلة تماماً خاصة بالمقالات والصفحات فقط دون المساس بباقي الأقسام
         async function saveOrUpdatePost() {
             const title = document.getElementById('post-title').value.trim();
             const contentType = document.getElementById('content-type-selector').value;
@@ -510,7 +470,6 @@
                 return;
             }
 
-            // تحديث المقال أو الصفحة محلياً ضمن الكائن العام
             if (contentType === 'page') {
                 if(!globalData.pages) globalData.pages = [];
                 const idx = globalData.pages.findIndex(p => p.id == fileId);
@@ -524,78 +483,75 @@
                 else globalData.posts.unshift(itemObj);
                 localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
 
-                // إضافة المقال للقائمة تلقائياً إذا لم يكن موجوداً
                 let articleUrl = `articles/${slug}`;
                 if (!globalData.menu.some(item => item.url && item.url.includes(slug))) {
                     globalData.menu.push({ title: title, url: articleUrl, level: 3, rawText: '___ ' + title });
                 }
             }
 
-const owner = "abdulazizalhaaj728-del";
-    const repo = "tech-dalil";
-    const path = "data.json";
+            const owner = "abdulazizalhaaj728-del";
+            const repo = "tech-dalil";
+            const path = "data.json";
 
-    try {
-        const contentString = JSON.stringify(globalData, null, 4);
-        const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
+            try {
+                const contentString = JSON.stringify(globalData, null, 4);
+                const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
 
-        // 1. جلب أحدث SHA للملف من السيرفر قبل التحديث لتجنب خطأ عدم التطابق
-        let currentSha = globalFileSha;
-        const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-            headers: { 'Authorization': `token ${token}` }
-        });
-        if (getRes.ok) {
-            const getData = await getRes.json();
-            currentSha = getData.sha;
-        }
-
-        // 2. إرسال طلب التحديث مع الـ SHA المحدث تماماً
-        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-            method: 'PUT',
-            headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                message: `Save Article/Page: ${title}`, 
-                content: encodedContent, 
-                sha: currentSha 
-            })
-        });
-
-        const result = await response.json();
-        if (response.ok) {
-            globalFileSha = result.content.sha; // تحديث المتغير العالمي بالقيمة الجديدة
-
-            // بقية كود رفع ملف الـ HTML الخاص بالمقال...
-            if (contentType === 'post') {
-                const fileName = `articles/${slug}`;
-                const htmlContent = generateArticleHtml(itemObj);
-                const encodedHtml = btoa(unescape(encodeURIComponent(htmlContent)));
-    
-                let htmlSha = "";
-                const resHtml = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+                let currentSha = globalFileSha;
+                const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
                     headers: { 'Authorization': `token ${token}` }
                 });
-                if (resHtml.ok) {
-                    const hData = await resHtml.json();
-                    htmlSha = hData.sha;
+                if (getRes.ok) {
+                    const getData = await getRes.json();
+                    currentSha = getData.sha;
                 }
-    
-                await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+
+                const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Generate article file: ${title}`, content: encodedHtml, sha: htmlSha || undefined })
+                    body: JSON.stringify({ 
+                        message: `Save Article/Page: ${title}`, 
+                        content: encodedContent, 
+                        sha: currentSha 
+                    })
                 });
-            }
 
-            showCustomAlert("نجاح", "تم حفظ المقال ونشره حصرياً وتحديث السحابة بنجاح!");
-            closeArticleManager();
-            loadPostsAdminList();
-        } else {
-            showCustomAlert("خطأ", "فشل رفع المقال للسيرفر: " + (result.message || ""));
+                const result = await response.json();
+                if (response.ok) {
+                    globalFileSha = result.content.sha;
+
+                    if (contentType === 'post') {
+                        const fileName = `articles/${slug}`;
+                        const htmlContent = generateArticleHtml(itemObj);
+                        const encodedHtml = btoa(unescape(encodeURIComponent(htmlContent)));
+            
+                        let htmlSha = "";
+                        const resHtml = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+                            headers: { 'Authorization': `token ${token}` }
+                        });
+                        if (resHtml.ok) {
+                            const hData = await resHtml.json();
+                            htmlSha = hData.sha;
+                        }
+            
+                        await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+                            method: 'PUT',
+                            headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ message: `Generate article file: ${title}`, content: encodedHtml, sha: htmlSha || undefined })
+                        });
+                    }
+
+                    showCustomAlert("نجاح", "تم حفظ المقال ونشره حصرياً وتحديث السحابة بنجاح!");
+                    closeArticleManager();
+                    loadPostsAdminList();
+                } else {
+                    showCustomAlert("خطأ", "فشل رفع المقال للسيرفر: " + (result.message || ""));
+                }
+            } catch(e) {
+                console.error(e);
+                showCustomAlert("خطأ", "حدث خطأ أثناء الاتصال بالخادم لحفظ المقال.");
+            }
         }
-    } catch(e) {
-        console.error(e);
-        showCustomAlert("خطأ", "حدث خطأ أثناء الاتصال بالخادم لحفظ المقال.");
-    }
             
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
@@ -617,7 +573,6 @@ const owner = "abdulazizalhaaj728-del";
             </html>`;
         }
 
-        // إعداد محرر Quill
         var quill = new Quill('#editor-container', {
             theme: 'snow',
             modules: {
@@ -628,8 +583,7 @@ const owner = "abdulazizalhaaj728-del";
                     [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
                     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                     ['link', 'image', 'clean']
-                ],
-                imageResize: { modules: ['Resize', 'DisplaySize', 'Toolbar'] }
+                ]
             }
         });
 
@@ -776,7 +730,7 @@ const owner = "abdulazizalhaaj728-del";
             
             const slugInput = document.getElementById('article-slug-input');
             slugInput.value = p.slug || "";
-            slugInput.disabled = true; // منع تعديل الرابط للمقالات القديمة حفاظاً على المسار
+            slugInput.disabled = true;
 
             const publishBtn = document.getElementById('publish-btn');
             publishBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تحديث المقال حصرياً';
