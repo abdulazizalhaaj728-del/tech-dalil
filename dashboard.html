@@ -262,9 +262,8 @@
             </div>
             <div id="admin-menu-structured-list" style="max-height: 300px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
             <div style="margin-top: 15px;">
-                <button type="button" class="btn" onclick="saveServerData('تم حفظ وتحديث القوائم بنجاح على السيرفر!')" style="background: #28a745;">حفظ التغييرات النهائية للسيرفر</button>
+                <button type="button" class="btn" onclick="normalizeMenuLevelsBeforeSave(); saveGeneralSettings('menu');" style="background: #28a745;">حفظ التغييرات النهائية للسيرفر</button>            </div>
             </div>
-        </div>
 
         <!-- ودجات الشريط الأيسر والتذييل -->
         <div class="section-box">
@@ -738,7 +737,7 @@
 
 
         
-        var quill = new Quill('#editor-container', {
+var quill = new Quill('#editor-container', {
             theme: 'snow',
             modules: {
                 toolbar: [
@@ -748,7 +747,15 @@
                     [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
                     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                     ['link', 'image', 'clean']
-                ]
+                ],
+                imageResize: {
+                    displayStyles: {
+                        backgroundColor: 'black',
+                        border: 'none',
+                        color: 'white'
+                    },
+                    modules: [ 'Resize', 'DisplaySize', 'Toolbar' ]
+                }
             }
         });
 
