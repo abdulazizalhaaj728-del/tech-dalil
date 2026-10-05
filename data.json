@@ -40,6 +40,12 @@
             "title": "برمجة الحاسب الآلي",
             "level": 1,
             "url": "#"
+        },
+        {
+            "rawText": "___عمل تطبيق بوصلة بواسطة Android studio",
+            "title": "عمل تطبيق بوصلة بواسطة Android studio",
+            "level": 3,
+            "url": "#"
         }
     ],
     "widgets": [
