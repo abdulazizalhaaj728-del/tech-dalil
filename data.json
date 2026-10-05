@@ -10,6 +10,12 @@
             "title": "تجربة تيست جديدة",
             "level": 1,
             "url": "https://tech-dalil.com/articles/tech-post-74619.html"
+        },
+        {
+            "rawText": "تجارب",
+            "title": "تجارب",
+            "level": 1,
+            "url": "#"
         }
     ],
     "widgets": [
@@ -20,6 +26,14 @@
             "content": "",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1791191570161",
+            "title": "تجربة للتذييل",
+            "type": "recent",
+            "content": "",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
