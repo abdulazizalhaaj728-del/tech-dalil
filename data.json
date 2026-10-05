@@ -6,82 +6,82 @@
     },
     "menu": [
         {
-            "rawText": "علوم وصيانة الحاسب الآلي",
+            "rawText": "_ علوم وصيانة الحاسب الآلي",
             "title": "علوم وصيانة الحاسب الآلي",
             "level": 1,
             "url": "#"
         },
         {
-            "rawText": "__تركيب قطع وصيانة الحاسب الآلي",
+            "rawText": "__ تركيب قطع وصيانة الحاسب الآلي",
             "title": "تركيب قطع وصيانة الحاسب الآلي",
             "level": 2,
             "url": "#"
         },
         {
-            "rawText": "___الشبكات  Networks",
+            "rawText": "___ تجربة",
+            "title": "تجربة",
+            "level": 3,
+            "url": "https://tech-dalil.com/articles/tech-post-29189.html"
+        },
+        {
+            "rawText": "___ الشبكات  Networks",
             "title": "الشبكات  Networks",
             "level": 3,
             "url": "https://tech-dalil.com/articles/networks-networks-51711.html"
         },
         {
-            "rawText": "___أعطال الحاسب الآلي وكيفية إصلاحها",
+            "rawText": "___ أعطال الحاسب الآلي وكيفية إصلاحها",
             "title": "أعطال الحاسب الآلي وكيفية إصلاحها",
             "level": 3,
             "url": "https://tech-dalil.com/articles/tech-post-38753.html"
         },
         {
-            "rawText": "___دليل بناء حاسوب شخصي، اختيار القطع",
+            "rawText": "___ دليل بناء حاسوب شخصي، اختيار القطع",
             "title": "دليل بناء حاسوب شخصي، اختيار القطع",
             "level": 3,
             "url": "https://tech-dalil.com/articles/guide-pc-building-23134.html"
         },
         {
-            "rawText": "__برمجة الحاسب الآلي",
+            "rawText": "__ برمجة الحاسب الآلي",
             "title": "برمجة الحاسب الآلي",
             "level": 2,
             "url": "#"
         },
         {
-            "rawText": "___عمل تطبيق بوصلة بواسطة Android studio",
+            "rawText": "___ عمل تطبيق بوصلة بواسطة Android studio",
             "title": "عمل تطبيق بوصلة بواسطة Android studio",
             "level": 3,
             "url": "https://tech-dalil.com/articles/android-studio-07981.html"
         },
         {
-            "rawText": "___دليل لغات البرمجة : كيف تختار اللغة الأنسب؟",
+            "rawText": "___ دليل لغات البرمجة : كيف تختار اللغة الأنسب؟",
             "title": "دليل لغات البرمجة : كيف تختار اللغة الأنسب؟",
             "level": 3,
             "url": "https://tech-dalil.com/articles/guide-programming-how-to-50954.html"
         },
         {
-            "rawText": "مقالات تقنية",
+            "rawText": "_ مقالات تقنية",
             "title": "مقالات تقنية",
             "level": 1,
             "url": "#"
         },
         {
-            "rawText": "__السيارات الكهربائية، دليل الشراء!",
+            "rawText": "__ السيارات الكهربائية، دليل الشراء!",
             "title": "السيارات الكهربائية، دليل الشراء!",
             "level": 2,
             "url": "https://tech-dalil.com/articles/guide-52657.html"
         },
         {
-            "rawText": "__الطباعة ثلاثية الأبعاد",
+            "rawText": "__ الطباعة ثلاثية الأبعاد",
             "title": "الطباعة ثلاثية الأبعاد",
             "level": 2,
             "url": "https://tech-dalil.com/articles/3d-printing-future-67124.html"
         },
         {
-            "rawText": "__تكنولوجيا النانو",
+            "rawText": "__ تكنولوجيا النانو",
             "title": "تكنولوجيا النانو",
             "level": 2,
             "url": "https://tech-dalil.com/articles/how-to-46423.html"
-        },
-        {
-            "rawText": "تجربة",
-            "title": "تجربة",
-            "level": 1,
-            "url": "https://tech-dalil.com/articles/tech-post-29189.html"
         }
     ],
     "widgets": [
