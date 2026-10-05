@@ -18,12 +18,6 @@
             "url": "#"
         },
         {
-            "rawText": "___ تجربة",
-            "title": "تجربة",
-            "level": 3,
-            "url": "https://tech-dalil.com/articles/tech-post-29189.html"
-        },
-        {
             "rawText": "___ الشبكات  Networks",
             "title": "الشبكات  Networks",
             "level": 3,
@@ -64,6 +58,12 @@
             "title": "مقالات تقنية",
             "level": 1,
             "url": "#"
+        },
+        {
+            "rawText": "__ تجربة",
+            "title": "تجربة",
+            "level": 2,
+            "url": "https://tech-dalil.com/articles/tech-post-29189.html"
         },
         {
             "rawText": "__ السيارات الكهربائية، دليل الشراء!",
