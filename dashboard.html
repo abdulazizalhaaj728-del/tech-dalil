@@ -157,7 +157,6 @@
             font-weight: bold !important;
         }
 
-
         .ql-editor img {
             cursor: grab;
             resize: both;
@@ -194,27 +193,26 @@
             color: var(--text-main) !important;
         }
 
+        /* فرض ظهور حدود الجداول وتنسيقها داخل محرر Quill والمدونة */
+        .ql-editor table, 
+        .post-content table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 15px 0 !important;
+            background-color: #fff !important;
+        }
 
-/* فرض ظهور حدود الجداول وتنسيقها داخل محرر Quill والمدونة */
-.ql-editor table, 
-.post-content table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    margin: 15px 0 !important;
-    background-color: #fff !important;
-}
+        .ql-editor th, .ql-editor td,
+        .post-content th, .post-content data, .post-content td {
+            border: 1px solid #ccc !important;
+            padding: 10px !important;
+            text-align: right !important;
+        }
 
-.ql-editor th, .ql-editor td,
-.post-content th, .post-content data, .post-content td {
-    border: 1px solid #ccc !important;
-    padding: 10px !important;
-    text-align: right !important;
-}
-
-.ql-editor th, .post-content th {
-    background-color: #f1f1f1 !important;
-    font-weight: bold !important;
-}    </style>
+        .ql-editor th, .post-content th {
+            background-color: #f1f1f1 !important;
+            font-weight: bold !important;
+        }
     </style>
 </head>
 <body>
@@ -260,7 +258,7 @@
         <div class="section-box">
             <h3 style="color: var(--accent-color);">📋 نظام القوائم الذكي الهرمي</h3>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
-                أدخل اسم العنصر والرابط، واستخدم الشرطات للتحديد: <code>_</code> (رئيسي) | <code>__</code> (فرعي)[cite: 4, 7].
+                أدخل اسم العنصر والرابط، واستخدم الشرطات للتحديد: <code>_</code> (رئيسي) | <code>__</code> (فرعي).
             </p>
             <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                 <input type="text" id="menu-raw-input" placeholder="_تقنية أو __أول شرح" style="flex: 2;">
@@ -270,8 +268,9 @@
             </div>
             <div id="admin-menu-structured-list" style="max-height: 300px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);"></div>
             <div style="margin-top: 15px;">
-                <button type="button" class="btn" onclick="normalizeMenuLevelsBeforeSave(); saveGeneralSettings('menu');" style="background: #28a745;">حفظ التغييرات النهائية للسيرفر</button>            </div>
+                <button type="button" class="btn" onclick="normalizeMenuLevelsBeforeSave(); saveGeneralSettings('menu');" style="background: #28a745;">حفظ التغييرات النهائية للسيرفر</button>
             </div>
+        </div>
 
         <!-- ودجات الشريط الأيسر والتذييل -->
         <div class="section-box">
@@ -473,7 +472,6 @@
     <!-- مكتبة تعديل حجم الصور -->
     <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
 
-   
     <script>     
         let globalData = {
             settings: { logoUrl: "", logoHeight: "55px", tickerVisible: true },
@@ -565,7 +563,6 @@
             const path = "data.json";
 
             try {
-                // جلب أحدث SHA تفادياً لأخطاء التعارض
                 const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
                     headers: { 'Authorization': `token ${token}` }
                 });
@@ -646,11 +643,6 @@
                 if (idx !== -1) globalData.posts[idx] = itemObj;
                 else globalData.posts.unshift(itemObj);
                 localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
-
-               // let articleUrl = `articles/${slug}`;
-              //  if (!globalData.menu.some(item => item.url && item.url.includes(slug))) {
-              //      globalData.menu.push({ title: title, url: articleUrl, level: 3, rawText: '___ ' + title });
-              //  }
             }
 
             const owner = "abdulazizalhaaj728-del";
@@ -737,37 +729,33 @@
             </html>`;
         }
 
-
         // تسجيل أداة تغيير حجم الصور المدمجة
         if (typeof ImageResize !== 'undefined') {
             Quill.register('modules/imageResize', ImageResize.default || ImageResize);
         }
 
-
-        
-    // إعداد محرر Quill الموحد
-    var quill = new Quill('#editor-container', {
-        theme: 'snow',
-        modules: {
-            toolbar: [
-                [{ header: [1, 2, 3, false] }],
-                ['bold', 'italic', 'underline'],
-                [{ color: [] }, { background: [] }],
-                [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                ['link', 'image', 'clean'] // تم استبعاد table المؤقتة لمنع خطأ التحميل
-            ],
-            imageResize: {
-                displayStyles: {
-                    backgroundColor: 'black',
-                    border: 'none',
-                    color: 'white'
-                },
-                modules: ['Resize', 'DisplaySize', 'Toolbar']
+        // إعداد محرر Quill الموحد
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline'],
+                    [{ color: [] }, { background: [] }],
+                    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    ['link', 'image', 'clean']
+                ],
+                imageResize: {
+                    displayStyles: {
+                        backgroundColor: 'black',
+                        border: 'none',
+                        color: 'white'
+                    },
+                    modules: ['Resize', 'DisplaySize', 'Toolbar']
+                }
             }
-        }
-   });
-
+        });
 
         let activeImage = null;
         const editorWrapper = document.getElementById('editor-container');
@@ -830,8 +818,7 @@
                     menuHasChanges = true;
                 }
             });
-
-        
+        }
         
         window.addEventListener('DOMContentLoaded', () => {
             const tokenInput = document.getElementById('gh-token-input');
@@ -989,73 +976,6 @@
             previewWin.document.write(`<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>معاينة</title></head><body style="background:#0f172a;color:#fff;padding:30px;font-family:Cairo"><h1>${title}</h1><div>${quill.root.innerHTML}</div></body></html>`);
             previewWin.document.close();
         }
-
-
-
-                let activeImage = null;
-        const editorWrapper = document.getElementById('editor-container');
-
-        if (editorWrapper) {
-            const imgToolbar = document.createElement('div');
-            imgToolbar.id = 'custom-image-toolbar';
-            imgToolbar.style.cssText = 'display:none; position:absolute; background:#1e293b; color:#fff; padding:6px 12px; border-radius:6px; z-index:2000; gap:8px; align-items:center; font-size:12px; box-shadow:0 4px 12px rgba(0,0,0,0.2);';
-            imgToolbar.innerHTML = `
-                <button type="button" id="img-link-btn" style="background:#0284c7; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">إضافة/تعديل رابط</button>
-                <button type="button" id="img-alt-btn" style="background:#64748b; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">التسمية البديلة</button>
-                <button type="button" id="img-del-btn" style="background:#ef4444; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;"><i class="fa-solid fa-trash"></i> حذف</button>
-            `;
-            document.body.appendChild(imgToolbar);
-
-            editorWrapper.addEventListener('click', function(e) {
-                if (e.target && e.target.tagName === 'IMG') {
-                    activeImage = e.target;
-                    const rect = activeImage.getBoundingClientRect();
-                    imgToolbar.style.display = 'flex';
-                    imgToolbar.style.top = (window.scrollY + rect.top - 40) + 'px';
-                    imgToolbar.style.left = (window.scrollX + rect.left) + 'px';
-                } else if (!imgToolbar.contains(e.target)) {
-                    imgToolbar.style.display = 'none';
-                }
-            });
-
-            document.getElementById('img-del-btn').addEventListener('click', function() {
-                if (activeImage) {
-                    activeImage.remove();
-                    imgToolbar.style.display = 'none';
-                    menuHasChanges = true;
-                }
-            });
-
-            document.getElementById('img-link-btn').addEventListener('click', function() {
-                if (!activeImage) return;
-                let currentLink = activeImage.getAttribute('data-url') || '';
-                let newUrl = prompt("أدخل رابط الانتقال عند الضغط على الصورة:", currentLink);
-                if (newUrl !== null) {
-                    if (newUrl.trim() === '') {
-                        activeImage.removeAttribute('data-url');
-                        activeImage.style.cursor = 'default';
-                    } else {
-                        activeImage.setAttribute('data-url', newUrl);
-                        activeImage.style.cursor = 'pointer';
-                        activeImage.onclick = function() { window.open(newUrl, '_blank'); };
-                    }
-                    menuHasChanges = true;
-                }
-            });
-
-            document.getElementById('img-alt-btn').addEventListener('click', function() {
-                if (!activeImage) return;
-                let currentAlt = activeImage.getAttribute('alt') || '';
-                let newAlt = prompt("أدخل التسمية البديلة (Alt Text) للصورة:", currentAlt);
-                if (newAlt !== null) {
-                    activeImage.setAttribute('alt', newAlt);
-                    activeImage.title = newAlt;
-                    menuHasChanges = true;
-                }
-            });
-        }
-
-        
 
         function applyCustomFont(fontName) {
             const range = quill.getSelection();
@@ -1314,12 +1234,10 @@
                 if (chk.checked) selectedIndices.push(parseInt(chk.dataset.index)); 
             });
         
-            // إذا لم يكن العنصر المسحوب ضمن المحددين، نعتبره هو العنصر المستهدف وحده مع أبنائه
             if (!selectedIndices.includes(currentIndex)) {
                 selectedIndices = [currentIndex];
             }
         
-            // تجميع العناصر المحددة مع كل أبنائها التابعة لها هرمياً
             let allIndicesToMove = new Set();
             selectedIndices.forEach(idx => {
                 allIndicesToMove.add(idx);
@@ -1331,7 +1249,6 @@
                 }
             });
         
-            // ترتيب المؤشرات تصاعدياً للحفاظ على الترتيب الأصلي
             draggedIndices = Array.from(allIndicesToMove).sort((a, b) => a - b);
             this.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
@@ -1342,7 +1259,6 @@
             e.dataTransfer.dropEffect = 'move';
             const targetRow = this;
             
-            // تجاهل العناصر المخفية تماماً لمنع التداخل
             if (targetRow.style.display === 'none') return;
 
             const rect = targetRow.getBoundingClientRect();
@@ -1399,8 +1315,6 @@
         
             menuHasChanges = true;
             globalData.menu = remainingItems;
-            
-            // تم إزالة السطر: collapsedMenuIndices.clear(); لكي تظل القوائم المقفلة على حالها!
             renderStructuredMenuAdmin();
         }
                 
@@ -1414,14 +1328,11 @@
         function normalizeMenuLevelsBeforeSave() {
             if (!globalData.menu || !globalData.menu.length) return;
             
-            // تصحيح مستويات القائمة بناءً على التدفق الهرمي المنطقي
-            // (لا يمكن لعنصر أن يرتفع أكثر من مستوى واحد عن العنصر الذي يسبقه)
             let previousLevel = 1;
             
             globalData.menu.forEach((item, index) => {
                 let currentLevel = item.level || 1;
                 
-                // منع القفزات غير المنطقية في المستويات (مثلاً من 1 إلى 3 مباشرة بدون 2)
                 if (currentLevel > previousLevel + 1) {
                     currentLevel = previousLevel + 1;
                 }
@@ -1435,7 +1346,6 @@
             });
         }
 
-        
         function editStructuredItem(index) {
             const item = globalData.menu[index];
             if (!item) return;
