@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- مكتبة Quill CSS مع دعم الجداول -->
-
     <!-- Quill Snow Theme -->
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
     <!-- إضافة مكتبة الجداول المفقودة Quill Table Module -->
@@ -472,7 +471,8 @@
     <!-- مكتبة Quill.js -->
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
     <!-- مكتبة تعديل حجم الصور -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
+
    
     <script>     
         let globalData = {
@@ -745,116 +745,91 @@
 
 
         
-var quill = new Quill('#editor-container', {
-            theme: 'snow',
-            modules: {
-                toolbar: [
-                    [{ header: [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline'],
-                    [{ color: [] }, { background: [] }],
-                    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    ['link', 'image', 'clean']
-                ]
+    // إعداد محرر Quill الموحد
+    var quill = new Quill('#editor-container', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ color: [] }, { background: [] }],
+                [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                ['link', 'image', 'clean'] // تم استبعاد table المؤقتة لمنع خطأ التحميل
+            ],
+            imageResize: {
+                displayStyles: {
+                    backgroundColor: 'black',
+                    border: 'none',
+                    color: 'white'
+                },
+                modules: ['Resize', 'DisplaySize', 'Toolbar']
             }
-        });
-
-        // 1. جعل كل صورة جديدة أو موجودة قابلة للسحب وتفعيل تحجيم مرن
-        function makeImagesInteractive() {
-            const images = quill.root.querySelectorAll('img');
-            images.forEach(img => {
-                img.setAttribute('draggable', 'true');
-                
-                // إضافة مؤشر مرئي وإطار عند النقر لتغيير الحجم أو التحريك
-                img.style.cursor = 'pointer';
-                img.style.maxWidth = '100%';
-                
-                // إعطاء إمكانية التحكم بالتكبير والتصغير الحر عبر النقر المزدوج أو إظهار قائمة مقابض خفيفة
-                img.onclick = function(e) {
-                    e.stopPropagation();
-                    document.querySelectorAll('.ql-editor img').forEach(i => i.style.outline = 'none');
-                    img.style.outline = '3px solid #0284c7';
-                    window.activeImage = img;
-                };
-            });
         }
+   });
 
-        // تشغيل الدالة عند إدراج صورة أو تغيير محتوى المحرر
-        quill.on('text-change', function() {
-            makeImagesInteractive();
-        });
-        makeImagesInteractive();
 
-        // 2. إدارة السحب والإفلات (Drag & Drop) الحقيقي ونقل الصورة لمكان جديد
-        let draggedImgSrc = null;
-        let originalImgElement = null;
+        let activeImage = null;
+        const editorWrapper = document.getElementById('editor-container');
 
-        quill.root.addEventListener('dragstart', function(e) {
-            if (e.target && e.target.tagName === 'IMG') {
-                draggedImgSrc = e.target.src;
-                originalImgElement = e.target;
-                e.dataTransfer.setData('text/plain', draggedImgSrc);
-            }
-        });
+        if (editorWrapper) {
+            const imgToolbar = document.createElement('div');
+            imgToolbar.id = 'custom-image-toolbar';
+            imgToolbar.style.cssText = 'display:none; position:absolute; background:#1e293b; color:#fff; padding:6px 12px; border-radius:6px; z-index:2000; gap:8px; align-items:center; font-size:12px; box-shadow:0 4px 12px rgba(0,0,0,0.2);';
+            imgToolbar.innerHTML = `
+                <button type="button" id="img-link-btn" style="background:#0284c7; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">إضافة/تعديل رابط</button>
+                <button type="button" id="img-alt-btn" style="background:#64748b; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">التسمية البديلة</button>
+                <button type="button" id="img-del-btn" style="background:#ef4444; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;"><i class="fa-solid fa-trash"></i> حذف</button>
+            `;
+            document.body.appendChild(imgToolbar);
 
-        quill.root.addEventListener('dragover', function(e) {
-            e.preventDefault(); // ضروري جداً للسماح بالإفلات في أي مكان
-            e.dataTransfer.dropEffect = 'move';
-        });
-
-        quill.root.addEventListener('drop', function(e) {
-            if (draggedImgSrc) {
-                e.preventDefault();
-                
-                // الحصول على موقع المؤشر بالدقة داخل المحرر عند الإفلات
-                let range = quill.getSelection();
-                if (!range) {
-                    // إذا لم يكن مؤشر الكتابة محدداً، نضع الصورة في نهاية النص
-                    range = { index: quill.getLength() };
+            editorWrapper.addEventListener('click', function(e) {
+                if (e.target && e.target.tagName === 'IMG') {
+                    activeImage = e.target;
+                    const rect = activeImage.getBoundingClientRect();
+                    imgToolbar.style.display = 'flex';
+                    imgToolbar.style.top = (window.scrollY + rect.top - 40) + 'px';
+                    imgToolbar.style.left = (window.scrollX + rect.left) + 'px';
+                } else if (!imgToolbar.contains(e.target)) {
+                    imgToolbar.style.display = 'none';
                 }
+            });
 
-                // إدراج الصورة في المكان الجديد
-                quill.insertEmbed(range.index, 'image', draggedImgSrc);
-                
-                // حذف الصورة من مكانها القديم نهائياً
-                if (originalImgElement) {
-                    originalImgElement.remove();
-                }
-
-                // إعادة تعيين المتغيرات
-                draggedImgSrc = null;
-                originalImgElement = null;
-                menuHasChanges = true;
-                
-                // تحديث تفاعلية الصور
-                setTimeout(makeImagesInteractive, 100);
-            }
-        });
-
-        // إضافة طريقة سهلة لتغيير الحجم (تكبير/تصغير) عبر ضغط زر (أو لوحة المفاتيح) أو إعطاء أبعاد حرة
-        // يمكنك تكبير الصورة أو تصغيرها بالضغط عليها ثم الضغط على مفاتيح الأسهم أو أداة بسيطة
-        quill.root.addEventListener('keydown', function(e) {
-            if (window.activeImage) {
-                // زر سهم اليمين أو الأعلى يكبر الصورة، سهم اليسار أو الأسفل يصغرها
-                let currentWidth = window.activeImage.clientWidth;
-                if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    window.activeImage.style.width = (currentWidth + 30) + 'px';
+            document.getElementById('img-del-btn').addEventListener('click', function() {
+                if (activeImage) {
+                    activeImage.remove();
+                    imgToolbar.style.display = 'none';
                     menuHasChanges = true;
-                } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    if (currentWidth > 50) {
-                        window.activeImage.style.width = (currentWidth - 30) + 'px';
-                        menuHasChanges = true;
-                    }
                 }
-            }
-        });
+            });
 
+            document.getElementById('img-link-btn').addEventListener('click', function() {
+                if (!activeImage) return;
+                let currentLink = activeImage.getAttribute('data-url') || '';
+                let newUrl = prompt("أدخل رابط الانتقال عند الضغط على الصورة:", currentLink);
+                if (newUrl !== null) {
+                    if (newUrl.trim() === '') {
+                        activeImage.removeAttribute('data-url');
+                        activeImage.style.cursor = 'default';
+                    } else {
+                        activeImage.setAttribute('data-url', newUrl);
+                        activeImage.style.cursor = 'pointer';
+                        activeImage.onclick = function() { window.open(newUrl, '_blank'); };
+                    }
+                    menuHasChanges = true;
+                }
+            });
 
-
-
-
+            document.getElementById('img-alt-btn').addEventListener('click', function() {
+                if (!activeImage) return;
+                let currentAlt = activeImage.getAttribute('alt') || '';
+                let newAlt = prompt("أدخل التسمية البديلة (Alt Text) للصورة:", currentAlt);
+                if (newAlt !== null) {
+                    activeImage.setAttribute('alt', newAlt);
+                    activeImage.title = newAlt;
+                    menuHasChanges = true;
+                }
+            });
 
         
         
