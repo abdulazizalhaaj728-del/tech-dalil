@@ -483,9 +483,9 @@
                 else globalData.posts.unshift(itemObj);
                 localStorage.setItem('tech_dalil_posts', JSON.stringify(globalData.posts));
 
-                let articleUrl = `articles/${slug}`;
-                if (!globalData.menu.some(item => item.url && item.url.includes(slug))) {
-                    globalData.menu.push({ title: title, url: articleUrl, level: 3, rawText: '___ ' + title });
+               // let articleUrl = `articles/${slug}`;
+              //  if (!globalData.menu.some(item => item.url && item.url.includes(slug))) {
+              //      globalData.menu.push({ title: title, url: articleUrl, level: 3, rawText: '___ ' + title });
                 }
             }
 
