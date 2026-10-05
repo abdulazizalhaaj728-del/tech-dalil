@@ -124,16 +124,10 @@
             "rawText": "___ مقالة تجريبية"
         },
         {
-            "rawText": "_ مقالة تجريبية",
-            "title": "مقالة تجريبية",
+            "rawText": "_ test",
+            "title": "test",
             "level": 1,
             "url": "#"
-        },
-        {
-            "rawText": "__ مقالة تجريبية1",
-            "title": "مقالة تجريبية1",
-            "level": 2,
-            "url": "https://tech-dalil.com/articles/tech-post-07574.html"
         }
     ],
     "widgets": []
