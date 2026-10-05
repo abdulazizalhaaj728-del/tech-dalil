@@ -110,6 +110,14 @@
             "content": "",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1791216052334",
+            "title": "الصفحات الثابتة",
+            "type": "pages",
+            "content": "",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
