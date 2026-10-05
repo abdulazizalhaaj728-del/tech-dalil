@@ -4,7 +4,14 @@
         "logoHeight": "55px",
         "tickerVisible": true
     },
-    "menu": [],
+    "menu": [
+        {
+            "rawText": "تجربة تيست جديدة",
+            "title": "تجربة تيست جديدة",
+            "level": 1,
+            "url": "https://tech-dalil.com/articles/tech-post-74619.html"
+        }
+    ],
     "widgets": [],
     "ads": {
         "topOn": false,
