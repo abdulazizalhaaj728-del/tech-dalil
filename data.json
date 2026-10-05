@@ -26,14 +26,6 @@
             "content": "",
             "active": true,
             "location": "sidebar"
-        },
-        {
-            "id": "w_1791191570161",
-            "title": "تجربة للتذييل",
-            "type": "recent",
-            "content": "",
-            "active": true,
-            "location": "footer"
         }
     ],
     "ads": {
