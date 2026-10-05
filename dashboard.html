@@ -531,58 +531,72 @@
                 }
             }
 
-            const owner = "abdulazizalhaaj728-del";
-            const repo = "tech-dalil";
-            const path = "data.json";
+const owner = "abdulazizalhaaj728-del";
+    const repo = "tech-dalil";
+    const path = "data.json";
 
-            try {
-                const contentString = JSON.stringify(globalData, null, 4);
-                const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
+    try {
+        const contentString = JSON.stringify(globalData, null, 4);
+        const encodedContent = btoa(unescape(encodeURIComponent(contentString)));
 
-                const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Save Article/Page: ${title}`, content: encodedContent, sha: globalFileSha })
-                });
-
-                const result = await response.json();
-                if (response.ok) {
-                    globalFileSha = result.content.sha;
-
-                    // توليد ورفع ملف الـ HTML المستقل للمقال في مجلد articles/
-                    if (contentType === 'post') {
-                        const fileName = `articles/${slug}`;
-                        const htmlContent = generateArticleHtml(itemObj);
-                        const encodedHtml = btoa(unescape(encodeURIComponent(htmlContent)));
-            
-                        let htmlSha = "";
-                        const resHtml = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
-                            headers: { 'Authorization': `token ${token}` }
-                        });
-                        if (resHtml.ok) {
-                            const hData = await resHtml.json();
-                            htmlSha = hData.sha;
-                        }
-            
-                        await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
-                            method: 'PUT',
-                            headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ message: `Generate article file: ${title}`, content: encodedHtml, sha: htmlSha || undefined })
-                        });
-                    }
-
-                    showCustomAlert("نجاح", "تم حفظ المقال ونشره حصرياً وتحديث السحابة بنجاح!");
-                    closeArticleManager();
-                    loadPostsAdminList();
-                } else {
-                    showCustomAlert("خطأ", "فشل رفع المقال للسيرفر: " + (result.message || ""));
-                }
-            } catch(e) {
-                console.error(e);
-                showCustomAlert("خطأ", "حدث خطأ أثناء الاتصال بالخادم لحفظ المقال.");
-            }
+        // 1. جلب أحدث SHA للملف من السيرفر قبل التحديث لتجنب خطأ عدم التطابق
+        let currentSha = globalFileSha;
+        const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+            headers: { 'Authorization': `token ${token}` }
+        });
+        if (getRes.ok) {
+            const getData = await getRes.json();
+            currentSha = getData.sha;
         }
 
+        // 2. إرسال طلب التحديث مع الـ SHA المحدث تماماً
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+            method: 'PUT',
+            headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                message: `Save Article/Page: ${title}`, 
+                content: encodedContent, 
+                sha: currentSha 
+            })
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            globalFileSha = result.content.sha; // تحديث المتغير العالمي بالقيمة الجديدة
+
+            // بقية كود رفع ملف الـ HTML الخاص بالمقال...
+            if (contentType === 'post') {
+                const fileName = `articles/${slug}`;
+                const htmlContent = generateArticleHtml(itemObj);
+                const encodedHtml = btoa(unescape(encodeURIComponent(htmlContent)));
+    
+                let htmlSha = "";
+                const resHtml = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                if (resHtml.ok) {
+                    const hData = await resHtml.json();
+                    htmlSha = hData.sha;
+                }
+    
+                await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${fileName}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `Generate article file: ${title}`, content: encodedHtml, sha: htmlSha || undefined })
+                });
+            }
+
+            showCustomAlert("نجاح", "تم حفظ المقال ونشره حصرياً وتحديث السحابة بنجاح!");
+            closeArticleManager();
+            loadPostsAdminList();
+        } else {
+            showCustomAlert("خطأ", "فشل رفع المقال للسيرفر: " + (result.message || ""));
+        }
+    } catch(e) {
+        console.error(e);
+        showCustomAlert("خطأ", "حدث خطأ أثناء الاتصال بالخادم لحفظ المقال.");
+    }
+            
         function generateArticleHtml(post) {
             return `<!DOCTYPE html>
             <html lang="ar" dir="rtl">
