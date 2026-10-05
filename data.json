@@ -30,7 +30,16 @@
             "url": "https://tech-dalil.com/articles/tech-post-38753.html"
         }
     ],
-    "widgets": [],
+    "widgets": [
+        {
+            "id": "w_1791195678744",
+            "title": "أحدث المواضيع",
+            "type": "recent",
+            "content": "",
+            "active": true,
+            "location": "sidebar"
+        }
+    ],
     "ads": {
         "topOn": false,
         "topCode": "",
