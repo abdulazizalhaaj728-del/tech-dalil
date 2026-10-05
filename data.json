@@ -4,7 +4,26 @@
         "logoHeight": "55px",
         "tickerVisible": true
     },
-    "menu": [],
+    "menu": [
+        {
+            "rawText": "علوم وصيانة الحاسب الآلي",
+            "title": "علوم وصيانة الحاسب الآلي",
+            "level": 1,
+            "url": "#"
+        },
+        {
+            "rawText": "__تركيب قطع وصيانة الحاسب الآلي",
+            "title": "تركيب قطع وصيانة الحاسب الآلي",
+            "level": 2,
+            "url": "#"
+        },
+        {
+            "rawText": "___الشبكات  Networks",
+            "title": "الشبكات  Networks",
+            "level": 3,
+            "url": "#"
+        }
+    ],
     "widgets": [],
     "ads": {
         "topOn": false,
