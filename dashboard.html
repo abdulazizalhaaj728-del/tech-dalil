@@ -1150,6 +1150,14 @@
             renderStructuredMenuAdmin();
         }
 
+        let collapsedMenuIndices = new Set();
+
+        function toggleMenuCollapse(index) {
+            if (collapsedMenuIndices.has(index)) collapsedMenuIndices.delete(index);
+            else collapsedMenuIndices.add(index);
+            renderStructuredMenuAdmin();
+        }
+
         function renderStructuredMenuAdmin() {
             const container = document.getElementById('admin-menu-structured-list');
             if (!container) return;
@@ -1160,18 +1168,189 @@
                 return;
             }
 
+            let hideStackLevel = 999;
+
             globalData.menu.forEach((item, index) => {
+                let currentLevel = item.level || 1;
+                if (currentLevel <= hideStackLevel) hideStackLevel = 999;
+                const isHiddenByParent = currentLevel > hideStackLevel;
+
+                let hasChildren = false;
+                if (index + 1 < globalData.menu.length) {
+                    if ((globalData.menu[index + 1].level || 1) > currentLevel) hasChildren = true;
+                }
+
+                if (hasChildren && collapsedMenuIndices.has(index)) {
+                    hideStackLevel = Math.min(hideStackLevel, currentLevel);
+                }
+
                 const row = document.createElement('div');
-                row.className = 'item-row';
+                row.className = 'drag-item';
+                row.setAttribute('draggable', 'true');
+                row.dataset.index = index;
+                
+                row.style.cssText = isHiddenByParent ? 
+                    "display: none; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem;" :
+                    "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.15); border-radius: 6px; margin-bottom: 6px; gap: 10px; font-size: 0.85rem; transition: all 0.2s;";
+                
+                let indent = (currentLevel - 1) * 25; 
+                let collapseBtnHtml = hasChildren ? 
+                    `<button type="button" onclick="toggleMenuCollapse(${index})" style="background: ${collapsedMenuIndices.has(index) ? '#0284c7' : '#64748b'}; color: #fff; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;">${collapsedMenuIndices.has(index) ? '+' : '-'}</button>` :
+                    `<span style="width: 20px; display: inline-block;"></span>`;
+
                 row.innerHTML = `
-                    <span style="flex:1; font-size:0.9rem;"><b>${item.rawText}</b> (رابط: ${item.url})</span>
-                    <button type="button" class="btn-warning" onclick="editStructuredItem(${index})" style="padding: 3px 8px; border:none; border-radius:3px; cursor:pointer;">تعديل</button>
-                    <button type="button" class="btn-danger" onclick="deleteStructuredItem(${index})" style="padding: 3px 8px; border:none; border-radius:3px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-right: ${indent}px; flex: 1;">
+                        <input type="checkbox" class="menu-item-checkbox" data-index="${index}" style="width: 16px; height: 16px; cursor: pointer;">
+                        ${collapseBtnHtml}
+                        <span style="color: var(--text-muted); cursor: grab;"><i class="fa-solid fa-grip-vertical"></i></span>
+                        <span style="color: var(--accent-color); font-weight: bold;">${item.rawText}</span>
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">(رابط: ${item.url})</span>
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <button type="button" class="btn-warning" onclick="editStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;">تعديل</button>
+                        <button type="button" class="btn-danger" onclick="deleteStructuredItem(${index})" style="padding: 3px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
                 `;
+
+                row.addEventListener('dragstart', handleDragStart);
+                row.addEventListener('dragover', handleDragOver);
+                row.addEventListener('dragleave', handleDragLeave);
+                row.addEventListener('drop', handleDrop);
+                row.addEventListener('dragend', handleDragEnd);
+
                 container.appendChild(row);
             });
         }
 
+        let draggedIndices = [];
+
+        function handleDragStart(e) {
+            const currentIndex = parseInt(this.dataset.index);
+            const checkboxes = document.querySelectorAll('.menu-item-checkbox');
+            let selectedIndices = [];
+            
+            checkboxes.forEach(chk => { 
+                if (chk.checked) selectedIndices.push(parseInt(chk.dataset.index)); 
+            });
+        
+            // إذا لم يكن العنصر المسحوب ضمن المحددين، نعتبره هو العنصر المستهدف وحده مع أبنائه
+            if (!selectedIndices.includes(currentIndex)) {
+                selectedIndices = [currentIndex];
+            }
+        
+            // تجميع العناصر المحددة مع كل أبنائها التابعة لها هرمياً
+            let allIndicesToMove = new Set();
+            selectedIndices.forEach(idx => {
+                allIndicesToMove.add(idx);
+                let baseLevel = globalData.menu[idx].level || 1;
+                let nextIdx = idx + 1;
+                while (nextIdx < globalData.menu.length && (globalData.menu[nextIdx].level || 1) > baseLevel) {
+                    allIndicesToMove.add(nextIdx);
+                    nextIdx++;
+                }
+            });
+        
+            // ترتيب المؤشرات تصاعدياً للحفاظ على الترتيب الأصلي
+            draggedIndices = Array.from(allIndicesToMove).sort((a, b) => a - b);
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const targetRow = this;
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            if (yClick < threshold) targetRow.classList.add('drop-indicator-top');
+            else if (yClick > rect.height - threshold) targetRow.classList.add('drop-indicator-bottom');
+            else targetRow.classList.add('drag-over-parent');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const targetRow = this;
+            targetRow.classList.remove('drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+        
+            const targetIndex = parseInt(targetRow.dataset.index);
+            if (draggedIndices.includes(targetIndex)) return;
+        
+            const rect = targetRow.getBoundingClientRect();
+            const threshold = rect.height / 3;
+            const yClick = e.clientY - rect.top;
+        
+            let dropMode = yClick < threshold ? 'top' : (yClick > rect.height - threshold ? 'bottom' : 'child');
+        
+            let itemsToMove = draggedIndices.map(i => globalData.menu[i]);
+            let remainingItems = globalData.menu.filter((_, idx) => !draggedIndices.includes(idx));
+            
+            let targetItemInRemaining = globalData.menu[targetIndex];
+            let newTargetIdx = remainingItems.indexOf(targetItemInRemaining);
+            if (newTargetIdx === -1) newTargetIdx = remainingItems.length;
+        
+            if (dropMode === 'top') {
+                remainingItems.splice(newTargetIdx, 0, ...itemsToMove);
+            } else if (dropMode === 'bottom') {
+                let insertPos = newTargetIdx + 1;
+                while (insertPos < remainingItems.length && (remainingItems[insertPos].level || 1) > (targetItemInRemaining.level || 1)) {
+                    insertPos++;
+                }
+                remainingItems.splice(insertPos, 0, ...itemsToMove);
+            } else if (dropMode === 'child') {
+                let levelDiff = (targetItemInRemaining.level + 1) - itemsToMove[0].level;
+                itemsToMove.forEach(it => {
+                    it.level = Math.max(1, it.level + levelDiff);
+                    it.rawText = '_'.repeat(it.level) + ' ' + (it.title || 'عنصر');
+                });
+                remainingItems.splice(newTargetIdx + 1, 0, ...itemsToMove);
+            }
+        
+            menuHasChanges = true;
+            globalData.menu = remainingItems;
+            
+            // تم إزالة السطر: collapsedMenuIndices.clear(); لكي تظل القوائم المقفلة على حالها!
+            renderStructuredMenuAdmin();
+        }
+                
+        function handleDragEnd(e) {
+            document.querySelectorAll('.drag-item').forEach(item => {
+                item.classList.remove('dragging', 'drop-indicator-top', 'drop-indicator-bottom', 'drag-over-parent');
+            });
+            draggedIndices = [];
+        }
+
+        function normalizeMenuLevelsBeforeSave() {
+            if (!globalData.menu || !globalData.menu.length) return;
+            
+            // تصحيح مستويات القائمة بناءً على التدفق الهرمي المنطقي
+            // (لا يمكن لعنصر أن يرتفع أكثر من مستوى واحد عن العنصر الذي يسبقه)
+            let previousLevel = 1;
+            
+            globalData.menu.forEach((item, index) => {
+                let currentLevel = item.level || 1;
+                
+                // منع القفزات غير المنطقية في المستويات (مثلاً من 1 إلى 3 مباشرة بدون 2)
+                if (currentLevel > previousLevel + 1) {
+                    currentLevel = previousLevel + 1;
+                }
+                
+                item.level = currentLevel;
+                let cleanTitle = (item.title || item.rawText || '').replace(/^_+\s*/, '');
+                item.title = cleanTitle;
+                item.rawText = '_'.repeat(currentLevel) + ' ' + cleanTitle;
+                
+                previousLevel = currentLevel;
+            });
+        }
+
+        
         function editStructuredItem(index) {
             const item = globalData.menu[index];
             if (!item) return;
