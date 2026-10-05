@@ -745,7 +745,7 @@
 
 
         
-        var quill = new Quill('#editor-container', {
+var quill = new Quill('#editor-container', {
             theme: 'snow',
             modules: {
                 toolbar: [
@@ -759,44 +759,97 @@
             }
         });
 
-        
+        // 1. جعل كل صورة جديدة أو موجودة قابلة للسحب وتفعيل تحجيم مرن
+        function makeImagesInteractive() {
+            const images = quill.root.querySelectorAll('img');
+            images.forEach(img => {
+                img.setAttribute('draggable', 'true');
+                
+                // إضافة مؤشر مرئي وإطار عند النقر لتغيير الحجم أو التحريك
+                img.style.cursor = 'pointer';
+                img.style.maxWidth = '100%';
+                
+                // إعطاء إمكانية التحكم بالتكبير والتصغير الحر عبر النقر المزدوج أو إظهار قائمة مقابض خفيفة
+                img.onclick = function(e) {
+                    e.stopPropagation();
+                    document.querySelectorAll('.ql-editor img').forEach(i => i.style.outline = 'none');
+                    img.style.outline = '3px solid #0284c7';
+                    window.activeImage = img;
+                };
+            });
+        }
 
-        // تفعيل السحب والإفلات الحقيقي وتغيير الحجم للصور داخل محرر Quill
-        quill.root.addEventListener('click', function(e) {
-            if (e.target && e.target.tagName === 'IMG') {
-                // إزالة التحديد عن أي صورة أخرى
-                document.querySelectorAll('.ql-editor img').forEach(img => img.style.outline = 'none');
-                e.target.style.outline = '3px solid #0284c7';
-                activeImage = e.target;
-            } else if (activeImage && !e.target.classList.contains('img-resizer')) {
-                activeImage.style.outline = 'none';
-            }
+        // تشغيل الدالة عند إدراج صورة أو تغيير محتوى المحرر
+        quill.on('text-change', function() {
+            makeImagesInteractive();
         });
+        makeImagesInteractive();
 
-        // جعل جميع الصور قابلة للسحب والإفلات (Drag & Drop) داخل المحرر
+        // 2. إدارة السحب والإفلات (Drag & Drop) الحقيقي ونقل الصورة لمكان جديد
+        let draggedImgSrc = null;
+        let originalImgElement = null;
+
         quill.root.addEventListener('dragstart', function(e) {
             if (e.target && e.target.tagName === 'IMG') {
-                e.dataTransfer.setData('text/html', e.target.outerHTML);
-                window.draggedImage = e.target;
+                draggedImgSrc = e.target.src;
+                originalImgElement = e.target;
+                e.dataTransfer.setData('text/plain', draggedImgSrc);
             }
         });
 
         quill.root.addEventListener('dragover', function(e) {
-            e.preventDefault(); // ضروري السماح بالإفلات
+            e.preventDefault(); // ضروري جداً للسماح بالإفلات في أي مكان
+            e.dataTransfer.dropEffect = 'move';
         });
 
         quill.root.addEventListener('drop', function(e) {
-            if (window.draggedImage) {
+            if (draggedImgSrc) {
                 e.preventDefault();
-                let range = quill.getSelection() || { index: quill.getLength() };
-                // إدراج الصورة في المكان الجديد وحذفها من المكان القديم
-                quill.insertEmbed(range.index, 'image', window.draggedImage.src);
-                window.draggedImage.remove();
-                window.draggedImage = null;
+                
+                // الحصول على موقع المؤشر بالدقة داخل المحرر عند الإفلات
+                let range = quill.getSelection();
+                if (!range) {
+                    // إذا لم يكن مؤشر الكتابة محدداً، نضع الصورة في نهاية النص
+                    range = { index: quill.getLength() };
+                }
+
+                // إدراج الصورة في المكان الجديد
+                quill.insertEmbed(range.index, 'image', draggedImgSrc);
+                
+                // حذف الصورة من مكانها القديم نهائياً
+                if (originalImgElement) {
+                    originalImgElement.remove();
+                }
+
+                // إعادة تعيين المتغيرات
+                draggedImgSrc = null;
+                originalImgElement = null;
                 menuHasChanges = true;
+                
+                // تحديث تفاعلية الصور
+                setTimeout(makeImagesInteractive, 100);
             }
         });
 
+        // إضافة طريقة سهلة لتغيير الحجم (تكبير/تصغير) عبر ضغط زر (أو لوحة المفاتيح) أو إعطاء أبعاد حرة
+        // يمكنك تكبير الصورة أو تصغيرها بالضغط عليها ثم الضغط على مفاتيح الأسهم أو أداة بسيطة
+        quill.root.addEventListener('keydown', function(e) {
+            if (window.activeImage) {
+                // زر سهم اليمين أو الأعلى يكبر الصورة، سهم اليسار أو الأسفل يصغرها
+                let currentWidth = window.activeImage.clientWidth;
+                if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    window.activeImage.style.width = (currentWidth + 30) + 'px';
+                    menuHasChanges = true;
+                } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    if (currentWidth > 50) {
+                        window.activeImage.style.width = (currentWidth - 30) + 'px';
+                        menuHasChanges = true;
+                    }
+                }
+            }
+        });
 
 
 
