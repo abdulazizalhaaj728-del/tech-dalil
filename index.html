@@ -231,27 +231,37 @@
             text-align: justify !important; /* ضمان شد السطور للفقرات داخل المقال */
         }
         
-        /* 📊 التنسيق الجديد المخصص لإظهار حدود وخلايا الجداول بوضوح */
+        /* 📊 التنسيق الجديد المخصص لإظهار حدود وخلايا الجداول بوضوح *//* ضمان إظهار حدود الجداول بقوة وتجاوز أي تنسيقات افتراضية متعارضة */
+        .dynamic-post-content-box table,
+        .dynamic-post-content-box table * {
+            border-color: #8c7b63 !important; /* لون حدود واضح وقوي متناسق مع الخلفية البيج */
+        }
+        
         .dynamic-post-content-box table {
             width: 100% !important;
             border-collapse: collapse !important;
+            border-spacing: 0 !important;
             margin: 20px 0 !important;
             background-color: #ffffff !important;
-            border: 2px solid #C5B9A5 !important;
+            border: 2px solid #8c7b63 !important;
         }
         
-        .dynamic-post-content-box table th,
-        .dynamic-post-content-box table td {
-            border: 1px solid #C5B9A5 !important;
+        .dynamic-post-content-box th,
+        .dynamic-post-content-box td {
+            border: 1px solid #8c7b63 !important;
+            border-top: 1px solid #8c7b63 !important;
+            border-bottom: 1px solid #8c7b63 !important;
+            border-left: 1px solid #8c7b63 !important;
+            border-right: 1px solid #8c7b63 !important;
             padding: 12px 15px !important;
             text-align: right !important;
             color: #2C3E50 !important;
         }
         
-        .dynamic-post-content-box table th {
+        .dynamic-post-content-box th {
             background-color: #EFECE6 !important;
             font-weight: 700 !important;
-        }        
+        }
 
         .back-to-home-btn {
             display: inline-flex; align-items: center; gap: 6px;
