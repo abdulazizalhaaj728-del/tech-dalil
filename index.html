@@ -524,9 +524,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const jsonPath = `data.json?t=${Date.now()}`;
 
-    insertCustomTable();
-
-
     try {
         const response = await fetch(jsonPath);
         const data = await response.json();
@@ -715,48 +712,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error("تعذر جلب ملف بيانات المدونة:", err);
     }
 });
-
-
-
-        //------------------------- خاص بالجدول ----------------------
-     function insertCustomTable() {
-            const range = quill.getSelection();
-            const tableHTML = `
-                <div style="overflow-x:auto; margin: 15px 0;">
-                    <table border="1" style="width:100%; border-collapse:collapse; text-align:right; font-family:inherit; background:#fff;">
-                        <thead>
-                            <tr style="background-color: #007bff; color: white;">
-                                <th style="padding: 10px; border: 1px solid #ddd;">العنوان 1</th>
-                                <th style="padding: 10px; border: 1px solid #ddd;">العنوان 2</th>
-                                <th style="padding: 10px; border: 1px solid #ddd;">العنوان 3</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="padding: 8px; border: 1px solid #ddd;">بيانات 1</td>
-                                <td style="padding: 8px; border: 1px solid #ddd;">بيانات 2</td>
-                                <td style="padding: 8px; border: 1px solid #ddd;">بيانات 3</td>
-                            </tr>
-                            <tr style="background-color: #f9f9f9;">
-                                <td style="padding: 8px; border: 1px solid #ddd;">بيانات 4</td>
-                                <td style="padding: 8px; border: 1px solid #ddd;">بيانات 5</td>
-                                <td style="padding: 8px; border: 1px solid #ddd;">بيانات 6</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div><p></p>`;
-            
-            if (range) {
-                quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
-            } else {
-                const length = quill.getLength();
-                quill.clipboard.dangerouslyPasteHTML(length, tableHTML);
-            }
-     }
-       //------------------------------------------------------------ 
-        
-        
-
 
         
 // باقي الدوال تبقى كما هي بدون تغيير...
