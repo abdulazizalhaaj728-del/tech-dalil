@@ -228,8 +228,30 @@
         
         .dynamic-post-content-box p {
             margin-bottom: 15px;
+            text-align: justify !important; /* ضمان شد السطور للفقرات داخل المقال */
         }
         
+        /* 📊 التنسيق الجديد المخصص لإظهار حدود وخلايا الجداول بوضوح */
+        .dynamic-post-content-box table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 20px 0 !important;
+            background-color: #ffffff !important;
+            border: 2px solid #C5B9A5 !important;
+        }
+        
+        .dynamic-post-content-box table th,
+        .dynamic-post-content-box table td {
+            border: 1px solid #C5B9A5 !important;
+            padding: 12px 15px !important;
+            text-align: right !important;
+            color: #2C3E50 !important;
+        }
+        
+        .dynamic-post-content-box table th {
+            background-color: #EFECE6 !important;
+            font-weight: 700 !important;
+        }        
 
         .back-to-home-btn {
             display: inline-flex; align-items: center; gap: 6px;
