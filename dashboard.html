@@ -137,24 +137,33 @@
         .ql-font-tajawal { font-family: 'Tajawal', sans-serif !important; }
         .ql-font-amiri { font-family: 'Amiri', serif !important; }
 
-        /* تنسيق الجداول الحقيقية داخل المحرر والمعاينة لضمان ظهور الخلايا بوضوح */
-        .ql-editor table, .post-card table {
+        /* تنسيق الجداول الحقيقية داخل المحرر والمعاينة لضمان ظهور الخلايا بوضوح تام */
+        .ql-editor table, .post-card table, .post-content table {
             width: 100% !important;
             border-collapse: collapse !important;
+            border-spacing: 0 !important;
             margin: 15px 0 !important;
             background-color: #ffffff !important;
-            color: #1e293b !important;
+            border: 2px solid #7c6f57 !important;
         }
+        
+        .ql-editor tr, .post-card tr, .post-content tr {
+            border-bottom: 1px solid #7c6f57 !important;
+        }
+
         .ql-editor table td, .ql-editor table th,
-        .post-card table td, .post-card table th {
-            border: 2px solid #94a3b8 !important;
+        .post-card table td, .post-card table th,
+        .post-content table td, .post-content table th {
+            border: 1px solid #7c6f57 !important;
             padding: 10px 12px !important;
-            text-align: center !important;
+            text-align: right !important;
             vertical-align: middle !important;
+            color: #2C3E50 !important;
         }
-        .ql-editor table th, .post-card table th {
-            background-color: #e2e8f0 !important;
-            font-weight: bold !important;
+        
+        .ql-editor table th, .post-card table th, .post-content table th {
+            background-color: #EFECE6 !important;
+            font-weight: 700 !important;
         }
 
         .ql-editor img {
@@ -193,7 +202,7 @@
             color: var(--text-main) !important;
         }
 
-        /* فرض ظهور حدود الجداول وتنسيقها داخل محرر Quill والمدونة */
+        /* فرض ظهور حدود الجداول وتنسيقها داخل محرر Quill والمدونة 
         .ql-editor table, 
         .post-content table {
             width: 100% !important;
@@ -212,7 +221,7 @@
         .ql-editor th, .post-content th {
             background-color: #f1f1f1 !important;
             font-weight: bold !important;
-        }
+        }*/
     </style>
 </head>
 <body>
