@@ -267,6 +267,36 @@
             font-weight: 700 !important;
         }
 
+        /* إجبار الجداول الملصقة والمنسوخة على إظهار الحدود والخلايا بوضوح تام */
+.dynamic-post-content-box table,
+.dynamic-post-content-box table tr,
+.dynamic-post-content-box table th,
+.dynamic-post-content-box table td,
+.dynamic-post-content-box [style*="table"],
+.dynamic-post-content-box [style*="border"] {
+    border: 1px solid #7c6f57 !important;
+    border-collapse: collapse !important;
+}
+
+.dynamic-post-content-box table {
+    width: 100% !important;
+    margin: 20px 0 !important;
+    background-color: #ffffff !important;
+    border: 2px solid #5c513f !important;
+}
+
+.dynamic-post-content-box th,
+.dynamic-post-content-box td {
+    padding: 12px 15px !important;
+    text-align: right !important;
+    color: #2C3E50 !important;
+}
+
+.dynamic-post-content-box th {
+    background-color: #EFECE6 !important;
+    font-weight: 700 !important;
+}
+
         .back-to-home-btn {
             display: inline-flex; align-items: center; gap: 6px;
             background: var(--primary-color); color: #fff; padding: 6px 14px;
