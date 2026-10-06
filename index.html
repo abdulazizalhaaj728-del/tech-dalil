@@ -524,9 +524,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const jsonPath = `data.json?t=${Date.now()}`;
 
-
+    insertCustomTable();
 
         //------------------------- خاص بالجدول ----------------------
+     function insertCustomTable() {
             const range = quill.getSelection();
             const tableHTML = `
                 <div style="overflow-x:auto; margin: 15px 0;">
@@ -559,6 +560,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const length = quill.getLength();
                 quill.clipboard.dangerouslyPasteHTML(length, tableHTML);
             }
+     }
        //------------------------------------------------------------ 
     
 
