@@ -466,26 +466,28 @@
     </div>
 
     <!-- مكتبة Quill.js -->
-    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js">
+        // 1. إذا كنت تقوم بإعداد محرر Quill، يمكنك إضافة ميزة مطابقة اللصق (Clipboard Matcher)
+        quill.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+        // التحقق مما إذا كان العنصر الملصق هو جدول أو جزء منه
+        if (node.tagName === 'TABLE' || node.tagName === 'TR' || node.tagName === 'TH' || node.tagName === 'TD') {
+            
+            // تعديل عناصر الجدول لتضمين الحدود بشكل إجباري (Inline Styles)
+            delta.ops = delta.ops.map(op => {
+                if (op.attributes) {
+                    // إذا كان هناك تنسيقات مسبقة، يمكنك دمج الحدود معها
+                }
+                return op;
+            });
+        }
+        return delta;
+    });
+        
+    </script>
     <!-- مكتبة تعديل حجم الصور -->
     <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
 
     <script>     
-        // 1. إذا كنت تقوم بإعداد محرر Quill، يمكنك إضافة ميزة مطابقة اللصق (Clipboard Matcher)
-quill.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
-    // التحقق مما إذا كان العنصر الملصق هو جدول أو جزء منه
-    if (node.tagName === 'TABLE' || node.tagName === 'TR' || node.tagName === 'TH' || node.tagName === 'TD') {
-        
-        // تعديل عناصر الجدول لتضمين الحدود بشكل إجباري (Inline Styles)
-        delta.ops = delta.ops.map(op => {
-            if (op.attributes) {
-                // إذا كان هناك تنسيقات مسبقة، يمكنك دمج الحدود معها
-            }
-            return op;
-        });
-    }
-    return delta;
-});
         
         let globalData = {
             settings: { logoUrl: "", logoHeight: "55px", tickerVisible: true },
