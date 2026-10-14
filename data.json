@@ -691,5 +691,11 @@
             "isPublished": true,
             "url": "articles/tech-post-46472.html"
         }
-    ]
+    ],
+    "staticPagesLinks": {
+        "about": "https://tech-dalil.com/articles/tech-post-46472.html",
+        "terms": "https://tech-dalil.com/articles/tech-post-91070.html",
+        "privacy": "https://tech-dalil.com/articles/tech-post-29342.html",
+        "contact": "https://tech-dalil.com/articles/tech-post-71867.html"
+    }
 }
