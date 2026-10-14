@@ -264,6 +264,14 @@
             "content": "",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1791992816321",
+            "title": "مشاركة مميزة",
+            "type": "popular",
+            "content": "",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
