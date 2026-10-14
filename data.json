@@ -256,6 +256,14 @@
             "content": "",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1791992790833",
+            "title": "التسميات / التصنيفات",
+            "type": "categories",
+            "content": "",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
