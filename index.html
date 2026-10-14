@@ -194,7 +194,7 @@
         }
         
         .single-post-content, .dynamic-post-content-box {
-            font-family: 'Cairo', 'Tajawal', sans-serif !important;
+            font-family: var(--active-font, 'Cairo') !important;
             text-align: justify !important;
             text-justify: inter-word !important;
             color: #2C3E50 !important;
@@ -420,7 +420,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         let menuTree = data.menu ? buildTree(data.menu) : [];
         let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
 
-        // --- 1 & 2: معالجة الصفحات الثابتة في الشريط العلوي والتذييل تلقائياً ---
+        // --- التحكم بالثيمات والخطوط والوضع الليلي ---
+        initThemeAndFontControls(data);
+
+        // --- الصفحات الثابتة في الشريط العلوي ---
         const topPagesContainer = document.getElementById('top-static-pages-container');
         let staticLinksMap = [
             { key: 'about', label: 'من نحن' },
@@ -441,8 +444,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             topPagesContainer.innerHTML = linksHtml;
         }
 
-        // --- معالجة المشاركة المميزة (حسب الأعلى تداولاً / تعليقات، أو الأقدم / الأطول) ---
-        let featuredPostHtml = '';
+        // --- حساب المشاركة المميزة تلقائياً بناءً على القواعد المطلوبة ---
+        let topFeatured = null;
         if (filteredPosts.length > 0) {
             let sortedFeatured = [...filteredPosts].sort((a, b) => {
                 let viewsA = a.views || a.visits || 0;
@@ -461,18 +464,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let lenB = (b.content || '').length;
                 return lenB - lenA; // الأطول أولاً
             });
-            let topFeatured = sortedFeatured[0];
-            if (topFeatured) {
-                featuredPostHtml = `
-                    <div class="widget-card">
-                        <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">⭐ مشاركة مميزة</h3>
-                        <div style="font-size: 0.8rem;">
-                            <a href="?article=${topFeatured.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; display: block; margin-bottom: 5px;" onclick="openPostBySlug('${topFeatured.slug}'); return false;">${topFeatured.title}</a>
-                            <p style="color: var(--text-muted); font-size: 0.75rem; line-height: 1.4;">${topFeatured.description ? topFeatured.description.substring(0, 80) + '...' : ''}</p>
-                        </div>
-                    </div>
-                `;
-            }
+            topFeatured = sortedFeatured[0];
         }
 
         document.addEventListener('click', (e) => {
@@ -550,7 +542,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // --- عرض الودجتات والتصنيفات واتصل بنا في التذييل والشريط الجانبي ---
+        // --- تعبئة الودجتات المجهزة بالترتيب الصحيح دون عمل نسخ أو تغيير أماكنها ---
         const areWidgetsEnabled = data.settings ? (data.settings.showWidgets !== false) : true;
         const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
         const footerWidgetsContainer = document.getElementById('site-footer-widgets');
@@ -559,44 +551,35 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (sidebarWidgetsContainer) sidebarWidgetsContainer.style.display = 'none';
             if (footerWidgetsContainer) footerWidgetsContainer.style.display = 'none';
         } else {
-            let sidebarHtml = '', footerHtml = featuredPostHtml;
-
-            // إضافة ودجت الصفحات الثابتة للفوتر تلقائياً من الشريط العلوي
-            let footerStaticPagesHtml = '';
-            if (data.staticPagesLinks) {
-                let pagesListItems = '';
-                staticLinksMap.forEach(item => {
-                    let linkVal = data.staticPagesLinks[item.key];
-                    if (linkVal && linkVal.trim() !== '') {
-                        let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
-                        pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
-                    }
-                });
-                if (pagesListItems) {
-                    footerHtml += `
-                        <div class="widget-card">
-                            <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">📄 الصفحات الثابتة</h3>
-                            <ul class="recent-posts-list">${pagesListItems}</ul>
-                        </div>
-                    `;
-                }
-            }
+            let sidebarHtml = '', footerHtml = '';
 
             if (data.widgets && data.widgets.length > 0) {
                 data.widgets.forEach(w => {
                     if (!w.active) return;
                     let contentBox = '';
-                    if (w.type === 'recent') {
-                        let recentThree = sequencedPosts.slice(0, 3);
-                        contentBox = '<ul class="recent-posts-list">' + recentThree.map(p => `
-                            <li><a href="?article=${p.slug}" style="font-size: 0.68rem;" onclick="openPostBySlug('${p.slug}'); return false;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>
-                        `).join('') + '</ul>';
-                    } else if (w.type === 'categories') {
+
+                    // 1. التسميات أو التصنيفات
+                    if (w.type === 'categories') {
                         let categories = w.categoriesList || [...new Set(filteredPosts.map(p => p.category).filter(Boolean))];
                         contentBox = '<ul class="recent-posts-list">' + categories.map(cat => `
                             <li><a href="?category=${encodeURIComponent(cat)}" style="font-size: 0.68rem;"><i class="fa-solid fa-folder" style="margin-left: 5px; color: var(--primary-color);"></i>${cat}</a></li>
                         `).join('') + '</ul>';
-                    } else if (w.type === 'contact' && w.contactData) {
+                    } 
+                    // 2. مشاركة مميزة
+                    else if (w.type === 'featured' || (w.title && w.title.includes('مميزة'))) {
+                        if (topFeatured) {
+                            contentBox = `
+                                <div style="font-size: 0.8rem;">
+                                    <a href="?article=${topFeatured.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; display: block; margin-bottom: 5px;" onclick="openPostBySlug('${topFeatured.slug}'); return false;">${topFeatured.title}</a>
+                                    <p style="color: var(--text-muted); font-size: 0.75rem; line-height: 1.4;">${topFeatured.description ? topFeatured.description.substring(0, 80) + '...' : ''}</p>
+                                </div>
+                            `;
+                        } else {
+                            contentBox = `<p style="font-size: 0.75rem; color: var(--text-muted);">لا توجد مقالات مميزة حالياً</p>`;
+                        }
+                    } 
+                    // 3. اتصل بنا
+                    else if (w.type === 'contact' && w.contactData) {
                         let cd = w.contactData;
                         contentBox = `<div style="font-size: 0.75rem; line-height: 1.6;">`;
                         if (cd.name) contentBox += `<p><i class="fa-solid fa-user"></i> ${cd.name}</p>`;
@@ -605,9 +588,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (cd.whatsapp) contentBox += `<p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/${cd.whatsapp}" target="_blank" style="color: var(--accent-color);">واتساب</a></p>`;
                         if (cd.telegram) contentBox += `<p><i class="fa-brands fa-telegram"></i> <a href="https://t.me/${cd.telegram}" target="_blank" style="color: var(--accent-color);">تليجرام</a></p>`;
                         contentBox += `</div>`;
-                    } else if (w.type === 'links') {
-                        contentBox = `<div style="font-size: 0.68rem;">${w.content || ''}</div>`;
-                    } else {
+                    } 
+                    // 4. الصفحات الثابتة (تأخذ أسماءها وروابطها من الشريط العلوي)
+                    else if (w.type === 'static-pages' || (w.title && w.title.includes('الصفحات الثابتة'))) {
+                        let pagesListItems = '';
+                        if (data.staticPagesLinks) {
+                            staticLinksMap.forEach(item => {
+                                let linkVal = data.staticPagesLinks[item.key];
+                                if (linkVal && linkVal.trim() !== '') {
+                                    let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
+                                    pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
+                                }
+                            });
+                        }
+                        contentBox = `<ul class="recent-posts-list">${pagesListItems || '<li>لا توجد صفحات ثابتة</li>'}</ul>`;
+                    } 
+                    // أنواع أخرى مخصصة
+                    else {
                         contentBox = `<div style="font-size: 0.68rem;">${w.content || ''}</div>`;
                     }
 
@@ -617,6 +614,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <div class="widget-content">${contentBox}</div>
                         </div>
                     `;
+
                     if (w.location === 'footer') footerHtml += widgetBlock;
                     else sidebarHtml += widgetBlock;
                 });
@@ -659,6 +657,61 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error("تعذر جلب ملف بيانات المدونة:", err);
     }
 });
+
+// تفعيل ميزات الثيمات، الخطوط، والوضع الليلي
+function initThemeAndFontControls(data) {
+    const themes = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
+    let currentThemeIdx = 0;
+
+    const nextThemeBtn = document.getElementById('next-theme-btn');
+    const prevThemeBtn = document.getElementById('prev-theme-btn');
+    if (nextThemeBtn) {
+        nextThemeBtn.onclick = () => {
+            document.body.classList.remove(themes[currentThemeIdx]);
+            currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+            document.body.classList.add(themes[currentThemeIdx]);
+            localStorage.setItem('site_theme', themes[currentThemeIdx]);
+        };
+    }
+    if (prevThemeBtn) {
+        prevThemeBtn.onclick = () => {
+            document.body.classList.remove(themes[currentThemeIdx]);
+            currentThemeIdx = (currentThemeIdx - 1 + themes.length) % themes.length;
+            document.body.classList.add(themes[currentThemeIdx]);
+            localStorage.setItem('site_theme', themes[currentThemeIdx]);
+        };
+    }
+
+    let savedTheme = localStorage.getItem('site_theme');
+    if (savedTheme && themes.includes(savedTheme)) {
+        document.body.className = savedTheme;
+        currentThemeIdx = themes.indexOf(savedTheme);
+    }
+
+    const fonts = ['Cairo', 'Tajawal', 'Amiri', 'Almarai', 'Readex Pro', 'Changa'];
+    let currentFontIdx = 0;
+    const fontToggleBtn = document.getElementById('font-toggle-btn');
+    if (fontToggleBtn) {
+        fontToggleBtn.onclick = () => {
+            currentFontIdx = (currentFontIdx + 1) % fonts.length;
+            let chosenFont = fonts[currentFontIdx];
+            document.documentElement.style.setProperty('--active-font', chosenFont);
+            localStorage.setItem('site_font', chosenFont);
+        };
+    }
+    let savedFont = localStorage.getItem('site_font');
+    if (savedFont) {
+        document.documentElement.style.setProperty('--active-font', savedFont);
+    }
+
+    const darkModeBtn = document.getElementById('dark-mode-btn');
+    if (darkModeBtn) {
+        darkModeBtn.onclick = () => {
+            document.body.classList.toggle('theme-default');
+            document.body.classList.toggle('theme-blue-1');
+        };
+    }
+}
 
 function getOrderedPosts(menuItems, allPosts) {
     let ordered = [];
