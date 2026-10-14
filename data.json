@@ -287,6 +287,14 @@
                 "whatsapp": "",
                 "telegram": ""
             }
+        },
+        {
+            "id": "w_1791992880747",
+            "title": "الصفحات الثابتة",
+            "type": "pages",
+            "content": "",
+            "active": true,
+            "location": "footer"
         }
     ],
     "ads": {
