@@ -430,6 +430,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             topPagesContainer.innerHTML = linksHtml;
         }
 
+
+        //---------- الانتقال الى روابط محتويات المقال --------------------
+        document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (link && link.getAttribute('href')) {
+            const href = link.getAttribute('href');
+            if (href.startsWith('#')) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                return;
+            }
+        }
+    });
+        //-------------------------------------------------------
+
+        
+
         const siteLogoEl = document.getElementById('site-logo'); 
         if (siteLogoEl && data.settings) {
             if (data.settings.showLogo === false) {
@@ -646,6 +666,34 @@ window.openPostBySlug = async function(slug) {
             window.scrollTo({ top: window.pageYOffset + rect.top - 33, behavior: 'smooth' });
         }, 50);
 
+
+        // استخراج العناوين الفرعية تلقائياً لقائمة المحتويات -----------------------------------------
+        let tempDiv = document.createElement('div');
+        tempDiv.innerHTML = post.content || post.description || '';
+        let headings = tempDiv.querySelectorAll('h2, h3');
+        let tocHtml = '';
+        if (headings.length > 0) {
+            let tocItems = [];
+            headings.forEach((h, index) => {
+                let id = `heading-${index}`;
+                h.id = id;
+                let text = h.innerText.trim();
+                tocItems.push(`<li><a href="#${id}" style="color: var(--primary-color); text-decoration: none; font-weight: 600; display: block; padding: 4px 0;"><i class="fa-solid fa-angle-left" style="margin-left: 6px;"></i>${text}</a></li>`);
+            });
+            tocHtml = `
+                <div id="toc-container" style="margin-bottom: 20px; border: 1px solid #dcd3c1; border-radius: 8px; background: rgba(245, 240, 230, 0.6); padding: 12px 18px;">
+                    <div style="font-weight: bold; color: #4a3b32; font-size: 0.9rem; margin-bottom: 8px; border-bottom: 1px solid #dcd3c1; padding-bottom: 5px;">
+                        <i class="fa-solid fa-list-ul" style="color: var(--primary-color); margin-left: 8px;"></i> محتويات المقال:
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem;">${tocItems.join('')}</ul>
+                </div>
+            `;
+            post.processedContent = tempDiv.innerHTML;
+        } else {
+            post.processedContent = post.content || post.description || '';
+        }
+        //----------------------------------------------------
+        
         let ads = data.ads || {};
         let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
         let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
