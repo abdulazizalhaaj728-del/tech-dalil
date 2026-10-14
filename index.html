@@ -644,7 +644,7 @@ window.openPostBySlug = async function(slug) {
         setTimeout(() => {
             const rect = dynamicView.getBoundingClientRect();
             window.scrollTo({ top: window.pageYOffset + rect.top - 15, behavior: 'smooth' });
-        }, 40);
+        }, 10);
 
         let ads = data.ads || {};
         let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
