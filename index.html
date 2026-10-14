@@ -600,6 +600,66 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+
+// جلب التسميات واتصل بنا
+function renderDynamicWidgets(data) {
+    const sidebarContainer = document.getElementById('sidebar-widgets-container');
+    const footerContainer = document.getElementById('footer-widgets-container');
+
+    if (!data.widgets) return;
+
+    if (sidebarContainer) sidebarContainer.innerHTML = '';
+    if (footerContainer) footerContainer.innerHTML = '';
+
+    data.widgets.forEach(widget => {
+        if (!widget.active) return; // تخطي الودجت غير المكتمل أو المعطل
+
+        let widgetHtml = `<div class="widget-box">`;
+        widgetHtml += `<h3>${widget.title}</h3>`;
+
+        // 1. معالجة ودجت التسميات/التصنيفات
+        if (widget.type === 'categories') {
+            // استخراج التسميات إما من الحقل المخزن مسبقاً أو مباشرة من المقالات
+            let categories = widget.categoriesList || [...new Set((data.posts || []).map(p => p.category).filter(Boolean))];
+            widgetHtml += `<ul class="category-list">`;
+            if (categories.length > 0) {
+                categories.forEach(cat => {
+                    widgetHtml += `<li><a href="index.html?category=${encodeURIComponent(cat)}">${cat}</a></li>`;
+                });
+            } else {
+                widgetHtml += `<li>لا توجد تسميات مضافة بعد</li>`;
+            }
+            widgetHtml += `</ul>`;
+        } 
+        // 2. معالجة ودجت اتصل بنا
+        else if (widget.type === 'contact' && widget.contactData) {
+            let cd = widget.contactData;
+            widgetHtml += `<div class="contact-widget-content">`;
+            if (cd.name) widgetHtml  += `<p><i class="fa-solid fa-user"></i> ${cd.name}</p>`;
+            if (cd.email) widgetHtml += `<p><i class="fa-solid fa-envelope"></i> <a href="mailto:${cd.email}">${cd.email}</a></p>`;
+            if (cd.phone) widgetHtml += `<p><i class="fa-solid fa-phone"></i> <a href="tel:${cd.phone}">${cd.phone}</a></p>`;
+            if (cd.whatsapp) widgetHtml += `<p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/${cd.whatsapp}" target="_blank">واتساب</a></p>`;
+            if (cd.telegram) widgetHtml += `<p><i class="fa-brands fa-telegram"></i> <a href="https://t.me/${cd.telegram}" target="_blank">تليجرام</a></p>`;
+            widgetHtml += `</div>`;
+        } 
+        // 3. المحتوى المخصص أو الأنواع الأخرى
+        else if (widget.type === 'custom') {
+            widgetHtml += `<div>${widget.content || ''}</div>`;
+        }
+
+        widgetHtml += `</div>`;
+
+        // إدراج الودجت في مكانه الصحيح (Sidebar أو Footer)
+        if (widget.location === 'footer' && footerContainer) {
+            footerContainer.innerHTML += widgetHtml;
+        } else if (widget.location === 'sidebar' && sidebarContainer) {
+            sidebarContainer.innerHTML += widgetHtml;
+        }
+    });
+}        
+//--------------------------------------------------------
+
+        
 function getOrderedPosts(menuItems, allPosts) {
     let ordered = [];
     let visitedIds = new Set();
