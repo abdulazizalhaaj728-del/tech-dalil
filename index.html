@@ -182,7 +182,6 @@
         .product-card span { color: #ffffff; font-size: 0.72rem; text-align: center; line-height: 1.2; }
         .product-card.empty { opacity: 0.4; cursor: default; }    
 
-        /* تخصيص صندوق المقال ومنطقة العرض بلون بيج دافئ ومريح للعين */
         #dynamic-post-view .post-card,
         .dynamic-post-content-box {
             background-color: #F7F4EF !important;
@@ -194,7 +193,6 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
         
-        /* ضبط محاذاة الخطوط لتكون مشدودة ومنسقة من الأطراف (Justify) وبخط مريح */
         .single-post-content, .dynamic-post-content-box {
             font-family: 'Cairo', 'Tajawal', sans-serif !important;
             text-align: justify !important;
@@ -213,7 +211,6 @@
             margin-bottom: 15px;
         }
 
-        /* تنسيق وإظهار حدود الجداول بوضوح تام داخل المقالات */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
@@ -273,11 +270,9 @@
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
 
-
-        /* تنسيق قائمة المحتويات لتصبح Sticky وتثبت في أعلى الشاشة أثناء التمرير داخل المقال */
         #toc-container {
             position: sticky;
-            top: 40px; /* المسافة من أعلى الشاشة عند التمرير */
+            top: 40px;
             z-index: 100;
             background: rgba(247, 244, 239, 0.95);
             backdrop-filter: blur(5px);
@@ -345,7 +340,6 @@
         <div class="three-columns-grid" id="top-three-section">
             <div class="right-scrollable-section">
 
-                <!-- صندوق عرض المقال الديناميكي مع قائمة المحتويات التلقائية -->
                 <div id="dynamic-post-view" style="display: none; width: 100%; margin-bottom: 20px;">
                     <article class="post-card">
                         <div id="dynamic-post-content-box"></div>
@@ -420,17 +414,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await response.json();
         window.siteBlogData = data; 
         
-        // --- روابط الصفحات الثابتة في الشريط العلوي ---
+        let rawPosts = data.posts || [];
+        let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
+
+        let menuTree = data.menu ? buildTree(data.menu) : [];
+        let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+
+        // --- 1 & 2: معالجة الصفحات الثابتة في الشريط العلوي والتذييل تلقائياً ---
         const topPagesContainer = document.getElementById('top-static-pages-container');
+        let staticLinksMap = [
+            { key: 'about', label: 'من نحن' },
+            { key: 'terms', label: 'اتفاقية الاستخدام' },
+            { key: 'privacy', label: 'سياسة الخصوصية' },
+            { key: 'contact', label: 'اتصل بنا' }
+        ];
+
         if (topPagesContainer && data.staticPagesLinks) {
             let linksHtml = '';
-            const staticLinksMap = [
-                { key: 'about', label: 'من نحن' },
-                { key: 'terms', label: 'اتفاقية الاستخدام' },
-                { key: 'privacy', label: 'سياسة الخصوصية' },
-                { key: 'contact', label: 'اتصل بنا' }
-            ];
-
             staticLinksMap.forEach(item => {
                 let linkVal = data.staticPagesLinks[item.key];
                 if (linkVal && linkVal.trim() !== '') {
@@ -441,25 +441,54 @@ document.addEventListener('DOMContentLoaded', async () => {
             topPagesContainer.innerHTML = linksHtml;
         }
 
+        // --- معالجة المشاركة المميزة (حسب الأعلى تداولاً / تعليقات، أو الأقدم / الأطول) ---
+        let featuredPostHtml = '';
+        if (filteredPosts.length > 0) {
+            let sortedFeatured = [...filteredPosts].sort((a, b) => {
+                let viewsA = a.views || a.visits || 0;
+                let viewsB = b.views || b.visits || 0;
+                if (viewsB !== viewsA) return viewsB - viewsA;
 
-        //---------- الانتقال الى روابط محتويات المقال --------------------
-        document.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (link && link.getAttribute('href')) {
-            const href = link.getAttribute('href');
-            if (href.startsWith('#')) {
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-                return;
+                let commentsA = a.commentsCount || (a.comments ? a.comments.length : 0);
+                let commentsB = b.commentsCount || (b.comments ? b.comments.length : 0);
+                if (commentsB !== commentsA) return commentsB - commentsA;
+
+                let dateA = new Date(a.date || '2026-01-01').getTime();
+                let dateB = new Date(b.date || '2026-01-01').getTime();
+                if (dateA !== dateB) return dateA - dateB; // الأقدم أولاً
+
+                let lenA = (a.content || '').length;
+                let lenB = (b.content || '').length;
+                return lenB - lenA; // الأطول أولاً
+            });
+            let topFeatured = sortedFeatured[0];
+            if (topFeatured) {
+                featuredPostHtml = `
+                    <div class="widget-card">
+                        <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">⭐ مشاركة مميزة</h3>
+                        <div style="font-size: 0.8rem;">
+                            <a href="?article=${topFeatured.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; display: block; margin-bottom: 5px;" onclick="openPostBySlug('${topFeatured.slug}'); return false;">${topFeatured.title}</a>
+                            <p style="color: var(--text-muted); font-size: 0.75rem; line-height: 1.4;">${topFeatured.description ? topFeatured.description.substring(0, 80) + '...' : ''}</p>
+                        </div>
+                    </div>
+                `;
             }
         }
-    });
-        //-------------------------------------------------------
 
-        
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link && link.getAttribute('href')) {
+                const href = link.getAttribute('href');
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    return;
+                }
+            }
+        });
 
         const siteLogoEl = document.getElementById('site-logo'); 
         if (siteLogoEl && data.settings) {
@@ -472,12 +501,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         
-        let rawPosts = data.posts || [];
-        let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
-
-        let menuTree = data.menu ? buildTree(data.menu) : [];
-        let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
-
         const container = document.getElementById('posts-container');
         if (filteredPosts.length > 0) {
             if (container) {
@@ -527,6 +550,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // --- عرض الودجتات والتصنيفات واتصل بنا في التذييل والشريط الجانبي ---
         const areWidgetsEnabled = data.settings ? (data.settings.showWidgets !== false) : true;
         const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
         const footerWidgetsContainer = document.getElementById('site-footer-widgets');
@@ -535,24 +559,60 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (sidebarWidgetsContainer) sidebarWidgetsContainer.style.display = 'none';
             if (footerWidgetsContainer) footerWidgetsContainer.style.display = 'none';
         } else {
+            let sidebarHtml = '', footerHtml = featuredPostHtml;
+
+            // إضافة ودجت الصفحات الثابتة للفوتر تلقائياً من الشريط العلوي
+            let footerStaticPagesHtml = '';
+            if (data.staticPagesLinks) {
+                let pagesListItems = '';
+                staticLinksMap.forEach(item => {
+                    let linkVal = data.staticPagesLinks[item.key];
+                    if (linkVal && linkVal.trim() !== '') {
+                        let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
+                        pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
+                    }
+                });
+                if (pagesListItems) {
+                    footerHtml += `
+                        <div class="widget-card">
+                            <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">📄 الصفحات الثابتة</h3>
+                            <ul class="recent-posts-list">${pagesListItems}</ul>
+                        </div>
+                    `;
+                }
+            }
+
             if (data.widgets && data.widgets.length > 0) {
-                let sidebarHtml = '', footerHtml = '';
                 data.widgets.forEach(w => {
                     if (!w.active) return;
                     let contentBox = '';
                     if (w.type === 'recent') {
                         let recentThree = sequencedPosts.slice(0, 3);
                         contentBox = '<ul class="recent-posts-list">' + recentThree.map(p => `
-                            <li><a href="?article=${p.slug}" style="font-size: 0.68rem;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>
+                            <li><a href="?article=${p.slug}" style="font-size: 0.68rem;" onclick="openPostBySlug('${p.slug}'); return false;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${p.title}</a></li>
                         `).join('') + '</ul>';
+                    } else if (w.type === 'categories') {
+                        let categories = w.categoriesList || [...new Set(filteredPosts.map(p => p.category).filter(Boolean))];
+                        contentBox = '<ul class="recent-posts-list">' + categories.map(cat => `
+                            <li><a href="?category=${encodeURIComponent(cat)}" style="font-size: 0.68rem;"><i class="fa-solid fa-folder" style="margin-left: 5px; color: var(--primary-color);"></i>${cat}</a></li>
+                        `).join('') + '</ul>';
+                    } else if (w.type === 'contact' && w.contactData) {
+                        let cd = w.contactData;
+                        contentBox = `<div style="font-size: 0.75rem; line-height: 1.6;">`;
+                        if (cd.name) contentBox += `<p><i class="fa-solid fa-user"></i> ${cd.name}</p>`;
+                        if (cd.email) contentBox += `<p><i class="fa-solid fa-envelope"></i> <a href="mailto:${cd.email}" style="color: var(--accent-color);">${cd.email}</a></p>`;
+                        if (cd.phone) contentBox += `<p><i class="fa-solid fa-phone"></i> <a href="tel:${cd.phone}" style="color: var(--accent-color);">${cd.phone}</a></p>`;
+                        if (cd.whatsapp) contentBox += `<p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/${cd.whatsapp}" target="_blank" style="color: var(--accent-color);">واتساب</a></p>`;
+                        if (cd.telegram) contentBox += `<p><i class="fa-brands fa-telegram"></i> <a href="https://t.me/${cd.telegram}" target="_blank" style="color: var(--accent-color);">تليجرام</a></p>`;
+                        contentBox += `</div>`;
                     } else if (w.type === 'links') {
-                        contentBox = `<div class="quick-links-box" style="font-size: 0.68rem;">${w.content || ''}</div>`;
+                        contentBox = `<div style="font-size: 0.68rem;">${w.content || ''}</div>`;
                     } else {
                         contentBox = `<div style="font-size: 0.68rem;">${w.content || ''}</div>`;
                     }
 
                     let widgetBlock = `
-                        <div class="widget-card" id="${w.id}">
+                        <div class="widget-card" id="${w.id || ''}">
                             <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">${w.title}</h3>
                             <div class="widget-content">${contentBox}</div>
                         </div>
@@ -560,12 +620,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (w.location === 'footer') footerHtml += widgetBlock;
                     else sidebarHtml += widgetBlock;
                 });
+            }
 
-                if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
-                if (footerWidgetsContainer) {
-                    footerWidgetsContainer.style.minHeight = "220px";
-                    footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
-                }
+            if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
+            if (footerWidgetsContainer) {
+                footerWidgetsContainer.style.minHeight = "220px";
+                footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
             }
         }
 
@@ -600,66 +660,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-
-// جلب التسميات واتصل بنا
-function renderDynamicWidgets(data) {
-    const sidebarContainer = document.getElementById('sidebar-widgets-container');
-    const footerContainer = document.getElementById('footer-widgets-container');
-
-    if (!data.widgets) return;
-
-    if (sidebarContainer) sidebarContainer.innerHTML = '';
-    if (footerContainer) footerContainer.innerHTML = '';
-
-    data.widgets.forEach(widget => {
-        if (!widget.active) return; // تخطي الودجت غير المكتمل أو المعطل
-
-        let widgetHtml = `<div class="widget-box">`;
-        widgetHtml += `<h3>${widget.title}</h3>`;
-
-        // 1. معالجة ودجت التسميات/التصنيفات
-        if (widget.type === 'categories') {
-            // استخراج التسميات إما من الحقل المخزن مسبقاً أو مباشرة من المقالات
-            let categories = widget.categoriesList || [...new Set((data.posts || []).map(p => p.category).filter(Boolean))];
-            widgetHtml += `<ul class="category-list">`;
-            if (categories.length > 0) {
-                categories.forEach(cat => {
-                    widgetHtml += `<li><a href="index.html?category=${encodeURIComponent(cat)}">${cat}</a></li>`;
-                });
-            } else {
-                widgetHtml += `<li>لا توجد تسميات مضافة بعد</li>`;
-            }
-            widgetHtml += `</ul>`;
-        } 
-        // 2. معالجة ودجت اتصل بنا
-        else if (widget.type === 'contact' && widget.contactData) {
-            let cd = widget.contactData;
-            widgetHtml += `<div class="contact-widget-content">`;
-            if (cd.name) widgetHtml  += `<p><i class="fa-solid fa-user"></i> ${cd.name}</p>`;
-            if (cd.email) widgetHtml += `<p><i class="fa-solid fa-envelope"></i> <a href="mailto:${cd.email}">${cd.email}</a></p>`;
-            if (cd.phone) widgetHtml += `<p><i class="fa-solid fa-phone"></i> <a href="tel:${cd.phone}">${cd.phone}</a></p>`;
-            if (cd.whatsapp) widgetHtml += `<p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/${cd.whatsapp}" target="_blank">واتساب</a></p>`;
-            if (cd.telegram) widgetHtml += `<p><i class="fa-brands fa-telegram"></i> <a href="https://t.me/${cd.telegram}" target="_blank">تليجرام</a></p>`;
-            widgetHtml += `</div>`;
-        } 
-        // 3. المحتوى المخصص أو الأنواع الأخرى
-        else if (widget.type === 'custom') {
-            widgetHtml += `<div>${widget.content || ''}</div>`;
-        }
-
-        widgetHtml += `</div>`;
-
-        // إدراج الودجت في مكانه الصحيح (Sidebar أو Footer)
-        if (widget.location === 'footer' && footerContainer) {
-            footerContainer.innerHTML += widgetHtml;
-        } else if (widget.location === 'sidebar' && sidebarContainer) {
-            sidebarContainer.innerHTML += widgetHtml;
-        }
-    });
-}        
-//--------------------------------------------------------
-
-        
 function getOrderedPosts(menuItems, allPosts) {
     let ordered = [];
     let visitedIds = new Set();
@@ -731,14 +731,11 @@ window.openPostBySlug = async function(slug) {
     if (post) {
         dynamicView.style.display = 'block';
 
-        // التمرير الدقيق ليتوقف عند بداية رأس صندوق المقال مباشرة بدلاً من أعلى الصفحة
         setTimeout(() => {
             const rect = dynamicView.getBoundingClientRect();
             window.scrollTo({ top: window.pageYOffset + rect.top - 33, behavior: 'smooth' });
         }, 50);
 
-
-// استخراج العناوين الفرعية تلقائياً لقائمة محتويات بصيغة كومبو بوكس (عرض كامل وثابت دائماً ومعالجة المقالات الفارغة من العناوين)
         let tempDiv = document.createElement('div');
         tempDiv.innerHTML = post.content || post.description || '';
         let headings = tempDiv.querySelectorAll('h2, h3');
@@ -764,8 +761,6 @@ window.openPostBySlug = async function(slug) {
             </div>
         `;
         post.processedContent = tempDiv.innerHTML;
-        //--------------------------------------------------------------------
-
         
         let ads = data.ads || {};
         let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
@@ -783,14 +778,14 @@ window.openPostBySlug = async function(slug) {
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
                     <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
                     <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right;">
-                        <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${pPost.title}">${getShortTitle(pPost.title)}</a>
+                        <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${pPost.title}" onclick="openPostBySlug('${pPost.slug}'); return false;">${getShortTitle(pPost.title)}</a>
                     </div>
                 </div>` : `<span></span>`;
 
             let nHtml = nPost ? `
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
                     <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left;">
-                        <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nPost.title}">${getShortTitle(nPost.title)}</a>
+                        <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nPost.title}" onclick="openPostBySlug('${nPost.slug}'); return false;">${getShortTitle(nPost.title)}</a>
                     </div>
                     <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
                 </div>` : `<span></span>`;
@@ -824,7 +819,6 @@ window.openPostBySlug = async function(slug) {
                 };
             }
         }
-
 
         dynamicContentBox.innerHTML = `
             <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
