@@ -667,7 +667,7 @@ window.openPostBySlug = async function(slug) {
         }, 50);
 
 
-// استخراج العناوين الفرعية تلقائياً لقائمة محتويات بصيغة كومبو بوكس (عرض كامل)
+        // استخراج العناوين الفرعية تلقائياً لقائمة محتويات بصيغة كومبو بوكس (عرض كامل وثابت دائماً)
         let tempDiv = document.createElement('div');
         tempDiv.innerHTML = post.content || post.description || '';
         let headings = tempDiv.querySelectorAll('h2, h3');
@@ -684,7 +684,7 @@ window.openPostBySlug = async function(slug) {
             
             tocHtml = `
                 <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
-                    <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' }); this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid #dcd3c1; border-radius: 8px; background: #fff; color: #2C3E50; font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                    <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const targetPos = target.getBoundingClientRect().top + window.pageYOffset - 50; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid #dcd3c1; border-radius: 8px; background: #fff; color: #2C3E50; font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
                         ${tocOptions}
                     </select>
                 </div>
