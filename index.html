@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة</title>
@@ -115,19 +116,9 @@
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
        
         .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            min-width: 200px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            list-style: none;
-            display: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            z-index: 99;
-            text-align: right;
-            padding: 5px 0;
+            position: absolute; top: 100%; right: 0; min-width: 200px;
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
+            list-style: none; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 99; text-align: right; padding: 5px 0;
         }
 
         .mega-menu > li { position: relative; }
@@ -135,9 +126,7 @@
         .dropdown-menu li { position: relative; border-bottom: 1px solid var(--border-color); }
         .dropdown-menu li:last-child { border-bottom: none; }
 
-        .dropdown-menu li a { 
-            display: block; padding: 9px 15px; color: var(--text-main); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: 0.2s; 
-        }
+        .dropdown-menu li a { display: block; padding: 9px 15px; color: var(--text-main); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: 0.2s; }
         .dropdown-menu li a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); padding-right: 20px; }
         .dropdown-menu li:hover > .dropdown-menu { display: block; position: absolute; right: 100%; top: -5px; }
 
@@ -177,10 +166,6 @@
             flex: 1; background: var(--card-bg); border: 2px dashed var(--border-color); border-radius: 12px; height: 310px; padding: 15px; display: flex; flex-direction: column; overflow: hidden; color: var(--text-muted); font-size: 0.9rem; box-sizing: border-box;
         }
 
-        .news-ticker-wrapper {
-            width: 100%; background: var(--card-bg, #1e293b); border-bottom: 1px solid var(--border-color, #334155); padding: 8px 15px; margin-top: 0; margin-bottom: 15px; position: relative; z-index: 10; display: flex; align-items: center; border-radius: 6px;
-        }
-
         .products-grid {
             display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 6px; flex: 1; min-height: 0;
         }
@@ -210,7 +195,7 @@
         }
         
         /* ضبط محاذاة الخطوط لتكون مشدودة ومنسقة من الأطراف (Justify) وبخط مريح */
-        .dynamic-post-content-box {
+        .single-post-content, .dynamic-post-content-box {
             font-family: 'Cairo', 'Tajawal', sans-serif !important;
             text-align: justify !important;
             text-justify: inter-word !important;
@@ -218,25 +203,37 @@
             line-height: 2 !important;
         }
         
-        /* تنسيق العناوين والنصوص داخل صندوق الكتابة */
-        .dynamic-post-content-box h1, 
-        .dynamic-post-content-box h2, 
-        .dynamic-post-content-box h3 {
+        .single-post-content h1, .single-post-content h2, .single-post-content h3,
+        .dynamic-post-content-box h1, .dynamic-post-content-box h2, .dynamic-post-content-box h3 {
             color: #2C3E50 !important;
             margin-bottom: 15px;
         }
         
-        .dynamic-post-content-box p {
+        .single-post-content p, .dynamic-post-content-box p {
             margin-bottom: 15px;
         }
-        
 
-        .back-to-home-btn {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: var(--primary-color); color: #fff; padding: 6px 14px;
-            border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold;
+        /* تنسيق وإظهار حدود الجداول بوضوح تام داخل المقالات */
+        .single-post-content table,
+        .dynamic-post-content-box table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 15px 0 !important;
+            background-color: #ffffff !important;
         }
-        .back-to-home-btn:hover { opacity: 0.85; }
+
+        .single-post-content th, .single-post-content td,
+        .dynamic-post-content-box th, .dynamic-post-content-box td {
+            border: 1px solid #94a3b8 !important;
+            padding: 10px !important;
+            text-align: right !important;
+        }
+
+        .single-post-content th,
+        .dynamic-post-content-box th {
+            background-color: #e2e8f0 !important;
+            font-weight: bold !important;
+        }
 
         .left-sticky-sidebar { 
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
@@ -258,9 +255,6 @@
         .post-title a { font-size: 1.15rem; font-weight: 700; color: var(--accent-color); text-decoration: none; }
         .post-meta { font-size: 0.8rem; color: var(--text-muted); margin: 8px 0; display: flex; gap: 15px; }
         .post-excerpt { font-size: 0.9rem; color: var(--text-main); line-height: 1.6; margin-bottom: 10px; }
-        
-        .single-post-content { font-size: 1.05rem; color: var(--text-main); line-height: 1.8; margin-top: 15px; }
-        .single-post-content p { margin-bottom: 15px; }
 
         .widget-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 15px; }
         .widget-title { color: var(--accent-color); font-size: 1rem; margin-bottom: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 5px; }
@@ -278,30 +272,6 @@
 
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
-
-        .site-main-menu, .site-main-menu ul, .site-main-menu li, .site-main-menu a, .dropdown-menu, .dropdown-menu li, .dropdown-menu a {
-            pointer-events: auto !important;
-        }
-        .site-main-menu li { position: relative; }
-        .site-main-menu li:hover > .dropdown-menu { display: block !important; pointer-events: auto !important; }
-
-
-        /* تنسيق أيقونات الأسهم بجانب عناوين المقالات أو القوائم */
-        .recent-posts-list li a i,
-        .sidebar-widget ul li i,
-        .post-title i {
-            margin-left: 8px; /* مسافة بسيطة بين السهم والعنوان بناءً على اللغة العربية */
-            font-size: 0.85rem;
-            color: var(--accent-color, var(--primary-color));
-            display: inline-block;
-            transition: transform 0.2s ease;
-        }
-        
-        /* حركة جمالية عند المرور على السهم أو العنوان */
-        .recent-posts-list li a:hover i,
-        .sidebar-widget ul li:hover i {
-            transform: translateX(-3px); /* يتحرك السهم قليلاً لليمين في الواجهات العربية */
-        }
     </style>
 </head>
     
@@ -311,10 +281,8 @@
 
         <div id="site-ad-top" style="width: 100%; margin: 10px auto; text-align: center;"></div>
 
-<div class="top-bar">
-            <div class="top-pages" id="top-static-pages-container">
-                <!-- سيتم تعبئة روابط الصفحات الثابتة ديناميكياً من ملف data.json -->
-            </div>
+        <div class="top-bar">
+            <div class="top-pages" id="top-static-pages-container"></div>
             
             <div class="top-controls">
                 <div class="color-switcher-group">
@@ -335,7 +303,6 @@
             </div>
         </div>
 
-        
         <header>
             <div class="header-logo" id="site-logo-container">
                 <img id="site-logo" alt="شعار الموقع" style="display: none;">
@@ -359,12 +326,6 @@
         <div class="main-menu-bar">
             <nav id="site-main-menu" class="mega-menu">
                 <li><a href="#">الرئيسية</a></li>
-                <li>
-                    <a href="#">البرمجيات ▾</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">أنظمة الويب</a></li>
-                    </ul>
-                </li>
             </nav>
         </div>
 
@@ -373,24 +334,14 @@
         <div class="three-columns-grid" id="top-three-section">
             <div class="right-scrollable-section">
 
-                <!-- صندوق عرض المقال الديناميكي (مخفي افتراضياً ولا يظهر إلا عند الضغط على أي مقال) -->
+                <!-- صندوق عرض المقال الديناميكي مع قائمة المحتويات التلقائية -->
                 <div id="dynamic-post-view" style="display: none; width: 100%; margin-bottom: 20px;">
-                    <article class="post-card" style="background-color: #F7F4EF !important; border: 1px solid #E2D8C5 !important; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                        
-                        <!-- مكان تچیيز وتحميل محتوى المقال -->
-                        <div id="dynamic-post-content-box">
-                            <!-- هنا سيظهر عنوان ومحتوى المقال -->
-                        </div>
-                            <!-- أضف هذا السطر أسفل محتوى المقال مباشرة داخل صندوق المقال الديناميكي -->
-                            <div id="bottom-navigation-wrapper" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
-                        
+                    <article class="post-card">
+                        <div id="dynamic-post-content-box"></div>
                     </article>
                 </div>
 
-
-                <!-- صف السلايدر ومنتجات رقمية (سيتم إخفاؤهما تلقائياً عند فتح المقال عبر فئة hide-on-article) -->
                 <div class="top-right-row hide-on-article" id="home-slider-products-row">
-                    
                     <div class="square-slider-box" id="square-slider-wrapper">
                         <div class="square-slide active" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80');">
                             <div class="square-caption">
@@ -411,23 +362,20 @@
                                     <span>لعبة التحدي الثقافية</span>
                                 </div>
                             </a>
-        
                             <a href="test.html" target="_blank" rel="noopener noreferrer" class="product-card"> 
                                 <div class="product-content">
                                     <img src="https://tech-dalil.com/6.png" alt="اختبار تحدي الثقافة" class="ad-game-thumb">
                                     <span>تحدي المعرفة الثقافي</span>
                                 </div>
                             </a>
-        
                             <div class="product-card empty"></div>
                             <div class="product-card empty"></div>
                         </div>
                     </div>
-        
                 </div>
         
                 <div class="tags-filter-section hide-on-article">
-                    <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 10px;">🏷️️ تصفية حسب التسميات:</h3>
+                    <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 10px;">🏷 تصفية حسب التسميات:</h3>
                     <div class="tags-bar" id="tags-filter-bar"></div>
                 </div>
         
@@ -453,8 +401,7 @@
     </div>
     
     <script>
-        
-    document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const jsonPath = `data.json?t=${Date.now()}`;
 
     try {
@@ -462,62 +409,37 @@
         const data = await response.json();
         window.siteBlogData = data; 
         
-        // --- 1. التحكم في إظهار أو إخفاء الشريط الإخباري (News Ticker) ---
-        const newsTickerEl = document.getElementById('news-ticker-container'); // تأكد من أن هذا هو ID عنصر الشريط الإخباري لديك
-        if (newsTickerEl) {
-            if (data.settings && data.settings.showNewsTicker === false) {
-                newsTickerEl.style.display = 'none';
-            } else {
-                newsTickerEl.style.display = 'block';
-            }
+        // --- روابط الصفحات الثابتة في الشريط العلوي ---
+        const topPagesContainer = document.getElementById('top-static-pages-container');
+        if (topPagesContainer && data.staticPagesLinks) {
+            let linksHtml = '';
+            const staticLinksMap = [
+                { key: 'about', label: 'من نحن' },
+                { key: 'terms', label: 'اتفاقية الاستخدام' },
+                { key: 'privacy', label: 'سياسة الخصوصية' },
+                { key: 'contact', label: 'اتصل بنا' }
+            ];
+
+            staticLinksMap.forEach(item => {
+                let linkVal = data.staticPagesLinks[item.key];
+                if (linkVal && linkVal.trim() !== '') {
+                    let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
+                    linksHtml += `<a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;">${item.label}</a>`;
+                }
+            });
+            topPagesContainer.innerHTML = linksHtml;
         }
 
-            // --- روابط الصفحات الثابتة في الشريط العلوي ---
-// --- روابط الصفحات الثابتة في الشريط العلوي ---
-            const topPagesContainer = document.getElementById('top-static-pages-container');
-            if (topPagesContainer && data.staticPagesLinks) {
-                let linksHtml = '';
-                const staticLinksMap = [
-                    { key: 'about', label: 'من نحن' },
-                    { key: 'terms', label: 'اتفاقية الاستخدام' },
-                    { key: 'privacy', label: 'سياسة الخصوصية' },
-                    { key: 'contact', label: 'اتصل بنا' }
-                ];
-    
-                staticLinksMap.forEach(item => {
-                    let linkVal = data.staticPagesLinks[item.key];
-                    if (linkVal && linkVal.trim() !== '') {
-                        let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
-                        linksHtml += `<a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;">${item.label}</a>`;
-                    }
-                });
-    
-                topPagesContainer.innerHTML = linksHtml;
-            }
-
-        
-        // --- 2. التحكم في إظهار أو إخفاء الشعار (Logo) ---
-        // --- 2. التحكم في الشعار (Logo) وإظهاره وتعيين خصائصه ---
         const siteLogoEl = document.getElementById('site-logo'); 
         if (siteLogoEl && data.settings) {
-            // التحقق من خيار الإظهار/الإخفاء
             if (data.settings.showLogo === false) {
                 siteLogoEl.style.display = 'none';
             } else {
                 siteLogoEl.style.display = 'block';
-                
-                // تعيين رابط الشعار (Base64) إذا كان موجوداً
-                if (data.settings.logoUrl) {
-                    siteLogoEl.src = data.settings.logoUrl;
-                }
-                
-                // تعيين الارتفاع إذا كان محددماً في الإعدادات
-                if (data.settings.logoHeight) {
-                    siteLogoEl.style.height = data.settings.logoHeight;
-                }
+                if (data.settings.logoUrl) siteLogoEl.src = data.settings.logoUrl;
+                if (data.settings.logoHeight) siteLogoEl.style.height = data.settings.logoHeight;
             }
         }
-        //----------------------------------------
         
         let rawPosts = data.posts || [];
         let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
@@ -574,7 +496,6 @@
             }
         }
 
-        // --- 3. التحكم في الودجات (Widgets) وإخفائها بالكامل إذا كانت مفعلة/معطلة من لوحة التحكم ---
         const areWidgetsEnabled = data.settings ? (data.settings.showWidgets !== false) : true;
         const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
         const footerWidgetsContainer = document.getElementById('site-footer-widgets');
@@ -585,7 +506,6 @@
         } else {
             if (data.widgets && data.widgets.length > 0) {
                 let sidebarHtml = '', footerHtml = '';
-
                 data.widgets.forEach(w => {
                     if (!w.active) return;
                     let contentBox = '';
@@ -606,11 +526,8 @@
                             <div class="widget-content">${contentBox}</div>
                         </div>
                     `;
-                    if (w.location === 'footer') {
-                        footerHtml += widgetBlock;
-                    } else {
-                        sidebarHtml += widgetBlock;
-                    }
+                    if (w.location === 'footer') footerHtml += widgetBlock;
+                    else sidebarHtml += widgetBlock;
                 });
 
                 if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
@@ -621,40 +538,22 @@
             }
         }
 
-        // --- 4. التحكم في أماكن الإعلانات (Ads) حسب خيارات لوحة التحكم ---
         if (data.ads) {
             const topAdBox = document.getElementById('site-ad-top');
             const midAdBox = document.getElementById('site-ad-mid');
             const botAdBox = document.getElementById('site-ad-bot');
 
             if (topAdBox) {
-                if (data.ads.topOn && data.ads.topCode) {
-                    topAdBox.innerHTML = data.ads.topCode;
-                    topAdBox.style.display = 'block';
-                } else {
-                    topAdBox.innerHTML = '';
-                    topAdBox.style.display = 'none';
-                }
+                topAdBox.innerHTML = (data.ads.topOn && data.ads.topCode) ? data.ads.topCode : '';
+                topAdBox.style.display = (data.ads.topOn && data.ads.topCode) ? 'block' : 'none';
             }
-
             if (midAdBox) {
-                if (data.ads.midOn && data.ads.midCode) {
-                    midAdBox.innerHTML = data.ads.midCode;
-                    midAdBox.style.display = 'block';
-                } else {
-                    midAdBox.innerHTML = '';
-                    midAdBox.style.display = 'none';
-                }
+                midAdBox.innerHTML = (data.ads.midOn && data.ads.midCode) ? data.ads.midCode : '';
+                midAdBox.style.display = (data.ads.midOn && data.ads.midCode) ? 'block' : 'none';
             }
-
             if (botAdBox) {
-                if (data.ads.botOn && data.ads.botCode) {
-                    botAdBox.innerHTML = data.ads.botCode;
-                    botAdBox.style.display = 'block';
-                } else {
-                    botAdBox.innerHTML = '';
-                    botAdBox.style.display = 'none';
-                }
+                botAdBox.innerHTML = (data.ads.botOn && data.ads.botCode) ? data.ads.botCode : '';
+                botAdBox.style.display = (data.ads.botOn && data.ads.botCode) ? 'block' : 'none';
             }
         }
 
@@ -670,11 +569,9 @@
     }
 });
 
-// باقي الدوال تبقى كما هي بدون تغيير...
 function getOrderedPosts(menuItems, allPosts) {
     let ordered = [];
     let visitedIds = new Set();
-
     function traverse(items) {
         if (!items) return;
         items.forEach(item => {
@@ -687,21 +584,16 @@ function getOrderedPosts(menuItems, allPosts) {
                     }
                 }
             }
-            if (item.children && item.children.length > 0) {
-                traverse(item.children);
-            }
+            if (item.children && item.children.length > 0) traverse(item.children);
         });
     }
-
     if (menuItems) traverse(menuItems);
-
     allPosts.forEach(p => {
         if (!visitedIds.has(p.id)) {
             ordered.push(p);
             visitedIds.add(p.id);
         }
     });
-
     return ordered;
 }
 
@@ -725,10 +617,7 @@ window.openPostBySlug = async function(slug) {
             const res = await fetch(`data.json?t=${Date.now()}`);
             data = await res.json();
             window.siteBlogData = data;
-        } catch (e) {
-            console.error("تعذر جلب البيانات");
-            return;
-        }
+        } catch (e) { return; }
     }
 
     let rawPosts = data.posts || [];
@@ -737,9 +626,7 @@ window.openPostBySlug = async function(slug) {
     let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
 
     let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
-    if (targetSlug.includes('?article=')) {
-        targetSlug = targetSlug.split('?article=')[1];
-    }
+    if (targetSlug.includes('?article=')) targetSlug = targetSlug.split('?article=')[1];
     targetSlug = targetSlug.split('/').pop().trim();
 
     let post = rawPosts.find(p => {
@@ -747,19 +634,16 @@ window.openPostBySlug = async function(slug) {
         let pId = String(p.id || '').trim();
         let pUrl = (p.url || '').replace('.html', '').trim().toLowerCase();
         let pUrlFile = pUrl.split('/').pop();
-
-        return pSlug === targetSlug || 
-               pId === targetSlug || 
-               pUrl === targetSlug || 
-               pUrlFile === targetSlug ||
-               targetSlug.includes(pSlug);
+        return pSlug === targetSlug || pId === targetSlug || pUrl === targetSlug || pUrlFile === targetSlug || targetSlug.includes(pSlug);
     });
 
     if (post) {
         dynamicView.style.display = 'block';
 
+        // التمرير الدقيق ليتوقف عند بداية رأس صندوق المقال مباشرة بدلاً من أعلى الصفحة
         setTimeout(() => {
-            window.scrollTo({ top: dynamicView.offsetTop - 20, behavior: 'smooth' });
+            const rect = dynamicView.getBoundingClientRect();
+            window.scrollTo({ top: window.pageYOffset + rect.top - 15, behavior: 'smooth' });
         }, 50);
 
         let ads = data.ads || {};
@@ -767,7 +651,6 @@ window.openPostBySlug = async function(slug) {
         let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
 
         let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
-
         window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
         window._currentNavNextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
 
@@ -801,84 +684,67 @@ window.openPostBySlug = async function(slug) {
         function attachNavEvents() {
             const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
             const nextArrowBtn = document.getElementById('custom-next-arrow-btn');
-
             if (prevArrowBtn) {
                 prevArrowBtn.onclick = () => {
                     if (window._currentNavPrevIndex > 0) {
                         window._currentNavPrevIndex--;
                         window._currentNavNextIndex = window._currentNavPrevIndex + 2 < sequencedPosts.length ? window._currentNavPrevIndex + 2 : -1;
-                    } else {
-                        window._currentNavPrevIndex = sequencedPosts.length - 1;
-                    }
+                    } else { window._currentNavPrevIndex = sequencedPosts.length - 1; }
                     renderNavContainer();
                 };
             }
-
             if (nextArrowBtn) {
                 nextArrowBtn.onclick = () => {
                     if (window._currentNavNextIndex !== -1 && window._currentNavNextIndex < sequencedPosts.length - 1) {
                         window._currentNavNextIndex++;
                         window._currentNavPrevIndex = window._currentNavNextIndex - 2 >= 0 ? window._currentNavNextIndex - 2 : -1;
-                    } else {
-                        window._currentNavNextIndex = 0;
-                    }
+                    } else { window._currentNavNextIndex = 0; }
                     renderNavContainer();
                 };
             }
         }
 
-        let relatedPosts = sequencedPosts.filter(p => p.id !== post.id).slice(0, 4);
-        let relatedHtml = '';
-        if (relatedPosts.length > 0) {
-            let linksList = relatedPosts.map(rp => `
-                <li style="margin-bottom: 8px;">
-                    <a href="?article=${rp.slug}" style="color: #4a3b32; background: rgba(210, 195, 170, 0.25); padding: 8px 12px; display: block; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 0.85rem;">
-                        <i class="fa-solid fa-bookmark" style="color: var(--primary-color); margin-left: 6px;"></i> ${rp.title}
-                    </a>
-                </li>
-            `).join('');
-
-            relatedHtml = `
-                <div style="margin: 35px 0; padding: 20px; background: rgba(245, 240, 230, 0.6); border: 1px solid #dcd3c1; border-radius: 8px;">
-                    <h3 style="color: #8c4a32; font-size: 1.05rem; margin-bottom: 12px; font-weight: 700; border-bottom: 2px solid #dcd3c1; padding-bottom: 6px;">
-                        <i class="fa-solid fa-fire"></i> شاهد أيضاً / مواضيع ذات صلة:
-                    </h3>
-                    <ul style="list-style: none; padding: 0; margin: 0;">${linksList}</ul>
+        let tempDiv = document.createElement('div');
+        tempDiv.innerHTML = post.content || post.description || '';
+        let headings = tempDiv.querySelectorAll('h2, h3');
+        let tocHtml = '';
+        if (headings.length > 0) {
+            let tocItems = [];
+            headings.forEach((h, index) => {
+                let id = `heading-${index}`;
+                h.id = id;
+                let text = h.innerText.trim();
+                tocItems.append ? null : tocItems.push(`<li><a href="#${id}" style="color: var(--primary-color); text-decoration: none; font-weight: 600; display: block; padding: 4px 0;"><i class="fa-solid fa-angle-left" style="margin-left: 6px;"></i>${text}</a></li>`);
+            });
+            tocHtml = `
+                <div id="toc-container" style="margin-bottom: 20px; border: 1px solid #dcd3c1; border-radius: 8px; background: rgba(245, 240, 230, 0.6); padding: 12px 18px;">
+                    <div style="font-weight: bold; color: #4a3b32; font-size: 0.9rem; margin-bottom: 8px; border-bottom: 1px solid #dcd3c1; padding-bottom: 5px;">
+                        <i class="fa-solid fa-list-ul" style="color: var(--primary-color); margin-left: 8px;"></i> محتويات المقال:
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem;">${tocItems.join('')}</ul>
                 </div>
             `;
-        }
-
-        let rawContent = post.content || post.description || '';
-        let contentParts = rawContent.split('</p>');
-        let middleIndex = Math.floor(contentParts.length / 2);
-        if (contentParts.length > 1) {
-            contentParts[middleIndex] += relatedHtml;
-            rawContent = contentParts.join('</p>');
+            post.processedContent = tempDiv.innerHTML;
         } else {
-            rawContent += relatedHtml;
+            post.processedContent = post.content || post.description || '';
         }
 
         dynamicContentBox.innerHTML = `
             <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                <button id="back-to-home-btn-inner" onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
-            </div>
-
-            <div id="toc-container" style="margin-bottom: 20px; border: 1px solid #dcd3c1; border-radius: 6px; background: rgba(245, 240, 230, 0.4);">
-                <div id="toc-header" style="padding: 8px 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #4a3b32; font-size: 0.85rem;">
-                    <span><i class="fa-solid fa-list-ul" style="color: var(--primary-color); margin-left: 8px;"></i> محتويات المقال</span>
-                    <i class="fa-solid fa-chevron-down" id="toc-arrow" style="transition: transform 0.3s;"></i>
-                </div>
-                <div id="toc-list-box" style="display: none; padding: 10px 20px; border-top: 1px solid #dcd3c1; max-height: 200px; overflow-y: auto;"></div>
+                <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
             </div>
 
             <div style="padding: 0 15px;">
-                <h1 id="article-main-title-heading" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
-                <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 20px;">
-                    <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span> | <span>✍ ${post.author || 'إدارة المدونة'}</span>
+                <h1 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
+                <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 15px;">
+                    <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span>
                 </div>
+                
+                ${tocHtml}
+                
                 ${topAd}
-                <div class="single-post-content" id="article-main-content" style="line-height: 1.8; color: #2C3E50; font-size: 0.9rem;">
-                    ${rawContent}
+                <div class="single-post-content" style="line-height: 2; color: #2C3E50; font-size: 0.95rem;">
+                    ${post.processedContent}
                 </div>
                 ${botAd}
 
@@ -898,14 +764,11 @@ window.openPostBySlug = async function(slug) {
 window.closePostView = function() {
     const dynamicView = document.getElementById('dynamic-post-view');
     const dynamicContentBox = document.getElementById('dynamic-post-content-box');
-    
     if (dynamicView && dynamicContentBox) {
         dynamicView.style.display = 'none';
         dynamicContentBox.innerHTML = '';
     }
-
     document.querySelectorAll('.hide-on-article').forEach(el => el.style.display = '');
-
     history.pushState({}, '', window.location.pathname);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
@@ -915,14 +778,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const link = e.target.closest('a');
         if (link && link.getAttribute('href')) {
             const href = link.getAttribute('href');
+            if (href.startsWith('#')) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                return;
+            }
             if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
                 e.preventDefault();
-                let cleanSlug = href;
-                if (href.includes('?article=')) {
-                    cleanSlug = href.split('?article=')[1];
-                } else {
-                    cleanSlug = href.split('/').pop();
-                }
+                let cleanSlug = href.includes('?article=') ? href.split('?article=')[1] : href.split('/').pop();
                 cleanSlug = cleanSlug.replace('.html', '').split('&')[0].trim();
                 openPostBySlug(cleanSlug);
             }
@@ -932,11 +798,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const article = urlParams.get('article');
-        if (!article) {
-            closePostView();
-        } else {
-            openPostBySlug(article);
-        }
+        if (!article) closePostView();
+        else openPostBySlug(article);
     });
 });
 
@@ -946,9 +809,7 @@ function buildTree(items) {
     items.forEach(item => {
         let node = { ...item, children: [] };
         let lvl = item.level || 1;
-        while (stack.length > 1 && stack[stack.length - 1].level >= lvl) {
-            stack.pop();
-        }
+        while (stack.length > 1 && stack[stack.length - 1].level >= lvl) stack.pop();
         stack[stack.length - 1].children.push(node);
         stack.push({ level: lvl, children: node.children });
     });
@@ -958,13 +819,11 @@ function buildTree(items) {
 function generateMenuHtml(nodes, isRoot = false) {
     if (!nodes || nodes.length === 0) return '';
     let html = isRoot ? '' : '<ul class="dropdown-menu">';
-    
     html += nodes.map(node => {
         let itemUrl = node.url || node.link || '#';
         let finalHref = itemUrl;
         let isInternalPost = false;
         let cleanSlug = '';
-
         if (itemUrl !== '#' && !itemUrl.startsWith('http') && !itemUrl.startsWith('//') && !itemUrl.startsWith('javascript:')) {
             cleanSlug = itemUrl.split('/').pop().replace('.html', '').replace('?article=', '').trim();
             if (cleanSlug) {
@@ -972,11 +831,9 @@ function generateMenuHtml(nodes, isRoot = false) {
                 isInternalPost = true;
             }
         }
-
         let hasChildren = node.children && node.children.length > 0;
         let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
         let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;"` : '';
-
         return `
             <li>
                 <a href="${finalHref}" ${clickAttr}>${node.title}${arrow}</a>
@@ -984,7 +841,6 @@ function generateMenuHtml(nodes, isRoot = false) {
             </li>
         `;
     }).join('');
-
     if (!isRoot) html += '</ul>';
     return html;
 }
@@ -994,40 +850,22 @@ function initSliderLogic() {
     if (slides.length === 0) return;
     let currentSlide = 0;
     let sliderTimer = setInterval(nextSlide, 4000);
-
     function showSlide(index) {
         slides.forEach(s => s.classList.remove('active'));
         slides[index].classList.add('active');
     }
-
     function nextSlide() {
         currentSlide = (currentSlide + 1) % slides.length;
         showSlide(currentSlide);
     }
-
     function prevSlide() {
         currentSlide = (currentSlide - 1 + slides.length) % slides.length;
         showSlide(currentSlide);
     }
-
     const nextBtn = document.getElementById('slider-next-btn');
     const prevBtn = document.getElementById('slider-prev-btn');
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            clearInterval(sliderTimer);
-            nextSlide();
-            sliderTimer = setInterval(nextSlide, 4000);
-        });
-    }
-
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            clearInterval(sliderTimer);
-            prevSlide();
-            sliderTimer = setInterval(nextSlide, 4000);
-        });
-    }
+    if (nextBtn) nextBtn.addEventListener('click', () => { clearInterval(sliderTimer); nextSlide(); sliderTimer = setInterval(nextSlide, 4000); });
+    if (prevBtn) prevBtn.addEventListener('click', () => { clearInterval(sliderTimer); prevSlide(); sliderTimer = setInterval(nextSlide, 4000); });
 }
     </script>
 </body>
