@@ -272,6 +272,21 @@
             "content": "",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1791992856671",
+            "title": "اتصل بنا",
+            "type": "contact",
+            "content": "",
+            "active": true,
+            "location": "footer",
+            "contactData": {
+                "name": "",
+                "email": "",
+                "phone": "",
+                "whatsapp": "",
+                "telegram": ""
+            }
         }
     ],
     "ads": {
