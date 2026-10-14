@@ -464,37 +464,37 @@
             <h4>المقالات والصفحات المنشورة:</h4>
             <div id="posts-admin-management-list" style="margin-top: 10px; max-height: 280px; overflow-y: auto; padding-left: 5px;"></div>
         </div>
+        
+        <!-- إعدادات روابط الصفحات الثابتة -->
+        <div class="section-box" style="border-color: var(--primary-color);">
+            <h3 style="color: var(--primary-color);"><i class="fa-solid fa-file-shield"></i> إعدادات روابط الصفحات الثابتة</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
+                أدخل روابط الصفحات الثابتة لتظهر في تذييل الموقع (Footer) أو الأماكن المخصصة لها.
+            </p>
+            
+            <div class="form-group">
+                <label>1- من نحن؟</label>
+                <input type="text" id="page-about-url" placeholder="أدخل رابط صفحة من نحن...">
+            </div>
+            <div class="form-group">
+                <label>2- اتفاقية الاستخدام</label>
+                <input type="text" id="page-terms-url" placeholder="أدخل رابط اتفاقية الاستخدام...">
+            </div>
+            <div class="form-group">
+                <label>3- سياسة الخصوصية</label>
+                <input type="text" id="page-privacy-url" placeholder="أدخل رابط سياسة الخصوصية...">
+            </div>
+            <div class="form-group">
+                <label>4- اتصل بنا</label>
+                <input type="text" id="page-contact-url" placeholder="أدخل رابط اتصل بنا...">
+            </div>
+        
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button type="button" class="btn" onclick="saveStaticPagesLinks()" style="background: #28a745;">حفظ روابط الصفحات</button>
+                <button type="button" class="btn" onclick="resetStaticPagesForm()" style="background: #64748b;">إلغاء</button>
+            </div>
+        </div>
     </div>
-
-    <!-- إعدادات روابط الصفحات الثابتة -->
-<div class="section-box" style="border-color: var(--primary-color);">
-    <h3 style="color: var(--primary-color);"><i class="fa-solid fa-file-shield"></i> إعدادات روابط الصفحات الثابتة</h3>
-    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
-        أدخل روابط الصفحات الثابتة لتظهر في تذييل الموقع (Footer) أو الأماكن المخصصة لها.
-    </p>
-    
-    <div class="form-group">
-        <label>1- من نحن؟</label>
-        <input type="text" id="page-about-url" placeholder="أدخل رابط صفحة من نحن...">
-    </div>
-    <div class="form-group">
-        <label>2- اتفاقية الاستخدام</label>
-        <input type="text" id="page-terms-url" placeholder="أدخل رابط اتفاقية الاستخدام...">
-    </div>
-    <div class="form-group">
-        <label>3- سياسة الخصوصية</label>
-        <input type="text" id="page-privacy-url" placeholder="أدخل رابط سياسة الخصوصية...">
-    </div>
-    <div class="form-group">
-        <label>4- اتصل بنا</label>
-        <input type="text" id="page-contact-url" placeholder="أدخل رابط اتصل بنا...">
-    </div>
-
-    <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <button type="button" class="btn" onclick="saveStaticPagesLinks()" style="background: #28a745;">حفظ روابط الصفحات</button>
-        <button type="button" class="btn" onclick="resetStaticPagesForm()" style="background: #64748b;">إلغاء</button>
-    </div>
-</div>
 
     
     <!-- نافذة منبثقة للتنبيهات -->
