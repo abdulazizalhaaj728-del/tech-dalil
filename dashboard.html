@@ -232,34 +232,46 @@
         line-height: 2 !important;
     }
 
-            /* 2. تنسيق الجداول بدقة وإلزامها بظهور الحدود والخطوط بوضوح داخل المحرر والموقع */
-        /* إجبار محرر كويل وباقي العناصر في الداشبورد على عرض الجداول بشكل صحيح ومنتظم */
-            .ql-editor table {
+        /* --- تنسيق الجداول وإجبارها على الانتظام والترتيب حصرياً --- */
+            .ql-editor table,
+            .ql-container table,
+            table {
                 display: table !important;
                 width: 100% !important;
                 border-collapse: collapse !important;
+                border-spacing: 0 !important;
                 margin: 15px 0 !important;
                 background-color: #ffffff !important;
+                table-layout: auto !important;
             }
         
-            .ql-editor tr {
+            .ql-editor tr,
+            .ql-container tr,
+            tr {
                 display: table-row !important;
             }
         
             .ql-editor th, 
-            .ql-editor td {
+            .ql-editor td,
+            .ql-container th,
+            .ql-container td,
+            th, td {
                 display: table-cell !important;
                 border: 1px solid #475569 !important;
                 padding: 10px 12px !important;
                 text-align: right !important;
                 vertical-align: middle !important;
                 color: #2C3E50 !important;
+                word-break: break-word !important;
             }
         
-            .ql-editor th {
+            .ql-editor th,
+            th {
                 background-color: #e2e8f0 !important;
                 font-weight: bold !important;
+                color: #0f172a !important;
             }
+            
     </style>
 </head>
 <body>
@@ -1134,10 +1146,33 @@
 
         function insertCustomTable() {
             const range = quill.getSelection();
-            const tableHTML = `<table border="1" style="width:100%; border-collapse:collapse; margin:15px 0;"><thead><tr style="background:#e2e8f0;"><th style="padding:10px; border:1px solid #94a3b8;">عنوان 1</th><th style="padding:10px; border:1px solid #94a3b8;">عنوان 2</th></tr></thead><tbody><tr><td style="padding:8px; border:1px solid #94a3b8;">بيانات 1</td><td style="padding:8px; border:1px solid #94a3b8;">بيانات 2</td></tr></tbody></table><p></p>`;
-            if (range) quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
-            else quill.clipboard.dangerouslyPasteHTML(quill.getLength(), tableHTML);
+            const tableHTML = `
+                <table border="1" style="width:100%; border-collapse:collapse; margin:15px 0; background:#ffffff;">
+                    <thead>
+                        <tr style="background-color:#e2e8f0;">
+                            <th style="border:1px solid #475569; padding:10px; text-align:right;">نوع اللابتوب</th>
+                            <th style="border:1px solid #475569; padding:10px; text-align:right;">فئة الاستخدام</th>
+                            <th style="border:1px solid #475569; padding:10px; text-align:right;">السعر التقريبي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="border:1px solid #475569; padding:8px; text-align:right;">MacBook Air (M4)</td>
+                            <td style="border:1px solid #475569; padding:8px; text-align:right;">الأفضل للجميع</td>
+                            <td style="border:1px solid #475569; padding:8px; text-align:right;">$999</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><br></p>
+            `;
+            if (range) {
+                quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
+            } else {
+                quill.clipboard.dangerouslyPasteHTML(quill.getLength(), tableHTML);
+            }
         }
+
+        
 
         function uploadLogoFile(input) {
             if (input.files && input.files[0]) {
