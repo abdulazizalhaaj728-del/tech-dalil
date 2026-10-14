@@ -223,6 +223,41 @@
             background-color: #f1f1f1 !important;
             font-weight: bold !important;
         }
+
+
+        /* 1. ضبط محاذاة أسطر المحرر لتكون مشدودة من الجانبين (Justify) ومنسقة */
+    .ql-editor {
+        text-align: justify !important;
+        text-justify: inter-word !important;
+        line-height: 2 !important;
+    }
+
+    /* 2. تنسيق الجداول بدقة وإلزامها بظهور الحدود والخطوط بوضوح داخل المحرر والموقع */
+    .ql-editor table,
+    .post-content table,
+    .single-post-content table,
+    .dynamic-post-content-box table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin: 15px 0 !important;
+        background-color: #ffffff !important;
+    }
+
+    .ql-editor th, 
+    .ql-editor td,
+    .post-content th, 
+    .post-content td {
+        border: 1px solid #94a3b8 !important; /* لون حدود الجدول ووضوحها */
+        padding: 10px !important;
+        text-align: right !important;
+        color: #2C3E50 !important;
+    }
+
+    .ql-editor th, 
+    .post-content th {
+        background-color: #e2e8f0 !important; /* لون خلفية رأس الجدول */
+        font-weight: bold !important;
+    }
     </style>
 </head>
 <body>
