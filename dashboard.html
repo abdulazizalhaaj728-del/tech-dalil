@@ -232,40 +232,48 @@
         line-height: 2 !important;
     }
 
-        /* --- تنسيق الجداول وإجبارها على الانتظام والترتيب حصرياً --- */
-/* تنسيق الجداول بدقة تامة وبنفس معايير العرض الناجحة في ملف الرئيسية */
+/* إجبار هيكل الجداول على الانتظام التام ومنع تفككها نهائياً */
     .ql-editor table,
     .post-content table,
     .single-post-content table,
     .dynamic-post-content-box table {
         width: 100% !important;
         border-collapse: collapse !important;
+        border-spacing: 0 !important;
         margin: 15px 0 !important;
         background-color: #ffffff !important;
         display: table !important;
+        table-layout: fixed !important; /* لتوزيع الأعمدة بانتظام متساوي ومشدود */
     }
 
     .ql-editor tr,
+    .post-content tr,
     tr {
         display: table-row !important;
     }
 
     .ql-editor th, 
     .ql-editor td,
+    .post-content th, 
+    .post-content td,
     th, td {
         display: table-cell !important;
-        border: 1px solid #94a3b8 !important;
-        padding: 10px !important;
+        border: 1px solid #475569 !important;
+        padding: 10px 12px !important;
         text-align: right !important;
         vertical-align: middle !important;
         color: #2C3E50 !important;
+        word-break: break-word !important;
     }
 
     .ql-editor th, 
+    .post-content th,
     th {
         background-color: #e2e8f0 !important;
         font-weight: bold !important;
+        color: #0f172a !important;
     }
+        
             
     </style>
 </head>
@@ -1139,34 +1147,34 @@
             else showCustomAlert("تنبيه", "تظليل النص داخل المحرر مطلوب أولاً لتطبيق الخط.");
         }
 
-        function insertCustomTable() {
-            const range = quill.getSelection();
-            const tableHTML = `
-                <table border="1" style="width:100%; border-collapse:collapse; margin:15px 0; background:#ffffff;">
-                    <thead>
-                        <tr style="background-color:#e2e8f0;">
-                            <th style="border:1px solid #475569; padding:10px; text-align:right;">نوع اللابتوب</th>
-                            <th style="border:1px solid #475569; padding:10px; text-align:right;">فئة الاستخدام</th>
-                            <th style="border:1px solid #475569; padding:10px; text-align:right;">السعر التقريبي</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="border:1px solid #475569; padding:8px; text-align:right;">MacBook Air (M4)</td>
-                            <td style="border:1px solid #475569; padding:8px; text-align:right;">الأفضل للجميع</td>
-                            <td style="border:1px solid #475569; padding:8px; text-align:right;">$999</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p><br></p>
-            `;
-            if (range) {
-                quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
-            } else {
-                quill.clipboard.dangerouslyPasteHTML(quill.getLength(), tableHTML);
-            }
-        }
-
+function insertCustomTable() {
+    const range = quill.getSelection();
+    const cleanTableHTML = `
+        <table style="width:100%; border-collapse:collapse; margin:15px 0; background:#ffffff;">
+            <thead>
+                <tr style="background-color:#e2e8f0;">
+                    <th style="border:1px solid #475569; padding:10px; text-align:right;">نوع اللابتوب</th>
+                    <th style="border:1px solid #475569; padding:10px; text-align:right;">فئة الاستخدام</th>
+                    <th style="border:1px solid #475569; padding:10px; text-align:right;">السعر التقريبي</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="border:1px solid #475569; padding:8px; text-align:right;">MacBook Air (M4)</td>
+                    <td style="border:1px solid #475569; padding:8px; text-align:right;">الأفضل للجميع</td>
+                    <td style="border:1px solid #475569; padding:8px; text-align:right;">$999</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><br></p>
+    `;
+    
+    if (range) {
+        quill.clipboard.dangerouslyPasteHTML(range.index, cleanTableHTML);
+    } else {
+        quill.clipboard.dangerouslyPasteHTML(quill.getLength(), cleanTableHTML);
+    }
+}
         
 
         function uploadLogoFile(input) {
