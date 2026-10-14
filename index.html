@@ -667,7 +667,6 @@ window.openPostBySlug = async function(slug) {
         }, 50);
 
 
-        // استخراج العناوين الفرعية تلقائياً لقائمة المحتويات -----------------------------------------
 // استخراج العناوين الفرعية تلقائياً لقائمة محتويات بصيغة كومبو بوكس (عرض كامل)
         let tempDiv = document.createElement('div');
         tempDiv.innerHTML = post.content || post.description || '';
@@ -694,7 +693,8 @@ window.openPostBySlug = async function(slug) {
         } else {
             post.processedContent = post.content || post.description || '';
         }
-        //----------------------------------------------------
+        //--------------------------------------------------------------------
+
         
         let ads = data.ads || {};
         let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
