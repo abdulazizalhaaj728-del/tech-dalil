@@ -263,7 +263,15 @@
             "type": "categories",
             "content": "",
             "active": true,
-            "location": "footer"
+            "location": "footer",
+            "categoriesList": [
+                "مقالات تقنية",
+                "الصفحات الثابتة",
+                "شروحات تعليمية",
+                "مراجعات وتوصيات",
+                "الذكاء الاصطناعي",
+                "علوم الحاسب الآلي"
+            ]
         },
         {
             "id": "w_1791992816321",
@@ -306,6 +314,19 @@
         "botCode": ""
     },
     "posts": [
+        {
+            "id": "post_1792107188839",
+            "title": "تجربة جدول",
+            "category": "مقالات تقنية",
+            "description": "تجربة جدول",
+            "image": "",
+            "date": "١٦‏/١٠‏/٢٠٢٦",
+            "content": "<p class=\"ql-align-right\">  <strong>الأداء</strong></p><p class=\"ql-align-right\"> أعلى بكثير بنفس السعر؛ قطع بحجم كامل وتبريد أفضل.</p><p class=\"ql-align-right\"> جيد جداً للأعمال اليومية، لكنه أضعف في المهام الشاقة.</p><p class=\"ql-align-right\">   <strong>السعر</strong></p><p class=\"ql-align-right\"> أرخص عند مقارنة المواصفات المتطابقة.</p><p class=\"ql-align-right\"> أغلى بسبب تقنيات التصغير والبطارية والشاشة المدمجة.</p><p class=\"ql-align-right\">   <strong>قابلية التنقل</strong></p><p class=\"ql-align-right\"> ثابت في مكان واحد؛ يحتاج لمساحة مخصصة.</p><p class=\"ql-align-right\"> ميزته الكبرى؛ يمكنك العمل من أي مكان.</p><p class=\"ql-align-right\">   <strong>تطوير القطع</strong></p><p class=\"ql-align-right\"> سهل جداً؛ يمكنك تغيير الرام، المعالج، وكرت الشاشة بسهولة.</p><p class=\"ql-align-right\"> محدود جداً؛ غالباً يقتصر على الرام والتخزين فقط.</p><p class=\"ql-align-right\">   <strong>العمر الافتراضي</strong></p><p class=\"ql-align-right\"> طويل؛ بفضل التبريد الجيد وإمكانية استبدال القطع التالفة.</p><p class=\"ql-align-right\"> أقصر؛ يتأثر بالحرارة والبطارية وصعوبة الإصلاح.</p><p class=\"ql-align-right\">   <strong>الملحقات</strong></p><p class=\"ql-align-right\"> تختار الشاشة والكيبورد والماوس حسب ذوقك.</p><p class=\"ql-align-right\"> مدمجة؛ إذا تعطل الكيبورد أو الشاشة، تتعطل التجربة كاملة.</p><p class=\"ql-align-right\">   <strong>استهلاك الطاقة</strong></p><p class=\"ql-align-right\"> يستهلك طاقة أكثر ولا يعمل عند انقطاع الكهرباء.</p><p class=\"ql-align-right\"> موفر للطاقة ويعمل بالبطارية لساعات.</p><p class=\"ql-align-right\">  </p><p><br></p>",
+            "slug": "tech-post-57100.html",
+            "isDraft": false,
+            "isPublished": true,
+            "url": "articles/tech-post-57100.html"
+        },
         {
             "id": "post_1791973088824",
             "title": "اتصل بنا",
