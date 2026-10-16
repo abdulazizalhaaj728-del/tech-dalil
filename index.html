@@ -912,6 +912,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 `;
                 post.processedContent = tempDiv.innerHTML;
+
+
+                        // --- [تعديل المشكلة 1: توليد قسم شاهد أيضاً في منتصف المقال] ---
+        let postParagraphs = tempDiv.innerHTML.split('</p>');
+        if (postParagraphs.length > 2) {
+            // جلب مقالات عشوائية من باقي مقالات المدونة
+            let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
+            let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
+        
+            if (randomPosts.length > 0) {
+                let seeAlsoHtml = `
+                    <div class="see-also-box">
+                        <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
+                        <ul>
+                            ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                let midIndex = Math.floor(postParagraphs.length / 2);
+                postParagraphs.splice(midIndex, 0, seeAlsoHtml);
+                tempDiv.innerHTML = postParagraphs.join('</p>');
+            }
+        }
+        post.processedContent = tempDiv.innerHTML;
+                
+
                 
                 let ads = data.ads || {};
                 let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
@@ -1166,28 +1192,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
 
-        // --- [تعديل المشكلة 1: توليد قسم شاهد أيضاً في منتصف المقال] ---
-        let postParagraphs = tempDiv.innerHTML.split('</p>');
-        if (postParagraphs.length > 2) {
-            // جلب مقالات عشوائية من باقي مقالات المدونة
-            let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
-            let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
-        
-            if (randomPosts.length > 0) {
-                let seeAlsoHtml = `
-                    <div class="see-also-box">
-                        <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
-                        <ul>
-                            ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-                let midIndex = Math.floor(postParagraphs.length / 2);
-                postParagraphs.splice(midIndex, 0, seeAlsoHtml);
-                tempDiv.innerHTML = postParagraphs.join('</p>');
-            }
-        }
-        post.processedContent = tempDiv.innerHTML;
+
         
         
         // --- [تعديل المشكلة 2: زر الوضع الليلي/النهاري] ---
