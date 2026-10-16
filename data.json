@@ -315,19 +315,6 @@
     },
     "posts": [
         {
-            "id": "post_1792107188839",
-            "title": "تجربة جدول",
-            "category": "مقالات تقنية",
-            "description": "تجربة جدول",
-            "image": "",
-            "date": "١٦‏/١٠‏/٢٠٢٦",
-            "content": "<table><tbody><tr><td data-row=\"1\" class=\"ql-align-right ql-direction-rtl\"><strong>الأداء</strong></td><td data-row=\"1\" class=\"ql-align-right ql-direction-rtl\">أعلى بكثير بنفس السعر؛ قطع بحجم كامل وتبريد أفضل.</td><td data-row=\"1\" class=\"ql-align-right ql-direction-rtl\">جيد جداً للأعمال اليومية، لكنه أضعف في المهام الشاقة.</td></tr><tr><td data-row=\"2\" class=\"ql-align-right ql-direction-rtl\"><strong>السعر</strong></td><td data-row=\"2\" class=\"ql-align-right ql-direction-rtl\">أرخص عند مقارنة المواصفات المتطابقة.</td><td data-row=\"2\" class=\"ql-align-right ql-direction-rtl\">أغلى بسبب تقنيات التصغير والبطارية والشاشة المدمجة.</td></tr><tr><td data-row=\"3\" class=\"ql-align-right ql-direction-rtl\"><strong>قابلية التنقل</strong></td><td data-row=\"3\" class=\"ql-align-right ql-direction-rtl\">ثابت في مكان واحد؛ يحتاج لمساحة مخصصة.</td><td data-row=\"3\" class=\"ql-align-right ql-direction-rtl\">ميزته الكبرى؛ يمكنك العمل من أي مكان.</td></tr><tr><td data-row=\"4\" class=\"ql-align-right ql-direction-rtl\"><strong>تطوير القطع</strong></td><td data-row=\"4\" class=\"ql-align-right ql-direction-rtl\">سهل جداً؛ يمكنك تغيير الرام، المعالج، وكرت الشاشة بسهولة.</td><td data-row=\"4\" class=\"ql-align-right ql-direction-rtl\">محدود جداً؛ غالباً يقتصر على الرام والتخزين فقط.</td></tr><tr><td data-row=\"5\" class=\"ql-align-right ql-direction-rtl\"><strong>العمر الافتراضي</strong></td><td data-row=\"5\" class=\"ql-align-right ql-direction-rtl\">طويل؛ بفضل التبريد الجيد وإمكانية استبدال القطع التالفة.</td><td data-row=\"5\" class=\"ql-align-right ql-direction-rtl\">أقصر؛ يتأثر بالحرارة والبطارية وصعوبة الإصلاح.</td></tr><tr><td data-row=\"6\" class=\"ql-align-right ql-direction-rtl\"><strong>الملحقات</strong></td><td data-row=\"6\" class=\"ql-align-right ql-direction-rtl\">تختار الشاشة والكيبورد والماوس حسب ذوقك.</td><td data-row=\"6\" class=\"ql-align-right ql-direction-rtl\">مدمجة؛ إذا تعطل الكيبورد أو الشاشة، تتعطل التجربة كاملة.</td></tr><tr><td data-row=\"7\" class=\"ql-align-right ql-direction-rtl\"><strong>استهلاك الطاقة</strong></td><td data-row=\"7\" class=\"ql-align-right ql-direction-rtl\">يستهلك طاقة أكثر ولا يعمل عند انقطاع الكهرباء.</td><td data-row=\"7\" class=\"ql-align-right ql-direction-rtl\">موفر للطاقة ويعمل بالبطارية لساعات.</td></tr></tbody></table><p><br></p>",
-            "slug": "tech-post-57100.html",
-            "isDraft": false,
-            "isPublished": true,
-            "url": "articles/tech-post-57100.html"
-        },
-        {
             "id": "post_1791973088824",
             "title": "اتصل بنا",
             "category": "الصفحات الثابتة",
