@@ -201,14 +201,17 @@
             line-height: 2 !important;
         }
         
-        .single-post-content h1, .single-post-content h2, .single-post-content h3,
-        .dynamic-post-content-box h1, .dynamic-post-content-box h2, .dynamic-post-content-box h3 {
+        /* --- [تعديل المشكلة 4: تقليل المسافات والفراغات بين السطور إلى النصف] --- */
+        .single-post-content, .dynamic-post-content-box {
+            font-family: var(--active-font, 'Cairo') !important;
+            text-align: justify !important;
+            text-justify: inter-word !important;
             color: #2C3E50 !important;
-            margin-bottom: 15px;
+            line-height: 1.5 !important; /* تم تخفيضها من 2 إلى 1.5 */
         }
         
         .single-post-content p, .dynamic-post-content-box p {
-            margin-bottom: 15px;
+            margin-bottom: 8px !important; /* تم تخفيض الهامش بين الفقرات والسطور الفارغة إلى النصف من 15px إلى 8px */
         }
 
         .single-post-content table,
