@@ -196,16 +196,15 @@
         
         
         .ql-editor table {
-              table-layout: auto !important; /* السماح للأعمدة بتغيير حجمها بناءً على المحتوى */
-              width: 100%;
-              max-width: 100%;
+          width: 100% !important;
+          table-layout: fixed !important; /* يمنع الجدول من تجاوز حدود الحاوية */
         }
         
-        .ql-editor td, .ql-editor th {
-              word-break: break-word;
-              vertical-align: top;
+        .ql-editor td, .ql-editor th  {
+          word-wrap: break-word;
+          word-break: break-word;
+          white-space: normal !important; /* ضمان التفاف النصوص في جميع الخلايا وخاصة الأخيرة */
         }
-
         
     </style>
 </head>
@@ -832,29 +831,38 @@
         
         // التعامل مع عملية اللصق لتعديل الجداول
         quill.root.addEventListener('paste', function(e) {
-          // ننتظر حتى يتم إدراج المحتوى في DOM الخاص بالمحرر
           setTimeout(function() {
-            // العثور على جميع الجداول داخل المحرر
             var tables = quill.root.querySelectorAll('table');
             
             tables.forEach(function(table) {
-              // إزالة العرض الثابت للجدول وجعله متجاوباً
+              // ضبط الجدول ليلائم عرض الحاوية بالكامل
               table.style.width = '100%';
+              table.style.tableLayout = 'fixed'; // مهم جداً مع الأعمدة ذات العرض المتفاف
               table.style.borderCollapse = 'collapse';
               
-              // ضبط الخلايا لتتكيف مع النص الداخلي
-              var cells = table.querySelectorAll('th, td');
-              cells.forEach(function(cell) {
-                // نلغي العرض الثابت إن وجد لكي يكبر أو يصغر حسب المحتوى
-                cell.style.width = 'auto';
-                cell.style.whiteSpace = 'nowrap'; // اختياري: لمنع التفاف النص مبكراً إذا أردت للأعمدة أن تتسع
-                cell.style.padding = '8px';
-                cell.style.border = '1px solid #ccc';
+              // المرور على جميع الصفوف لتنسيق الخلايا
+              var rows = table.querySelectorAll('tr');
+              rows.forEach(function(row) {
+                var cells = row.querySelectorAll('th, td');
+                
+                cells.forEach(function(cell, index) {
+                  cell.style.padding = '8px';
+                  cell.style.border = '1px solid #ccc';
+                  
+                  // إذا كانت الخلية هي الأخيرة في الصف
+                  if (index === cells.length - 1) {
+                    cell.style.whiteSpace = 'normal'; // السماح بالالتفاف ونزول السطر
+                    cell.style.wordBreak = 'break-word'; // كسر الكلمات الطويلة جداً لضمان عدم الخروج
+                  } else {
+                    // الخلايا الأخرى يمكنها أخذ مساحتها الطبيعية
+                    cell.style.whiteSpace = 'normal';
+                  }
+                });
               });
             });
           }, 100);
         });
-//-------------------------------------------------------
+        //-------------------------------------------------------
 
         
 
