@@ -217,11 +217,11 @@
             text-align: justify !important;
             text-justify: inter-word !important;
             color: #2C3E50 !important;
-            line-height: 1.5 !important; /* تم تخفيضها من 2 إلى 1.5 */
+            line-height: 1.8 !important; /* تم تخفيضها من 2 إلى 1.5 */
         }
         
         .single-post-content p, .dynamic-post-content-box p {
-            margin-bottom: 8px !important; /* تم تخفيض الهامش بين الفقرات والسطور الفارغة إلى النصف من 15px إلى 8px */
+            margin-bottom: 11px !important; /* تم تخفيض الهامش بين الفقرات والسطور الفارغة إلى النصف من 15px إلى 8px */
         }
 
         .single-post-content table,
@@ -797,18 +797,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.documentElement.style.setProperty('--active-font', savedFont);
             }
         
-            const darkModeBtn = document.getElementById('dark-mode-btn');
-            if (darkModeBtn) {
-                darkModeBtn.onclick = () => {
-                    if (document.body.classList.contains('theme-blue-1')) {
-                        document.body.className = 'theme-default';
-                        localStorage.setItem('site_theme', 'theme-default');
-                    } else {
-                        document.body.className = 'theme-blue-1';
-                        localStorage.setItem('site_theme', 'theme-blue-1');
-                    }
-                };
-            }
+        // --- [تعديل المشكلة 2: زر الوضع الليلي/النهاري] ---
+        const darkModeBtn = document.getElementById('dark-mode-btn');
+        if (darkModeBtn) {
+            darkModeBtn.onclick = () => {
+                document.body.classList.toggle('dark-theme');
+                let isDark = document.body.classList.contains('dark-theme');
+                localStorage.setItem('site_dark_mode', isDark ? 'enabled' : 'disabled');
+            };
+        }
+        
+        // استعادة الحالة عند التحميل
+        if (localStorage.getItem('site_dark_mode') === 'enabled') {
+            document.body.classList.add('dark-theme');
         }
         
         function getOrderedPosts(menuItems, allPosts) {
@@ -1190,25 +1191,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 sliderWrapper.innerHTML = `<div class="square-slide active" style="background: var(--card-bg); display:flex; align-items:center; justify-content:center;"><span style="color:var(--text-muted);">لا توجد صور بالسلايدر</span></div>`;
             }
         };
-
-
-
-        
-        
-        // --- [تعديل المشكلة 2: زر الوضع الليلي/النهاري] ---
-        const darkModeBtn = document.getElementById('dark-mode-btn');
-        if (darkModeBtn) {
-            darkModeBtn.onclick = () => {
-                document.body.classList.toggle('dark-theme');
-                let isDark = document.body.classList.contains('dark-theme');
-                localStorage.setItem('site_dark_mode', isDark ? 'enabled' : 'disabled');
-            };
-        }
-        
-        // استعادة الحالة عند التحميل
-        if (localStorage.getItem('site_dark_mode') === 'enabled') {
-            document.body.classList.add('dark-theme');
-        }
         
     </script>
 </body>
