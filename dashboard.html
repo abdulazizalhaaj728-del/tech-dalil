@@ -504,7 +504,7 @@
     <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
 
     <script>     
-
+       
         let globalData = {
             settings: { logoUrl: "", logoHeight: "55px", tickerVisible: true },
             menu: [], widgets: [],
@@ -536,6 +536,21 @@
         
             // الحفظ سحابياً في ملف data.json بنفس طريقة باقي الإعدادات
             await saveGeneralSettings('static_pages_links');
+
+            // قبل عملية حفظ إعدادات الإعلانات، قم بتحديث الكائن بهذا الشكل:
+            globalData.ads = {
+                topOn: document.getElementById('ad-top-on').checked, // ستكون قيمتها true أو false صريحة
+                topCode: document.getElementById('ad-top-code').value.trim(),
+                
+                midOn: document.getElementById('ad-mid-on').checked, // true أو false
+                midCode: document.getElementById('ad-mid-code').value.trim(),
+                
+                botOn: document.getElementById('ad-bot-on').checked, // true أو false
+                botCode: document.getElementById('ad-bot-code').value.trim()
+            };
+            
+            // ثم استدعاء دالة الحفظ السحابي
+            await saveGeneralSettings('ads');
         }
         
         // إعادة تعيين أو تفريغ الحقول عند الضغط على إلغاء
@@ -962,12 +977,16 @@
                 if (globalData.settings.logoHeight) document.getElementById('logo-size-selector').value = globalData.settings.logoHeight;
                 if (globalData.settings.tickerVisible !== undefined) document.getElementById('ticker-visible-toggle').checked = globalData.settings.tickerVisible;
             }
+            
             if (globalData.ads) {
-                document.getElementById('ad-top-on').checked = globalData.ads.topOn || false;
+                // التأكد من تحويل القيم إلى boolean (true / false) بدقة
+                document.getElementById('ad-top-on').checked = Boolean(globalData.ads.topOn);
                 document.getElementById('ad-top-code').value = globalData.ads.topCode || '';
-                document.getElementById('ad-mid-on').checked = globalData.ads.midOn || false;
+                
+                document.getElementById('ad-mid-on').checked = Boolean(globalData.ads.midOn);
                 document.getElementById('ad-mid-code').value = globalData.ads.midCode || '';
-                document.getElementById('ad-bot-on').checked = globalData.ads.botOn || false;
+                
+                document.getElementById('ad-bot-on').checked = Boolean(globalData.ads.botOn);
                 document.getElementById('ad-bot-code').value = globalData.ads.botCode || '';
             }
 
