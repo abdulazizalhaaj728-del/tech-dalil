@@ -399,16 +399,20 @@
                     <label>المحتوى:</label>
                     <div class="sticky-editor-header">
                         <div class="custom-font-bar">
-                            <span style="font-size: 0.8rem; color: var(--accent-color); margin-left: 5px;"><i class="fa-solid fa-font"></i> تغيير الخط للنص المظلل:</span>
+                            <span style="font-size: 0.8rem; color: var(--accent-color); margin-left: 5px;"><i class="fa-solid fa-font"></i> تغيير الخط:</span>
                             <button type="button" class="font-tag-btn" style="font-family: 'Cairo', sans-serif;" onclick="applyCustomFont('cairo')">خط كايرو</button>
                             <button type="button" class="font-tag-btn" style="font-family: 'Tajawal', sans-serif;" onclick="applyCustomFont('tajawal')">خط تجوال</button>
                             <button type="button" class="font-tag-btn" style="font-family: 'Amiri', serif;" onclick="applyCustomFont('amiri')">خط أميري</button>
                             <button type="button" class="font-tag-btn" style="color: #94a3b8;" onclick="applyCustomFont(false)">إزالة الخط</button>
-
-                            <button type="button" id="insert-table-btn" class="btn btn-secondary" onclick="insertCustomTable()" style="margin: 5px; background-color: #6c757d; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
-                                📊 إدراج جدول جاهز
-                            </button>
+                        
+                            <span style="font-size: 0.8rem; color: var(--accent-color); margin-right: 15px; margin-left: 5px;"><i class="fa-solid fa-heading"></i> تنسيق العنوان:</span>
+                            <button type="button" class="font-tag-btn" style="background-color: #0284c7; color: white;" onclick="applyHeading(1)">عنوان رئيسي (H1)</button>
+                            <button type="button" class="font-tag-btn" style="background-color: #0d9488; color: white;" onclick="applyHeading(2)">عنوان فرعي (H2)</button>
+                            <button type="button" class="font-tag-btn" style="background-color: #d97706; color: white;" onclick="applyHeading(3)">عنوان ثانوي (H3)</button>
+                            <button type="button" class="font-tag-btn" style="background-color: #64748b; color: white;" onclick="applyHeading(false)">نص عادي</button>
+                        
                         </div>
+                                                
                     </div>
                     <div id="editor-container"></div>
                 </div>
@@ -547,6 +551,18 @@
             }
         }
 
+
+        //---------------- للعناوين الرئيسية والفرعية والثانوية -------------------------
+        function applyHeading(level) {
+            const range = quill.getSelection();
+            if (range) {
+                // تطبيق مستوى العنوان المحدد (1 لـ H1، 2 لـ H2، 3 لـ H3، أو false للعودة لنص عادي)
+                quill.format('header', level);
+            } else {
+                showCustomAlert("تنبيه", "قم بتحديد النص أو وضع المؤشر على السطر المراد تحويله لعنوان.");
+            }
+        }
+        //----------------------------------------------------------------
         
         function showCustomAlert(title, message, callback) {
             const overlay = document.getElementById('custom-modal-container');
@@ -809,13 +825,13 @@
             theme: 'snow',
             modules: {
                 toolbar: [
-                    [{ header: [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline'],
-                    [{ color: [] }, { background: [] }],
-                    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    ['link', 'image', 'clean']
-                ],
+                            // يمكنك إزالة [{ header: [1, 2, 3, false] }] إذا اكتفيت بالأزرار العربية العلوية
+                            ['bold', 'italic', 'underline'],
+                            [{ color: [] }, { background: [] }],
+                            [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            ['link', 'image', 'clean']
+                        ],
                 imageResize: {
                     displayStyles: {
                         backgroundColor: 'black',
