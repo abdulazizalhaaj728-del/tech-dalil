@@ -350,7 +350,8 @@
                 <label class="checkbox-label"><input type="checkbox" id="ad-bot-on"> تفعيل إعلان نهاية المقال</label>
                 <textarea id="ad-bot-code" placeholder="أدخل شفرة/سكريبت الإعلان هنا..."></textarea>
             </div>
-            <button class="btn" onclick="saveGeneralSettings('ads')">حفظ إعدادات الإعلانات منفصلة للسيرفر</button>
+            
+                <button class="btn" onclick="saveAdsSettings()">حفظ إعدادات الإعلانات منفصلة للسيرفر</button>
         </div>
 
         <!-- إدارة ونشر المقالات والصفحات -->
@@ -537,19 +538,22 @@
             // الحفظ سحابياً في ملف data.json بنفس طريقة باقي الإعدادات
             await saveGeneralSettings('static_pages_links');
 
-            // قبل عملية حفظ إعدادات الإعلانات، قم بتحديث الكائن بهذا الشكل:
-            globalData.ads = {
-                topOn: document.getElementById('ad-top-on').checked, // ستكون قيمتها true أو false صريحة
-                topCode: document.getElementById('ad-top-code').value.trim(),
-                
-                midOn: document.getElementById('ad-mid-on').checked, // true أو false
-                midCode: document.getElementById('ad-mid-code').value.trim(),
-                
-                botOn: document.getElementById('ad-bot-on').checked, // true أو false
-                botCode: document.getElementById('ad-bot-code').value.trim()
-            };
+        }
+
+        async function saveAdsSettings() {
+            // 1. تحديث كائن globalData.ads مباشرة من عناصر الواجهة (Checkbox و Textarea)
+            if (!globalData.ads) globalData.ads = {};
             
-            // ثم استدعاء دالة الحفظ السحابي
+            globalData.ads.topOn = document.getElementById('ad-top-on').checked; // ستكون true أو false بدقة
+            globalData.ads.topCode = document.getElementById('ad-top-code').value.trim();
+            
+            globalData.ads.midOn = document.getElementById('ad-mid-on').checked; // true أو false
+            globalData.ads.midCode = document.getElementById('ad-mid-code').value.trim();
+            
+            globalData.ads.botOn = document.getElementById('ad-bot-on').checked; // true أو false
+            globalData.ads.botCode = document.getElementById('ad-bot-code').value.trim();
+        
+            // 2. إرسال البيانات المحدثة إلى السيرفر (GitHub)
             await saveGeneralSettings('ads');
         }
         
