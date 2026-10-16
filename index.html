@@ -712,32 +712,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // --- [تعديل المشكلة 3: إظهار المناطق الإعلانية] ---
-        if (data.ads) {
-            const topAdBox = document.getElementById('site-ad-top');
-            const midAdBox = document.getElementById('site-ad-mid');
-            const botAdBox = document.getElementById('site-ad-bot');
-        
-            const renderAdSlot = (container, isEnabled, adCode, placeholderText) => {
-                if (!container) return;
-                if (isEnabled) {
-                    container.style.display = 'block';
-                    if (adCode && adCode.trim() !== '') {
-                        container.innerHTML = adCode;
-                    } else {
-                        // إظهار مساحة محددة فارغة في حال تم تفعيل الخيار بدون كود إعلان
-                        container.innerHTML = `<div style="border: 1px dashed var(--border-color); padding: 20px; color: var(--text-muted); font-size: 0.85rem; border-radius: 8px; background: rgba(0,0,0,0.1);">${placeholderText}</div>`;
-                    }
+// --- [تعديل المشكلة 3: إظهار المناطق الإعلانية (بشكل آمن)] ---
+        const ads = data.ads || { topOn: false, midOn: false, botOn: false };
+        const topAdBox = document.getElementById('site-ad-top');
+        const midAdBox = document.getElementById('site-ad-mid');
+        const botAdBox = document.getElementById('site-ad-bot');
+    
+        const renderAdSlot = (container, isEnabled, adCode, placeholderText) => {
+            if (!container) return;
+            if (isEnabled) {
+                container.style.display = 'block';
+                if (adCode && adCode.trim() !== '') {
+                    container.innerHTML = adCode;
                 } else {
-                    container.style.display = 'none';
-                    container.innerHTML = '';
+                    container.innerHTML = `<div style="border: 1px dashed var(--border-color); padding: 20px; color: var(--text-muted); font-size: 0.85rem; border-radius: 8px; background: rgba(0,0,0,0.1);">${placeholderText}</div>`;
                 }
-            };
-        
-            renderAdSlot(topAdBox, data.ads.topOn, data.ads.topCode, 'مساحة إعلانية علوية');
-            renderAdSlot(midAdBox, data.ads.midOn, data.ads.midCode, 'مساحة إعلانية وسطى');
-            renderAdSlot(botAdBox, data.ads.botOn, data.ads.botCode, 'مساحة إعلانية سفلية');
-        }
+            } else {
+                container.style.display = 'none';
+                container.innerHTML = '';
+            }
+        };
+    
+        renderAdSlot(topAdBox, ads.topOn, ads.topCode, 'مساحة إعلانية علوية');
+        renderAdSlot(midAdBox, ads.midOn, ads.midCode, 'مساحة إعلانية وسطىة');
+        renderAdSlot(botAdBox, ads.botOn, ads.botCode, 'مساحة إعلانية سفلية');
+    }
 
 
         
