@@ -797,20 +797,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.documentElement.style.setProperty('--active-font', savedFont);
             }
         
-        // --- [تعديل المشكلة 2: زر الوضع الليلي/النهاري] ---
-        const darkModeBtn = document.getElementById('dark-mode-btn');
-        if (darkModeBtn) {
-            darkModeBtn.onclick = () => {
-                document.body.classList.toggle('dark-theme');
-                let isDark = document.body.classList.contains('dark-theme');
-                localStorage.setItem('site_dark_mode', isDark ? 'enabled' : 'disabled');
-            };
+            // --- [تعديل المشكلة 2: زر الوضع الليلي/النهاري] ---
+            const darkModeBtn = document.getElementById('dark-mode-btn');
+            if (darkModeBtn) {
+                darkModeBtn.onclick = () => {
+                    document.body.classList.toggle('dark-theme');
+                    let isDark = document.body.classList.contains('dark-theme');
+                    localStorage.setItem('site_dark_mode', isDark ? 'enabled' : 'disabled');
+                };
+            }
+            
+            // استعادة الحالة عند التحميل
+            if (localStorage.getItem('site_dark_mode') === 'enabled') {
+                document.body.classList.add('dark-theme');
+            }
         }
-        
-        // استعادة الحالة عند التحميل
-        if (localStorage.getItem('site_dark_mode') === 'enabled') {
-            document.body.classList.add('dark-theme');
-        }
+
         
         function getOrderedPosts(menuItems, allPosts) {
             let ordered = [];
