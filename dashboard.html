@@ -188,13 +188,25 @@
 
 
         /* 1. ضبط محاذاة أسطر المحرر لتكون مشدودة من الجانبين (Justify) ومنسقة */
-    .ql-editor {
-        text-align: justify !important;
-        text-justify: inter-word !important;
-        line-height: 2 !important;
-    }
+        .ql-editor {
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            line-height: 2 !important;
+        }
+        
+        
+        .ql-editor table {
+              table-layout: auto !important; /* السماح للأعمدة بتغيير حجمها بناءً على المحتوى */
+              width: 100%;
+              max-width: 100%;
+        }
+        
+        .ql-editor td, .ql-editor th {
+              word-break: break-word;
+              vertical-align: top;
+        }
 
-            
+        
     </style>
 </head>
 <body>
@@ -815,6 +827,36 @@
                 }
             }
         });
+
+
+        
+        // التعامل مع عملية اللصق لتعديل الجداول
+        quill.root.addEventListener('paste', function(e) {
+          // ننتظر حتى يتم إدراج المحتوى في DOM الخاص بالمحرر
+          setTimeout(function() {
+            // العثور على جميع الجداول داخل المحرر
+            var tables = quill.root.querySelectorAll('table');
+            
+            tables.forEach(function(table) {
+              // إزالة العرض الثابت للجدول وجعله متجاوباً
+              table.style.width = '100%';
+              table.style.borderCollapse = 'collapse';
+              
+              // ضبط الخلايا لتتكيف مع النص الداخلي
+              var cells = table.querySelectorAll('th, td');
+              cells.forEach(function(cell) {
+                // نلغي العرض الثابت إن وجد لكي يكبر أو يصغر حسب المحتوى
+                cell.style.width = 'auto';
+                cell.style.whiteSpace = 'nowrap'; // اختياري: لمنع التفاف النص مبكراً إذا أردت للأعمدة أن تتسع
+                cell.style.padding = '8px';
+                cell.style.border = '1px solid #ccc';
+              });
+            });
+          }, 100);
+        });
+//-------------------------------------------------------
+
+        
 
         let activeImage = null;
         const editorWrapper = document.getElementById('editor-container');
