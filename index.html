@@ -200,6 +200,16 @@
             color: #2C3E50 !important;
             line-height: 2 !important;
         }
+
+        /* وضع ليلي قياسي بدلاً من الألوان المتعددة */
+        body.dark-theme {
+            --bg-color: #0f172a !important;
+            --card-bg: #1e293b !important;
+            --text-main: #f8fafc !important;
+            --text-muted: #94a3b8 !important;
+            --border-color: #334155 !important;
+        }
+        
         
         /* --- [تعديل المشكلة 4: تقليل المسافات والفراغات بين السطور إلى النصف] --- */
         .single-post-content, .dynamic-post-content-box {
@@ -700,25 +710,35 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // --- [تعديل المشكلة 3: إظهار المناطق الإعلانية] ---
         if (data.ads) {
             const topAdBox = document.getElementById('site-ad-top');
             const midAdBox = document.getElementById('site-ad-mid');
             const botAdBox = document.getElementById('site-ad-bot');
-
-            if (topAdBox) {
-                topAdBox.innerHTML = (data.ads.topOn && data.ads.topCode) ? data.ads.topCode : '';
-                topAdBox.style.display = (data.ads.topOn && data.ads.topCode) ? 'block' : 'none';
-            }
-            if (midAdBox) {
-                midAdBox.innerHTML = (data.ads.midOn && data.ads.midCode) ? data.ads.midCode : '';
-                midAdBox.style.display = (data.ads.midOn && data.ads.midCode) ? 'block' : 'none';
-            }
-            if (botAdBox) {
-                botAdBox.innerHTML = (data.ads.botOn && data.ads.botCode) ? data.ads.botCode : '';
-                botAdBox.style.display = (data.ads.botOn && data.ads.botCode) ? 'block' : 'none';
-            }
+        
+            const renderAdSlot = (container, isEnabled, adCode, placeholderText) => {
+                if (!container) return;
+                if (isEnabled) {
+                    container.style.display = 'block';
+                    if (adCode && adCode.trim() !== '') {
+                        container.innerHTML = adCode;
+                    } else {
+                        // إظهار مساحة محددة فارغة في حال تم تفعيل الخيار بدون كود إعلان
+                        container.innerHTML = `<div style="border: 1px dashed var(--border-color); padding: 20px; color: var(--text-muted); font-size: 0.85rem; border-radius: 8px; background: rgba(0,0,0,0.1);">${placeholderText}</div>`;
+                    }
+                } else {
+                    container.style.display = 'none';
+                    container.innerHTML = '';
+                }
+            };
+        
+            renderAdSlot(topAdBox, data.ads.topOn, data.ads.topCode, 'مساحة إعلانية علوية');
+            renderAdSlot(midAdBox, data.ads.midOn, data.ads.midCode, 'مساحة إعلانية وسطى');
+            renderAdSlot(botAdBox, data.ads.botOn, data.ads.botCode, 'مساحة إعلانية سفلية');
         }
 
+
+        
         const urlParams = new URLSearchParams(window.location.search);
         const articleParam = urlParams.get('article');
         if (articleParam) {
@@ -1145,6 +1165,46 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         };
 
+
+        // --- [تعديل المشكلة 1: توليد قسم شاهد أيضاً في منتصف المقال] ---
+        let postParagraphs = tempDiv.innerHTML.split('</p>');
+        if (postParagraphs.length > 2) {
+            // جلب مقالات عشوائية من باقي مقالات المدونة
+            let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
+            let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
+        
+            if (randomPosts.length > 0) {
+                let seeAlsoHtml = `
+                    <div class="see-also-box">
+                        <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
+                        <ul>
+                            ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                let midIndex = Math.floor(postParagraphs.length / 2);
+                postParagraphs.splice(midIndex, 0, seeAlsoHtml);
+                tempDiv.innerHTML = postParagraphs.join('</p>');
+            }
+        }
+        post.processedContent = tempDiv.innerHTML;
+        
+        
+        // --- [تعديل المشكلة 2: زر الوضع الليلي/النهاري] ---
+        const darkModeBtn = document.getElementById('dark-mode-btn');
+        if (darkModeBtn) {
+            darkModeBtn.onclick = () => {
+                document.body.classList.toggle('dark-theme');
+                let isDark = document.body.classList.contains('dark-theme');
+                localStorage.setItem('site_dark_mode', isDark ? 'enabled' : 'disabled');
+            };
+        }
+        
+        // استعادة الحالة عند التحميل
+        if (localStorage.getItem('site_dark_mode') === 'enabled') {
+            document.body.classList.add('dark-theme');
+        }
+        
     </script>
 </body>
 </html>
