@@ -710,7 +710,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 footerWidgetsContainer.style.minHeight = "220px";
                 footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
             }
-            // --- [تعديل المشكلة 3: إظهار المناطق الإعلانية (بشكل آمن)] ---
+    }
+        // --- [ضع كود الإعلانات هنا في مكانه الصحيح قبل إغلاق try] ---
         const ads = data.ads || { topOn: false, midOn: false, botOn: false };
         const topAdBox = document.getElementById('site-ad-top');
         const midAdBox = document.getElementById('site-ad-mid');
@@ -734,12 +735,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderAdSlot(topAdBox, ads.topOn, ads.topCode, 'مساحة إعلانية علوية');
         renderAdSlot(midAdBox, ads.midOn, ads.midCode, 'مساحة إعلانية وسطىة');
         renderAdSlot(botAdBox, ads.botOn, ads.botCode, 'مساحة إعلانية سفلية');
-    }
-        
 
-
-
-        
         const urlParams = new URLSearchParams(window.location.search);
         const articleParam = urlParams.get('article');
         if (articleParam) {
