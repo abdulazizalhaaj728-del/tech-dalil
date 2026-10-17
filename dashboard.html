@@ -786,6 +786,9 @@
                     }
 
                     showCustomAlert("نجاح", "تم حفظ المقال ونشره حصرياً وتحديث السحابة بنجاح!");
+                    generateSitemapXmlContent(); // دالة سايت ماب
+                    updateSitemapOnGitHub(); // دالة رفع الملف
+                    
                     closeArticleManager();
                     loadPostsAdminList();
                 } else {
@@ -1544,6 +1547,91 @@
             document.getElementById('menu-add-btn').innerText = "إضافة للقائمة";
             document.getElementById('menu-cancel-edit-btn').style.display = 'none';
         }
+
+
+        //-------- دالة لحفظ خريطة الموقع -----------------
+        // دالة لتوليد محتوى خريطة الموقع XML من البيانات الموجودة في المتصفح
+        function generateSitemapXmlContent() {
+            const domain = "https://tech-dalil.com";
+            let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+            xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+        
+            // 1. إضافة الصفحة الرئيسية
+            xml += `  <url>\n`;
+            xml += `    <loc>${domain}/</loc>\n`;
+            xml += `    <changefreq>daily</changefreq>\n`;
+            xml += `    <priority>1.0</priority>\n`;
+            xml += `  </url>\n`;
+        
+            // 2. إضافة جميع المقالات المحفوظة
+                const allPosts = globalData.posts || [];
+                allPosts.forEach(post => {
+                    const slug = post.slug || '';
+                    const lastmod = post.updated_at || post.date || new Date().toISOString().split('T')[0];
+                    
+                    if (slug && !post.isDraft) {
+                        // تمييز إذا كانت صفحة ثابتة أو مقال عادي بناءً على طريقة حفظك
+                        const isStaticPage = post.contentType === 'page' || post.type === 'page';
+                        const itemUrl = isStaticPage ? `${domain}/${slug}` : `${domain}/articles/${slug}`;
+            
+                        xml += `  <url>\n`;
+                        xml += `    <loc>${itemUrl}</loc>\n`;
+                        xml += `    <lastmod>${new Date(lastmod).toISOString().split('T')[0]}</lastmod>\n`;
+                        xml += `    <changefreq>weekly</changefreq>\n`;
+                        xml += `    <priority>${isStaticPage ? '0.6' : '0.8'}</priority>\n`;
+                        xml += `  </url>\n`;
+                    }
+                });
+            
+                xml += '</urlset>';
+                return xml;
+            }
+            //-------------------------------------------
+
+            //------------------ دالة لرفع ملف السايتماب إل الموقع ----------
+            // بعد نجاح حفظ ملف data.json على GitHub، قم فوراً برفع ملف sitemap.xml تلقائياً:
+            async function updateSitemapOnGitHub(token) {
+                const owner = "abdulazizalhaaj728-del";
+                const repo = "tech-dalil";
+                const path = "sitemap.xml";
+            
+                // 1. توليد محتوى الـ XML
+                const sitemapContent = generateSitemapXmlContent();
+                const encodedSitemap = btoa(unescape(encodeURIComponent(sitemapContent)));
+            
+                try {
+                    // 2. جلب الـ SHA القديم لملف sitemap.xml إن وجد (مطلوب للتحديث في GitHub API)
+                    let fileSha = "";
+                    const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    if (getRes.ok) {
+                        const fileData = await getRes.json();
+                        fileSha = fileData.sha;
+                    }
+            
+                    // 3. رفع الملف المحدث إلى المستودع
+                    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: "Auto-update sitemap.xml via Techno-Guide Admin Panel",
+                            content: encodedSitemap,
+                            sha: fileSha || undefined
+                        })
+                    });
+                    console.log("Sitemap updated and uploaded to GitHub successfully!");
+                } catch (err) {
+                    console.error("Failed to update sitemap on GitHub:", err);
+                }
+            }
+            //-----------------------------------------------------
+        
+        
+        
     </script>
 </body>
 </html>
