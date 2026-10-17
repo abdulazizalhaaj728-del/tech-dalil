@@ -787,7 +787,7 @@
 
                     showCustomAlert("نجاح", "تم حفظ المقال ونشره حصرياً وتحديث السحابة بنجاح!");
                     generateSitemapXmlContent(); // دالة سايت ماب
-                    updateSitemapOnGitHub(); // دالة رفع الملف
+                    await updateSitemapOnGitHub(token); // دالة رفع الملف
                     
                     closeArticleManager();
                     loadPostsAdminList();
