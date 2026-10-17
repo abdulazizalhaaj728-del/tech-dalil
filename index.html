@@ -705,12 +705,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             }
 
-            if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
+if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
             if (footerWidgetsContainer) {
                 footerWidgetsContainer.style.minHeight = "220px";
                 footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
             }
-    }
+        }
+
         // --- [ضع كود الإعلانات هنا في مكانه الصحيح قبل إغلاق try] ---
         const ads = data.ads || { topOn: false, midOn: false, botOn: false };
         const topAdBox = document.getElementById('site-ad-top');
@@ -748,6 +749,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+        
         // تفعيل ميزات الثيمات، الخطوط، والوضع الليلي
         function initThemeAndFontControls(data) {
             const themes = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
