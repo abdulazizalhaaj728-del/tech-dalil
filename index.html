@@ -201,15 +201,54 @@
             line-height: 2 !important;
         }
 
-        /* وضع ليلي قياسي بدلاً من الألوان المتعددة */
-        body.dark-theme {
-            background-color: #0f172a !important;
-            color: #f8fafc !important;
-            --bg-color: #0f172a !important;
-            --card-bg: #1e293b !important;
-            --text-main: #f8fafc !important;
-            --text-muted: #94a3b8 !important;
-            --border-color: #334155 !important;
+/* --- تنسيقات الوضع النهاري المضيء (Light Mode) --- */
+body.light-mode {
+    --bg-color: #f8fafc !important;
+    --card-bg: #ffffff !important;
+    --text-main: #0f172a !important;
+    --text-muted: #475569 !important;
+    --border-color: #cbd5e1 !important;
+    --primary-color: #0284c7 !important;
+    --accent-color: #2563eb !important;
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+}
+
+        /* تعديل العناصر داخل الوضع النهاري لتكون واضحة */
+        body.light-mode .top-bar,
+        body.light-mode header,
+        body.light-mode .mega-menu,
+        body.light-mode .ticker-container,
+        body.light-mode .post-card,
+        body.light-mode .widget-card,
+        body.light-mode .footer-container,
+        body.light-mode .left-sticky-sidebar,
+        body.light-mode .news-mini-container {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        
+        body.light-mode .product-card {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+        }
+        
+        body.light-mode .product-card span {
+            color: #0f172a !important;
+        }
+        
+        body.light-mode .dropdown-menu {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+        }
+        
+        body.light-mode .dropdown-menu li a {
+            color: #0f172a !important;
+        }
+        
+        body.light-mode .dropdown-menu li a:hover {
+            background: rgba(2, 132, 199, 0.1) !important;
         }
         
         
