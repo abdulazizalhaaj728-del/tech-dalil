@@ -200,30 +200,15 @@
             color: #2C3E50 !important;
             line-height: 2 !important;
         }
-
-        /* وضع ليلي قياسي بدلاً من الألوان المتعددة */
-        body.dark-theme {
-            background-color: #0f172a !important;
-            color: #f8fafc !important;
-            --bg-color: #0f172a !important;
-            --card-bg: #1e293b !important;
-            --text-main: #f8fafc !important;
-            --text-muted: #94a3b8 !important;
-            --border-color: #334155 !important;
-        }
         
-        
-        /* --- [تعديل المشكلة 4: تقليل المسافات والفراغات بين السطور إلى النصف] --- */
-        .single-post-content, .dynamic-post-content-box {
-            font-family: var(--active-font, 'Cairo') !important;
-            text-align: justify !important;
-            text-justify: inter-word !important;
+        .single-post-content h1, .single-post-content h2, .single-post-content h3,
+        .dynamic-post-content-box h1, .dynamic-post-content-box h2, .dynamic-post-content-box h3 {
             color: #2C3E50 !important;
-            line-height: 1.8 !important; /* تم تخفيضها من 2 إلى 1.5 */
+            margin-bottom: 15px;
         }
         
         .single-post-content p, .dynamic-post-content-box p {
-            margin-bottom: 11px !important; /* تم تخفيض الهامش بين الفقرات والسطور الفارغة إلى النصف من 15px إلى 8px */
+            margin-bottom: 15px;
         }
 
         .single-post-content table,
@@ -712,34 +697,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-// --- [تعديل المشكلة 3: إظهار المناطق الإعلانية (بشكل آمن)] ---
-        const ads = data.ads || { topOn: false, midOn: false, botOn: false };
-        const topAdBox = document.getElementById('site-ad-top');
-        const midAdBox = document.getElementById('site-ad-mid');
-        const botAdBox = document.getElementById('site-ad-bot');
-    
-        const renderAdSlot = (container, isEnabled, adCode, placeholderText) => {
-            if (!container) return;
-            if (isEnabled) {
-                container.style.display = 'block';
-                if (adCode && adCode.trim() !== '') {
-                    container.innerHTML = adCode;
-                } else {
-                    container.innerHTML = `<div style="border: 1px dashed var(--border-color); padding: 20px; color: var(--text-muted); font-size: 0.85rem; border-radius: 8px; background: rgba(0,0,0,0.1);">${placeholderText}</div>`;
-                }
-            } else {
-                container.style.display = 'none';
-                container.innerHTML = '';
+        if (data.ads) {
+            const topAdBox = document.getElementById('site-ad-top');
+            const midAdBox = document.getElementById('site-ad-mid');
+            const botAdBox = document.getElementById('site-ad-bot');
+
+            if (topAdBox) {
+                topAdBox.innerHTML = (data.ads.topOn && data.ads.topCode) ? data.ads.topCode : '';
+                topAdBox.style.display = (data.ads.topOn && data.ads.topCode) ? 'block' : 'none';
             }
-        };
-    
-        renderAdSlot(topAdBox, ads.topOn, ads.topCode, 'مساحة إعلانية علوية');
-        renderAdSlot(midAdBox, ads.midOn, ads.midCode, 'مساحة إعلانية وسطىة');
-        renderAdSlot(botAdBox, ads.botOn, ads.botCode, 'مساحة إعلانية سفلية');
-    }
+            if (midAdBox) {
+                midAdBox.innerHTML = (data.ads.midOn && data.ads.midCode) ? data.ads.midCode : '';
+                midAdBox.style.display = (data.ads.midOn && data.ads.midCode) ? 'block' : 'none';
+            }
+            if (botAdBox) {
+                botAdBox.innerHTML = (data.ads.botOn && data.ads.botCode) ? data.ads.botCode : '';
+                botAdBox.style.display = (data.ads.botOn && data.ads.botCode) ? 'block' : 'none';
+            }
+        }
 
-
-        
         const urlParams = new URLSearchParams(window.location.search);
         const articleParam = urlParams.get('article');
         if (articleParam) {
@@ -798,22 +774,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.documentElement.style.setProperty('--active-font', savedFont);
             }
         
-            // --- تعديل زر الوضع الليلي/النهاري ---
             const darkModeBtn = document.getElementById('dark-mode-btn');
             if (darkModeBtn) {
                 darkModeBtn.onclick = () => {
-                    document.body.classList.toggle('dark-theme');
-                    let isDark = document.body.classList.contains('dark-theme');
-                    localStorage.setItem('site_dark_mode', isDark ? 'enabled' : 'disabled');
+                    if (document.body.classList.contains('theme-blue-1')) {
+                        document.body.className = 'theme-default';
+                        localStorage.setItem('site_theme', 'theme-default');
+                    } else {
+                        document.body.className = 'theme-blue-1';
+                        localStorage.setItem('site_theme', 'theme-blue-1');
+                    }
                 };
             }
-            
-            // استعادة الحالة عند التحميل وتطبيقها فوراً
-            if (localStorage.getItem('site_dark_mode') === 'enabled') {
-                document.body.classList.add('dark-theme');
-            }
         }
-
         
         function getOrderedPosts(menuItems, allPosts) {
             let ordered = [];
@@ -916,32 +889,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 `;
                 post.processedContent = tempDiv.innerHTML;
-
-
-                        // --- [تعديل المشكلة 1: توليد قسم شاهد أيضاً في منتصف المقال] ---
-        let postParagraphs = tempDiv.innerHTML.split('</p>');
-        if (postParagraphs.length > 2) {
-            // جلب مقالات عشوائية من باقي مقالات المدونة
-            let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
-            let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
-        
-            if (randomPosts.length > 0) {
-                let seeAlsoHtml = `
-                    <div class="see-also-box">
-                        <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
-                        <ul>
-                            ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-                let midIndex = Math.floor(postParagraphs.length / 2);
-                postParagraphs.splice(midIndex, 0, seeAlsoHtml);
-                tempDiv.innerHTML = postParagraphs.join('</p>');
-            }
-        }
-        post.processedContent = tempDiv.innerHTML;
-                
-
                 
                 let ads = data.ads || {};
                 let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
@@ -1194,7 +1141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 sliderWrapper.innerHTML = `<div class="square-slide active" style="background: var(--card-bg); display:flex; align-items:center; justify-content:center;"><span style="color:var(--text-muted);">لا توجد صور بالسلايدر</span></div>`;
             }
         };
-        
+
     </script>
 </body>
 </html>
