@@ -796,22 +796,25 @@ if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
                 document.documentElement.style.setProperty('--active-font', savedFont);
             }
         
-            // --- تعديل زر الوضع الليلي/النهاري ---
-            const darkModeBtn = document.getElementById('dark-mode-btn');
-            if (darkModeBtn) {
-                darkModeBtn.onclick = () => {
-                    document.body.classList.toggle('dark-theme');
-                    let isDark = document.body.classList.contains('dark-theme');
-                    localStorage.setItem('site_dark_mode', isDark ? 'enabled' : 'disabled');
-                };
-            }
-            
-            // استعادة الحالة عند التحميل وتطبيقها فوراً
-            if (localStorage.getItem('site_dark_mode') === 'enabled') {
-                document.body.classList.add('dark-theme');
-            }
-        }
+//------------------- الوضع الليلي -----------------------------
+const darkModeBtn = document.getElementById('dark-mode-btn');
+if (darkModeBtn) {
+    darkModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
+        darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    });
 
+    if (localStorage.getItem('tech_light_mode') === '1') {
+        document.body.classList.add('light-mode');
+        darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+    }
+}
+
+
+
+        
         
         function getOrderedPosts(menuItems, allPosts) {
             let ordered = [];
