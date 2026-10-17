@@ -795,24 +795,24 @@ if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
             if (savedFont) {
                 document.documentElement.style.setProperty('--active-font', savedFont);
             }
-        
-//------------------- الوضع الليلي -----------------------------
-const darkModeBtn = document.getElementById('dark-mode-btn');
-if (darkModeBtn) {
-    darkModeBtn.addEventListener('click', () => {
-        document.body.classList.toggle('light-mode');
-        const isLight = document.body.classList.contains('light-mode');
-        localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
-        darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-    });
+                    
+            //------------------- الوضع الليلي -----------------------------
+            const darkModeBtn = document.getElementById('dark-mode-btn');
+            if (darkModeBtn) {
+                darkModeBtn.addEventListener('click', () => {
+                    document.body.classList.toggle('light-mode');
+                    const isLight = document.body.classList.contains('light-mode');
+                    localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
+                    darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+                });
+            
+                if (localStorage.getItem('tech_light_mode') === '1') {
+                    document.body.classList.add('light-mode');
+                    darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                }
+            }
 
-    if (localStorage.getItem('tech_light_mode') === '1') {
-        document.body.classList.add('light-mode');
-        darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-    }
-}
-
-
+        }
 
         
         
