@@ -712,7 +712,7 @@ if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
             }
         }
 
-        // --- [ضع كود الإعلانات هنا في مكانه الصحيح قبل إغلاق try] ---
+        // --- كود الإعلانات والروابط داخل الـ try الصحيح ---
         const ads = data.ads || { topOn: false, midOn: false, botOn: false };
         const topAdBox = document.getElementById('site-ad-top');
         const midAdBox = document.getElementById('site-ad-mid');
@@ -748,7 +748,6 @@ if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
         console.error("تعذر جلب ملف بيانات المدونة:", err);
     }
 });
-
         
         // تفعيل ميزات الثيمات، الخطوط، والوضع الليلي
         function initThemeAndFontControls(data) {
