@@ -1563,30 +1563,39 @@
             xml += `    <priority>1.0</priority>\n`;
             xml += `  </url>\n`;
         
-            // 2. إضافة جميع المقالات المحفوظة
-                const allPosts = globalData.posts || [];
-                allPosts.forEach(post => {
-                    const slug = post.slug || '';
-                    const lastmod = post.updated_at || post.date || new Date().toISOString().split('T')[0];
-                    
-                    if (slug && !post.isDraft) {
-                        // تمييز إذا كانت صفحة ثابتة أو مقال عادي بناءً على طريقة حفظك
-                        const isStaticPage = post.contentType === 'page' || post.type === 'page';
-                        const itemUrl = isStaticPage ? `${domain}/${slug}` : `${domain}/articles/${slug}`;
-            
-                        xml += `  <url>\n`;
-                        xml += `    <loc>${itemUrl}</loc>\n`;
-                        xml += `    <lastmod>${new Date(lastmod).toISOString().split('T')[0]}</lastmod>\n`;
-                        xml += `    <changefreq>weekly</changefreq>\n`;
-                        xml += `    <priority>${isStaticPage ? '0.6' : '0.8'}</priority>\n`;
-                        xml += `  </url>\n`;
+            // 2. إضافة جميع المقالات المحفوظة بأمان تام ضد التواريخ التالفة
+            const allPosts = globalData.posts || [];
+            allPosts.forEach(post => {
+                const slug = post.slug || '';
+                
+                // التحقق من صحة التاريخ لتفادي خطأ Invalid time value
+                let rawDate = post.updated_at || post.date;
+                let lastmod = new Date().toISOString().split('T')[0]; // تاريخ افتراضي لليوم
+                
+                if (rawDate) {
+                    let parsedDate = new Date(rawDate);
+                    if (!isNaN(parsedDate.getTime())) {
+                        lastmod = parsedDate.toISOString().split('T')[0];
                     }
-                });
-            
-                xml += '</urlset>';
-                return xml;
-            }
-            //-------------------------------------------
+                }
+                
+                if (slug && !post.isDraft) {
+                    const isStaticPage = post.contentType === 'page' || post.type === 'page';
+                    const itemUrl = isStaticPage ? `${domain}/${slug}` : `${domain}/articles/${slug}`;
+        
+                    xml += `  <url>\n`;
+                    xml += `    <loc>${itemUrl}</loc>\n`;
+                    xml += `    <lastmod>${lastmod}</lastmod>\n`;
+                    xml += `    <changefreq>weekly</changefreq>\n`;
+                    xml += `    <priority>${isStaticPage ? '0.6' : '0.8'}</priority>\n`;
+                    xml += `  </url>\n`;
+                }
+            });
+        
+            xml += '</urlset>';
+            return xml;
+        }
+        //-------------------------------------------
 
             //------------------ دالة لرفع ملف السايتماب إل الموقع ----------
             // بعد نجاح حفظ ملف data.json على GitHub، قم فوراً برفع ملف sitemap.xml تلقائياً:
