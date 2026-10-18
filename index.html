@@ -406,31 +406,27 @@
            ========================================================= */
         @media (max-width: 768px) {
             
-            /* 1. تعديل الشريط العلوي ليكون صفين */
+            /* 1. الشريط العلوي للجوال: يقتصر على صفحات السياسة فقط بعد إزالة السوشيال ميديا */
             .top-bar {
                 display: flex !important;
-                flex-direction: column !important;
-                gap: 8px !important;
-                padding: 8px 10px !important;
+                justify-content: center !important;
+                padding: 6px 10px !important;
             }
             .top-pages {
                 justify-content: center !important;
                 flex-wrap: wrap !important;
-                gap: 8px 12px !important;
-                border-bottom: 1px dashed var(--border-color);
-                padding-bottom: 6px;
+                gap: 8px 14px !important;
                 width: 100%;
             }
             .top-pages a {
-                font-size: 0.72rem !important;
+                font-size: 0.75rem !important;
             }
+            /* إخفاء السوشيال ميديا من الشريط العلوي للجوال نهائياً */
             .top-social {
-                justify-content: center !important;
-                width: 100%;
-                gap: 15px !important;
+                display: none !important;
             }
         
-            /* 2. جعل الترويسة مثبتة وبارتفاع نحيف مع زر القائمة */
+            /* 2. الهيدر المدمج والثابت */
             header {
                 position: sticky !important;
                 top: 0 !important;
@@ -440,7 +436,7 @@
                 justify-content: space-between !important;
                 padding: 6px 12px !important;
                 margin-top: 5px !important;
-                grid-template-columns: none !important; /* إلغاء شبكة الكومبيوتر */
+                grid-template-columns: none !important;
                 box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             }
         
@@ -448,21 +444,21 @@
                 flex: 0 0 auto !important;
             }
             .header-logo img {
-                max-height: 42px !important; /* حجم الشعار في الجوال */
+                max-height: 40px !important;
             }
         
             .header-center {
                 flex: 1 !important;
                 text-align: center !important;
-                padding: 0 8px !important;
+                padding: 0 6px !important;
             }
             .header-center h1 {
-                font-size: 1.25rem !important; /* تصغير خط تكنو-دليل */
+                font-size: 1.2rem !important;
                 line-height: 1.1 !important;
                 margin: 0 !important;
             }
             .header-center p {
-                font-size: 0.68rem !important;
+                font-size: 0.65rem !important;
                 margin-top: 2px !important;
                 white-space: nowrap !important;
             }
@@ -475,42 +471,58 @@
                 background: var(--bg-color);
                 border: 1px solid var(--border-color);
                 color: var(--accent-color);
-                width: 38px;
-                height: 38px;
+                width: 36px;
+                height: 36px;
                 border-radius: 6px;
-                font-size: 1.1rem;
+                font-size: 1rem;
                 cursor: pointer;
                 flex-shrink: 0;
             }
         
-            /* 3. القائمة الرئيسية في الجوال (تفتح وتغلق عند الضغط) */
+            /* 3. القائمة الرئيسية للجوال */
             .main-menu-bar {
                 position: relative !important;
                 top: auto !important;
             }
             .mega-menu {
-                display: none; /* إخفاء القائمة افتراضياً في الجوال */
+                display: none;
                 flex-direction: column !important;
                 gap: 2px !important;
                 padding: 8px !important;
                 margin-top: 5px !important;
             }
             .mega-menu.mobile-active {
-                display: flex !important; /* إظهار القائمة عند النقر */
+                display: flex !important;
             }
             .mega-menu li a, .mega-menu > a {
                 padding: 10px 12px !important;
                 font-size: 0.85rem !important;
                 border-bottom: 1px solid var(--border-color);
             }
+        
+            /* 4. جعل السلايدر والمنتجات الرقمية في صفوف منفصلة (تحت بعضها) */
+            .top-right-row {
+                flex-direction: column !important; /* تحويل الصف إلى عمود فوق بعض */
+                gap: 15px !important;
+            }
+            .square-slider-box {
+                width: 100% !important;
+                height: 220px !important; /* تقليل الارتفاع قليلاً ليناسب الجوال */
+            }
+            .news-mini-container {
+                width: 100% !important;
+                height: auto !important; /* الارتفاع حسب المحتوى */
+                min-height: 180px;
+            }
         }
         
-        /* إخفاء زر القائمة في أجهزة الكومبيوتر */
+        /* إخفاء زر القائمة في الكمبيوتر */
         @media (min-width: 769px) {
             .mobile-menu-btn {
                 display: none !important;
             }
-        }        
+        }
+    
     </style>
 </head>
     
@@ -522,14 +534,8 @@
 
         <div class="top-bar">
             <div class="top-pages" id="top-static-pages-container"></div>
-            
-            <div class="top-social">
-                <a href="#" title="إكس (تويتر)"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="#" title="يوتيوب"><i class="fa-brands fa-youtube"></i></a>
-                <a href="#" title="تيليجرام"><i class="fa-brands fa-telegram"></i></a>
-                <a href="#" title="سناب شات"><i class="fa-brands fa-snapchat"></i></a>
-                <a href="#" title="جيت هب"><i class="fa-brands fa-github"></i></a>
-            </div>
+            <!-- تم إزالة السوشيال ميديا من هنا للجوال، وستبقى مخفية بناءً على الـ CSS أعلاه -->
+            <div class="top-social" style="display: none;"></div>
         </div>
 
         <header>
