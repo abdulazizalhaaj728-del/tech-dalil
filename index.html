@@ -970,7 +970,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return words.length > 5 ? words.slice(0, 5).join(' ') + '...' : title;
         }
                 
-        window.openPostBySlug = async function(slug) {
+window.openPostBySlug = async function(slug) {
             const dynamicView = document.getElementById('dynamic-post-view');
             const dynamicContentBox = document.getElementById('dynamic-post-content-box');
             
@@ -1016,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 tempDiv.innerHTML = post.content || post.description || '';
                 let headings = tempDiv.querySelectorAll('h2, h3');
                 
-                // 1. توليد قائمة المحتويات (TOC) وإعلان الأعلى
+                // 1. قائمة المحتويات وإعلان الأعلى
                 let tocOptions = `<option value="" disabled selected>-- اختر من محتويات المقال (انقر هنا للاستعراض) --</option>`;
                 if (headings.length > 0) {
                     headings.forEach((h, index) => {
@@ -1035,33 +1035,34 @@ document.addEventListener('DOMContentLoaded', async () => {
                             ${tocOptions}
                         </select>
                     </div>
-                    <!-- ⬅️ إعلان الأعلى: تحت محتويات المقال مباشرة -->
+                    <!-- ⬅️ إعلان الأعلى: تحت المحتويات تماماً -->
                     <div id="article-top-ad" class="article-ad-box"></div>
                 `;
         
-                // 2. معالجة الفقرات وصندوق "شاهد أيضاً" (إعلان المنتصف تحته مباشرة)
+                // 2. معالجة الفقرات وصندوق "شاهد أيضاً" وإخراج إعلان الأوسط تحته مباشرة كعنصر مستقل
                 let paragraphs = tempDiv.querySelectorAll('p');
                 if (paragraphs.length > 1) {
                     let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
                     let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
         
                     if (randomPosts.length > 0) {
-                        let seeAlsoDiv = document.createElement('div');
-                        seeAlsoDiv.className = 'see-also-box';
-                        seeAlsoDiv.innerHTML = `
-                            <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
-                            <ul>
-                                ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
-                            </ul>
-                            <!-- ⬅️ إعلان الأوسط: تحت مربع الروابط / شاهد أيضاً مباشرة -->
-                            <div id="article-mid-ad" class="article-ad-box" style="margin-top: 15px;"></div>
+                        let seeAlsoWrapper = document.createElement('div');
+                        seeAlsoWrapper.innerHTML = `
+                            <div class="see-also-box">
+                                <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
+                                <ul>
+                                    ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
+                                </ul>
+                            </div>
+                            <!-- ⬅️ إعلان الأوسط: مستطيل مستقل تحت صندوق شاهد أيضاً مباشرة -->
+                            <div id="article-mid-ad" class="article-ad-box"></div>
                         `;
                         let middleIndex = Math.floor(paragraphs.length / 2);
-                        paragraphs[middleIndex].parentNode.insertBefore(seeAlsoDiv, paragraphs[middleIndex].nextSibling);
+                        paragraphs[middleIndex].parentNode.insertBefore(seeAlsoWrapper, paragraphs[middleIndex].nextSibling);
                     }
                 }
 
-                // 3. إعلان الأسفل: فوق أسهم التنقل مباشرة
+                // 3. إعلان الأسفل
                 let botAdHtml = `
                     <!-- ⬅️ إعلان الأسفل: فوق أسهم التنقل مباشرة -->
                     <div id="article-bot-ad" class="article-ad-box"></div>
@@ -1070,16 +1071,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 tempDiv.innerHTML = tocHtml + tempDiv.innerHTML + botAdHtml;
                 post.processedContent = tempDiv.innerHTML;
         
+                // إعداد متغيرات التنقل
                 let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
                 window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
                 window._currentNavNextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
 
-                setTimeout(() => {
-                    if (typeof renderArticleAds === 'function') {
-                        renderArticleAds(data.ads);
-                    }
-                }, 150);
-                
+                // رسم واجهة المقال
                 dynamicContentBox.innerHTML = `
                     <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
                         <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
@@ -1095,7 +1092,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                             ${post.processedContent}
                         </div>
         
-                        <div id="bottom-navigation-wrapper" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
+                        <!-- حاوية أسهم وروابط التنقل -->
+                        <div id="bottom-navigation-wrapper" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
         
                         <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
                             <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
@@ -1104,10 +1102,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 `;
         
                 history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
-                renderNavContainer();
+                
+                // رسم أسهم التنقل وحقن الإعلانات بعد التثبيت في الـ DOM
+                renderNavContainer(sequencedPosts);
+                
+                setTimeout(() => {
+                    if (typeof renderArticleAds === 'function') {
+                        renderArticleAds(data.ads);
+                    }
+                }, 150);
             }
         };
-
         function renderNavContainer() {
             let pPost = window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
             let nPost = window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
