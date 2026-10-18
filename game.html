@@ -266,12 +266,8 @@
     </style>
 
 	<style>
-		/* إلغاء أي قيود سابقة وإعطاء مرونة تامة لعرض اللعبة على الجوال والكمبيوتر */
-		#rotate-screen-warning {
-		    display: none !important;
-		}
-		
-		@media screen and (max-width: 900px) {
+		/* ضبط الوضع العمودي للجوال (Portrait) ليحافظ على مظهره المضغوط والمرن الذي أدى الغرض */
+		@media screen and (max-width: 900px) and (orientation: portrait) {
 		    body {
 		        padding: 2px !important;
 		        align-items: center !important;
@@ -295,10 +291,46 @@
 		        margin: 2px 0 !important;
 		    }
 		
-		    /* تثبيت ارتفاع مرن ومنضبط لمساحة اللعب لكي تظهر الطائرات بوضوح في جميع المستويات بما فيها الأسطوري */
 		    #canvas-wrapper {
 		        width: 100% !important;
-		        height: 380px !important;
+		        height: 360px !important;
+		        max-width: 100% !important;
+		    }
+		
+		    canvas {
+		        width: 100% !important;
+		        height: 100% !important;
+		    }
+		}
+		
+		/* إصلاح وتحسين الوضع الأفقي للجوال (Landscape) ليكون مريحاً وتظهر فيه منطقة السؤال والطائرات كاملة بدون قص */
+		@media screen and (max-height: 600px) and (orientation: landscape) {
+		    body {
+		        padding: 2px !important;
+		        align-items: flex-start !important;
+		        min-height: 100vh !important;
+		    }
+		    
+		    #game-container {
+		        max-width: 630px !important;
+		        padding: 6px !important;
+		        margin: auto !important;
+		    }
+		
+		    #info-bar {
+		        font-size: 12px !important;
+		        margin-bottom: 2px !important;
+		    }
+		
+		    #question-box {
+		        font-size: 13px !important;
+		        margin: 2px 0 !important;
+		        min-height: 20px !important;
+		    }
+		
+		    #canvas-wrapper {
+		        width: 100% !important;
+		        height: 280px !important; /* ارتفاع متوازن ومناسب جداً للوضع الأفقي يمنع خروج السؤال للأعلى */
 		        max-width: 100% !important;
 		    }
 		
