@@ -406,7 +406,7 @@
            ========================================================= */
         @media (max-width: 768px) {
             
-            /* 1. الشريط العلوي للجوال: يقتصر على صفحات السياسة فقط بعد إزالة السوشيال ميديا */
+            /* 1. الشريط العلوي للجوال */
             .top-bar {
                 display: flex !important;
                 justify-content: center !important;
@@ -421,7 +421,6 @@
             .top-pages a {
                 font-size: 0.75rem !important;
             }
-            /* إخفاء السوشيال ميديا من الشريط العلوي للجوال نهائياً */
             .top-social {
                 display: none !important;
             }
@@ -500,19 +499,35 @@
                 border-bottom: 1px solid var(--border-color);
             }
         
-            /* 4. جعل السلايدر والمنتجات الرقمية في صفوف منفصلة (تحت بعضها) */
+            /* 4. فصل السلايدر عن صندوق المنتجات الرقمية وتأكيد ظهورهما بوضوح */
             .top-right-row {
-                flex-direction: column !important; /* تحويل الصف إلى عمود فوق بعض */
+                display: flex !important;
+                flex-direction: column !important; /* ترتيب العناصر تحت بعضها عمودياً */
                 gap: 15px !important;
+                align-items: stretch !important;
             }
+            
             .square-slider-box {
+                display: block !important;
                 width: 100% !important;
-                height: 220px !important; /* تقليل الارتفاع قليلاً ليناسب الجوال */
+                height: 230px !important; /* ارتفاع ممتاز ومناسب للجوال */
+                flex: none !important;
             }
+            
+            .square-slide {
+                display: none; /* يتم التحكم بها عبر جافاسكريبت والـ active */
+            }
+            .square-slide.active {
+                display: flex !important; /* ضمان ظهور الشريحة النشطة فقط */
+            }
+        
             .news-mini-container {
+                display: flex !important;
+                flex-direction: column !important;
                 width: 100% !important;
-                height: auto !important; /* الارتفاع حسب المحتوى */
-                min-height: 180px;
+                height: auto !important;
+                min-height: 200px !important;
+                flex: none !important;
             }
         }
         
@@ -521,8 +536,7 @@
             .mobile-menu-btn {
                 display: none !important;
             }
-        }
-    
+        }    
     </style>
 </head>
     
