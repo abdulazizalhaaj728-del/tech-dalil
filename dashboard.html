@@ -1259,12 +1259,28 @@
             
             // إظهار حقول الاتصال إذا كان النوع contact
             handleWidgetTypeSelection(w.type);
-            if (w.type === 'contact' && w.contactData) {
-                document.getElementById('contact-name').value = w.contactData.name || '';
-                document.getElementById('contact-email').value = w.contactData.email || '';
-                document.getElementById('contact-phone').value = w.contactData.phone || '';
-                document.getElementById('contact-whatsapp').value = w.contactData.whatsapp || '';
-                document.getElementById('contact-telegram').value = w.contactData.telegram || '';
+            if (w.type === 'contact') {
+                let cd = w.contactData || { name: "تكنو-دليل", email: "info@tech-dalil.com", phone: "", whatsapp: "" };
+                contentBox = `
+                    <div style="font-size: 0.75rem; line-height: 1.6; display: flex; flex-direction: column; gap: 8px;">
+                        <label style="display: flex; flex-direction: column; gap: 3px; color: var(--text-muted);">
+                            اسم الموقع / الجهة:
+                            <input type="text" value="${cd.name || ''}" style="width: 100%; padding: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main); border-radius: 4px;" oninput="window.updateContactData && window.updateContactData('name', this.value)">
+                        </label>
+                        <label style="display: flex; flex-direction: column; gap: 3px; color: var(--text-muted);">
+                            البريد الإلكتروني:
+                            <input type="email" value="${cd.email || ''}" style="width: 100%; padding: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main); border-radius: 4px;" oninput="window.updateContactData && window.updateContactData('email', this.value)">
+                        </label>
+                        <label style="display: flex; flex-direction: column; gap: 3px; color: var(--text-muted);">
+                            رقم الهاتف:
+                            <input type="text" value="${cd.phone || ''}" style="width: 100%; padding: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main); border-radius: 4px;" oninput="window.updateContactData && window.updateContactData('phone', this.value)">
+                        </label>
+                        <label style="display: flex; flex-direction: column; gap: 3px; color: var(--text-muted);">
+                            رقم الواتساب:
+                            <input type="text" value="${cd.whatsapp || ''}" style="width: 100%; padding: 6px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main); border-radius: 4px;" oninput="window.updateContactData && window.updateContactData('whatsapp', this.value)">
+                        </label>
+                    </div>
+                `;
             }
         
             if (w.location === 'footer') { ft.checked = true; sb.checked = false; }
