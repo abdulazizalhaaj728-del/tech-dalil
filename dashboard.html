@@ -300,11 +300,11 @@
                     <div class="form-group" id="contact-fields-group" style="display: none;">
                         <label style="color: var(--accent-color); margin-bottom: 6px; display: block;">معلومات الاتصال (اترك الفارغ ليتم إخفاؤه تلقائياً):</label>
                         <div style="display: grid; gap: 8px;">
-                            <input type="text" id="contact-name" placeholder="اسم المسؤول أو الجهة..." disabled>
-                            <input type="email" id="contact-email" placeholder="البريد الإلكتروني..." disabled>
-                            <input type="text" id="contact-phone" placeholder="رقم الهاتف..." disabled>
-                            <input type="text" id="contact-whatsapp" placeholder="رقم الواتساب..." disabled>
-                            <input type="text" id="contact-telegram" placeholder="معرف تليجرام (Telegram)..." disabled>
+                            <input type="text" id="contact-name" placeholder="اسم المسؤول أو الجهة...">
+                            <input type="email" id="contact-email" placeholder="البريد الإلكتروني...">
+                            <input type="text" id="contact-phone" placeholder="رقم الهاتف...">
+                            <input type="text" id="contact-whatsapp" placeholder="رقم الواتساب...">
+                            <input type="text" id="contact-telegram" placeholder="معرف تليجرام (Telegram)...">
                         </div>
                     </div>
 
@@ -636,7 +636,18 @@
                 showCustomAlert("تنبيه", "الرجاء إدخال رمز الصلاحية (GitHub Token) في أعلى اللوحة أولاً!");
                 return;
             }
-
+            // 🟢 تحديث قيم الإعلانات قبل الحفظ إذا كان القسم المختار هو الإعلانات
+                if (sectionType === 'ads') {
+                    globalData.ads = {
+                        topOn: document.getElementById('ad-top-on').checked,
+                        topCode: document.getElementById('ad-top-code').value,
+                        midOn: document.getElementById('ad-mid-on').checked,
+                        midCode: document.getElementById('ad-mid-code').value,
+                        botOn: document.getElementById('ad-bot-on').checked,
+                        botCode: document.getElementById('ad-bot-code').value
+                    };
+                }
+            
             const owner = "abdulazizalhaaj728-del";
             const repo = "tech-dalil";
             const path = "data.json";
@@ -1163,7 +1174,6 @@
             const contactFieldsGroup = document.getElementById('contact-fields-group');
             const autoWidgetMsg = document.getElementById('auto-widget-msg');
         
-            // إخفاء كافة الحقول المخصصة أولاً
             customTextGroup.style.display = 'none';
             contactFieldsGroup.style.display = 'none';
             autoWidgetMsg.style.display = 'none';
@@ -1171,12 +1181,10 @@
             if (val === 'custom') {
                 customTextGroup.style.display = 'block';
             } else if (val === 'contact') {
-                contactFieldsGroup.style.display = 'block';
+                contactFieldsGroup.style.display = 'block'; // تفعيل وإظهار الحقول المفتوحة
             } else if (val === 'categories' || val === 'recent' || val === 'popular' || val === 'pages') {
                 autoWidgetMsg.style.display = 'block';
-                autoWidgetMsg.innerText = val === 'categories' 
-                    ? 'ℹ️ ودجت التسميات/التصنيفات: سيقوم النظام بجمع التصنيفات تلقائياً من المقالات المحفوظة وعرضها هنا وفي الاندكس.'
-                    : 'ℹ️ هذا الودج تلقائي بالكامل ومحتواه مغلق؛ سيقوم النظام بجلبه وعرضه وتصنيفه تلقائياً للمستخدمين.';
+                autoWidgetMsg.innerText = 'ℹ️ هذا الودج تلقائي بالكامل ومحتواه مغلق؛ سيقوم النظام بجلبه وعرضه وتصنيفه تلقائياً للمستخدمين.';
             }
         }
 
