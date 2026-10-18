@@ -897,185 +897,186 @@ document.addEventListener('DOMContentLoaded', async () => {
             let words = title.trim().split(/\s+/);
             return words.length > 5 ? words.slice(0, 5).join(' ') + '...' : title;
         }
-        
-            window.openPostBySlug = async function(slug) {
-                const dynamicView = document.getElementById('dynamic-post-view');
-                const dynamicContentBox = document.getElementById('dynamic-post-content-box');
                 
-                if (!dynamicView || !dynamicContentBox) return;
+        window.openPostBySlug = async function(slug) {
+            const dynamicView = document.getElementById('dynamic-post-view');
+            const dynamicContentBox = document.getElementById('dynamic-post-content-box');
             
-                document.querySelectorAll('.hide-on-article').forEach(el => el.style.display = 'none');
-            
-                let data = window.siteBlogData;
-                if (!data) {
-                    try {
-                        const res = await fetch(`data.json?t=${Date.now()}`);
-                        data = await res.json();
-                        window.siteBlogData = data;
-                    } catch (e) { return; }
+            if (!dynamicView || !dynamicContentBox) return;
+        
+            document.querySelectorAll('.hide-on-article').forEach(el => el.style.display = 'none');
+        
+            let data = window.siteBlogData;
+            if (!data) {
+                try {
+                    const res = await fetch(`data.json?t=${Date.now()}`);
+                    data = await res.json();
+                    window.siteBlogData = data;
+                } catch (e) { return; }
+            }
+        
+            let rawPosts = data.posts || [];
+            let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
+            let menuTree = data.menu ? buildTree(data.menu) : [];
+            let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+        
+            let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
+            if (targetSlug.includes('?article=')) targetSlug = targetSlug.split('?article=')[1];
+            targetSlug = targetSlug.split('/').pop().trim();
+        
+            let post = rawPosts.find(p => {
+                let pSlug = (p.slug || '').replace('.html', '').trim().toLowerCase();
+                let pId = String(p.id || '').trim();
+                let pUrl = (p.url || '').replace('.html', '').trim().toLowerCase();
+                let pUrlFile = pUrl.split('/').pop();
+                return pSlug === targetSlug || pId === targetSlug || pUrl === targetSlug || pUrlFile === targetSlug || targetSlug.includes(pSlug);
+            });
+        
+            if (post) {
+                dynamicView.style.display = 'block';
+        
+                setTimeout(() => {
+                    const rect = dynamicView.getBoundingClientRect();
+                    window.scrollTo({ top: window.pageYOffset + rect.top - 33, behavior: 'smooth' });
+                }, 50);
+        
+                let tempDiv = document.createElement('div');
+                tempDiv.innerHTML = post.content || post.description || '';
+                let headings = tempDiv.querySelectorAll('h2, h3');
+                let tocHtml = '';
+                
+                let tocOptions = `<option value="" disabled selected>-- اختر من محتويات المقال (انقر هنا للاستعراض) --</option>`;
+                if (headings.length > 0) {
+                    headings.forEach((h, index) => {
+                        let id = `heading-${index}`;
+                        h.id = id;
+                        let text = h.innerText.trim();
+                        tocOptions += `<option value="#${id}">${text}</option>`;
+                    });
+                } else {
+                    tocOptions += `<option value="" disabled>لا توجد عناوين فرعية في هذا المقال</option>`;
                 }
-            
-                let rawPosts = data.posts || [];
-                let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
-                let menuTree = data.menu ? buildTree(data.menu) : [];
-                let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
-            
-                let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
-                if (targetSlug.includes('?article=')) targetSlug = targetSlug.split('?article=')[1];
-                targetSlug = targetSlug.split('/').pop().trim();
-            
-                let post = rawPosts.find(p => {
-                    let pSlug = (p.slug || '').replace('.html', '').trim().toLowerCase();
-                    let pId = String(p.id || '').trim();
-                    let pUrl = (p.url || '').replace('.html', '').trim().toLowerCase();
-                    let pUrlFile = pUrl.split('/').pop();
-                    return pSlug === targetSlug || pId === targetSlug || pUrl === targetSlug || pUrlFile === targetSlug || targetSlug.includes(pSlug);
-                });
-            
-                if (post) {
-                    dynamicView.style.display = 'block';
-            
-                    setTimeout(() => {
-                        const rect = dynamicView.getBoundingClientRect();
-                        window.scrollTo({ top: window.pageYOffset + rect.top - 33, behavior: 'smooth' });
-                    }, 50);
-            
-                    let tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = post.content || post.description || '';
-                    let headings = tempDiv.querySelectorAll('h2, h3');
-                    let tocHtml = '';
-                    
-                    let tocOptions = `<option value="" disabled selected>-- اختر من محتويات المقال (انقر هنا للاستعراض) --</option>`;
-                    if (headings.length > 0) {
-                        headings.forEach((h, index) => {
-                            let id = `heading-${index}`;
-                            h.id = id;
-                            let text = h.innerText.trim();
-                            tocOptions += `<option value="#${id}">${text}</option>`;
-                        });
-                    } else {
-                        tocOptions += `<option value="" disabled>لا توجد عناوين فرعية في هذا المقال</option>`;
+        
+                tocHtml = `
+                    <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
+                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 30; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                            ${tocOptions}
+                        </select>
+                    </div>
+                `;
+        
+                // --- توليد قسم شاهد أيضاً في منتصف المقال بأمان ---
+                let paragraphs = tempDiv.querySelectorAll('p');
+                if (paragraphs.length > 1) {
+                    let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
+                    let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
+        
+                    if (randomPosts.length > 0) {
+                        let seeAlsoDiv = document.createElement('div');
+                        seeAlsoDiv.className = 'see-also-box';
+                        seeAlsoDiv.innerHTML = `
+                            <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
+                            <ul>
+                                ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
+                            </ul>
+                        `;
+                        let middleIndex = Math.floor(paragraphs.length / 2);
+                        paragraphs[middleIndex].parentNode.insertBefore(seeAlsoDiv, paragraphs[middleIndex].nextSibling);
                     }
-            
-                    tocHtml = `
-                        <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
-                            <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 30; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
-                                ${tocOptions}
-                            </select>
+                }
+                post.processedContent = tempDiv.innerHTML;
+        
+                let ads = data.ads || {};
+                let topAdHtml = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
+                let botAdHtml = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
+        
+                let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
+                window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
+                window._currentNavNextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
+        
+                function renderNavContainer() {
+                    let pPost = window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
+                    let nPost = window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
+        
+                    let pHtml = pPost ? `
+                        <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
+                            <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
+                            <div style="border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; background: var(--card-bg); flex-grow: 1; text-align: right;">
+                                <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${pPost.title}" onclick="openPostBySlug('${pPost.slug}'); return false;">${getShortTitle(pPost.title)}</a>
+                            </div>
+                        </div>` : `<span></span>`;
+        
+                    let nHtml = nPost ? `
+                        <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
+                            <div style="border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; background: var(--card-bg); flex-grow: 1; text-align: left;">
+                                <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nPost.title}" onclick="openPostBySlug('${nPost.slug}'); return false;">${getShortTitle(nPost.title)}</a>
+                            </div>
+                            <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
+                        </div>` : `<span></span>`;
+        
+                    const navBox = document.getElementById('bottom-navigation-wrapper');
+                    if (navBox) {
+                        navBox.innerHTML = `<div>${pHtml}</div><div>${nHtml}</div>`;
+                        attachNavEvents();
+                    }
+                }
+                
+                function attachNavEvents() {
+                    const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
+                    const nextArrowBtn = document.getElementById('custom-next-arrow-btn');
+                    if (prevArrowBtn) {
+                        prevArrowBtn.onclick = () => {
+                            if (window._currentNavPrevIndex > 0) {
+                                window._currentNavPrevIndex--;
+                                window._currentNavNextIndex = window._currentNavPrevIndex + 2 < sequencedPosts.length ? window._currentNavPrevIndex + 2 : -1;
+                            } else { window._currentNavPrevIndex = sequencedPosts.length - 1; }
+                            renderNavContainer();
+                        };
+                    }
+                    if (nextArrowBtn) {
+                        nextArrowBtn.onclick = () => {
+                            if (window._currentNavNextIndex !== -1 && window._currentNavNextIndex < sequencedPosts.length - 1) {
+                                window._currentNavNextIndex++;
+                                window._currentNavPrevIndex = window._currentNavNextIndex - 2 >= 0 ? window._currentNavNextIndex - 2 : -1;
+                            } else { window._currentNavNextIndex = 0; }
+                            renderNavContainer();
+                        };
+                    }
+                }
+        
+                dynamicContentBox.innerHTML = `
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                        <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
+                    </div>
+        
+                    <div style="padding: 0 15px;">
+                        <h1 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
+                        <div class="post-meta" style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 15px;">
+                            <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span>
                         </div>
-                    `;
-            
-                    // --- توليد قسم شاهد أيضاً في منتصف المقال بأمان ---
-                    let paragraphs = tempDiv.querySelectorAll('p');
-                    if (paragraphs.length > 1) {
-                        let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
-                        let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
-            
-                        if (randomPosts.length > 0) {
-                            let seeAlsoDiv = document.createElement('div');
-                            seeAlsoDiv.className = 'see-also-box';
-                            seeAlsoDiv.innerHTML = `
-                                <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
-                                <ul>
-                                    ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
-                                </ul>
-                            `;
-                            let middleIndex = Math.floor(paragraphs.length / 2);
-                            paragraphs[middleIndex].parentNode.insertBefore(seeAlsoDiv, paragraphs[middleIndex].nextSibling);
-                        }
-                    }
-                    post.processedContent = tempDiv.innerHTML;
-            
-                    // تجهيز الإعلانات بلغة آمنة
-                    let ads = data.ads || {};
-                    let topAdHtml = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
-                    let botAdHtml = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
-            
-                    let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
-                    window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
-                    window._currentNavNextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
-            
-                    function renderNavContainer() {
-                        let pPost = window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
-                        let nPost = window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
-            
-                        let pHtml = pPost ? `
-                            <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                                <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
-                                <div style="border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; background: var(--card-bg); flex-grow: 1; text-align: right;">
-                                    <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${pPost.title}" onclick="openPostBySlug('${pPost.slug}'); return false;">${getShortTitle(pPost.title)}</a>
-                                </div>
-                            </div>` : `<span></span>`;
-            
-                        let nHtml = nPost ? `
-                            <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
-                                <div style="border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; background: var(--card-bg); flex-grow: 1; text-align: left;">
-                                    <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nPost.title}" onclick="openPostBySlug('${nPost.slug}'); return false;">${getShortTitle(nPost.title)}</a>
-                                </div>
-                                <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
-                            </div>` : `<span></span>`;
-            
-                        const navBox = document.getElementById('bottom-navigation-wrapper');
-                        if (navBox) {
-                            navBox.innerHTML = `<div>${pHtml}</div><div>${nHtml}</div>`;
-                            attachNavEvents();
-                        }
-                    }
-                    
-                    function attachNavEvents() {
-                        const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
-                        const nextArrowBtn = document.getElementById('custom-next-arrow-btn');
-                        if (prevArrowBtn) {
-                            prevArrowBtn.onclick = () => {
-                                if (window._currentNavPrevIndex > 0) {
-                                    window._currentNavPrevIndex--;
-                                    window._currentNavNextIndex = window._currentNavPrevIndex + 2 < sequencedPosts.length ? window._currentNavPrevIndex + 2 : -1;
-                                } else { window._currentNavPrevIndex = sequencedPosts.length - 1; }
-                                renderNavContainer();
-                            };
-                        }
-                        if (nextArrowBtn) {
-                            nextArrowBtn.onclick = () => {
-                                if (window._currentNavNextIndex !== -1 && window._currentNavNextIndex < sequencedPosts.length - 1) {
-                                    window._currentNavNextIndex++;
-                                    window._currentNavPrevIndex = window._currentNavNextIndex - 2 >= 0 ? window._currentNavNextIndex - 2 : -1;
-                                } else { window._currentNavNextIndex = 0; }
-                                renderNavContainer();
-                            };
-                        }
-                    }
-            
-                    dynamicContentBox.innerHTML = `
-                        <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                        
+                        ${tocHtml}
+                        
+                        <div id="article-ad-top-container">${topAdHtml}</div>
+                        <div class="single-post-content" style="line-height: 2; font-size: 0.95rem;">
+                            ${post.processedContent}
+                        </div>
+                        <div id="article-ad-bottom-container">${botAdHtml}</div>
+        
+                        <div id="bottom-navigation-wrapper" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
+        
+                        <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
                             <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
                         </div>
-            
-                        <div style="padding: 0 15px;">
-                            <h1 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
-                            <div class="post-meta" style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 15px;">
-                                <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span>
-                            </div>
-                            
-                            ${tocHtml}
-                            
-                            ${topAdHtml}
-                            <div class="single-post-content" style="line-height: 2; font-size: 0.95rem;">
-                                ${post.processedContent}
-                            </div>
-                            ${botAdHtml}
-            
-                            <div id="bottom-navigation-wrapper" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
-            
-                            <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                                <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
-                            </div>
-                        </div>
-                    `;
-            
-                    history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
-                    renderNavContainer();
-                }
-            };        
+                    </div>
+                `;
+        
+                history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
+                renderNavContainer();
+            }
+        };
+        
+        
         window.closePostView = function() {
             const dynamicView = document.getElementById('dynamic-post-view');
             const dynamicContentBox = document.getElementById('dynamic-post-content-box');
