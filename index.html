@@ -675,6 +675,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <li><a href="?category=${encodeURIComponent(cat)}" style="font-size: 0.68rem;"><i class="fa-solid fa-folder" style="margin-left: 5px; color: var(--primary-color);"></i>${cat}</a></li>
                         `).join('') + '</ul>';
                     } 
+                        // 5. أحدث المواضيع
+                        else if (w.type === 'recent' || (w.title && w.title.includes('أحدث المواضيع'))) {
+                            let recentPosts = filteredPosts.slice(0, 5); // جلب أحدث المواضيع
+                            contentBox = '<ul class="recent-posts-list">' + recentPosts.map(p => `
+                                <li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}'); return false;" style="font-size: 0.7rem; display: flex; align-items: center; gap: 5px;">
+                                    <i class="fa-solid fa-clock" style="color: var(--primary-color);"></i>${p.title}
+                                </a></li>
+                            `).join('') + '</ul>';
+                        }
                     // 2. مشاركة مميزة
                     else if (w.type === 'featured' || (w.title && w.title.includes('مميزة'))) {
                         if (topFeatured) {
@@ -744,7 +753,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             }
 
-if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
+        if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
             if (footerWidgetsContainer) {
                 footerWidgetsContainer.style.minHeight = "220px";
                 footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
