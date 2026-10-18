@@ -991,6 +991,9 @@ window.openPostBySlug = async function(slug) {
             let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
             let menuTree = data.menu ? buildTree(data.menu) : [];
             let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+            
+            // حفظ المتغير في النطاق العام لضمان عمل الأسهم بسلاسة
+            window._currentSequencedPosts = sequencedPosts;
         
             let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
             if (targetSlug.includes('?article=')) targetSlug = targetSlug.split('?article=')[1];
@@ -1035,11 +1038,11 @@ window.openPostBySlug = async function(slug) {
                             ${tocOptions}
                         </select>
                     </div>
-                    <!-- ⬅️ إعلان الأعلى: تحت المحتويات تماماً -->
+                    <!-- إعلان الأعلى -->
                     <div id="article-top-ad" class="article-ad-box"></div>
                 `;
         
-                // 2. معالجة الفقرات وصندوق "شاهد أيضاً" وإخراج إعلان الأوسط تحته مباشرة كعنصر مستقل
+                // 2. معالجة الفقرات وصندوق "شاهد أيضاً" وإعلان المنتصف تحته مباشرة
                 let paragraphs = tempDiv.querySelectorAll('p');
                 if (paragraphs.length > 1) {
                     let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
@@ -1054,7 +1057,7 @@ window.openPostBySlug = async function(slug) {
                                     ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
                                 </ul>
                             </div>
-                            <!-- ⬅️ إعلان الأوسط: مستطيل مستقل تحت صندوق شاهد أيضاً مباشرة -->
+                            <!-- إعلان الأوسط تحت صندوق شاهد أيضاً مباشرة -->
                             <div id="article-mid-ad" class="article-ad-box"></div>
                         `;
                         let middleIndex = Math.floor(paragraphs.length / 2);
@@ -1064,19 +1067,19 @@ window.openPostBySlug = async function(slug) {
 
                 // 3. إعلان الأسفل
                 let botAdHtml = `
-                    <!-- ⬅️ إعلان الأسفل: فوق أسهم التنقل مباشرة -->
+                    <!-- إعلان الأسفل فوق الأسهم -->
                     <div id="article-bot-ad" class="article-ad-box"></div>
                 `;
 
                 tempDiv.innerHTML = tocHtml + tempDiv.innerHTML + botAdHtml;
                 post.processedContent = tempDiv.innerHTML;
         
-                // إعداد متغيرات التنقل
+                // إعداد مؤشرات التنقل
                 let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
                 window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
                 window._currentNavNextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
 
-                // رسم واجهة المقال
+                // رسم محتوى المقال في الـ DOM أولاً
                 dynamicContentBox.innerHTML = `
                     <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
                         <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
@@ -1092,7 +1095,7 @@ window.openPostBySlug = async function(slug) {
                             ${post.processedContent}
                         </div>
         
-                        <!-- حاوية أسهم وروابط التنقل -->
+                        <!-- حاوية الأسهم وروابط التنقل -->
                         <div id="bottom-navigation-wrapper" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
         
                         <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
@@ -1103,16 +1106,17 @@ window.openPostBySlug = async function(slug) {
         
                 history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
                 
-                // رسم أسهم التنقل وحقن الإعلانات بعد التثبيت في الـ DOM
-                renderNavContainer(sequencedPosts);
-                
+                // تنفيذ رسم الأسهم وحقن الإعلانات بعد تأكيد بناء الـ DOM
                 setTimeout(() => {
+                    renderNavContainer();
                     if (typeof renderArticleAds === 'function') {
                         renderArticleAds(data.ads);
                     }
-                }, 150);
+                }, 100);
             }
         };
+        
+        
         function renderNavContainer() {
             let pPost = window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
             let nPost = window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
