@@ -242,14 +242,6 @@
     ],
     "widgets": [
         {
-            "id": "w_1791216100821",
-            "title": "روابط سريعة",
-            "type": "links",
-            "content": "",
-            "active": true,
-            "location": "sidebar"
-        },
-        {
             "id": "w_1791992790833",
             "title": "التسميات / التصنيفات",
             "type": "categories",
