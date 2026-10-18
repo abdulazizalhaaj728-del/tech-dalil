@@ -655,6 +655,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let menuTree = data.menu ? buildTree(data.menu) : [];
         let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+        window._currentSequencedPosts = sequencedPosts;
 
         initThemeAndFontControls(data);
 
@@ -970,7 +971,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return words.length > 5 ? words.slice(0, 5).join(' ') + '...' : title;
         }
                 
-window.openPostBySlug = async function(slug) {
+        window.openPostBySlug = async function(slug) {
             const dynamicView = document.getElementById('dynamic-post-view');
             const dynamicContentBox = document.getElementById('dynamic-post-content-box');
             
@@ -991,8 +992,6 @@ window.openPostBySlug = async function(slug) {
             let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
             let menuTree = data.menu ? buildTree(data.menu) : [];
             let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
-            
-            // حفظ المتغير في النطاق العام لضمان عمل الأسهم بسلاسة
             window._currentSequencedPosts = sequencedPosts;
         
             let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
@@ -1019,7 +1018,6 @@ window.openPostBySlug = async function(slug) {
                 tempDiv.innerHTML = post.content || post.description || '';
                 let headings = tempDiv.querySelectorAll('h2, h3');
                 
-                // 1. قائمة المحتويات وإعلان الأعلى
                 let tocOptions = `<option value="" disabled selected>-- اختر من محتويات المقال (انقر هنا للاستعراض) --</option>`;
                 if (headings.length > 0) {
                     headings.forEach((h, index) => {
@@ -1038,11 +1036,9 @@ window.openPostBySlug = async function(slug) {
                             ${tocOptions}
                         </select>
                     </div>
-                    <!-- إعلان الأعلى -->
                     <div id="article-top-ad" class="article-ad-box"></div>
                 `;
         
-                // 2. معالجة الفقرات وصندوق "شاهد أيضاً" وإعلان المنتصف تحته مباشرة
                 let paragraphs = tempDiv.querySelectorAll('p');
                 if (paragraphs.length > 1) {
                     let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
@@ -1057,7 +1053,6 @@ window.openPostBySlug = async function(slug) {
                                     ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
                                 </ul>
                             </div>
-                            <!-- إعلان الأوسط تحت صندوق شاهد أيضاً مباشرة -->
                             <div id="article-mid-ad" class="article-ad-box"></div>
                         `;
                         let middleIndex = Math.floor(paragraphs.length / 2);
@@ -1065,21 +1060,17 @@ window.openPostBySlug = async function(slug) {
                     }
                 }
 
-                // 3. إعلان الأسفل
                 let botAdHtml = `
-                    <!-- إعلان الأسفل فوق الأسهم -->
                     <div id="article-bot-ad" class="article-ad-box"></div>
                 `;
 
                 tempDiv.innerHTML = tocHtml + tempDiv.innerHTML + botAdHtml;
                 post.processedContent = tempDiv.innerHTML;
         
-                // إعداد مؤشرات التنقل
                 let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
                 window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
                 window._currentNavNextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
 
-                // رسم محتوى المقال في الـ DOM أولاً
                 dynamicContentBox.innerHTML = `
                     <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
                         <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
@@ -1095,7 +1086,6 @@ window.openPostBySlug = async function(slug) {
                             ${post.processedContent}
                         </div>
         
-                        <!-- حاوية الأسهم وروابط التنقل -->
                         <div id="bottom-navigation-wrapper" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
         
                         <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
@@ -1106,7 +1096,6 @@ window.openPostBySlug = async function(slug) {
         
                 history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
                 
-                // تنفيذ رسم الأسهم وحقن الإعلانات بعد تأكيد بناء الـ DOM
                 setTimeout(() => {
                     renderNavContainer();
                     if (typeof renderArticleAds === 'function') {
@@ -1116,10 +1105,12 @@ window.openPostBySlug = async function(slug) {
             }
         };
         
-        
         function renderNavContainer() {
-            let pPost = window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
-            let nPost = window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
+            let sequencedPosts = window._currentSequencedPosts || (window.siteBlogData ? window.siteBlogData.posts : []);
+            if (!sequencedPosts) return;
+
+            let pPost = window._currentNavPrevIndex !== undefined && window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
+            let nPost = window._currentNavNextIndex !== undefined && window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
 
             let pHtml = pPost ? `
                 <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
@@ -1140,7 +1131,7 @@ window.openPostBySlug = async function(slug) {
             const navBox = document.getElementById('bottom-navigation-wrapper');
             if (navBox) {
                 navBox.innerHTML = `<div>${pHtml}</div><div>${nHtml}</div>`;
-                attachNavEvents();
+                attachNavEvents(sequencedPosts);
             }
         }
 
@@ -1182,7 +1173,7 @@ window.openPostBySlug = async function(slug) {
             injectAd('article-bot-ad', adsData.botOn, adsData.botCode);
         }
 
-        function attachNavEvents() {
+        function attachNavEvents(sequencedPosts) {
             const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
             const nextArrowBtn = document.getElementById('custom-next-arrow-btn');
             if (prevArrowBtn) {
