@@ -373,6 +373,12 @@
                 <button class="btn btn-red" id="btn-role-admin" style="padding: 10px 20px; font-size: 15px;" onclick="selectRole('admin')" disabled>🔑 مسؤول النظام</button>
             </div>
 
+			<div style="margin-top: 12px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-gray" style="font-size: 11px; padding: 5px 12px;" onclick="openAboutModal()" id="btn-about-main">برمجة وتصميم</button>
+                <!-- زر الخروج الجديد -->
+                <button class="btn btn-red" style="font-size: 11px; padding: 5px 12px;" onclick="exitGameApp()" id="btn-exit-game">🚪 خروج من اللعبة</button>
+            </div>
+			
             <div style="margin-top: 12px;">
                 <button class="btn btn-gray" style="font-size: 11px; padding: 5px 12px;" onclick="openAboutModal()" id="btn-about-main">برمجة وتصميم</button>
             </div>
@@ -851,6 +857,7 @@ ar: [
                 langPrompt: "الرجاء اختيار لغة النظام للبدء:",
                 btnContestant: "👨‍🎓 متسابق جديد",
                 btnAdmin: "🔑 مسؤول النظام",
+				btnExitGame: "🚪 خروج من اللعبة",
                 welTitle: "مرحباً بك في التحدي التعليمي",
                 instHeading: "إرشادات التحدي",
                 instP1: "1. أضف اسمك الثنائي أو الثلاثي للبدء.",
@@ -930,6 +937,7 @@ ar: [
                 langPrompt: "Please select system language to start:",
                 btnContestant: "👨‍🎓 New Contestant",
                 btnAdmin: "🔑 System Admin",
+				btnExitGame: "🚪 Exit Game",
                 welTitle: "Welcome to Educational Challenge",
                 instHeading: "Challenge Guidelines",
                 instP1: "1. Enter your full name to begin.",
@@ -1029,6 +1037,7 @@ ar: [
             document.getElementById('lang-prompt-txt').innerText = t.langPrompt;
             document.getElementById('btn-role-contestant').innerText = t.btnContestant;
             document.getElementById('btn-role-admin').innerText = t.btnAdmin;
+			document.getElementById('btn-exit-game').innerText = t.btnExitGame;
             document.getElementById('wel-title').innerText = t.welTitle;
             document.getElementById('inst-heading').innerText = t.instHeading;
             document.getElementById('inst-p1').innerText = t.instP1;
@@ -1087,7 +1096,7 @@ ar: [
             document.getElementById('ctrl-sec-records-mgmt').innerText = t.ctrlSecRecordsMgmt;
             document.getElementById('btn-clear-all-records').innerText = t.btnClearAllRecords;
 
-	    document.getElementById('btn-ctrl-records').innerText = t.btnRecords;
+	    	document.getElementById('btn-ctrl-records').innerText = t.btnRecords;
             document.getElementById('btn-ctrl-guide').innerText = t.btnGuide;
             document.getElementById('btn-ctrl-about').innerText = t.btnAbout;
             document.getElementById('edit-modal-title').innerText = t.editModalTitle;
@@ -1906,7 +1915,8 @@ function loadQuestion() {
             }
         }
 
-        function draw() {
+		
+		function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // رسم مقذوفات المدفع
@@ -1934,45 +1944,35 @@ function loadQuestion() {
                     let heliElem = document.getElementById(`heli-container-${enemy.index}`);
                     let boxElem = document.getElementById(`box-container-${enemy.index}`);
                     let labelElem = document.getElementById(`label-${enemy.index}`);
+                    
                     if (!enemy.active) {
                         if (heliElem) heliElem.style.display = 'none';
                         if (boxElem) boxElem.style.display = 'none';
                     } else {
+                        // تموضع الطائرة
                         if (heliElem) {
                             heliElem.style.display = 'block';
                             heliElem.style.left = (enemy.x * displayScaleX) + "px";
                             heliElem.style.top = (enemy.y * displayScaleY) + "px";
-
-
-                       }
+                        }
+                        
+                        // تموضع وتنسيق الصندوق أسفل الطائرة مباشرة
                         if (boxElem) {
                             boxElem.style.display = 'block';
-                            boxElem.style.left = (enemy.x +17 *  displayScaleX) + "px";
-                            boxElem.style.top = ((enemy.y + 30) * displayScaleY) + "px";
+                            boxElem.style.left = (enemy.x * displayScaleX) + "px";
+                            boxElem.style.top = ((enemy.y + 28) * displayScaleY) + "px";
                             boxElem.style.opacity = enemy.alpha;
 
-				if (labelElem) {
-				        labelElem.innerText = enemy.text;
-				    }
-
-		
-
-				labelElem.innerText = enemy.text;
-
-				// مظهر الصندوق الصلب (غير الشفاف):
-				labelElem.style.backgroundColor = "white"; // لون خشبي يشبه الصناديق (أو استبدله بأي لون صلب مثل "white" أو "yellow")
-				labelElem.style.border = "2px solid red"; // إطار أسود واضح يحيط بالصندوق
-				labelElem.style.borderRadius = "4px";        // زوايا دائرية قليلاً
-				labelElem.style.padding = "3px 3px";        // مسافة داخلية ليكون النص مريحاً داخل الصندوق
-				labelElem.style.color = "#000000";           // لون النص داخل الصندوق (أسود ليكون واضحاً على الخلفية)
-				labelElem.style.textAlign = "center";        // توسيط النص
-				labelElem.style.textShadow = "none"; // إزالة أي ظل موجود على النص
- 
-
-			
- 				// إضافة محيط (إطار) للنص
-			//    labelElem.style.border = "2px solid red"; // يمكنك تغيير اللون (red) والسمك (2px) حسب رغبتك
-			//    labelElem.style.padding = "4px";        // مسافة داخلية اختيارية لجعل الشكل أفضل
+                            if (labelElem) {
+                                labelElem.innerText = enemy.text;
+                                labelElem.style.backgroundColor = "white";
+                                labelElem.style.border = "2px solid red";
+                                labelElem.style.borderRadius = "4px";
+                                labelElem.style.padding = "3px 3px";
+                                labelElem.style.color = "#000000";
+                                labelElem.style.textAlign = "center";
+                                labelElem.style.textShadow = "none";
+                            }
                         }
                     }
                 });
@@ -2104,6 +2104,23 @@ function loadQuestion() {
             printWindow.document.close();
             printWindow.print();
         }
+
+		function exitGameApp() {
+		    showCustomConfirm(currentLang === 'ar' ? "هل أنت متأكد من رغبتك في الخروج من اللعبة؟" : "Are you sure you want to exit the game?", function(res) {
+		        if (res) {
+		            try {
+		                window.close();
+		            } catch(e) {}
+		            // إذا منع المتصفح إغلاق النافذة برمجياً، يتم توجيهه لصفحة فارغة أو رسالة وداع
+		            document.body.innerHTML = `<div style="background:#0b0f19; color:#fff; height:100vh; display:flex; justify-content:center; align-items:center; font-family:'Cairo',sans-serif; text-align:center;">
+		                <div>
+		                    <h2>${currentLang === 'ar' ? 'شكراً لاستخدامك منظومة التحدي التعليمية' : 'Thank you for using Educational Challenge System'}</h2>
+		                    <p style="color:#38bdf8;">${currentLang === 'ar' ? 'يمكنك إغلاق هذه النافذة بأمان الآن.' : 'You can now safely close this window.'}</p>
+		                </div>
+		            </div>`;
+		        }
+		    });
+		}
     </script>
 </body>
 </html>
