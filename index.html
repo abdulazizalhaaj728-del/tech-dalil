@@ -399,6 +399,119 @@
             font-weight: bold !important;
         }
     </style>
+
+    <style>
+        /* =========================================================
+           تنسيقات شاشة الجوال والتابلت فقط (Media Query for Mobile)
+           ========================================================= */
+        @media (max-width: 768px) {
+            
+            /* 1. تعديل الشريط العلوي ليكون صفين */
+            .top-bar {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+                padding: 8px 10px !important;
+            }
+            .top-pages {
+                justify-content: center !important;
+                flex-wrap: wrap !important;
+                gap: 8px 12px !important;
+                border-bottom: 1px dashed var(--border-color);
+                padding-bottom: 6px;
+                width: 100%;
+            }
+            .top-pages a {
+                font-size: 0.72rem !important;
+            }
+            .top-social {
+                justify-content: center !important;
+                width: 100%;
+                gap: 15px !important;
+            }
+        
+            /* 2. جعل الترويسة مثبتة وبارتفاع نحيف مع زر القائمة */
+            header {
+                position: sticky !important;
+                top: 0 !important;
+                z-index: 1000 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                padding: 6px 12px !important;
+                margin-top: 5px !important;
+                grid-template-columns: none !important; /* إلغاء شبكة الكومبيوتر */
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            }
+        
+            .header-logo {
+                flex: 0 0 auto !important;
+            }
+            .header-logo img {
+                max-height: 42px !important; /* حجم الشعار في الجوال */
+            }
+        
+            .header-center {
+                flex: 1 !important;
+                text-align: center !important;
+                padding: 0 8px !important;
+            }
+            .header-center h1 {
+                font-size: 1.25rem !important; /* تصغير خط تكنو-دليل */
+                line-height: 1.1 !important;
+                margin: 0 !important;
+            }
+            .header-center p {
+                font-size: 0.68rem !important;
+                margin-top: 2px !important;
+                white-space: nowrap !important;
+            }
+        
+            /* زر القائمة المربع (الهامبرغر) في اليسار */
+            .mobile-menu-btn {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                background: var(--bg-color);
+                border: 1px solid var(--border-color);
+                color: var(--accent-color);
+                width: 38px;
+                height: 38px;
+                border-radius: 6px;
+                font-size: 1.1rem;
+                cursor: pointer;
+                flex-shrink: 0;
+            }
+        
+            /* 3. القائمة الرئيسية في الجوال (تفتح وتغلق عند الضغط) */
+            .main-menu-bar {
+                position: relative !important;
+                top: auto !important;
+            }
+            .mega-menu {
+                display: none; /* إخفاء القائمة افتراضياً في الجوال */
+                flex-direction: column !important;
+                gap: 2px !important;
+                padding: 8px !important;
+                margin-top: 5px !important;
+            }
+            .mega-menu.mobile-active {
+                display: flex !important; /* إظهار القائمة عند النقر */
+            }
+            .mega-menu li a, .mega-menu > a {
+                padding: 10px 12px !important;
+                font-size: 0.85rem !important;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+        
+        /* إخفاء زر القائمة في أجهزة الكومبيوتر */
+        @media (min-width: 769px) {
+            .mobile-menu-btn {
+                display: none !important;
+            }
+        }        
+    </style>
 </head>
     
 <body class="theme-default">
@@ -423,12 +536,18 @@
             <div class="header-logo" id="site-logo-container">
                 <img id="site-logo" alt="شعار الموقع" style="display: none;">
             </div>
+            
             <div class="header-center">
                 <h1 id="site-main-heading">تكنو-<span>دليل</span></h1>
-                <p id="site-tagline">بوابة الحلول الرقمية والتقنية المبتكرة</p>
+                <p id="site-tagline">بوابة الحلول الرقمية</p>
             </div>
-            <div></div>
+        
+            <!-- زر القائمة المربع للجوال -->
+            <button type="button" class="mobile-menu-btn" id="mobile-hamburger-btn" aria-label="فتح القائمة">
+                <i class="fa-solid fa-bars"></i>
+            </button>
         </header>
+        
 
         <div class="ticker-wrapper" id="site-ticker-wrapper">
             <div class="ticker-container">
@@ -602,6 +721,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (data.settings.logoHeight) siteLogoEl.style.height = data.settings.logoHeight;
             }
         }
+
+        // تفعيل فتح وإغلاق القائمة عند الضغط على زر الهامبرغر في الجوال
+        const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
+        const mainMenu = document.getElementById('site-main-menu');
+        
+        if (hamburgerBtn && mainMenu) {
+            hamburgerBtn.addEventListener('click', () => {
+                mainMenu.classList.toggle('mobile-active');
+                const icon = hamburgerBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-bars');
+                    icon.classList.toggle('fa-xmark'); // تغيير الأيقونة إلى X عند الفتح
+                }
+            });
+        }
+        //-----------------------------------------------------------------------
+
         
         const container = document.getElementById('posts-container');
         if (filteredPosts.length > 0) {
