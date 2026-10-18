@@ -333,20 +333,20 @@ body.light-mode {
             padding: 5px 0;
         }
 
-        /* تنسيق قسم شاهد أيضاً بلون أخضر وتصميم بارز */
+        /* تنسيق قسم شاهد أيضاً مرتبط كلياً بمتغيرات الثيم */
         .related-posts-box, .see-also-box {
-            background-color: #ecfdf5 !important;
-            border: 1px solid #10b981 !important;
+            background-color: var(--card-bg) !important;
+            border: 1px solid var(--border-color) !important;
             border-radius: 8px;
             padding: 15px;
             margin: 20px 0;
-            color: #065f46 !important;
+            color: var(--text-main) !important;
         }
         .related-posts-box h4, .see-also-box h4 {
-            color: #047857 !important;
+            color: var(--accent-color) !important;
             font-size: 1rem;
             margin-bottom: 10px;
-            border-bottom: 1px dashed #10b981;
+            border-bottom: 1px dashed var(--border-color);
             padding-bottom: 5px;
         }
         .related-posts-box ul, .see-also-box ul {
@@ -357,12 +357,12 @@ body.light-mode {
             margin-bottom: 8px;
         }
         .related-posts-box a, .see-also-box a {
-            color: #047857 !important;
+            color: var(--primary-color) !important;
             text-decoration: none;
             font-weight: 600;
         }
         .related-posts-box a:hover, .see-also-box a:hover {
-            color: #022c22 !important;
+            color: var(--accent-color) !important;
             text-decoration: underline;
         }
 
@@ -967,34 +967,34 @@ document.addEventListener('DOMContentLoaded', async () => {
                 post.processedContent = tempDiv.innerHTML;
 
 
-                        // --- [تعديل المشكلة 1: توليد قسم شاهد أيضاً في منتصف المقال] ---
-        let postParagraphs = tempDiv.innerHTML.split('</p>');
-        if (postParagraphs.length > 2) {
-            // جلب مقالات عشوائية من باقي مقالات المدونة
-            let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
-            let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
-        
-            if (randomPosts.length > 0) {
-                let seeAlsoHtml = `
-                    <div class="see-also-box">
-                        <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
-                        <ul>
-                            ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-                let midIndex = Math.floor(postParagraphs.length / 2);
-                postParagraphs.splice(midIndex, 0, seeAlsoHtml);
-                tempDiv.innerHTML = postParagraphs.join('</p>');
-            }
-        }
-        post.processedContent = tempDiv.innerHTML;
+                // --- [تعديل المشكلة 1: توليد قسم شاهد أيضاً في منتصف المقال] ---
+                let postParagraphs = tempDiv.innerHTML.split('</p>');
+                if (postParagraphs.length > 2) {
+                    // جلب مقالات عشوائية من باقي مقالات المدونة
+                    let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
+                    let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
                 
+                    if (randomPosts.length > 0) {
+                        let seeAlsoHtml = `
+                            <div class="see-also-box">
+                                <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
+                                <ul>
+                                    ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                        let midIndex = Math.floor(postParagraphs.length / 2);
+                        postParagraphs.splice(midIndex, 0, seeAlsoHtml);
+                        tempDiv.innerHTML = postParagraphs.join('</p>');
+                    }
+                }
+                post.processedContent = tempDiv.innerHTML;
+                        
 
                 
-                let ads = data.ads || {};
-                let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
-                let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
+                // تشغيل الإعلانات داخل المقالة بسلاسة وتوافق مع أجهزة الجوال والكومبيوتر
+                injectAdScript('article-ad-top-container', ads.topOn, ads.topCode);
+                injectAdScript('article-ad-bottom-container', ads.botOn, ads.botCode);
         
                 let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
                 window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
@@ -1244,6 +1244,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         };
         
+
+        // دالة لتنفيذ السكريبتات الإعلانية ديناميكياً داخل المقالة
+        function injectAdScript(containerId, isEnabled, adCode) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+            if (!isEnabled || !adCode || adCode.trim() === '') {
+                container.style.display = 'none';
+                return;
+            }
+            container.style.display = 'block';
+        
+            // إنشاء إطار آمن أو تفكيك السكريبتات لتنفيذها
+            const iframe = document.createElement('iframe');
+            iframe.style.border = 'none';
+            iframe.style.width = '100%';
+            iframe.style.height = '100px';
+            iframe.style.overflow = 'hidden';
+            container.appendChild(iframe);
+        
+            const iframeDoc = iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head><style>body { margin: 0; padding: 0; text-align: center; background: transparent; }</style></head>
+                <body>${adCode}</body>
+                </html>
+            `);
+            iframeDoc.close();
+        }
+               
     </script>
 </body>
 </html>
