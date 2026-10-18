@@ -267,53 +267,21 @@
 
 	<style>
 		/* --- تنسيقات إجبار الوضع الأفقي والشاشات الصغيرة --- */
+		/* إيقاف ظهور شاشة الإجبار وجعل التصميم متجاوباً تلقائياً مع الوضع العمودي والأفقي */
 		#rotate-screen-warning {
-		    display: none;
-		    position: fixed;
-		    top: 0; left: 0;
-		    width: 100vw; height: 100vh;
-		    background: #0b0f19;
-		    color: #fff;
-		    z-index: 999999;
-		    flex-direction: column;
-		    justify-content: center;
-		    align-items: center;
-		    text-align: center;
-		    padding: 20px;
-		    box-sizing: border-box;
+		    display: none !important;
 		}
 		
-		#rotate-screen-warning .rotate-icon {
-		    font-size: 50px;
-		    margin-bottom: 15px;
-		    animation: rotateAnim 2s infinite ease-in-out;
-		}
-		
-		@keyframes rotateAnim {
-		    0% { transform: rotate(0deg); }
-		    50% { transform: rotate(90deg); }
-		    100% { transform: rotate(0deg); }
-		}
-		
-		/* إظهار تحذير التدوير إذا كان الجوال في الوضع العمودي */
-		@media screen and (max-width: 900px) and (orientation: portrait) {
-		    #rotate-screen-warning {
-		        display: flex !important;
-		    }
-		}
-
-		/* تحسينات الاستجابة للوضع الأفقي في الجوال */
-		@media screen and (max-height: 500px) and (orientation: landscape) {
+		/* تحسينات إضافية لتكييف عناصر اللعبة في الوضع العمودي للجوال */
+		@media screen and (max-width: 600px) {
 		    body {
 		        padding: 2px !important;
-		        align-items: flex-start !important;
+		        align-items: center !important;
 		    }
-		    
+		
 		    #game-container {
-		        padding: 4px !important;
 		        max-width: 100% !important;
-		        border: none !important;
-		        box-shadow: none !important;
+		        padding: 4px !important;
 		    }
 		
 		    #info-bar {
@@ -323,18 +291,13 @@
 		
 		    #question-box {
 		        font-size: 12px !important;
+		        min-height: 20px !important;
 		        margin: 2px 0 !important;
-		        min-height: 18px !important;
 		    }
 		
+		    /* تقليل ارتفاع الـ Canvas قليلاً في الجوال العمودي ليترك متسعاً للأزرار والعناصر */
 		    #canvas-wrapper {
-		        height: 62vh !important; /* ملائمة ارتفاع مساحة اللعبة لشاشة الجوال الأفقي */
-		        max-width: 100% !important;
-		    }
-		
-		    .panel-box {
-		        max-height: 65vh !important;
-		        padding: 6px !important;
+		        height: 360px !important;
 		    }
 		}
 	</style>
