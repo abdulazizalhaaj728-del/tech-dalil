@@ -264,12 +264,91 @@
             100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
         }
     </style>
+
+	<style>
+		/* --- تنسيقات إجبار الوضع الأفقي والشاشات الصغيرة --- */
+		#rotate-screen-warning {
+		    display: none;
+		    position: fixed;
+		    top: 0; left: 0;
+		    width: 100vw; height: 100vh;
+		    background: #0b0f19;
+		    color: #fff;
+		    z-index: 999999;
+		    flex-direction: column;
+		    justify-content: center;
+		    align-items: center;
+		    text-align: center;
+		    padding: 20px;
+		    box-sizing: border-box;
+		}
+		
+		#rotate-screen-warning .rotate-icon {
+		    font-size: 50px;
+		    margin-bottom: 15px;
+		    animation: rotateAnim 2s infinite ease-in-out;
+		}
+		
+		@keyframes rotateAnim {
+		    0% { transform: rotate(0deg); }
+		    50% { transform: rotate(90deg); }
+		    100% { transform: rotate(0deg); }
+		}
+		
+		/* إظهار تحذير التدوير إذا كان الجوال في الوضع العمودي */
+		@media screen and (max-width: 900px) and (orientation: portrait) {
+		    #rotate-screen-warning {
+		        display: flex !important;
+		    }
+		}
+
+		/* تحسينات الاستجابة للوضع الأفقي في الجوال */
+		@media screen and (max-height: 500px) and (orientation: landscape) {
+		    body {
+		        padding: 2px !important;
+		        align-items: flex-start !important;
+		    }
+		    
+		    #game-container {
+		        padding: 4px !important;
+		        max-width: 100% !important;
+		        border: none !important;
+		        box-shadow: none !important;
+		    }
+		
+		    #info-bar {
+		        font-size: 11px !important;
+		        margin-bottom: 2px !important;
+		    }
+		
+		    #question-box {
+		        font-size: 12px !important;
+		        margin: 2px 0 !important;
+		        min-height: 18px !important;
+		    }
+		
+		    #canvas-wrapper {
+		        height: 62vh !important; /* ملائمة ارتفاع مساحة اللعبة لشاشة الجوال الأفقي */
+		        max-width: 100% !important;
+		    }
+		
+		    .panel-box {
+		        max-height: 65vh !important;
+		        padding: 6px !important;
+		    }
+		}
+	</style>
 </head>
 <body>
 
+	<!-- حاوية إجبار الوضع الأفقي للجوال -->
+	<div id="rotate-screen-warning">
+	    <div class="rotate-icon">📱🔄</div>
+	    <h2>يرجى تدوير الجهاز للوضع الأفقي</h2>
+	    <p>للحصول على أفضل تجربة لعب، يرجى تدوير الهاتف أفقياً (Landscape Mode)</p>
+	</div>
+	
     <div id="game-container">
-
-
         <div class="main-top-buttons" id="external-nav-bar" style="display: none;">
             <button class="btn btn-gray" onclick="openRecordsModal()" id="btn-records-txt" style="display: none;">سجل المتسابقين</button>
             <button class="btn btn-gray" onclick="openControlPanel()" id="btn-ctrl-txt" style="display: none;">لوحة التحكم</button>
@@ -1455,31 +1534,35 @@ function confirmClearAllRecords() {
             requestAnimationFrame(loop);
         }
 
-        function handlePointerMove(e) {
-            let rect = document.getElementById('canvas-wrapper').getBoundingClientRect();
-            let scaleX = canvas.width / rect.width;
-            let mouseX = (e.clientX - rect.left) * scaleX;
-            player.x = mouseX;
-        }
 
-        function handleTouchMove(e) {
-            if (e.touches.length > 0) {
-                let rect = document.getElementById('canvas-wrapper').getBoundingClientRect();
-                let scaleX = canvas.width / rect.width;
-                let touchX = (e.touches[0].clientX - rect.left) * scaleX;
-                player.x = touchX;
-            }
-        }
-
-        function handleTouchStart(e) {
-            if (e.touches.length > 0) {
-                let rect = document.getElementById('canvas-wrapper').getBoundingClientRect();
-                let scaleX = canvas.width / rect.width;
-                let touchX = (e.touches[0].clientX - rect.left) * scaleX;
-                player.x = touchX;
-            }
-        }
-
+		function getCanvasRelativeX(clientX) {
+		    let rect = document.getElementById('canvas-wrapper').getBoundingClientRect();
+		    let scaleX = canvas.width / rect.width;
+		    let touchX = (clientX - rect.left) * scaleX;
+		    
+		    // ضمان عدم خروج المدفع خارج الحدود
+		    if (touchX < 25) touchX = 25;
+		    if (touchX > canvas.width - 25) touchX = canvas.width - 25;
+		    
+		    return touchX;
+		}
+		
+		function handlePointerMove(e) {
+		    player.x = getCanvasRelativeX(e.clientX);
+		}
+		
+		function handleTouchMove(e) {
+		    if (e.touches.length > 0) {
+		        player.x = getCanvasRelativeX(e.touches[0].clientX);
+		    }
+		}
+		
+		function handleTouchStart(e) {
+		    if (e.touches.length > 0) {
+		        player.x = getCanvasRelativeX(e.touches[0].clientX);
+		    }
+		}
+		
         function handlePlayerClick(e) {
             e.stopPropagation();
             shootBullet();
