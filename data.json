@@ -287,6 +287,14 @@
             "content": "",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1792281708906",
+            "title": "أحدث المواضيع",
+            "type": "recent",
+            "content": "",
+            "active": true,
+            "location": "sidebar"
         }
     ],
     "ads": {
