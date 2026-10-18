@@ -515,10 +515,30 @@
         }
         
         @media (max-width: 768px) {
+        /* منع الإعلانات من تجاوز عرض الشاشة وإجبارها على الانكماش للتوافق */
             .article-ad-box {
-                margin: 15px auto;
-                transform: scale(0.92);
-                transform-origin: center;
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow: hidden !important;
+                box-sizing: border-box !important;
+                margin: 15px auto !important;
+            }
+
+            /* أي عنصر داخل صندوق الإعلان (مثل iframe أو صور الإعلانات) يلتزم بالعرض */
+            .article-ad-box iframe, 
+            .article-ad-box ins, 
+            .article-ad-box img, 
+            .article-ad-box div {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+        
+            /* حماية حاوية المقال الرئيسية من التمدد الأفقي */
+            #dynamic-post-view, 
+            .dynamic-post-content-box,
+            .right-scrollable-section {
+                max-width: 100% !important;
+                overflow-x: hidden !important;
             }
         }
     </style>
