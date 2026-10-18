@@ -295,6 +295,21 @@
             "content": "",
             "active": true,
             "location": "sidebar"
+        },
+        {
+            "id": "w_1792300032915",
+            "title": "اتصل بنا",
+            "type": "contact",
+            "content": "",
+            "active": true,
+            "location": "sidebar",
+            "contactData": {
+                "name": "",
+                "email": "",
+                "phone": "",
+                "whatsapp": "",
+                "telegram": ""
+            }
         }
     ],
     "ads": {
