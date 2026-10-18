@@ -674,7 +674,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         `).join('') + '</ul>';
                     } 
                     else if (w.type === 'recent' || (w.title && w.title.includes('أحدث المواضيع'))) {
-                        let recentPosts = filteredPosts.slice(0, 5);
+                        let recentPosts = filteredPosts.slice(0, 3);
                         contentBox = '<ul class="recent-posts-list">' + recentPosts.map(p => `
                             <li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}'); return false;" style="font-size: 0.7rem; display: flex; align-items: center; gap: 5px;">
                                 <i class="fa-solid fa-clock" style="color: var(--primary-color);"></i>${p.title}
