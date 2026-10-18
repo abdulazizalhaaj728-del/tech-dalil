@@ -1116,7 +1116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let headings = tempDiv.querySelectorAll('h2, h3');
                 let tocHtml = '';
                 
-                // 1. توليد قائمة المحتويات (TOC)
+// 1. توليد قائمة المحتويات (TOC) وإعلان الأعلى
                 let tocOptions = `<option value="" disabled selected>-- اختر من محتويات المقال (انقر هنا للاستعراض) --</option>`;
                 if (headings.length > 0) {
                     headings.forEach((h, index) => {
@@ -1129,7 +1129,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     tocOptions += `<option value="" disabled>لا توجد عناوين فرعية في هذا المقال</option>`;
                 }
         
-                // إضافة حواضن الإعلانات وتجميع عناصر المقال
                 let tocHtml = `
                     <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
                         <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 30; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
@@ -1140,7 +1139,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div id="article-top-ad" class="article-ad-box"></div>
                 `;
         
+                // 2. معالجة الفقرات وصندوق "شاهد أيضاً" (إعلان المنتصف تحته مباشرة)
                 let paragraphs = tempDiv.querySelectorAll('p');
+                let seeAlsoAndMidAdHtml = '';
+                
                 if (paragraphs.length > 1) {
                     let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
                     let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
@@ -1153,101 +1155,41 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <ul>
                                 ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
                             </ul>
+                            <!-- ⬅️ إعلان الأوسط: تحت مربع الروابط / شاهد أيضاً مباشرة -->
+                            <div id="article-mid-ad" class="article-ad-box" style="margin-top: 15px;"></div>
                         `;
                         let middleIndex = Math.floor(paragraphs.length / 2);
                         paragraphs[middleIndex].parentNode.insertBefore(seeAlsoDiv, paragraphs[middleIndex].nextSibling);
                     }
                 }
 
-                // ⬅️ إعلان الأوسط: يوضع بعد نهاية محتوى المقال وقبل الأسهم (أو تحت مربع الروابط)
-                let midAndBotAdsHtml = `
-                    <!-- ⬅️ إعلان الأوسط: تحت مربع الروابط / المحتوى -->
-                    <div id="article-mid-ad" class="article-ad-box"></div>
-                    
+                // 3. إعلان الأسفل: فوق أسهم التنقل مباشرة
+                let botAdHtml = `
                     <!-- ⬅️ إعلان الأسفل: فوق أسهم التنقل مباشرة -->
                     <div id="article-bot-ad" class="article-ad-box"></div>
                 `;
 
-                // دمج المحتوى مع إعلان الأسفل والأوسط
-                tempDiv.innerHTML = tocHtml + tempDiv.innerHTML + midAndBotAdsHtml;
+                // دمج المحتوى بالكامل
+                tempDiv.innerHTML = tocHtml + tempDiv.innerHTML + botAdHtml;
                 post.processedContent = tempDiv.innerHTML;
         
+                // إعداد مؤشرات التنقل للمقال السابق والتالي
                 let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
                 window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
                 window._currentNavNextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
-        
-                function renderNavContainer() {
-                    let pPost = window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
-                    let nPost = window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
-        
-                    let pHtml = pPost ? `
-                        <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                            <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
-                            <div style="border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; background: var(--card-bg); flex-grow: 1; text-align: right;">
-                                <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${pPost.title}" onclick="openPostBySlug('${pPost.slug}'); return false;">${getShortTitle(pPost.title)}</a>
-                            </div>
-                        </div>` : `<span></span>`;
-        
-                    let nHtml = nPost ? `
-                        <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
-                            <div style="border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; background: var(--card-bg); flex-grow: 1; text-align: left;">
-                                <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nPost.title}" onclick="openPostBySlug('${nPost.slug}'); return false;">${getShortTitle(nPost.title)}</a>
-                            </div>
-                            <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
-                        </div>` : `<span></span>`;
-        
-                    const navBox = document.getElementById('bottom-navigation-wrapper');
-                    if (navBox) {
-                        navBox.innerHTML = `<div>${pHtml}</div><div>${nHtml}</div>`;
-                        attachNavEvents();
-                    }
-                }
 
-                // دالة حقن الإعلانات التي لديك
-                function renderArticleAds(adsData) {
-                    if (!adsData) return;
-                
-                    function injectAd(containerId, isOn, codeString) {
-                        const container = document.getElementById(containerId);
-                        if (!container) return;
-                
-                        if (isOn && codeString) {
-                            container.style.display = 'flex';
-                            container.innerHTML = ''; 
-                
-                            const wrapper = document.createElement('div');
-                            wrapper.innerHTML = codeString;
-                
-                            Array.from(wrapper.childNodes).forEach(node => {
-                                if (node.nodeName === 'SCRIPT') {
-                                    const script = document.createElement('script');
-                                    Array.from(node.attributes).forEach(attr => {
-                                        script.setAttribute(attr.name, attr.value);
-                                    });
-                                    if (node.innerHTML) {
-                                        script.innerHTML = node.innerHTML;
-                                    }
-                                    container.appendChild(script);
-                                } else {
-                                    container.appendChild(node.cloneNode(true));
-                                }
-                            });
-                        } else {
-                            container.style.display = 'none';
-                        }
+                // استدعاء دالة عرض الإعلانات (يُفضل أن تكون معرفة في النطاق العام للجافاسكريبت)
+                setTimeout(() => {
+                    if (typeof renderArticleAds === 'function') {
+                        renderArticleAds(data.ads);
                     }
+                }, 150);
                 
-                    // استدعاء الحقن في المواضع الثلاثة داخل المقال
-                    injectAd('article-top-ad', ads.topOn, ads.topCode);
-                    injectAd('article-mid-ad', ads.midOn, ads.midCode);
-                    injectAd('article-bot-ad', ads.botOn, ads.botCode);
-                }
-
-                // تأكد من استدعاء دالة عرض الإعلانات بعد تحميل المقال ورسمه
+                /* تأكد من استدعاء دالة عرض الإعلانات بعد تحميل المقال ورسمه
                 setTimeout(() => {
                     renderArticleAds(data.ads);
                 }, 100);
-
+                */
                 
                 function attachNavEvents() {
                     const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
