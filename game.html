@@ -266,22 +266,22 @@
     </style>
 
 	<style>
-		/* --- تنسيقات إجبار الوضع الأفقي والشاشات الصغيرة --- */
-		/* إيقاف ظهور شاشة الإجبار وجعل التصميم متجاوباً تلقائياً مع الوضع العمودي والأفقي */
+		/* إلغاء أي قيود سابقة وإعطاء مرونة تامة لعرض اللعبة على الجوال والكمبيوتر */
 		#rotate-screen-warning {
 		    display: none !important;
 		}
 		
-		/* تحسينات إضافية لتكييف عناصر اللعبة في الوضع العمودي للجوال */
-		@media screen and (max-width: 600px) {
+		@media screen and (max-width: 900px) {
 		    body {
 		        padding: 2px !important;
 		        align-items: center !important;
 		    }
 		
 		    #game-container {
+		        width: 100% !important;
 		        max-width: 100% !important;
 		        padding: 4px !important;
+		        box-sizing: border-box !important;
 		    }
 		
 		    #info-bar {
@@ -295,11 +295,19 @@
 		        margin: 2px 0 !important;
 		    }
 		
-		    /* تقليل ارتفاع الـ Canvas قليلاً في الجوال العمودي ليترك متسعاً للأزرار والعناصر */
+		    /* تثبيت ارتفاع مرن ومنضبط لمساحة اللعب لكي تظهر الطائرات بوضوح في جميع المستويات بما فيها الأسطوري */
 		    #canvas-wrapper {
-		        height: 360px !important;
+		        width: 100% !important;
+		        height: 380px !important;
+		        max-width: 100% !important;
+		    }
+		
+		    canvas {
+		        width: 100% !important;
+		        height: 100% !important;
 		    }
 		}
+	
 	</style>
 </head>
 <body>
@@ -340,10 +348,6 @@
                 <button class="btn btn-gray" style="font-size: 11px; padding: 5px 12px;" onclick="openAboutModal()" id="btn-about-main">برمجة وتصميم</button>
                 <!-- زر الخروج الجديد -->
                 <button class="btn btn-red" style="font-size: 11px; padding: 5px 12px;" onclick="exitGameApp()" id="btn-exit-game">🚪 خروج من اللعبة</button>
-            </div>
-			
-            <div style="margin-top: 12px;">
-                <button class="btn btn-gray" style="font-size: 11px; padding: 5px 12px;" onclick="openAboutModal()" id="btn-about-main">برمجة وتصميم</button>
             </div>
         </div>
 
