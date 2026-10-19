@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -235,6 +236,7 @@
         body.light-mode .post-card,
         body.light-mode .widget-card,
         body.light-mode .sidebar-controls-box,
+        body.light-mode .mobile-theme-bar,
         body.light-mode .footer-container,
         body.light-mode .left-sticky-sidebar,
         body.light-mode .news-mini-container {
@@ -331,7 +333,7 @@
 
         #toc-container {
             position: sticky;
-            top: 40px;
+            top: 95px;
             z-index: 100;
             background: rgba(247, 244, 239, 0.95);
             backdrop-filter: blur(5px);
@@ -444,6 +446,27 @@
                 cursor: pointer;
                 flex-shrink: 0;
             }
+
+            /* الشريط المخصص للثيمات والأزرار الثلاثة بالجوال (Sticky تحت الهيدر) */
+            .mobile-theme-bar {
+                display: flex !important;
+                position: sticky !important;
+                top: 55px !important;
+                z-index: 998 !important;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 6px 10px;
+                margin: 8px 0;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            }
+
+            /* جعل محتوى المقال ستيكي تحت شريط الثيمات مباشرة للجوال */
+            #dynamic-post-view {
+                position: sticky !important;
+                top: 105px !important;
+                z-index: 900 !important;
+            }
         
             .main-menu-bar {
                 position: relative !important;
@@ -500,6 +523,9 @@
             .mobile-menu-btn {
                 display: none !important;
             }
+            .mobile-theme-bar {
+                display: none !important;
+            }
         }    
 
         .article-ad-box {
@@ -515,7 +541,7 @@
         }
         
         @media (max-width: 768px) {
-        /* منع الإعلانات من تجاوز عرض الشاشة وإجبارها على الانكماش للتوافق */
+            /* إجبار الإعلانات على الانكماش والتوافق التام مع حاوية الجوال دون أي قطع */
             .article-ad-box {
                 width: 100% !important;
                 max-width: 100% !important;
@@ -524,7 +550,6 @@
                 margin: 15px auto !important;
             }
 
-            /* أي عنصر داخل صندوق الإعلان (مثل iframe أو صور الإعلانات) يلتزم بالعرض */
             .article-ad-box iframe, 
             .article-ad-box ins, 
             .article-ad-box img, 
@@ -533,7 +558,6 @@
                 box-sizing: border-box !important;
             }
         
-            /* حماية حاوية المقال الرئيسية من التمدد الأفقي */
             #dynamic-post-view, 
             .dynamic-post-content-box,
             .right-scrollable-section {
@@ -567,6 +591,19 @@
                 <i class="fa-solid fa-bars"></i>
             </button>
         </header>
+
+        <!-- شريط الثيمات والأزرار الثابت (Sticky) المخصص للجوال تحت الهيدر مباشرة -->
+        <div class="mobile-theme-bar sidebar-controls-box" style="margin-bottom: 0;">
+            <div class="sidebar-controls-inner" style="width: 100%;">
+                <div class="color-switcher-group">
+                    <button id="mob-prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
+                    <span class="color-center-icon"><i class="fa-solid fa-palette"></i></span>
+                    <button id="mob-next-theme-btn" title="الثيم التالي"><i class="fa-solid fa-chevron-left"></i></button>
+                </div>
+                <button class="control-btn" id="mob-font-toggle-btn" title="تغيير الخط"><i class="fa-solid fa-font"></i> الخط</button>
+                <button class="control-btn" id="mob-dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
+            </div>
+        </div>
 
         <div class="ticker-wrapper" id="site-ticker-wrapper">
             <div class="ticker-container">
@@ -693,7 +730,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let linkVal = data.staticPagesLinks[item.key];
                 if (linkVal && linkVal.trim() !== '') {
                     let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
-                    linksHtml += `<a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;">${item.label}</a>`;
+                    linksHtml += `<a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" rel="nofollow">${item.label}</a>`;
                 }
             });
             topPagesContainer.innerHTML = linksHtml;
@@ -855,7 +892,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 let linkVal = data.staticPagesLinks[item.key];
                                 if (linkVal && linkVal.trim() !== '') {
                                     let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
-                                    pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
+                                    pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" rel="nofollow" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
                                 }
                             });
                         }
@@ -900,24 +937,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             const themes = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
             let currentThemeIdx = 0;
         
-            const nextThemeBtn = document.getElementById('next-theme-btn');
-            const prevThemeBtn = document.getElementById('prev-theme-btn');
-            if (nextThemeBtn) {
-                nextThemeBtn.onclick = () => {
-                    document.body.classList.remove(themes[currentThemeIdx]);
-                    currentThemeIdx = (currentThemeIdx + 1) % themes.length;
-                    document.body.classList.add(themes[currentThemeIdx]);
-                    localStorage.setItem('site_theme', themes[currentThemeIdx]);
-                };
+            function applyTheme(idx) {
+                document.body.classList.remove(...themes);
+                currentThemeIdx = idx;
+                document.body.classList.add(themes[currentThemeIdx]);
+                localStorage.setItem('site_theme', themes[currentThemeIdx]);
             }
-            if (prevThemeBtn) {
-                prevThemeBtn.onclick = () => {
-                    document.body.classList.remove(themes[currentThemeIdx]);
-                    currentThemeIdx = (currentThemeIdx - 1 + themes.length) % themes.length;
-                    document.body.classList.add(themes[currentThemeIdx]);
-                    localStorage.setItem('site_theme', themes[currentThemeIdx]);
-                };
-            }
+
+            // ربط أزرار الكمبيوتر والجوال معاً
+            ['next-theme-btn', 'mob-next-theme-btn'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.onclick = () => applyTheme((currentThemeIdx + 1) % themes.length);
+            });
+
+            ['prev-theme-btn', 'mob-prev-theme-btn'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.onclick = () => applyTheme((currentThemeIdx - 1 + themes.length) % themes.length);
+            });
         
             let savedTheme = localStorage.getItem('site_theme');
             if (savedTheme && themes.includes(savedTheme)) {
@@ -927,33 +963,45 @@ document.addEventListener('DOMContentLoaded', async () => {
         
             const fonts = ['Cairo', 'Tajawal', 'Amiri', 'Almarai', 'Readex Pro', 'Changa'];
             let currentFontIdx = 0;
-            const fontToggleBtn = document.getElementById('font-toggle-btn');
-            if (fontToggleBtn) {
-                fontToggleBtn.onclick = () => {
-                    currentFontIdx = (currentFontIdx + 1) % fonts.length;
-                    let chosenFont = fonts[currentFontIdx];
-                    document.documentElement.style.setProperty('--active-font', chosenFont);
-                    localStorage.setItem('site_font', chosenFont);
-                };
+
+            function toggleFont() {
+                currentFontIdx = (currentFontIdx + 1) % fonts.length;
+                let chosenFont = fonts[currentFontIdx];
+                document.documentElement.style.setProperty('--active-font', chosenFont);
+                localStorage.setItem('site_font', chosenFont);
             }
+
+            ['font-toggle-btn', 'mob-font-toggle-btn'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.onclick = toggleFont;
+            });
+
             let savedFont = localStorage.getItem('site_font');
             if (savedFont) {
                 document.documentElement.style.setProperty('--active-font', savedFont);
             }
                     
-            const darkModeBtn = document.getElementById('dark-mode-btn');
-            if (darkModeBtn) {
-                darkModeBtn.addEventListener('click', () => {
-                    document.body.classList.toggle('light-mode');
-                    const isLight = document.body.classList.contains('light-mode');
-                    localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
-                    darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+            function toggleDarkMode() {
+                document.body.classList.toggle('light-mode');
+                const isLight = document.body.classList.contains('light-mode');
+                localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
+                ['dark-mode-btn', 'mob-dark-mode-btn'].forEach(id => {
+                    const b = document.getElementById(id);
+                    if (b) b.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
                 });
-            
-                if (localStorage.getItem('tech_light_mode') === '1') {
-                    document.body.classList.add('light-mode');
-                    darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-                }
+            }
+
+            ['dark-mode-btn', 'mob-dark-mode-btn'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.addEventListener('click', toggleDarkMode);
+            });
+
+            if (localStorage.getItem('tech_light_mode') === '1') {
+                document.body.classList.add('light-mode');
+                ['dark-mode-btn', 'mob-dark-mode-btn'].forEach(id => {
+                    const b = document.getElementById(id);
+                    if (b) b.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                });
             }
         }
 
@@ -1031,7 +1079,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                 setTimeout(() => {
                     const rect = dynamicView.getBoundingClientRect();
-                    window.scrollTo({ top: window.pageYOffset + rect.top - 33, behavior: 'smooth' });
+                    window.scrollTo({ top: window.pageYOffset + rect.top - 100, behavior: 'smooth' });
                 }, 50);
         
                 let tempDiv = document.createElement('div');
@@ -1052,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                 let tocHtml = `
                     <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
-                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 30; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 40; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                             ${tocOptions}
                         </select>
                     </div>
@@ -1286,7 +1334,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 let hasChildren = node.children && node.children.length > 0;
                 let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-                let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;"` : '';
+                let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;" rel="nofollow"` : 'rel="nofollow"';
                 return `
                     <li>
                         <a href="${finalHref}" ${clickAttr}>${node.title}${arrow}</a>
