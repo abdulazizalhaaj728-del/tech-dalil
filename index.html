@@ -285,7 +285,7 @@
             background: rgba(2, 132, 199, 0.1) !important;
         }
 
-        /* تنسيقات الجداول الجديدة: خلفيات صلبة، عناوين داكنة بولد، ونصوص سوداء بولد وأصغر قليلاً */
+        /* تنسيقات الجداول الصلبة وغير الشفافة */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
@@ -368,12 +368,11 @@
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
 
-        /* شريط المحتويات (TOC): معلق ومثبت بدقة تحت القائمة الرئيسية في الكمبيوتر، وتحت شريط الثيمات في الجوال */
+        /* شريط المحتويات (TOC): معلق ومثبت تماماً في المكان المطلوب */
         #toc-container {
-            position: sticky;
-            top: 52px;
-            z-index: 100;
-            background: rgba(247, 244, 239, 0.95);
+            position: sticky !important;
+            z-index: 100 !important;
+            background: rgba(247, 244, 239, 0.95) !important;
             backdrop-filter: blur(5px);
             padding: 8px 0;
             margin-bottom: 20px;
@@ -381,12 +380,12 @@
         }
         @media (min-width: 769px) {
             #toc-container {
-                top: 55px; /* يلتصق أسفل القائمة الرئيسية مباشرة على الكمبيوتر */
+                top: 55px !important; /* يعلق تحت القائمة الرئيسية المثبتة في الكمبيوتر تماماً */
             }
         }
         @media (max-width: 768px) {
             #toc-container {
-                top: 105px; /* يلتصق أسفل شريط الثيمات والهيدر المثبت على الجوال */
+                top: 105px !important; /* يعلق تحت شريط الثيمات مباشرة في الجوال */
             }
         }
 
@@ -497,7 +496,7 @@
                 flex-shrink: 0;
             }
 
-            /* شريط الثيمات الثابت للجوال تحت الهيدر مباشرة */
+            /* شريط الثيمات الثابت للجوال تحت الهيدر */
             .mobile-theme-bar {
                 display: flex !important;
                 position: sticky !important;
@@ -1244,6 +1243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // تم إصلاح دالة حقن الإعلانات لتففعيل السكربتات والإطارات بشكل متكامل
         function renderArticleAds(adsData) {
             if (!adsData) return;
         
@@ -1251,23 +1251,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const container = document.getElementById(containerId);
                 if (!container) return;
         
-                if (isOn && codeString) {
+                if (isOn && codeString && codeString.trim() !== '') {
                     container.style.display = 'flex';
                     container.innerHTML = ''; 
         
-                    const wrapper = document.createElement('div');
-                    wrapper.innerHTML = codeString;
-        
-                    Array.from(wrapper.childNodes).forEach(node => {
+                    const tempWrapper = document.createElement('div');
+                    tempWrapper.innerHTML = codeString;
+                    
+                    // استخراج ونقل العناصر مع تشغيل السكربتات الداخلية ديناميكياً
+                    Array.from(tempWrapper.childNodes).forEach(node => {
                         if (node.nodeName === 'SCRIPT') {
-                            const script = document.createElement('script');
+                            const newScript = document.createElement('script');
                             Array.from(node.attributes).forEach(attr => {
-                                script.setAttribute(attr.name, attr.value);
+                                newScript.setAttribute(attr.name, attr.value);
                             });
-                            if (node.innerHTML) {
-                                script.innerHTML = node.innerHTML;
+                            if (node.textContent) {
+                                newScript.textContent = node.textContent;
                             }
-                            container.appendChild(script);
+                            container.appendChild(newScript);
                         } else {
                             container.appendChild(node.cloneNode(true));
                         }
