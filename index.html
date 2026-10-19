@@ -42,12 +42,12 @@
             flex-grow: 1;
         }
 
-        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --primary-color: #0284c7; --accent-color: #0284c7; --border-color: #334155; }
-        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --primary-color: #38bdf8; --accent-color: #38bdf8; --border-color: #1d4ed8; }
-        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --primary-color: #e04885; --accent-color: #e04885; --border-color: #5c2438; }
-        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --primary-color: #b86b3a; --accent-color: #b86b3a; --border-color: #593f2b; }
-        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; }
-        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; }
+        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --primary-color: #0284c7; --accent-color: #0284c7; --border-color: #334155; --table-bg: rgba(30, 41, 59, 0.4); }
+        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --primary-color: #38bdf8; --accent-color: #38bdf8; --border-color: #1d4ed8; --table-bg: rgba(12, 35, 64, 0.4); }
+        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --primary-color: #e04885; --accent-color: #e04885; --border-color: #5c2438; --table-bg: rgba(31, 16, 23, 0.4); }
+        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --primary-color: #b86b3a; --accent-color: #b86b3a; --border-color: #593f2b; --table-bg: rgba(31, 23, 18, 0.4); }
+        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; --table-bg: rgba(13, 46, 32, 0.4); }
+        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; --table-bg: rgba(35, 20, 66, 0.4); }
 
         .section-title {
             text-align: center;
@@ -98,6 +98,10 @@
         .top-social { display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
         .top-social a { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; transition: color 0.2s; }
         .top-social a:hover { color: var(--accent-color); }
+
+        header, .header-center, .site-footer, .footer-bottom-bar {
+            font-family: 'Cairo', sans-serif !important;
+        }
 
         header {
             background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);
@@ -225,6 +229,7 @@
             --border-color: #cbd5e1 !important;
             --primary-color: #0284c7 !important;
             --accent-color: #2563eb !important;
+            --table-bg: rgba(241, 245, 249, 0.4) !important;
             background-color: #f8fafc !important;
             color: #0f172a !important;
         }
@@ -271,26 +276,39 @@
             margin-bottom: 11px !important;
         }
 
+        /* تنسيقات الجداول لتكون بخلفية شفافة خفيفة (أثر من لون الثيم) وخط صغير مانع للتقطيع */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
             border-collapse: collapse !important;
             margin: 15px 0 !important;
-            background-color: #ffffff !important;
+            background-color: var(--table-bg, rgba(240, 244, 248, 0.4)) !important;
         }
 
         .single-post-content th, .single-post-content td,
         .dynamic-post-content-box th, .dynamic-post-content-box td {
-            border: 1px solid #94a3b8 !important;
-            padding: 10px !important;
+            border: 1px solid var(--border-color, #94a3b8) !important;
+            padding: 6px 8px !important;
             text-align: right !important;
-            color: #1e293b !important;
+            color: var(--text-main, #1e293b) !important;
+            font-size: 0.78rem !important;
+            white-space: nowrap !important;
         }
 
         .single-post-content th,
         .dynamic-post-content-box th {
-            background-color: #e2e8f0 !important;
+            background-color: var(--card-bg, #e2e8f0) !important;
+            opacity: 0.95;
             font-weight: bold !important;
+            font-size: 0.8rem !important;
+        }
+
+        @media (max-width: 768px) {
+            .single-post-content th, .single-post-content td,
+            .dynamic-post-content-box th, .dynamic-post-content-box td {
+                font-size: 0.65rem !important;
+                padding: 4px 5px !important;
+            }
         }
 
         .left-sticky-sidebar { 
@@ -333,7 +351,7 @@
 
         #toc-container {
             position: sticky;
-            top: 95px;
+            top: 55px;
             z-index: 100;
             background: rgba(247, 244, 239, 0.95);
             backdrop-filter: blur(5px);
@@ -447,25 +465,18 @@
                 flex-shrink: 0;
             }
 
-            /* الشريط المخصص للثيمات والأزرار الثلاثة بالجوال (Sticky تحت الهيدر) */
+            /* شريط الثيمات والأزرار الثابت للجوال */
             .mobile-theme-bar {
                 display: flex !important;
                 position: sticky !important;
-                top: 55px !important;
+                top: 52px !important;
                 z-index: 998 !important;
                 background: var(--card-bg);
                 border: 1px solid var(--border-color);
                 border-radius: 8px;
-                padding: 6px 10px;
-                margin: 8px 0;
+                padding: 5px 10px;
+                margin: 6px 0;
                 box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-            }
-
-            /* جعل محتوى المقال ستيكي تحت شريط الثيمات مباشرة للجوال */
-            #dynamic-post-view {
-                position: sticky !important;
-                top: 105px !important;
-                z-index: 900 !important;
             }
         
             .main-menu-bar {
@@ -541,7 +552,7 @@
         }
         
         @media (max-width: 768px) {
-            /* إجبار الإعلانات على الانكماش والتوافق التام مع حاوية الجوال دون أي قطع */
+            /* ضمان عدم قص الإعلانات واحتوائها التام داخل حاوية الجوال */
             .article-ad-box {
                 width: 100% !important;
                 max-width: 100% !important;
@@ -592,7 +603,7 @@
             </button>
         </header>
 
-        <!-- شريط الثيمات والأزرار الثابت (Sticky) المخصص للجوال تحت الهيدر مباشرة -->
+        <!-- شريط الثيمات للجوال -->
         <div class="mobile-theme-bar sidebar-controls-box" style="margin-bottom: 0;">
             <div class="sidebar-controls-inner" style="width: 100%;">
                 <div class="color-switcher-group">
@@ -944,7 +955,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 localStorage.setItem('site_theme', themes[currentThemeIdx]);
             }
 
-            // ربط أزرار الكمبيوتر والجوال معاً
             ['next-theme-btn', 'mob-next-theme-btn'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) btn.onclick = () => applyTheme((currentThemeIdx + 1) % themes.length);
@@ -1079,7 +1089,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                 setTimeout(() => {
                     const rect = dynamicView.getBoundingClientRect();
-                    window.scrollTo({ top: window.pageYOffset + rect.top - 100, behavior: 'smooth' });
+                    window.scrollTo({ top: window.pageYOffset + rect.top - 60, behavior: 'smooth' });
                 }, 50);
         
                 let tempDiv = document.createElement('div');
@@ -1100,7 +1110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                 let tocHtml = `
                     <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
-                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 40; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 15; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                             ${tocOptions}
                         </select>
                     </div>
@@ -1180,20 +1190,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             let pPost = window._currentNavPrevIndex !== undefined && window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
             let nPost = window._currentNavNextIndex !== undefined && window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
 
+            // تنسيق أزرار التنقل والأسهم لتكون تحت الروابط مع تصغير خط الروابط قليلاً
             let pHtml = pPost ? `
-                <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                    <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
-                    <div style="border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; background: var(--card-bg); flex-grow: 1; text-align: right;">
-                        <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${pPost.title}" onclick="openPostBySlug('${pPost.slug}'); return false;">${getShortTitle(pPost.title)}</a>
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%;">
+                    <div style="border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; background: var(--card-bg); width: 100%; text-align: right;">
+                        <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.75rem; display: block;" title="${pPost.title}" onclick="openPostBySlug('${pPost.slug}'); return false;">${getShortTitle(pPost.title)}</a>
                     </div>
+                    <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; padding: 4px 12px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; font-size: 0.75rem; gap: 5px;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i> السابق</button>
                 </div>` : `<span></span>`;
 
             let nHtml = nPost ? `
-                <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
-                    <div style="border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; background: var(--card-bg); flex-grow: 1; text-align: left;">
-                        <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nPost.title}" onclick="openPostBySlug('${nPost.slug}'); return false;">${getShortTitle(nPost.title)}</a>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; width: 100%;">
+                    <div style="border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; background: var(--card-bg); width: 100%; text-align: left;">
+                        <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.75rem; display: block;" title="${nPost.title}" onclick="openPostBySlug('${nPost.slug}'); return false;">${getShortTitle(nPost.title)}</a>
                     </div>
-                    <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; padding: 4px 12px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; font-size: 0.75rem; gap: 5px;" title="المقال التالي">التالي <i class="fa-solid fa-arrow-left"></i></button>
                 </div>` : `<span></span>`;
 
             const navBox = document.getElementById('bottom-navigation-wrapper');
