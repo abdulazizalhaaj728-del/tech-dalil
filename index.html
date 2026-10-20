@@ -285,52 +285,52 @@
             background: rgba(2, 132, 199, 0.1) !important;
         }
 
-        /* تعديل الجداول لتكون صلبة تماماً (Solid) بدون أي شفافية */
+        
+        /* هيكل الجدول العام داخل المقالات */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
             max-width: 100% !important;
             border-collapse: collapse !important;
             margin: 15px auto !important;
-            background-color: var(--table-bg, #ffffff) !important;
+            background-color: var(--card-bg) !important; /* خلفية متوافقة مع الثيم الحركي */
             table-layout: auto !important;
+            border: 1px solid var(--border-color) !important;
         }
-
+        
+        /* خلايا الجدول والنصوص (تتغير تلقائياً مع الثيمات ولا تظل سوداء) */
         .single-post-content th, .single-post-content td,
         .dynamic-post-content-box th, .dynamic-post-content-box td {
-            border: 1px solid var(--border-color, #94a3b8) !important;
-            padding: 6px 8px !important;
+            border: 1px solid var(--border-color) !important;
+            padding: 8px 10px !important;
             text-align: right !important;
-            color: #000000 !important;
-            font-size: 0.78rem !important;
-            background-color: var(--table-bg, #ffffff) !important;
+            color: var(--text-main) !important; /* لون النص يتغير حسب الثيم الحالي تلقائياً */
+            font-size: 0.8rem !important;
+            background-color: var(--card-bg) !important;
             white-space: normal !important;
             word-break: normal !important;
             overflow-wrap: break-word !important;
         }
-
-        .single-post-content th *, .single-post-content td *,
-        .dynamic-post-content-box th *, .dynamic-post-content-box td * {
-            background: transparent !important;
-            background-color: transparent !important;
-            color: #000000 !important;
-        }
-
+        
+        /* عناوين الجدول الرئيسية (th) */
         .single-post-content th,
         .dynamic-post-content-box th {
             font-weight: bold !important;
-            font-size: 0.8rem !important;
-            background-color: var(--card-bg, #e2e8f0) !important;
+            font-size: 0.85rem !important;
+            color: var(--accent-color) !important; /* لون مميز لعناوين الجدول يتطابق مع الثيم */
+            background-color: var(--bg-color) !important;
         }
-
+        
+        /* التجاوب مع الجوال للجداول */
         @media (max-width: 768px) {
             .single-post-content th, .single-post-content td,
             .dynamic-post-content-box th, .dynamic-post-content-box td {
-                font-size: 0.65rem !important;
-                padding: 4px 5px !important;
+                font-size: 0.7rem !important;
+                padding: 5px 6px !important;
             }
         }
 
+        
         .left-sticky-sidebar { 
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
         }
