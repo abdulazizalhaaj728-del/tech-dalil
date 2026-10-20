@@ -42,12 +42,12 @@
             flex-grow: 1;
         }
 
-        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --primary-color: #0284c7; --accent-color: #0284c7; --border-color: #334155; --table-bg: rgba(30, 41, 59, 0.4); }
-        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --primary-color: #38bdf8; --accent-color: #38bdf8; --border-color: #1d4ed8; --table-bg: rgba(12, 35, 64, 0.4); }
-        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --primary-color: #e04885; --accent-color: #e04885; --border-color: #5c2438; --table-bg: rgba(31, 16, 23, 0.4); }
-        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --primary-color: #b86b3a; --accent-color: #b86b3a; --border-color: #593f2b; --table-bg: rgba(31, 23, 18, 0.4); }
-        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; --table-bg: rgba(13, 46, 32, 0.4); }
-        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; --table-bg: rgba(35, 20, 66, 0.4); }
+        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --primary-color: #0284c7; --accent-color: #0284c7; --border-color: #334155; --table-bg: #1e293b; }
+        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --primary-color: #38bdf8; --accent-color: #38bdf8; --border-color: #1d4ed8; --table-bg: #0c2340; }
+        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --primary-color: #e04885; --accent-color: #e04885; --border-color: #5c2438; --table-bg: #1f1017; }
+        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --primary-color: #b86b3a; --accent-color: #b86b3a; --border-color: #593f2b; --table-bg: #1f1712; }
+        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; --table-bg: #0d2e20; }
+        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; --table-bg: #231442; }
 
         .section-title {
             text-align: center;
@@ -221,7 +221,6 @@
             line-height: 2 !important;
         }
 
-        /* ضبط المحاذاة: الفقرات مشدودة، والعناوين على طبيعتها */
         .single-post-content p, .dynamic-post-content-box p {
             text-align: justify !important;
             text-justify: inter-word !important;
@@ -243,7 +242,7 @@
             --border-color: #cbd5e1 !important;
             --primary-color: #0284c7 !important;
             --accent-color: #2563eb !important;
-            --table-bg: rgba(241, 245, 249, 0.4) !important;
+            --table-bg: #ffffff !important;
             background-color: #f8fafc !important;
             color: #0f172a !important;
         }
@@ -286,14 +285,14 @@
             background: rgba(2, 132, 199, 0.1) !important;
         }
 
-        /* تنسيقات الجداول المتوسطة، النص الأسود، وخلفيات نصية شفافة تماماً بدون خلفيات بيضاء/ملونة */
+        /* تعديل الجداول لتكون صلبة تماماً (Solid) بدون أي شفافية */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
             max-width: 100% !important;
             border-collapse: collapse !important;
             margin: 15px auto !important;
-            background-color: var(--table-bg, rgba(240, 244, 248, 0.4)) !important;
+            background-color: var(--table-bg, #ffffff) !important;
             table-layout: auto !important;
         }
 
@@ -304,8 +303,7 @@
             text-align: right !important;
             color: #000000 !important;
             font-size: 0.78rem !important;
-            background: solid !important;
-            background-color: solid !important;
+            background-color: var(--table-bg, #ffffff) !important;
             white-space: normal !important;
             word-break: normal !important;
             overflow-wrap: break-word !important;
@@ -322,6 +320,7 @@
         .dynamic-post-content-box th {
             font-weight: bold !important;
             font-size: 0.8rem !important;
+            background-color: var(--card-bg, #e2e8f0) !important;
         }
 
         @media (max-width: 768px) {
@@ -370,14 +369,18 @@
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
 
-        /* شريط المحتويات ليكون ثابتاً تحت شريط الثيمات في الجوال تماماً بدون اختفاء */
+        /* تعديل تثبيت شريط المحتويات في الكمبيوتر والجوال ليكون ثابتاً دائماً في مكانه الصحيح دون اختفاء */
         #toc-container {
             position: sticky;
-            top: 55px;
+            top: 70px;
             z-index: 100;
-            background: rgba(247, 244, 239, 0.95);
-            backdrop-filter: blur(5px);
-            padding: 5px 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            width: 100%;
         }
 
         .related-posts-box, .see-also-box {
@@ -500,6 +503,11 @@
                 margin: 6px 0;
                 box-shadow: 0 3px 8px rgba(0,0,0,0.15);
             }
+
+            /* ضبط مكان شريط المحتويات في الجوال ليثبت أسفل شريط الثيمات مباشرة دون اختفاء */
+            #toc-container {
+                top: 102px !important;
+            }
         
             .main-menu-bar {
                 position: relative !important;
@@ -561,33 +569,36 @@
             }
         }    
 
+        /* حل مشكلة قطع الإعلانات في الجوال وعرضها بشكل كامل وسليم */
         .article-ad-box {
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 20px auto;
             width: 100%;
+            max-width: 100%;
             min-height: 90px;
             overflow: hidden;
+            box-sizing: border-box;
             background: rgba(0, 0, 0, 0.02);
             border-radius: 8px;
         }
         
+        .article-ad-box iframe, 
+        .article-ad-box ins, 
+        .article-ad-box img, 
+        .article-ad-box div {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
         @media (max-width: 768px) {
             .article-ad-box {
                 width: 100% !important;
                 max-width: 100% !important;
-                overflow: hidden !important;
+                overflow-x: hidden !important;
                 box-sizing: border-box !important;
                 margin: 15px auto !important;
-            }
-
-            .article-ad-box iframe, 
-            .article-ad-box ins, 
-            .article-ad-box img, 
-            .article-ad-box div {
-                max-width: 100% !important;
-                box-sizing: border-box !important;
             }
         
             #dynamic-post-view, 
@@ -1130,7 +1141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
         
                 let tocHtml = `
-                    <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
+                    <div id="toc-container">
                         <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 15; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                             ${tocOptions}
                         </select>
@@ -1211,7 +1222,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             let pPost = window._currentNavPrevIndex !== undefined && window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
             let nPost = window._currentNavNextIndex !== undefined && window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
 
-            // الأسهم أصبحت فوق الروابط وليست تحتها
             let pHtml = pPost ? `
                 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%;">
                     <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; padding: 4px 12px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; font-size: 0.75rem; gap: 5px;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i> السابق</button>
