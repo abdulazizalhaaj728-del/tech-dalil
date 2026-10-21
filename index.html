@@ -570,6 +570,37 @@
             }
         }    
 
+        /* تنسيقات خاصة بتدوير أو تمرير الجداول أفقياً في الجوال */
+@media (max-width: 768px) {
+    .single-post-content table,
+    .dynamic-post-content-box table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+    }
+
+    /* الحاوية الخاصة بعلامة أو زر التدوير/التمرير في الهامش الأيمن للجدول */
+    .table-scroll-indicator {
+        position: sticky;
+        right: 0;
+        float: right;
+        z-index: 10;
+        background: var(--primary-color);
+        color: #fff;
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        border-radius: 4px 0 0 4px;
+        box-shadow: -2px 2px 5px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        pointer-events: none; /* لتفادي تعارض النقر مع المحتوى تحته إذا لزم */
+        margin-bottom: 5px;
+    }
+}
+
         .article-ad-box {
             display: flex;
             justify-content: center;
@@ -1139,6 +1170,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } else {
                     tocOptions += `<option value="" disabled>لا توجد عناوين فرعية في هذا المقال</option>`;
                 }
+
+
+                document.addEventListener("DOMContentLoaded", () => {
+                if (window.innerWidth <= 768) {
+                    document.querySelectorAll('.single-post-content table, .dynamic-post-content-box table').forEach(table => {
+                        if (!table.previousElementSibling || !table.previousElementSibling.classList.contains('table-scroll-indicator')) {
+                            const indicator = document.createElement('div');
+                            indicator.className = 'table-scroll-indicator';
+                            indicator.innerHTML = '<i class="fa-solid fa-arrows-left-right"></i> اسحب أفقياً';
+                            table.parentNode.insertBefore(indicator, table);
+                        }
+                    });
+                }
+            });
         
                 let tocHtml = `
                     <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
