@@ -113,7 +113,6 @@
         .header-center h1 span { color: var(--primary-color); }
         .header-center p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 5px; }
 
-        /* شريط الثيمات النحيف تحت عنوان بوابة الحلول الرقمية */
         .header-themes-bar {
             display: flex;
             align-items: center;
@@ -306,13 +305,14 @@
             margin-bottom: 11px !important;
         }
 
-        /* تنسيقات الجداول الدقيقة الجديدة حسب الطلب الثالث */
+        /* تنسيقات الجداول المعدلة وفق وصفك الدقيق:
+           - أول صف وأول عمود كما هما تماماً (خلفية بني غامق وخط بني فاتح جداً).
+           - بقية خلايا الجدول تصبح خلفيتها بلون النص في الصف الأول/العمود الأول (#e6ccb2 بني فاتح) بينما يظل لون الخط فيها أسود بولد. */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
             border-collapse: collapse !important;
             margin: 15px auto !important;
-            background-color: #3b281b !important; /* لون خلفية خلايا بقية الجدول كلون نص الصف الأول والعمود الأول */
             table-layout: fixed;
         }
 
@@ -321,30 +321,29 @@
             border: 1px solid #70533c !important;
             padding: 8px 10px !important;
             text-align: right !important;
-            color: #000000 !important; /* بقية خلايا الجدول لون الخط أسود بولد */
+            color: #000000 !important; /* لون النص في بقية خلايا الجدول أسود */
+            background-color: #e6ccb2 !important; /* خلفية بقية خلايا الجدول بني فاتح بنفس درجة لون النص السابق */
             font-weight: bold !important;
-            font-size: calc(0.88rem - 3px) !important; /* بقية الخلايا يصغر الخط بمقدار 3 درجات */
+            font-size: 0.85rem !important;
             word-wrap: break-word;
         }
 
-        /* الصف الأول بالكامل (th أو tr الأول) */
+        /* الصف الأول بجميع خلاياه كما هو (خلفية بني غامق، خط بني فاتح جداً) */
         .single-post-content tr:first-child th, 
         .single-post-content tr:first-child td,
         .dynamic-post-content-box tr:first-child th, 
         .dynamic-post-content-box tr:first-child td {
-            background-color: #3b281b !important; /* خلفية أول صف بني غامق */
-            color: #e6ccb2 !important; /* خط أول صف بني فاتح جداً */
+            background-color: #3b281b !important; 
+            color: #e6ccb2 !important; 
             font-weight: bold !important;
-            font-size: calc(0.88rem - 2px) !important; /* يصغر درجتين عن النص العادي */
         }
 
-        /* العمود الأول بالكامل (ما عدا التقاطع مع الصف الأول تم التعامل معه أعلاه) */
+        /* العمود الأول بجميع خلاياه كما هو (خلفية بني غامق، خط بني فاتح جداً) */
         .single-post-content tr td:first-child,
         .dynamic-post-content-box tr td:first-child {
-            background-color: #3b281b !important; /* خلفية أول عمود بني غامق */
-            color: #e6ccb2 !important; /* خط أول عمود بني فاتح جداً */
+            background-color: #3b281b !important; 
+            color: #e6ccb2 !important; 
             font-weight: bold !important;
-            font-size: calc(0.88rem - 2px) !important; /* يصغر درجتين */
         }
 
         .left-sticky-sidebar { 
@@ -385,10 +384,10 @@
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
 
-        /* شريط محتويات المقال (TOC) في الكمبيوتر: يثبت مع الهيدر ولكن نازل بمقدار ارتفاع القائمة الرئيسية لكي لا يختفي خلفها وتكون هناك مساحة فراغ */
+        /* شريط محتويات المقال (TOC) في الكمبيوتر: تم رفعه للأعلى بمقدار 17px (أصبح 193px بدلاً من 210px) */
         #toc-container {
             position: sticky;
-            top: 210px; /* الارتفاع الكلي للهيدر + القائمة الرئيسية في الكمبيوتر */
+            top: 193px; 
             z-index: 100;
             background: rgba(247, 244, 239, 0.95);
             backdrop-filter: blur(5px);
@@ -488,7 +487,6 @@
                 white-space: nowrap !important;
             }
 
-            /* إظهار شريط الثيمات في هيدر الجوال تحت عبارة بوابة الحلول الرقمية كما طلبتم */
             .header-themes-bar {
                 display: flex !important;
                 max-width: 220px !important;
@@ -560,9 +558,9 @@
                 flex: none !important;
             }
 
-            /* في الجوال والتابلت: شريط محتويات المقال يثبت مع الرأس مباشرة بدون مسافة أو فراغ للأسفل */
+            /* في الجوال: ضمان تثبيت شريط المحتويات تحت الهيدر مباشرة بدقة (تم حساب ارتفاع الهيدر الفعلي في الجوال ليكون التثبيت صحيحاً) */
             #toc-container {
-                top: 55px !important;
+                top: 58px !important;
             }
         }
         
@@ -631,7 +629,6 @@
             <div class="header-center">
                 <h1 id="site-main-heading">تكنو-<span>دليل</span></h1>
                 <p id="site-tagline">بوابة الحلول الرقمية</p>
-                <!-- شريط الثيمات تحت عبارة بوابة الحلول الرقمية للكمبيوتر والجوال -->
                 <div class="header-themes-bar">
                     <div class="header-color-group">
                         <button id="h-prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
@@ -1124,7 +1121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                 setTimeout(() => {
                     const rect = dynamicView.getBoundingClientRect();
-                    window.scrollTo({ top: window.pageYOffset + rect.top - 215, behavior: 'smooth' });
+                    window.scrollTo({ top: window.pageYOffset + rect.top - 193, behavior: 'smooth' });
                 }, 50);
         
                 let tempDiv = document.createElement('div');
