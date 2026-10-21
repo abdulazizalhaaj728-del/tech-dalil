@@ -429,6 +429,29 @@
     </style>
 
     <style>
+
+        /* إخفاء واظهار أشرطة المحتويات حسب الشاشة */
+        #toc2-container {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            #toc-container {
+                display: none !important;
+            }
+            #toc2-container {
+                display: block !important;
+                position: sticky;
+                top: 54px; /* يثبت تماماً تحت الهيدر في الجوال */
+                z-index: 998;
+                background: rgba(247, 244, 239, 0.95);
+                backdrop-filter: blur(5px);
+                padding: 6px 0;
+                margin-bottom: 15px;
+                width: 100%;
+            }
+        }
+                
         /* =========================================================
            تنسيقات شاشة الجوال والتابلت فقط (Media Query for Mobile)
            ========================================================= */
@@ -1185,6 +1208,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     });
                 }
             });
+                
         
                 let tocHtml = `
                     <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
@@ -1192,8 +1216,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                             ${tocOptions}
                         </select>
                     </div>
+                    <div id="toc2-container">
+                        <select id="toc2-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc2-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 40; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.88rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                            ${tocOptions}
+                        </select>
+                    </div>
                     <div id="article-top-ad" class="article-ad-box"></div>
                 `;
+                
         
                 let paragraphs = tempDiv.querySelectorAll('p');
                 if (paragraphs.length > 1) {
