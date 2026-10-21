@@ -250,7 +250,7 @@
             text-justify: inter-word !important;
             color: #2C3E50 !important;
             line-height: 2 !important;
-            font-size: 0.88rem !important; /* خط أصغر قليلاً */
+            font-size: 0.88rem !important;
         }
 
         body.light-mode {
@@ -306,13 +306,13 @@
             margin-bottom: 11px !important;
         }
 
-        /* تنسيقات الجداول الدقيقة الجديدة */
+        /* تنسيقات الجداول الدقيقة الجديدة حسب الطلب الثالث */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
             border-collapse: collapse !important;
             margin: 15px auto !important;
-            background-color: #4A3525 !important; /* خلفية خشبي خفيف صلب */
+            background-color: #3b281b !important; /* لون خلفية خلايا بقية الجدول كلون نص الصف الأول والعمود الأول */
             table-layout: fixed;
         }
 
@@ -321,24 +321,30 @@
             border: 1px solid #70533c !important;
             padding: 8px 10px !important;
             text-align: right !important;
-            color: #000000 !important; /* باقي الجدول أسود بولد */
+            color: #000000 !important; /* بقية خلايا الجدول لون الخط أسود بولد */
             font-weight: bold !important;
-            font-size: 0.82rem !important; /* خط نص الجدول أصغر من العناوين */
+            font-size: calc(0.88rem - 3px) !important; /* بقية الخلايا يصغر الخط بمقدار 3 درجات */
             word-wrap: break-word;
         }
 
-        .single-post-content th,
-        .dynamic-post-content-box th {
+        /* الصف الأول بالكامل (th أو tr الأول) */
+        .single-post-content tr:first-child th, 
+        .single-post-content tr:first-child td,
+        .dynamic-post-content-box tr:first-child th, 
+        .dynamic-post-content-box tr:first-child td {
             background-color: #3b281b !important; /* خلفية أول صف بني غامق */
             color: #e6ccb2 !important; /* خط أول صف بني فاتح جداً */
-            font-size: 0.86rem !important; /* خط عناوين الجدول */
+            font-weight: bold !important;
+            font-size: calc(0.88rem - 2px) !important; /* يصغر درجتين عن النص العادي */
         }
 
-        .single-post-content td:first-child,
-        .dynamic-post-content-box td:first-child {
+        /* العمود الأول بالكامل (ما عدا التقاطع مع الصف الأول تم التعامل معه أعلاه) */
+        .single-post-content tr td:first-child,
+        .dynamic-post-content-box tr td:first-child {
             background-color: #3b281b !important; /* خلفية أول عمود بني غامق */
             color: #e6ccb2 !important; /* خط أول عمود بني فاتح جداً */
             font-weight: bold !important;
+            font-size: calc(0.88rem - 2px) !important; /* يصغر درجتين */
         }
 
         .left-sticky-sidebar { 
@@ -379,14 +385,15 @@
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
 
-        /* شريط محتويات المقال (TOC) المحدث حسب مكان التثبيت المطلوب */
+        /* شريط محتويات المقال (TOC) في الكمبيوتر: يثبت مع الهيدر ولكن نازل بمقدار ارتفاع القائمة الرئيسية لكي لا يختفي خلفها وتكون هناك مساحة فراغ */
         #toc-container {
             position: sticky;
-            top: 285px; /* افتراضي للكمبيوتر تحت الهيدر مع مسافة القائمة الرئيسية */
+            top: 210px; /* الارتفاع الكلي للهيدر + القائمة الرئيسية في الكمبيوتر */
             z-index: 100;
             background: rgba(247, 244, 239, 0.95);
             backdrop-filter: blur(5px);
-            padding: 5px 0;
+            padding: 8px 0;
+            margin-bottom: 20px;
         }
 
         .related-posts-box, .see-also-box {
@@ -481,8 +488,11 @@
                 white-space: nowrap !important;
             }
 
+            /* إظهار شريط الثيمات في هيدر الجوال تحت عبارة بوابة الحلول الرقمية كما طلبتم */
             .header-themes-bar {
-                display: none !important; /* إخفاء شريط الثيمات من الهيدر في الجوال لضمان عدم الازدحام، حيث يوجد في الشريط الجانبي */
+                display: flex !important;
+                max-width: 220px !important;
+                margin: 3px auto 0 auto !important;
             }
         
             .mobile-menu-btn {
@@ -550,7 +560,7 @@
                 flex: none !important;
             }
 
-            /* في الجوال: شريط محتويات المقال يثبت تحت الرأس مباشرة دون فراغ القائمة */
+            /* في الجوال والتابلت: شريط محتويات المقال يثبت مع الرأس مباشرة بدون مسافة أو فراغ للأسفل */
             #toc-container {
                 top: 55px !important;
             }
@@ -559,10 +569,6 @@
         @media (min-width: 769px) {
             .mobile-menu-btn {
                 display: none !important;
-            }
-            /* في الكمبيوتر: شريط محتويات المقال ينزل بمقدار ارتفاع القائمة الرئيسية */
-            #toc-container {
-                top: 125px !important;
             }
         }    
 
@@ -579,7 +585,6 @@
         }
         
         @media (max-width: 768px) {
-            /* إعلانات الجوال مصغرة وتظهر بكامل محتواها دون قطع */
             .article-ad-box {
                 width: 100% !important;
                 max-width: 100% !important;
@@ -626,7 +631,7 @@
             <div class="header-center">
                 <h1 id="site-main-heading">تكنو-<span>دليل</span></h1>
                 <p id="site-tagline">بوابة الحلول الرقمية</p>
-                <!-- شريط نحيف تحت بوابة الحلول الرقمية لأزرار الثيمات بدون عنوان -->
+                <!-- شريط الثيمات تحت عبارة بوابة الحلول الرقمية للكمبيوتر والجوال -->
                 <div class="header-themes-bar">
                     <div class="header-color-group">
                         <button id="h-prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
@@ -981,7 +986,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 localStorage.setItem('site_theme', themes[idx]);
             }
 
-            // ربط أزرار الشريط الجانبي والهيدر معاً
             ['next-theme-btn', 'h-next-theme-btn'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) btn.onclick = () => {
@@ -1120,7 +1124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                 setTimeout(() => {
                     const rect = dynamicView.getBoundingClientRect();
-                    window.scrollTo({ top: window.pageYOffset + rect.top - 140, behavior: 'smooth' });
+                    window.scrollTo({ top: window.pageYOffset + rect.top - 215, behavior: 'smooth' });
                 }, 50);
         
                 let tempDiv = document.createElement('div');
@@ -1195,7 +1199,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                             ${post.processedContent}
                         </div>
         
-                        <!-- تعديل أسفل المقال: السهمين فوق الروابط مع مساحة متسعة لسطرين وعدم التمدد عمودياً -->
                         <div id="bottom-navigation-wrapper" style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 20px; display: flex; flex-direction: column; gap: 15px;"></div>
         
                         <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
@@ -1240,7 +1243,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const navBox = document.getElementById('bottom-navigation-wrapper');
             if (navBox) {
-                // تقريب الروابط لبعضها مع ترك مسافة مناسبة (استخدام grid أو flex لعرضهما جنباً إلى جنب مع مسافة صغيرة متسعة)
                 navBox.innerHTML = `<div style="display: flex; gap: 12px; width: 100%; justify-content: space-between;">${pHtml}${nHtml}</div>`;
                 attachNavEvents(sequencedPosts);
             }
