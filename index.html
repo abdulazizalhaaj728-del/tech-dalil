@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
     <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -42,12 +41,12 @@
             flex-grow: 1;
         }
 
-        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --primary-color: #0284c7; --accent-color: #0284c7; --border-color: #334155; --table-bg: rgba(30, 41, 59, 0.4); }
-        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --primary-color: #38bdf8; --accent-color: #38bdf8; --border-color: #1d4ed8; --table-bg: rgba(12, 35, 64, 0.4); }
-        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --primary-color: #e04885; --accent-color: #e04885; --border-color: #5c2438; --table-bg: rgba(31, 16, 23, 0.4); }
-        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --primary-color: #b86b3a; --accent-color: #b86b3a; --border-color: #593f2b; --table-bg: rgba(31, 23, 18, 0.4); }
-        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; --table-bg: rgba(13, 46, 32, 0.4); }
-        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; --table-bg: rgba(35, 20, 66, 0.4); }
+        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --primary-color: #0284c7; --accent-color: #0284c7; --border-color: #334155; }
+        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --primary-color: #38bdf8; --accent-color: #38bdf8; --border-color: #1d4ed8; }
+        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --primary-color: #e04885; --accent-color: #e04885; --border-color: #5c2438; }
+        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --primary-color: #b86b3a; --accent-color: #b86b3a; --border-color: #593f2b; }
+        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; }
+        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; }
 
         .section-title {
             text-align: center;
@@ -99,15 +98,12 @@
         .top-social a { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; transition: color 0.2s; }
         .top-social a:hover { color: var(--accent-color); }
 
-        header, .header-center, .site-footer, .footer-bottom-bar {
-            font-family: 'Cairo', sans-serif !important;
-        }
-
         header {
             background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);
             border-bottom: 2px solid var(--primary-color); padding: 10px;
             display: grid; grid-template-columns: 200px 1fr 200px; align-items: center; gap: 15px;
             width: 100%; margin: 10px auto 0; border-radius: 10px; border: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 1000;
         }
         .header-logo { display: flex; align-items: center; justify-content: flex-start; }
         .header-logo img { max-height: 100px; }
@@ -115,7 +111,42 @@
         .header-center { text-align: center; }
         .header-center h1 { font-size: 2.2rem; font-weight: 900; color: var(--text-main); }
         .header-center h1 span { color: var(--primary-color); }
-        .header-center p { color: var(--text-muted); font-size: 0.95rem; }
+        .header-center p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 5px; }
+
+        /* شريط الثيمات النحيف تحت عنوان بوابة الحلول الرقمية */
+        .header-themes-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 3px 0;
+            background: rgba(0,0,0,0.15);
+            border-radius: 6px;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+        .header-themes-bar button, .header-themes-bar .h-control-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.72rem;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .header-themes-bar button:hover { background: rgba(2, 132, 199, 0.3); color: var(--accent-color); }
+        .header-color-group {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .header-color-group button { border: none; padding: 2px 6px; background: transparent; }
 
         .ticker-wrapper { width: 100%; margin: 15px auto 0; padding: 0; }
         .ticker-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 15px; display: flex; align-items: center; position: relative; overflow: hidden; }
@@ -130,7 +161,7 @@
             100% { transform: translateX(100%); opacity: 0; } 
         }
 
-        .main-menu-bar { width: 100%; margin: 10px auto 0; padding: 0; position: sticky; top: 0; z-index: 999; }
+        .main-menu-bar { width: 100%; margin: 10px auto 0; padding: 0; position: sticky; top: 125px; z-index: 999; }
         .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; }
         .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
@@ -211,28 +242,15 @@
             color: #2C3E50 !important;
             padding: 25px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            max-width: 100% !important;
-            overflow-x: hidden !important;
         }
         
         .single-post-content, .dynamic-post-content-box {
             font-family: var(--active-font, 'Cairo') !important;
-            color: #2C3E50 !important;
-            line-height: 2 !important;
-        }
-
-        /* ضبط المحاذاة: الفقرات مشدودة، والعناوين على طبيعتها */
-        .single-post-content p, .dynamic-post-content-box p {
             text-align: justify !important;
             text-justify: inter-word !important;
-            margin-bottom: 11px !important;
-        }
-
-        .single-post-content h1, .single-post-content h2, .single-post-content h3, 
-        .single-post-content h4, .single-post-content h5, .single-post-content h6,
-        .dynamic-post-content-box h1, .dynamic-post-content-box h2, .dynamic-post-content-box h3, 
-        .dynamic-post-content-box h4, .dynamic-post-content-box h5, .dynamic-post-content-box h6 {
-            text-align: right !important;
+            color: #2C3E50 !important;
+            line-height: 2 !important;
+            font-size: 0.88rem !important; /* خط أصغر قليلاً */
         }
 
         body.light-mode {
@@ -243,7 +261,6 @@
             --border-color: #cbd5e1 !important;
             --primary-color: #0284c7 !important;
             --accent-color: #2563eb !important;
-            --table-bg: rgba(241, 245, 249, 0.4) !important;
             background-color: #f8fafc !important;
             color: #0f172a !important;
         }
@@ -255,7 +272,6 @@
         body.light-mode .post-card,
         body.light-mode .widget-card,
         body.light-mode .sidebar-controls-box,
-        body.light-mode .mobile-theme-bar,
         body.light-mode .footer-container,
         body.light-mode .left-sticky-sidebar,
         body.light-mode .news-mini-container {
@@ -285,55 +301,48 @@
         body.light-mode .dropdown-menu li a:hover {
             background: rgba(2, 132, 199, 0.1) !important;
         }
+        
+        .single-post-content p, .dynamic-post-content-box p {
+            margin-bottom: 11px !important;
+        }
 
-        /* تنسيقات الجداول المتوسطة، النص الأسود، وخلفيات نصية شفافة تماماً بدون خلفيات بيضاء/ملونة */
+        /* تنسيقات الجداول الدقيقة الجديدة */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
-            max-width: 100% !important;
             border-collapse: collapse !important;
             margin: 15px auto !important;
-            background-color: var(--table-bg, rgba(240, 244, 248, 0.4)) !important;
-            table-layout: auto !important;
+            background-color: #4A3525 !important; /* خلفية خشبي خفيف صلب */
+            table-layout: fixed;
         }
 
         .single-post-content th, .single-post-content td,
         .dynamic-post-content-box th, .dynamic-post-content-box td {
-            border: 1px solid var(--border-color, #94a3b8) !important;
-            padding: 6px 8px !important;
+            border: 1px solid #70533c !important;
+            padding: 8px 10px !important;
             text-align: right !important;
-            color: #000000 !important;
-            font-size: 0.78rem !important;
-            background: solid !important;
-            background-color: solid !important;
-            white-space: normal !important;
-            word-break: normal !important;
-            overflow-wrap: break-word !important;
-        }
-
-        .single-post-content th *, .single-post-content td *,
-        .dynamic-post-content-box th *, .dynamic-post-content-box td * {
-            background: transparent !important;
-            background-color: transparent !important;
-            color: #000000 !important;
+            color: #000000 !important; /* باقي الجدول أسود بولد */
+            font-weight: bold !important;
+            font-size: 0.82rem !important; /* خط نص الجدول أصغر من العناوين */
+            word-wrap: break-word;
         }
 
         .single-post-content th,
         .dynamic-post-content-box th {
-            font-weight: bold !important;
-            font-size: 0.8rem !important;
+            background-color: #3b281b !important; /* خلفية أول صف بني غامق */
+            color: #e6ccb2 !important; /* خط أول صف بني فاتح جداً */
+            font-size: 0.86rem !important; /* خط عناوين الجدول */
         }
 
-        @media (max-width: 768px) {
-            .single-post-content th, .single-post-content td,
-            .dynamic-post-content-box th, .dynamic-post-content-box td {
-                font-size: 0.65rem !important;
-                padding: 4px 5px !important;
-            }
+        .single-post-content td:first-child,
+        .dynamic-post-content-box td:first-child {
+            background-color: #3b281b !important; /* خلفية أول عمود بني غامق */
+            color: #e6ccb2 !important; /* خط أول عمود بني فاتح جداً */
+            font-weight: bold !important;
         }
 
         .left-sticky-sidebar { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; position: sticky; top: 185px; align-self: flex-start; max-height: calc(100vh - 200px); overflow-y: auto;
         }
         .sidebar-widget { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
         .sidebar-widget h4, .sidebar-widget h3 { color: var(--accent-color); font-size: 0.95rem; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
@@ -370,10 +379,10 @@
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
 
-        /* شريط المحتويات ليكون ثابتاً تحت شريط الثيمات في الجوال تماماً بدون اختفاء */
+        /* شريط محتويات المقال (TOC) المحدث حسب مكان التثبيت المطلوب */
         #toc-container {
             position: sticky;
-            top: 55px;
+            top: 125px; /* افتراضي للكمبيوتر تحت الهيدر مع مسافة القائمة الرئيسية */
             z-index: 100;
             background: rgba(247, 244, 239, 0.95);
             backdrop-filter: blur(5px);
@@ -471,6 +480,10 @@
                 margin-top: 2px !important;
                 white-space: nowrap !important;
             }
+
+            .header-themes-bar {
+                display: none !important; /* إخفاء شريط الثيمات من الهيدر في الجوال لضمان عدم الازدحام، حيث يوجد في الشريط الجانبي */
+            }
         
             .mobile-menu-btn {
                 display: flex !important;
@@ -485,20 +498,6 @@
                 font-size: 1rem;
                 cursor: pointer;
                 flex-shrink: 0;
-            }
-
-            /* شريط الثيمات الثابت للجوال */
-            .mobile-theme-bar {
-                display: flex !important;
-                position: sticky !important;
-                top: 52px !important;
-                z-index: 998 !important;
-                background: var(--card-bg);
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                padding: 5px 10px;
-                margin: 6px 0;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.15);
             }
         
             .main-menu-bar {
@@ -550,14 +549,20 @@
                 min-height: 200px !important;
                 flex: none !important;
             }
+
+            /* في الجوال: شريط محتويات المقال يثبت تحت الرأس مباشرة دون فراغ القائمة */
+            #toc-container {
+                top: 55px !important;
+            }
         }
         
         @media (min-width: 769px) {
             .mobile-menu-btn {
                 display: none !important;
             }
-            .mobile-theme-bar {
-                display: none !important;
+            /* في الكمبيوتر: شريط محتويات المقال ينزل بمقدار ارتفاع القائمة الرئيسية */
+            #toc-container {
+                top: 125px !important;
             }
         }    
 
@@ -574,12 +579,15 @@
         }
         
         @media (max-width: 768px) {
+            /* إعلانات الجوال مصغرة وتظهر بكامل محتواها دون قطع */
             .article-ad-box {
                 width: 100% !important;
                 max-width: 100% !important;
-                overflow: hidden !important;
+                overflow: visible !important;
                 box-sizing: border-box !important;
-                margin: 15px auto !important;
+                margin: 10px auto !important;
+                min-height: auto !important;
+                padding: 5px !important;
             }
 
             .article-ad-box iframe, 
@@ -587,6 +595,7 @@
             .article-ad-box img, 
             .article-ad-box div {
                 max-width: 100% !important;
+                height: auto !important;
                 box-sizing: border-box !important;
             }
         
@@ -617,25 +626,22 @@
             <div class="header-center">
                 <h1 id="site-main-heading">تكنو-<span>دليل</span></h1>
                 <p id="site-tagline">بوابة الحلول الرقمية</p>
+                <!-- شريط نحيف تحت بوابة الحلول الرقمية لأزرار الثيمات بدون عنوان -->
+                <div class="header-themes-bar">
+                    <div class="header-color-group">
+                        <button id="h-prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
+                        <span style="padding: 0 4px; font-size: 0.75rem; color: var(--accent-color);"><i class="fa-solid fa-palette"></i></span>
+                        <button id="h-next-theme-btn" title="الثيم التالي"><i class="fa-solid fa-chevron-left"></i></button>
+                    </div>
+                    <button class="h-control-btn" id="h-font-toggle-btn" title="تغيير الخط"><i class="fa-solid fa-font"></i> الخط</button>
+                    <button class="h-control-btn" id="h-dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
+                </div>
             </div>
         
             <button type="button" class="mobile-menu-btn" id="mobile-hamburger-btn" aria-label="فتح القائمة">
                 <i class="fa-solid fa-bars"></i>
             </button>
         </header>
-
-        <!-- شريط الثيمات للجوال -->
-        <div class="mobile-theme-bar sidebar-controls-box" style="margin-bottom: 0;">
-            <div class="sidebar-controls-inner" style="width: 100%;">
-                <div class="color-switcher-group">
-                    <button id="mob-prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
-                    <span class="color-center-icon"><i class="fa-solid fa-palette"></i></span>
-                    <button id="mob-next-theme-btn" title="الثيم التالي"><i class="fa-solid fa-chevron-left"></i></button>
-                </div>
-                <button class="control-btn" id="mob-font-toggle-btn" title="تغيير الخط"><i class="fa-solid fa-font"></i> الخط</button>
-                <button class="control-btn" id="mob-dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
-            </div>
-        </div>
 
         <div class="ticker-wrapper" id="site-ticker-wrapper">
             <div class="ticker-container">
@@ -762,7 +768,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let linkVal = data.staticPagesLinks[item.key];
                 if (linkVal && linkVal.trim() !== '') {
                     let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
-                    linksHtml += `<a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" rel="nofollow">${item.label}</a>`;
+                    linksHtml += `<a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;">${item.label}</a>`;
                 }
             });
             topPagesContainer.innerHTML = linksHtml;
@@ -924,7 +930,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 let linkVal = data.staticPagesLinks[item.key];
                                 if (linkVal && linkVal.trim() !== '') {
                                     let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
-                                    pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" rel="nofollow" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
+                                    pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
                                 }
                             });
                         }
@@ -971,19 +977,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         
             function applyTheme(idx) {
                 document.body.classList.remove(...themes);
-                currentThemeIdx = idx;
-                document.body.classList.add(themes[currentThemeIdx]);
-                localStorage.setItem('site_theme', themes[currentThemeIdx]);
+                document.body.classList.add(themes[idx]);
+                localStorage.setItem('site_theme', themes[idx]);
             }
 
-            ['next-theme-btn', 'mob-next-theme-btn'].forEach(id => {
+            // ربط أزرار الشريط الجانبي والهيدر معاً
+            ['next-theme-btn', 'h-next-theme-btn'].forEach(id => {
                 const btn = document.getElementById(id);
-                if (btn) btn.onclick = () => applyTheme((currentThemeIdx + 1) % themes.length);
+                if (btn) btn.onclick = () => {
+                    currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+                    applyTheme(currentThemeIdx);
+                };
             });
 
-            ['prev-theme-btn', 'mob-prev-theme-btn'].forEach(id => {
+            ['prev-theme-btn', 'h-prev-theme-btn'].forEach(id => {
                 const btn = document.getElementById(id);
-                if (btn) btn.onclick = () => applyTheme((currentThemeIdx - 1 + themes.length) % themes.length);
+                if (btn) btn.onclick = () => {
+                    currentThemeIdx = (currentThemeIdx - 1 + themes.length) % themes.length;
+                    applyTheme(currentThemeIdx);
+                };
             });
         
             let savedTheme = localStorage.getItem('site_theme');
@@ -994,17 +1006,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         
             const fonts = ['Cairo', 'Tajawal', 'Amiri', 'Almarai', 'Readex Pro', 'Changa'];
             let currentFontIdx = 0;
-
-            function toggleFont() {
-                currentFontIdx = (currentFontIdx + 1) % fonts.length;
-                let chosenFont = fonts[currentFontIdx];
+            
+            function applyFont(idx) {
+                let chosenFont = fonts[idx];
                 document.documentElement.style.setProperty('--active-font', chosenFont);
                 localStorage.setItem('site_font', chosenFont);
             }
 
-            ['font-toggle-btn', 'mob-font-toggle-btn'].forEach(id => {
+            ['font-toggle-btn', 'h-font-toggle-btn'].forEach(id => {
                 const btn = document.getElementById(id);
-                if (btn) btn.onclick = toggleFont;
+                if (btn) btn.onclick = () => {
+                    currentFontIdx = (currentFontIdx + 1) % fonts.length;
+                    applyFont(currentFontIdx);
+                };
             });
 
             let savedFont = localStorage.getItem('site_font');
@@ -1012,28 +1026,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.documentElement.style.setProperty('--active-font', savedFont);
             }
                     
-            function toggleDarkMode() {
-                document.body.classList.toggle('light-mode');
-                const isLight = document.body.classList.contains('light-mode');
-                localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
-                ['dark-mode-btn', 'mob-dark-mode-btn'].forEach(id => {
-                    const b = document.getElementById(id);
-                    if (b) b.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-                });
-            }
-
-            ['dark-mode-btn', 'mob-dark-mode-btn'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.addEventListener('click', toggleDarkMode);
+            ['dark-mode-btn', 'h-dark-mode-btn'].forEach(id => {
+                const darkModeBtn = document.getElementById(id);
+                if (darkModeBtn) {
+                    darkModeBtn.addEventListener('click', () => {
+                        document.body.classList.toggle('light-mode');
+                        const isLight = document.body.classList.contains('light-mode');
+                        localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
+                        document.querySelectorAll('#dark-mode-btn, #h-dark-mode-btn').forEach(b => {
+                            b.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+                        });
+                    });
+                
+                    if (localStorage.getItem('tech_light_mode') === '1') {
+                        document.body.classList.add('light-mode');
+                        darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                    }
+                }
             });
-
-            if (localStorage.getItem('tech_light_mode') === '1') {
-                document.body.classList.add('light-mode');
-                ['dark-mode-btn', 'mob-dark-mode-btn'].forEach(id => {
-                    const b = document.getElementById(id);
-                    if (b) b.innerHTML = '<i class="fa-solid fa-sun"></i>';
-                });
-            }
         }
 
         function getOrderedPosts(menuItems, allPosts) {
@@ -1110,7 +1120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                 setTimeout(() => {
                     const rect = dynamicView.getBoundingClientRect();
-                    window.scrollTo({ top: window.pageYOffset + rect.top - 60, behavior: 'smooth' });
+                    window.scrollTo({ top: window.pageYOffset + rect.top - 140, behavior: 'smooth' });
                 }, 50);
         
                 let tempDiv = document.createElement('div');
@@ -1131,7 +1141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                 let tocHtml = `
                     <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
-                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 15; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 40; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                             ${tocOptions}
                         </select>
                     </div>
@@ -1185,7 +1195,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                             ${post.processedContent}
                         </div>
         
-                        <div id="bottom-navigation-wrapper" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
+                        <!-- تعديل أسفل المقال: السهمين فوق الروابط مع مساحة متسعة لسطرين وعدم التمدد عمودياً -->
+                        <div id="bottom-navigation-wrapper" style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 20px; display: flex; flex-direction: column; gap: 15px;"></div>
         
                         <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
                             <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
@@ -1211,26 +1222,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             let pPost = window._currentNavPrevIndex !== undefined && window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
             let nPost = window._currentNavNextIndex !== undefined && window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
 
-            // الأسهم أصبحت فوق الروابط وليست تحتها
             let pHtml = pPost ? `
-                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%;">
-                    <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; padding: 4px 12px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; font-size: 0.75rem; gap: 5px;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i> السابق</button>
-                    <div style="border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; background: var(--card-bg); width: 100%; text-align: right;">
-                        <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.75rem; display: block;" title="${pPost.title}" onclick="openPostBySlug('${pPost.slug}'); return false;">${getShortTitle(pPost.title)}</a>
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; flex: 1;">
+                    <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
+                    <div style="border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 6px; background: var(--card-bg); width: 100%; height: 54px; display: flex; align-items: center; overflow: hidden;">
+                        <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.82rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.3;" title="${pPost.title}" onclick="openPostBySlug('${pPost.slug}'); return false;">${pPost.title}</a>
                     </div>
-                </div>` : `<span></span>`;
+                </div>` : `<div style="flex: 1;"></div>`;
 
             let nHtml = nPost ? `
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; width: 100%;">
-                    <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; padding: 4px 12px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; font-size: 0.75rem; gap: 5px;" title="المقال التالي">التالي <i class="fa-solid fa-arrow-left"></i></button>
-                    <div style="border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; background: var(--card-bg); width: 100%; text-align: left;">
-                        <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.75rem; display: block;" title="${nPost.title}" onclick="openPostBySlug('${nPost.slug}'); return false;">${getShortTitle(nPost.title)}</a>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: 1;">
+                    <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
+                    <div style="border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 6px; background: var(--card-bg); width: 100%; height: 54px; display: flex; align-items: center; overflow: hidden;">
+                        <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.82rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; text-align: right;" title="${nPost.title}" onclick="openPostBySlug('${nPost.slug}'); return false;">${nPost.title}</a>
                     </div>
-                </div>` : `<span></span>`;
+                </div>` : `<div style="flex: 1;"></div>`;
 
             const navBox = document.getElementById('bottom-navigation-wrapper');
             if (navBox) {
-                navBox.innerHTML = `<div>${pHtml}</div><div>${nHtml}</div>`;
+                // تقريب الروابط لبعضها مع ترك مسافة مناسبة (استخدام grid أو flex لعرضهما جنباً إلى جنب مع مسافة صغيرة متسعة)
+                navBox.innerHTML = `<div style="display: flex; gap: 12px; width: 100%; justify-content: space-between;">${pHtml}${nHtml}</div>`;
                 attachNavEvents(sequencedPosts);
             }
         }
@@ -1366,7 +1377,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 let hasChildren = node.children && node.children.length > 0;
                 let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-                let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;" rel="nofollow"` : 'rel="nofollow"';
+                let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;"` : '';
                 return `
                     <li>
                         <a href="${finalHref}" ${clickAttr}>${node.title}${arrow}</a>
