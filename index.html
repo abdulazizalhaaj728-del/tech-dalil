@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&family=Readex+Pro:wght@400;600&family=Changa:wght@400;600&display=swap" rel="stylesheet">
 
-    <style>
+<style>
         :root {
             --primary-color: #0284c7;
             --accent-color: #f59e0b;
@@ -103,11 +103,16 @@
             font-family: 'Cairo', sans-serif !important;
         }
 
+        /* تثبيت الهيدر في الكمبيوتر والشاشات الكبيرة أيضاً */
         header {
             background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);
             border-bottom: 2px solid var(--primary-color); padding: 10px;
             display: grid; grid-template-columns: 200px 1fr 200px; align-items: center; gap: 15px;
             width: 100%; margin: 10px auto 0; border-radius: 10px; border: 1px solid var(--border-color);
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1000 !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
         .header-logo { display: flex; align-items: center; justify-content: flex-start; }
         .header-logo img { max-height: 100px; }
@@ -285,53 +290,38 @@
             background: rgba(2, 132, 199, 0.1) !important;
         }
 
-
-        /* الثيم الافتراضي الداكن: جعلنا خلفية الجدول لوناً صلباً هادئاً وفاتحاً نسبياً ليتناسب مع النص الأسود */
-        body.theme-default { --table-bg-solid: #e2e8f0; }
-        body.theme-blue-1 { --table-bg-solid: #e0f2fe; }
-        body.theme-pink { --table-bg-solid: #fce7f3; }
-        body.theme-wood { --table-bg-solid: #fef3c7; }
-        body.theme-green { --table-bg-solid: #d1fae5; }
-        body.theme-purple { --table-bg-solid: #ede9fe; }
-        
-        /* إذا كان الوضع الليلي (Light Mode) مفَعلاً */
-        body.light-mode { --table-bg-solid: #f1f5f9; }
-
-        
-        /* هيكل الجدول والخلية بخلفية صلبة تماماً وغير شفافة */
+        /* تنسيقات الجداول بخلفية البيج الهادئ والنص الأسود الصلب */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
             max-width: 100% !important;
             border-collapse: collapse !important;
             margin: 15px auto !important;
-            background-color:  var(--table-bg-solid, #FDF5E6) !important;  /*خلفية صلبة مخففة مشتقة من الثيم */
-            border: 1px solid var(--border-color) !important;
+            background-color: #FDF5E6 !important;
+            border: 1px solid #E2D8C5 !important;
         }
         
-        /* تنسيق خلايا الجدول والنصوص (نص أسود صلب غير شفاف) */
         .single-post-content th, .single-post-content td,
         .dynamic-post-content-box th, .dynamic-post-content-box td {
-            border: 1px solid var(--border-color) !important;
+            border: 1px solid #E2D8C5 !important;
             padding: 8px 10px !important;
             text-align: right !important;
-            color: #000000 !important; /* لون أسود صلب واضح جداً */
+            color: #000000 !important;
             font-size: 0.8rem !important;
-            background-color: var(--table-bg-solid, #FDF5E6) !important; /* تأكيد عدم الشفافية للخلية */
+            background-color: #FDF5E6 !important;
             white-space: normal !important;
             word-break: normal !important;
             overflow-wrap: break-word !important;
         }
         
-        /* عناوين الجدول الرئيسية (th) بلون خلفية أغمق قليلاً لتمييزها مع نص أسود عريض */
         .single-post-content th,
         .dynamic-post-content-box th {
             font-weight: bold !important;
             font-size: 0.85rem !important;
             color: #000000 !important;
-            background-color: rgba(0, 0, 0, 0.05) !important; /* غمقان بسيط جداً ومخفف لتمييز رأس الجدول */
-        }        
-        /* التجاوب مع الجوال للجداول */
+            background-color: #F5DEB3 !important;
+        }
+        
         @media (max-width: 768px) {
             .single-post-content th, .single-post-content td,
             .dynamic-post-content-box th, .dynamic-post-content-box td {
@@ -340,7 +330,6 @@
             }
         }
 
-        
         .left-sticky-sidebar { 
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; position: sticky; top: 60px; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto;
         }
@@ -379,10 +368,10 @@
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
 
-        /* تعديل تثبيت شريط المحتويات في الكمبيوتر والجوال ليكون ثابتاً دائماً في مكانه الصحيح دون اختفاء */
+        /* تثبيت شريط المحتويات في الكمبيوتر تحت الهيدر مباشرة */
         #toc-container {
-            position: sticky;
-            top: 70px;
+            position: sticky !important;
+            top: 130px !important;
             z-index: 100;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -516,7 +505,7 @@
 
             /* ضبط مكان شريط المحتويات في الجوال ليثبت أسفل شريط الثيمات مباشرة دون اختفاء */
             #toc-container {
-                top: 102px !important;
+                top: 105px !important;
             }
         
             .main-menu-bar {
@@ -619,6 +608,7 @@
             }
         }
     </style>
+
 </head>
     
 <body class="theme-default">
