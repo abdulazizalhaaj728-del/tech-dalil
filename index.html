@@ -379,7 +379,7 @@
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
 
-        /* تعديل تثبيت شريط المحتويات في الكمبيوتر والجوال ليكون ثابتاً دائماً في مكانه الصحيح دون اختفاء */
+        /* تعديل تثبيت شريط المحتويات في الكمبيوتر والجوال ليكون ثابتاً دائماً في مكانه الصحيح دون اختفاء 
         #toc-container {
             position: sticky;
             top: 70px;
@@ -391,7 +391,17 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
             width: 100%;
+        }*/
+
+        #toc-container {
+            position: sticky;
+            top: 40px;
+            z-index: 100;
+            background: rgba(247, 244, 239, 0.95);
+            backdrop-filter: blur(5px);
+            padding: 5px 0;
         }
+        
 
         .related-posts-box, .see-also-box {
             background-color: var(--card-bg) !important;
