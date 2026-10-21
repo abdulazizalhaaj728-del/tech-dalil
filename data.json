@@ -314,11 +314,11 @@
     ],
     "ads": {
         "topOn": true,
-        "topCode": "<script>\n  atOptions = {\n    'key' : '6ec42ea54492db5ee0aa092a3c3ab240',\n    'format' : 'iframe',\n    'height' : 90,\n    'width' : 728,\n    'params' : {}\n  };\n</script>\n<script src=\"https://www.highrevenueformat.com/6ec42ea54492db5ee0aa092a3c3ab240/invoke.js\"></script>",
+        "topCode": "",
         "midOn": true,
-        "midCode": "<script>\n  atOptions = {\n    'key' : '6ec42ea54492db5ee0aa092a3c3ab240',\n    'format' : 'iframe',\n    'height' : 90,\n    'width' : 728,\n    'params' : {}\n  };\n</script>\n<script src=\"https://www.highrevenueformat.com/6ec42ea54492db5ee0aa092a3c3ab240/invoke.js\"></script>",
+        "midCode": "",
         "botOn": true,
-        "botCode": "<script>\n  atOptions = {\n    'key' : '6ec42ea54492db5ee0aa092a3c3ab240',\n    'format' : 'iframe',\n    'height' : 90,\n    'width' : 728,\n    'params' : {}\n  };\n</script>\n<script src=\"https://www.highrevenueformat.com/6ec42ea54492db5ee0aa092a3c3ab240/invoke.js\"></script>"
+        "botCode": ""
     },
     "posts": [
         {
