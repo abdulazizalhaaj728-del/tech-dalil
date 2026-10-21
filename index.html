@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
     <title id="site-title">تكنو-دليل | المدونة التقنية الشاملة</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&family=Readex+Pro:wght@400;600&family=Changa:wght@400;600&display=swap" rel="stylesheet">
 
-<style>
+    <style>
         :root {
             --primary-color: #0284c7;
             --accent-color: #f59e0b;
@@ -42,12 +41,12 @@
             flex-grow: 1;
         }
 
-        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --primary-color: #0284c7; --accent-color: #0284c7; --border-color: #334155; --table-bg: #1e293b; }
-        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --primary-color: #38bdf8; --accent-color: #38bdf8; --border-color: #1d4ed8; --table-bg: #0c2340; }
-        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --primary-color: #e04885; --accent-color: #e04885; --border-color: #5c2438; --table-bg: #1f1017; }
-        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --primary-color: #b86b3a; --accent-color: #b86b3a; --border-color: #593f2b; --table-bg: #1f1712; }
-        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; --table-bg: #0d2e20; }
-        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; --table-bg: #231442; }
+        body.theme-default { --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --primary-color: #0284c7; --accent-color: #0284c7; --border-color: #334155; }
+        body.theme-blue-1 { --bg-color: #041221; --card-bg: #0c2340; --text-main: #f0f9ff; --text-muted: #7dd3fc; --primary-color: #38bdf8; --accent-color: #38bdf8; --border-color: #1d4ed8; }
+        body.theme-pink { --bg-color: #12090e; --card-bg: #1f1017; --text-main: #fce8ef; --text-muted: #d4839d; --primary-color: #e04885; --accent-color: #e04885; --border-color: #5c2438; }
+        body.theme-wood { --bg-color: #120e0a; --card-bg: #1f1712; --text-main: #f7ede2; --text-muted: #c29b7a; --primary-color: #b86b3a; --accent-color: #b86b3a; --border-color: #593f2b; }
+        body.theme-green { --bg-color: #051911; --card-bg: #0d2e20; --text-main: #ecfdf5; --text-muted: #6ee7b7; --primary-color: #10b981; --accent-color: #10b981; --border-color: #065f46; }
+        body.theme-purple { --bg-color: #130a24; --card-bg: #231442; --text-main: #f5f3ff; --text-muted: #c4b5fd; --primary-color: #8b5cf6; --accent-color: #8b5cf6; --border-color: #5b21b6; }
 
         .section-title {
             text-align: center;
@@ -62,57 +61,33 @@
         
         .top-bar {
             background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 8px 20px;
-            display: grid; grid-template-columns: 1fr auto; align-items: center; font-size: 0.85rem;
+            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-size: 0.85rem;
             width: 100%; margin: 0 auto; border-radius: 8px 8px 0 0;
         }
         .top-pages { display: flex; gap: 12px; justify-content: flex-start; }
         .top-pages a { color: var(--text-muted); text-decoration: none; font-size: 0.8rem; }
         .top-pages a:hover { color: var(--primary-color); }
 
-        .sidebar-controls-box {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 10px 12px;
-            margin-bottom: 15px;
-        }
-        .sidebar-controls-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-        }
+        .top-controls { display: flex; align-items: center; gap: 10px; justify-content: center; }
         .control-btn {
-            background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main);
-            padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 4px;
-            flex: 1; justify-content: center; text-align: center;
+            background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main);
+            padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;
         }
-        .control-btn:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
         .color-switcher-group {
-            display: flex; align-items: center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; flex: 1; justify-content: center;
+            display: flex; align-items: center; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;
         }
         .color-switcher-group button { background: transparent; border: none; color: var(--text-main); padding: 5px 8px; cursor: pointer; font-size: 0.75rem; }
-        .color-switcher-group button:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
-        .color-center-icon { padding: 0 2px; font-size: 0.78rem; color: var(--accent-color); }
+        .color-center-icon { padding: 0 4px; font-size: 0.8rem; color: var(--accent-color); }
 
         .top-social { display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
         .top-social a { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; transition: color 0.2s; }
         .top-social a:hover { color: var(--accent-color); }
 
-        header, .header-center, .site-footer, .footer-bottom-bar {
-            font-family: 'Cairo', sans-serif !important;
-        }
-
-        /* تثبيت الهيدر في الكمبيوتر والشاشات الكبيرة أيضاً */
         header {
             background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-color) 100%);
             border-bottom: 2px solid var(--primary-color); padding: 10px;
             display: grid; grid-template-columns: 200px 1fr 200px; align-items: center; gap: 15px;
             width: 100%; margin: 10px auto 0; border-radius: 10px; border: 1px solid var(--border-color);
-            position: sticky !important;
-            top: 0 !important;
-            z-index: 1000 !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
         .header-logo { display: flex; align-items: center; justify-content: flex-start; }
         .header-logo img { max-height: 100px; }
@@ -135,7 +110,7 @@
             100% { transform: translateX(100%); opacity: 0; } 
         }
 
-        .main-menu-bar { width: 100%; margin: 10px auto 0; padding: 0; position: sticky; top: 200; z-index: 999; }
+        .main-menu-bar { width: 100%; margin: 10px auto 0; padding: 0; position: sticky; top: 0; z-index: 999; }
         .mega-menu { background: var(--card-bg); border: 2px solid var(--primary-color); border-radius: 10px; display: flex; flex-wrap: wrap; list-style: none; padding: 5px 10px; gap: 5px; justify-content: flex-start; }
         .mega-menu li a, .mega-menu > a { display: flex; align-items: center; gap: 6px; padding: 8px 16px; color: var(--text-main); text-decoration: none; font-weight: 700; font-size: 13px; border-radius: 6px; }
         .mega-menu li a:hover, .mega-menu > a:hover { background: rgba(2, 132, 199, 0.2); color: var(--accent-color); }
@@ -216,50 +191,36 @@
             color: #2C3E50 !important;
             padding: 25px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            max-width: 100% !important;
-            overflow-x: hidden !important;
         }
         
         .single-post-content, .dynamic-post-content-box {
             font-family: var(--active-font, 'Cairo') !important;
+            text-align: justify !important;
+            text-justify: inter-word !important;
             color: #2C3E50 !important;
             line-height: 2 !important;
         }
 
-        .single-post-content p, .dynamic-post-content-box p {
-            text-align: justify !important;
-            text-justify: inter-word !important;
-            margin-bottom: 11px !important;
-        }
+/* --- تنسيقات الوضع النهاري المضيء (Light Mode) --- */
+body.light-mode {
+    --bg-color: #f8fafc !important;
+    --card-bg: #ffffff !important;
+    --text-main: #0f172a !important;
+    --text-muted: #475569 !important;
+    --border-color: #cbd5e1 !important;
+    --primary-color: #0284c7 !important;
+    --accent-color: #2563eb !important;
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+}
 
-        .single-post-content h1, .single-post-content h2, .single-post-content h3, 
-        .single-post-content h4, .single-post-content h5, .single-post-content h6,
-        .dynamic-post-content-box h1, .dynamic-post-content-box h2, .dynamic-post-content-box h3, 
-        .dynamic-post-content-box h4, .dynamic-post-content-box h5, .dynamic-post-content-box h6 {
-            text-align: right !important;
-        }
-
-        body.light-mode {
-            --bg-color: #f8fafc !important;
-            --card-bg: #ffffff !important;
-            --text-main: #0f172a !important;
-            --text-muted: #475569 !important;
-            --border-color: #cbd5e1 !important;
-            --primary-color: #0284c7 !important;
-            --accent-color: #2563eb !important;
-            --table-bg: #ffffff !important;
-            background-color: #f8fafc !important;
-            color: #0f172a !important;
-        }
-
+        /* تعديل العناصر داخل الوضع النهاري لتكون واضحة */
         body.light-mode .top-bar,
         body.light-mode header,
         body.light-mode .mega-menu,
         body.light-mode .ticker-container,
         body.light-mode .post-card,
         body.light-mode .widget-card,
-        body.light-mode .sidebar-controls-box,
-        body.light-mode .mobile-theme-bar,
         body.light-mode .footer-container,
         body.light-mode .left-sticky-sidebar,
         body.light-mode .news-mini-container {
@@ -289,45 +250,40 @@
         body.light-mode .dropdown-menu li a:hover {
             background: rgba(2, 132, 199, 0.1) !important;
         }
+        
+        
+        /* --- [تعديل المشكلة 4: تقليل المسافات والفراغات بين السطور إلى النصف] --- */
+        .single-post-content, .dynamic-post-content-box {
+            font-family: var(--active-font, 'Cairo') !important;
+            text-align: justify !important;
+            text-justify: inter-word !important;
+            color: #2C3E50 !important;
+            line-height: 1.8 !important; /* تم تخفيضها من 2 إلى 1.5 */
+        }
+        
+        .single-post-content p, .dynamic-post-content-box p {
+            margin-bottom: 11px !important; /* تم تخفيض الهامش بين الفقرات والسطور الفارغة إلى النصف من 15px إلى 8px */
+        }
 
-        /* تنسيقات الجداول بخلفية البيج الهادئ والنص الأسود الصلب */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
-            max-width: 100% !important;
             border-collapse: collapse !important;
-            margin: 15px auto !important;
-            background-color: #FDF5E6 !important;
-            border: 1px solid #E2D8C5 !important;
+            margin: 15px 0 !important;
+            background-color: #ffffff !important;
         }
-        
+
         .single-post-content th, .single-post-content td,
         .dynamic-post-content-box th, .dynamic-post-content-box td {
-            border: 1px solid #E2D8C5 !important;
-            padding: 8px 10px !important;
+            border: 1px solid #94a3b8 !important;
+            padding: 10px !important;
             text-align: right !important;
-            color: #000000 !important;
-            font-size: 0.8rem !important;
-            background-color: #FDF5E6 !important;
-            white-space: normal !important;
-            word-break: normal !important;
-            overflow-wrap: break-word !important;
         }
-        
+
         .single-post-content th,
         .dynamic-post-content-box th {
+            background-color: #e2e8f0 !important;
             font-weight: bold !important;
-            font-size: 0.85rem !important;
-            color: #000000 !important;
-            background-color: #F5DEB3 !important;
-        }
-        
-        @media (max-width: 768px) {
-            .single-post-content th, .single-post-content td,
-            .dynamic-post-content-box th, .dynamic-post-content-box td {
-                font-size: 0.7rem !important;
-                padding: 5px 6px !important;
-            }
         }
 
         .left-sticky-sidebar { 
@@ -368,33 +324,29 @@
         @media (max-width: 900px) { .footer-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .footer-container { grid-template-columns: 1fr; } }
 
-        /* تثبيت شريط المحتويات في الكمبيوتر تحت الهيدر مباشرة */
         #toc-container {
-            position: sticky !important;
-            top: 290px !important;
+            position: sticky;
+            top: 40px;
             z-index: 100;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 8px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            width: 100%;
+            background: rgba(247, 244, 239, 0.95);
+            backdrop-filter: blur(5px);
+            padding: 5px 0;
         }
 
+        /* تنسيق قسم شاهد أيضاً بلون أخضر وتصميم بارز */
         .related-posts-box, .see-also-box {
-            background-color: var(--card-bg) !important;
-            border: 1px solid var(--border-color) !important;
+            background-color: #ecfdf5 !important;
+            border: 1px solid #10b981 !important;
             border-radius: 8px;
             padding: 15px;
             margin: 20px 0;
-            color: var(--text-main) !important;
+            color: #065f46 !important;
         }
         .related-posts-box h4, .see-also-box h4 {
-            color: var(--accent-color) !important;
+            color: #047857 !important;
             font-size: 1rem;
             margin-bottom: 10px;
-            border-bottom: 1px dashed var(--border-color);
+            border-bottom: 1px dashed #10b981;
             padding-bottom: 5px;
         }
         .related-posts-box ul, .see-also-box ul {
@@ -405,248 +357,78 @@
             margin-bottom: 8px;
         }
         .related-posts-box a, .see-also-box a {
-            color: var(--primary-color) !important;
+            color: #047857 !important;
             text-decoration: none;
             font-weight: 600;
         }
         .related-posts-box a:hover, .see-also-box a:hover {
-            color: var(--accent-color) !important;
+            color: #022c22 !important;
             text-decoration: underline;
         }
+
+
+        /* ضمان ظهور حدود الجداول وترتيبها بدقة داخل المقالات */
+        .single-post-content table,
+        .dynamic-post-content-box table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 15px 0 !important;
+            background-color: #ffffff !important;
+        }
+        .single-post-content th, .single-post-content td,
+        .dynamic-post-content-box th, .dynamic-post-content-box td {
+            border: 1px solid #cbd5e1 !important;
+            padding: 10px !important;
+            text-align: right !important;
+            color: #1e293b !important;
+        }
+        .single-post-content th,
+        .dynamic-post-content-box th {
+            background-color: #f1f5f9 !important;
+            font-weight: bold !important;
+        }
+        
     </style>
-
-    <style>
-        /* =========================================================
-           تنسيقات شاشة الجوال والتابلت فقط (Media Query for Mobile)
-           ========================================================= */
-        @media (max-width: 768px) {
-            .top-bar {
-                display: flex !important;
-                justify-content: center !important;
-                padding: 6px 10px !important;
-            }
-            .top-pages {
-                justify-content: center !important;
-                flex-wrap: wrap !important;
-                gap: 8px 14px !important;
-                width: 100%;
-            }
-            .top-pages a {
-                font-size: 0.75rem !important;
-            }
-            .top-social {
-                display: none !important;
-            }
-        
-            header {
-                position: sticky !important;
-                top: 0 !important;
-                z-index: 1000 !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-                padding: 6px 12px !important;
-                margin-top: 5px !important;
-                grid-template-columns: none !important;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            }
-        
-            .header-logo {
-                flex: 0 0 auto !important;
-            }
-            .header-logo img {
-                max-height: 40px !important;
-            }
-        
-            .header-center {
-                flex: 1 !important;
-                text-align: center !important;
-                padding: 0 6px !important;
-            }
-            .header-center h1 {
-                font-size: 1.2rem !important;
-                line-height: 1.1 !important;
-                margin: 0 !important;
-            }
-            .header-center p {
-                font-size: 0.65rem !important;
-                margin-top: 2px !important;
-                white-space: nowrap !important;
-            }
-        
-            .mobile-menu-btn {
-                display: flex !important;
-                align-items: center;
-                justify-content: center;
-                background: var(--bg-color);
-                border: 1px solid var(--border-color);
-                color: var(--accent-color);
-                width: 36px;
-                height: 36px;
-                border-radius: 6px;
-                font-size: 1rem;
-                cursor: pointer;
-                flex-shrink: 0;
-            }
-
-            /* شريط الثيمات الثابت للجوال */
-            .mobile-theme-bar {
-                display: flex !important;
-                position: sticky !important;
-                top: 52px !important;
-                z-index: 998 !important;
-                background: var(--card-bg);
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                padding: 5px 10px;
-                margin: 6px 0;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-            }
-
-            /* ضبط مكان شريط المحتويات في الجوال ليثبت أسفل شريط الثيمات مباشرة دون اختفاء */
-            #toc-container {
-                top: 105px !important;
-            }
-        
-            .main-menu-bar {
-                position: relative !important;
-                top: auto !important;
-            }
-            .mega-menu {
-                display: none;
-                flex-direction: column !important;
-                gap: 2px !important;
-                padding: 8px !important;
-                margin-top: 5px !important;
-            }
-            .mega-menu.mobile-active {
-                display: flex !important;
-            }
-            .mega-menu li a, .mega-menu > a {
-                padding: 10px 12px !important;
-                font-size: 0.85rem !important;
-                border-bottom: 1px solid var(--border-color);
-            }
-        
-            .top-right-row {
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 15px !important;
-                align-items: stretch !important;
-            }
-            
-            .square-slider-box {
-                display: block !important;
-                width: 100% !important;
-                height: 230px !important;
-                flex: none !important;
-            }
-            
-            .square-slide {
-                display: none;
-            }
-            .square-slide.active {
-                display: flex !important;
-            }
-        
-            .news-mini-container {
-                display: flex !important;
-                flex-direction: column !important;
-                width: 100% !important;
-                height: auto !important;
-                min-height: 200px !important;
-                flex: none !important;
-            }
-        }
-        
-        @media (min-width: 769px) {
-            .mobile-menu-btn {
-                display: none !important;
-            }
-            .mobile-theme-bar {
-                display: none !important;
-            }
-        }    
-
-        /* حل مشكلة قطع الإعلانات في الجوال وعرضها بشكل كامل وسليم */
-        .article-ad-box {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 20px auto;
-            width: 100%;
-            max-width: 100%;
-            min-height: 90px;
-            overflow: hidden;
-            box-sizing: border-box;
-            background: rgba(0, 0, 0, 0.02);
-            border-radius: 8px;
-        }
-        
-        .article-ad-box iframe, 
-        .article-ad-box ins, 
-        .article-ad-box img, 
-        .article-ad-box div {
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-        }
-
-        @media (max-width: 768px) {
-            .article-ad-box {
-                width: 100% !important;
-                max-width: 100% !important;
-                overflow-x: hidden !important;
-                box-sizing: border-box !important;
-                margin: 15px auto !important;
-            }
-        
-            #dynamic-post-view, 
-            .dynamic-post-content-box,
-            .right-scrollable-section {
-                max-width: 100% !important;
-                overflow-x: hidden !important;
-            }
-        }
-    </style>
-
 </head>
     
 <body class="theme-default">
 
     <div class="site-outer-frame">
 
+        <div id="site-ad-top" style="width: 100%; margin: 10px auto; text-align: center;"></div>
+
         <div class="top-bar">
             <div class="top-pages" id="top-static-pages-container"></div>
-            <div class="top-social" style="display: none;"></div>
+            
+            <div class="top-controls">
+                <div class="color-switcher-group">
+                    <button id="prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
+                    <span class="color-center-icon"><i class="fa-solid fa-palette"></i></span>
+                    <button id="next-theme-btn" title="الثيم التالي"><i class="fa-solid fa-chevron-left"></i></button>
+                </div>
+                <button class="control-btn" id="font-toggle-btn" title="تغيير الخط"><i class="fa-solid fa-font"></i> الخط</button>
+                <button class="control-btn" id="dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
+            </div>
+
+            <div class="top-social">
+                <a href="#" title="إكس (تويتر)"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" title="يوتيوب"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" title="تيليجرام"><i class="fa-brands fa-telegram"></i></a>
+                <a href="#" title="سناب شات"><i class="fa-brands fa-snapchat"></i></a>
+                <a href="#" title="جيت هب"><i class="fa-brands fa-github"></i></a>
+            </div>
         </div>
 
         <header>
             <div class="header-logo" id="site-logo-container">
                 <img id="site-logo" alt="شعار الموقع" style="display: none;">
             </div>
-            
             <div class="header-center">
                 <h1 id="site-main-heading">تكنو-<span>دليل</span></h1>
-                <p id="site-tagline">بوابة الحلول الرقمية</p>
+                <p id="site-tagline">بوابة الحلول الرقمية والتقنية المبتكرة</p>
             </div>
-        
-            <button type="button" class="mobile-menu-btn" id="mobile-hamburger-btn" aria-label="فتح القائمة">
-                <i class="fa-solid fa-bars"></i>
-            </button>
+            <div></div>
         </header>
-
-        <!-- شريط الثيمات للجوال -->
-        <div class="mobile-theme-bar sidebar-controls-box" style="margin-bottom: 0;">
-            <div class="sidebar-controls-inner" style="width: 100%;">
-                <div class="color-switcher-group">
-                    <button id="mob-prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
-                    <span class="color-center-icon"><i class="fa-solid fa-palette"></i></span>
-                    <button id="mob-next-theme-btn" title="الثيم التالي"><i class="fa-solid fa-chevron-left"></i></button>
-                </div>
-                <button class="control-btn" id="mob-font-toggle-btn" title="تغيير الخط"><i class="fa-solid fa-font"></i> الخط</button>
-                <button class="control-btn" id="mob-dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
-            </div>
-        </div>
 
         <div class="ticker-wrapper" id="site-ticker-wrapper">
             <div class="ticker-container">
@@ -662,6 +444,8 @@
                 <li><a href="#">الرئيسية</a></li>
             </nav>
         </div>
+
+        <div id="site-ad-mid" style="width: 100%; margin: 15px auto; text-align: center;"></div>
         
         <div class="three-columns-grid" id="top-three-section">
             <div class="right-scrollable-section">
@@ -716,22 +500,11 @@
             </div>
         
             <div class="left-sticky-sidebar">
-                <div class="sidebar-controls-box">
-                    <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">تغيير الثيمات والخطوط</h3>
-                    <div class="sidebar-controls-inner">
-                        <div class="color-switcher-group">
-                            <button id="prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
-                            <span class="color-center-icon"><i class="fa-solid fa-palette"></i></span>
-                            <button id="next-theme-btn" title="الثيم التالي"><i class="fa-solid fa-chevron-left"></i></button>
-                        </div>
-                        <button class="control-btn" id="font-toggle-btn" title="تغيير الخط"><i class="fa-solid fa-font"></i> الخط</button>
-                        <button class="control-btn" id="dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
-                    </div>
-                </div>
-
                 <div class="left-content-area" id="left-widgets-area"></div>
             </div>
         </div>
+
+        <div id="site-ad-bot" style="width: 100%; margin: 15px auto; text-align: center;"></div>
 
         <footer class="site-footer">
             <div class="footer-container" id="site-footer-widgets"></div>
@@ -739,6 +512,7 @@
                 جميع الحقوق محفوظة <span class="secret-c" id="secret-trigger" title="إدارة">©</span> 2026 - <span id="footer-site-name">تكنو-دليل</span>
             </div>
         </footer>
+
     </div>
     
     <script>
@@ -755,10 +529,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let menuTree = data.menu ? buildTree(data.menu) : [];
         let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
-        window._currentSequencedPosts = sequencedPosts;
 
+        // --- التحكم بالثيمات والخطوط والوضع الليلي ---
         initThemeAndFontControls(data);
 
+        // --- الصفحات الثابتة في الشريط العلوي ---
         const topPagesContainer = document.getElementById('top-static-pages-container');
         let staticLinksMap = [
             { key: 'about', label: 'من نحن' },
@@ -773,12 +548,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let linkVal = data.staticPagesLinks[item.key];
                 if (linkVal && linkVal.trim() !== '') {
                     let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
-                    linksHtml += `<a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" rel="nofollow">${item.label}</a>`;
+                    linksHtml += `<a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;">${item.label}</a>`;
                 }
             });
             topPagesContainer.innerHTML = linksHtml;
         }
 
+        // --- حساب المشاركة المميزة تلقائياً بناءً على القواعد المطلوبة ---
         let topFeatured = null;
         if (filteredPosts.length > 0) {
             let sortedFeatured = [...filteredPosts].sort((a, b) => {
@@ -792,14 +568,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 let dateA = new Date(a.date || '2026-01-01').getTime();
                 let dateB = new Date(b.date || '2026-01-01').getTime();
-                if (dateA !== dateB) return dateA - dateB;
+                if (dateA !== dateB) return dateA - dateB; // الأقدم أولاً
 
                 let lenA = (a.content || '').length;
                 let lenB = (b.content || '').length;
-                return lenB - lenA;
+                return lenB - lenA; // الأطول أولاً
             });
             topFeatured = sortedFeatured[0];
         }
+
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link && link.getAttribute('href')) {
+                const href = link.getAttribute('href');
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    return;
+                }
+            }
+        });
 
         const siteLogoEl = document.getElementById('site-logo'); 
         if (siteLogoEl && data.settings) {
@@ -811,34 +602,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (data.settings.logoHeight) siteLogoEl.style.height = data.settings.logoHeight;
             }
         }
-
-        const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
-        const mainMenu = document.getElementById('site-main-menu');
         
-        if (hamburgerBtn && mainMenu) {
-            hamburgerBtn.addEventListener('click', () => {
-                mainMenu.classList.toggle('mobile-active');
-                const icon = hamburgerBtn.querySelector('i');
-                if (icon) {
-                    icon.classList.toggle('fa-bars');
-                    icon.classList.toggle('fa-xmark');
-                }
-            });
-        }
-
         const container = document.getElementById('posts-container');
         if (filteredPosts.length > 0) {
             if (container) {
                 container.innerHTML = filteredPosts.map(post => `
                     <div class="post-card">
                         <div class="post-title">
-                            <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}'); return false;">${post.title}</a>
+                            <a href="?article=${post.slug}">${post.title}</a>
                         </div>
                         <div class="post-meta">
                             <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
                         </div>
                         <div class="post-excerpt">${post.description || ''}</div>
-                        <a href="?article=${post.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;" onclick="openPostBySlug('${post.slug}'); return false;">للقراءة أكثر ←</a>
+                        <a href="?article=${post.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;">للقراءة أكثر ←</a>
                     </div>
                 `).join('');
             }
@@ -849,7 +626,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let sliderHtml = sliderPosts.map((p, idx) => `
                     <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
                         <div class="square-caption">
-                            <a href="?article=${p.slug}" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;" onclick="openPostBySlug('${p.slug}'); return false;">${p.title}</a>
+                            <a href="?article=${p.slug}" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;">${p.title}</a>
                             <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
                         </div>
                     </div>
@@ -875,6 +652,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // --- تعبئة الودجتات المجهزة بالترتيب الصحيح دون عمل نسخ أو تغيير أماكنها ---
         const areWidgetsEnabled = data.settings ? (data.settings.showWidgets !== false) : true;
         const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
         const footerWidgetsContainer = document.getElementById('site-footer-widgets');
@@ -890,22 +668,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (!w.active) return;
                     let contentBox = '';
 
+                    // 1. التسميات أو التصنيفات
                     if (w.type === 'categories') {
                         let categories = w.categoriesList || [...new Set(filteredPosts.map(p => p.category).filter(Boolean))];
-                        let catListHtml = `<li><a href="#" onclick="filterPostsByCategory('ALL'); return false;" style="font-size: 0.68rem; font-weight: bold; color: var(--accent-color);"><i class="fa-solid fa-border-all" style="margin-left: 5px;"></i>إظهار الكل</a></li>`;
-                        catListHtml += categories.map(cat => `
-                            <li><a href="#" onclick="filterPostsByCategory('${cat}'); return false;" style="font-size: 0.68rem;"><i class="fa-solid fa-folder" style="margin-left: 5px; color: var(--primary-color);"></i>${cat}</a></li>
-                        `).join('');
-                        contentBox = `<ul class="recent-posts-list">${catListHtml}</ul>`;
-                    } 
-                    else if (w.type === 'recent' || (w.title && w.title.includes('أحدث المواضيع'))) {
-                        let recentPosts = filteredPosts.slice(0, 3);
-                        contentBox = '<ul class="recent-posts-list">' + recentPosts.map(p => `
-                            <li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}'); return false;" style="font-size: 0.7rem; display: flex; align-items: center; gap: 5px;">
-                                <i class="fa-solid fa-clock" style="color: var(--primary-color);"></i>${p.title}
-                            </a></li>
+                        contentBox = '<ul class="recent-posts-list">' + categories.map(cat => `
+                            <li><a href="?category=${encodeURIComponent(cat)}" style="font-size: 0.68rem;"><i class="fa-solid fa-folder" style="margin-left: 5px; color: var(--primary-color);"></i>${cat}</a></li>
                         `).join('') + '</ul>';
-                    }
+                    } 
+                    // 2. مشاركة مميزة
                     else if (w.type === 'featured' || (w.title && w.title.includes('مميزة'))) {
                         if (topFeatured) {
                             contentBox = `
@@ -918,6 +688,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             contentBox = `<p style="font-size: 0.75rem; color: var(--text-muted);">لا توجد مقالات مميزة حالياً</p>`;
                         }
                     } 
+                    // 3. اتصل بنا
                     else if (w.type === 'contact' && w.contactData) {
                         let cd = w.contactData;
                         contentBox = `<div style="font-size: 0.75rem; line-height: 1.6;">`;
@@ -928,6 +699,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (cd.telegram) contentBox += `<p><i class="fa-brands fa-telegram"></i> <a href="https://t.me/${cd.telegram}" target="_blank" style="color: var(--accent-color);">تليجرام</a></p>`;
                         contentBox += `</div>`;
                     } 
+                    // 4. الصفحات الثابتة (تأخذ أسماءها وروابطها من الشريط العلوي)
                     else if (w.type === 'static-pages' || (w.title && w.title.includes('الصفحات الثابتة'))) {
                         let pagesListItems = '';
                         if (data.staticPagesLinks) {
@@ -935,14 +707,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 let linkVal = data.staticPagesLinks[item.key];
                                 if (linkVal && linkVal.trim() !== '') {
                                     let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
-                                    pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" rel="nofollow" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
+                                    pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
                                 }
                             });
                         }
                         contentBox = `<ul class="recent-posts-list">${pagesListItems || '<li>لا توجد صفحات ثابتة</li>'}</ul>`;
                     } 
+                    // أنواع أخرى مخصصة
                     else {
                         contentBox = `<div style="font-size: 0.68rem;">${w.content || ''}</div>`;
+                    }
+
+                    // 1. التسميات أو التصنيفات مع إضافة بند "إظهار الكل" وتصفية المقالات والسلايدر
+                    if (w.type === 'categories') {
+                        let categories = w.categoriesList || [...new Set(filteredPosts.map(p => p.category).filter(Boolean))];
+                        
+                        // بند إظهار الكل الثابت في الأعلى
+                        let catListHtml = `<li><a href="#" onclick="filterPostsByCategory('ALL'); return false;" style="font-size: 0.68rem; font-weight: bold; color: var(--accent-color);"><i class="fa-solid fa-border-all" style="margin-left: 5px;"></i>إظهار الكل</a></li>`;
+                        
+                        catListHtml += categories.map(cat => `
+                            <li><a href="#" onclick="filterPostsByCategory('${cat}'); return false;" style="font-size: 0.68rem;"><i class="fa-solid fa-folder" style="margin-left: 5px; color: var(--primary-color);"></i>${cat}</a></li>
+                        `).join('');
+                        
+                        contentBox = `<ul class="recent-posts-list">${catListHtml}</ul>`;
                     }
 
                     let widgetBlock = `
@@ -957,12 +744,37 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             }
 
-            if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
+if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
             if (footerWidgetsContainer) {
                 footerWidgetsContainer.style.minHeight = "220px";
                 footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
             }
         }
+
+        // --- [ضع كود الإعلانات هنا في مكانه الصحيح قبل إغلاق try] ---
+        const ads = data.ads || { topOn: false, midOn: false, botOn: false };
+        const topAdBox = document.getElementById('site-ad-top');
+        const midAdBox = document.getElementById('site-ad-mid');
+        const botAdBox = document.getElementById('site-ad-bot');
+    
+        const renderAdSlot = (container, isEnabled, adCode, placeholderText) => {
+            if (!container) return;
+            if (isEnabled) {
+                container.style.display = 'block';
+                if (adCode && adCode.trim() !== '') {
+                    container.innerHTML = adCode;
+                } else {
+                    container.innerHTML = `<div style="border: 1px dashed var(--border-color); padding: 20px; color: var(--text-muted); font-size: 0.85rem; border-radius: 8px; background: rgba(0,0,0,0.1);">${placeholderText}</div>`;
+                }
+            } else {
+                container.style.display = 'none';
+                container.innerHTML = '';
+            }
+        };
+    
+        renderAdSlot(topAdBox, ads.topOn, ads.topCode, 'مساحة إعلانية علوية');
+        renderAdSlot(midAdBox, ads.midOn, ads.midCode, 'مساحة إعلانية وسطىة');
+        renderAdSlot(botAdBox, ads.botOn, ads.botCode, 'مساحة إعلانية سفلية');
 
         const urlParams = new URLSearchParams(window.location.search);
         const articleParam = urlParams.get('article');
@@ -976,26 +788,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+        
+        // تفعيل ميزات الثيمات، الخطوط، والوضع الليلي
         function initThemeAndFontControls(data) {
             const themes = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
             let currentThemeIdx = 0;
         
-            function applyTheme(idx) {
-                document.body.classList.remove(...themes);
-                currentThemeIdx = idx;
-                document.body.classList.add(themes[currentThemeIdx]);
-                localStorage.setItem('site_theme', themes[currentThemeIdx]);
+            const nextThemeBtn = document.getElementById('next-theme-btn');
+            const prevThemeBtn = document.getElementById('prev-theme-btn');
+            if (nextThemeBtn) {
+                nextThemeBtn.onclick = () => {
+                    document.body.classList.remove(themes[currentThemeIdx]);
+                    currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+                    document.body.classList.add(themes[currentThemeIdx]);
+                    localStorage.setItem('site_theme', themes[currentThemeIdx]);
+                };
             }
-
-            ['next-theme-btn', 'mob-next-theme-btn'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.onclick = () => applyTheme((currentThemeIdx + 1) % themes.length);
-            });
-
-            ['prev-theme-btn', 'mob-prev-theme-btn'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.onclick = () => applyTheme((currentThemeIdx - 1 + themes.length) % themes.length);
-            });
+            if (prevThemeBtn) {
+                prevThemeBtn.onclick = () => {
+                    document.body.classList.remove(themes[currentThemeIdx]);
+                    currentThemeIdx = (currentThemeIdx - 1 + themes.length) % themes.length;
+                    document.body.classList.add(themes[currentThemeIdx]);
+                    localStorage.setItem('site_theme', themes[currentThemeIdx]);
+                };
+            }
         
             let savedTheme = localStorage.getItem('site_theme');
             if (savedTheme && themes.includes(savedTheme)) {
@@ -1005,48 +821,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         
             const fonts = ['Cairo', 'Tajawal', 'Amiri', 'Almarai', 'Readex Pro', 'Changa'];
             let currentFontIdx = 0;
-
-            function toggleFont() {
-                currentFontIdx = (currentFontIdx + 1) % fonts.length;
-                let chosenFont = fonts[currentFontIdx];
-                document.documentElement.style.setProperty('--active-font', chosenFont);
-                localStorage.setItem('site_font', chosenFont);
+            const fontToggleBtn = document.getElementById('font-toggle-btn');
+            if (fontToggleBtn) {
+                fontToggleBtn.onclick = () => {
+                    currentFontIdx = (currentFontIdx + 1) % fonts.length;
+                    let chosenFont = fonts[currentFontIdx];
+                    document.documentElement.style.setProperty('--active-font', chosenFont);
+                    localStorage.setItem('site_font', chosenFont);
+                };
             }
-
-            ['font-toggle-btn', 'mob-font-toggle-btn'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.onclick = toggleFont;
-            });
-
             let savedFont = localStorage.getItem('site_font');
             if (savedFont) {
                 document.documentElement.style.setProperty('--active-font', savedFont);
             }
                     
-            function toggleDarkMode() {
-                document.body.classList.toggle('light-mode');
-                const isLight = document.body.classList.contains('light-mode');
-                localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
-                ['dark-mode-btn', 'mob-dark-mode-btn'].forEach(id => {
-                    const b = document.getElementById(id);
-                    if (b) b.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+            //------------------- الوضع الليلي -----------------------------
+            const darkModeBtn = document.getElementById('dark-mode-btn');
+            if (darkModeBtn) {
+                darkModeBtn.addEventListener('click', () => {
+                    document.body.classList.toggle('light-mode');
+                    const isLight = document.body.classList.contains('light-mode');
+                    localStorage.setItem('tech_light_mode', isLight ? '1' : '0');
+                    darkModeBtn.innerHTML = isLight ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
                 });
+            
+                if (localStorage.getItem('tech_light_mode') === '1') {
+                    document.body.classList.add('light-mode');
+                    darkModeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                }
             }
 
-            ['dark-mode-btn', 'mob-dark-mode-btn'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.addEventListener('click', toggleDarkMode);
-            });
-
-            if (localStorage.getItem('tech_light_mode') === '1') {
-                document.body.classList.add('light-mode');
-                ['dark-mode-btn', 'mob-dark-mode-btn'].forEach(id => {
-                    const b = document.getElementById(id);
-                    if (b) b.innerHTML = '<i class="fa-solid fa-sun"></i>';
-                });
-            }
         }
 
+        
+        
         function getOrderedPosts(menuItems, allPosts) {
             let ordered = [];
             let visitedIds = new Set();
@@ -1080,7 +888,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             let words = title.trim().split(/\s+/);
             return words.length > 5 ? words.slice(0, 5).join(' ') + '...' : title;
         }
-                
+        
         window.openPostBySlug = async function(slug) {
             const dynamicView = document.getElementById('dynamic-post-view');
             const dynamicContentBox = document.getElementById('dynamic-post-content-box');
@@ -1102,7 +910,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
             let menuTree = data.menu ? buildTree(data.menu) : [];
             let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
-            window._currentSequencedPosts = sequencedPosts;
         
             let targetSlug = decodeURIComponent(slug || '').replace('.html', '').trim().toLowerCase();
             if (targetSlug.includes('?article=')) targetSlug = targetSlug.split('?article=')[1];
@@ -1121,12 +928,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                 setTimeout(() => {
                     const rect = dynamicView.getBoundingClientRect();
-                    window.scrollTo({ top: window.pageYOffset + rect.top - 60, behavior: 'smooth' });
+                    window.scrollTo({ top: window.pageYOffset + rect.top - 33, behavior: 'smooth' });
                 }, 50);
         
                 let tempDiv = document.createElement('div');
                 tempDiv.innerHTML = post.content || post.description || '';
                 let headings = tempDiv.querySelectorAll('h2, h3');
+                let tocHtml = '';
                 
                 let tocOptions = `<option value="" disabled selected>-- اختر من محتويات المقال (انقر هنا للاستعراض) --</option>`;
                 if (headings.length > 0) {
@@ -1140,47 +948,99 @@ document.addEventListener('DOMContentLoaded', async () => {
                     tocOptions += `<option value="" disabled>لا توجد عناوين فرعية في هذا المقال</option>`;
                 }
         
-                let tocHtml = `
-                    <div id="toc-container">
-                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 15; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                tocHtml = `
+                    <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
+                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 30; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 12px 18px; border: 1px solid #dcd3c1; border-radius: 8px; background: #fff; color: #2C3E50; font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                             ${tocOptions}
                         </select>
                     </div>
-                    <div id="article-top-ad" class="article-ad-box"></div>
                 `;
-        
-                let paragraphs = tempDiv.querySelectorAll('p');
-                if (paragraphs.length > 1) {
-                    let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
-                    let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
-        
-                    if (randomPosts.length > 0) {
-                        let seeAlsoWrapper = document.createElement('div');
-                        seeAlsoWrapper.innerHTML = `
-                            <div class="see-also-box">
-                                <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
-                                <ul>
-                                    ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
-                                </ul>
-                            </div>
-                            <div id="article-mid-ad" class="article-ad-box"></div>
-                        `;
-                        let middleIndex = Math.floor(paragraphs.length / 2);
-                        paragraphs[middleIndex].parentNode.insertBefore(seeAlsoWrapper, paragraphs[middleIndex].nextSibling);
-                    }
-                }
-
-                let botAdHtml = `
-                    <div id="article-bot-ad" class="article-ad-box"></div>
-                `;
-
-                tempDiv.innerHTML = tocHtml + tempDiv.innerHTML + botAdHtml;
                 post.processedContent = tempDiv.innerHTML;
+
+
+                        // --- [تعديل المشكلة 1: توليد قسم شاهد أيضاً في منتصف المقال] ---
+        let postParagraphs = tempDiv.innerHTML.split('</p>');
+        if (postParagraphs.length > 2) {
+            // جلب مقالات عشوائية من باقي مقالات المدونة
+            let otherPosts = rawPosts.filter(p => p.id !== post.id && (p.category || '').trim() !== 'الصفحات الثابتة');
+            let randomPosts = otherPosts.sort(() => 0.5 - Math.random()).slice(0, 4);
+        
+            if (randomPosts.length > 0) {
+                let seeAlsoHtml = `
+                    <div class="see-also-box">
+                        <h4><i class="fa-solid fa-eye"></i> شاهد أيضاً:</h4>
+                        <ul>
+                            ${randomPosts.map(rp => `<li><a href="?article=${rp.slug}" onclick="openPostBySlug('${rp.slug}'); return false;">${rp.title}</a></li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                let midIndex = Math.floor(postParagraphs.length / 2);
+                postParagraphs.splice(midIndex, 0, seeAlsoHtml);
+                tempDiv.innerHTML = postParagraphs.join('</p>');
+            }
+        }
+        post.processedContent = tempDiv.innerHTML;
+                
+
+                
+                let ads = data.ads || {};
+                let topAd = (ads.topOn && ads.topCode) ? `<div style="margin:15px 0; text-align:center;">${ads.topCode}</div>` : '';
+                let botAd = (ads.botOn && ads.botCode) ? `<div style="margin:15px 0; text-align:center;">${ads.botCode}</div>` : '';
         
                 let currentIndex = sequencedPosts.findIndex(p => p.id === post.id);
                 window._currentNavPrevIndex = currentIndex > 0 ? currentIndex - 1 : -1;
                 window._currentNavNextIndex = currentIndex !== -1 && currentIndex < sequencedPosts.length - 1 ? currentIndex + 1 : -1;
-
+        
+                function renderNavContainer() {
+                    let pPost = window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
+                    let nPost = window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
+        
+                    let pHtml = pPost ? `
+                        <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
+                            <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i></button>
+                            <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: right;">
+                                <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${pPost.title}" onclick="openPostBySlug('${pPost.slug}'); return false;">${getShortTitle(pPost.title)}</a>
+                            </div>
+                        </div>` : `<span></span>`;
+        
+                    let nHtml = nPost ? `
+                        <div style="display: flex; align-items: center; gap: 14px; width: 100%; justify-content: flex-end;">
+                            <div style="border: 1px solid #dcd3c1; padding: 6px 12px; border-radius: 6px; background: rgba(245, 240, 230, 0.3); flex-grow: 1; text-align: left;">
+                                <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.85rem; display: block;" title="${nPost.title}" onclick="openPostBySlug('${nPost.slug}'); return false;">${getShortTitle(nPost.title)}</a>
+                            </div>
+                            <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; flex-shrink: 0;" title="المقال التالي"><i class="fa-solid fa-arrow-left"></i></button>
+                        </div>` : `<span></span>`;
+        
+                    const navBox = document.getElementById('bottom-navigation-wrapper');
+                    if (navBox) {
+                        navBox.innerHTML = `<div>${pHtml}</div><div>${nHtml}</div>`;
+                        attachNavEvents();
+                    }
+                }
+                
+                function attachNavEvents() {
+                    const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
+                    const nextArrowBtn = document.getElementById('custom-next-arrow-btn');
+                    if (prevArrowBtn) {
+                        prevArrowBtn.onclick = () => {
+                            if (window._currentNavPrevIndex > 0) {
+                                window._currentNavPrevIndex--;
+                                window._currentNavNextIndex = window._currentNavPrevIndex + 2 < sequencedPosts.length ? window._currentNavPrevIndex + 2 : -1;
+                            } else { window._currentNavPrevIndex = sequencedPosts.length - 1; }
+                            renderNavContainer();
+                        };
+                    }
+                    if (nextArrowBtn) {
+                        nextArrowBtn.onclick = () => {
+                            if (window._currentNavNextIndex !== -1 && window._currentNavNextIndex < sequencedPosts.length - 1) {
+                                window._currentNavNextIndex++;
+                                window._currentNavPrevIndex = window._currentNavNextIndex - 2 >= 0 ? window._currentNavNextIndex - 2 : -1;
+                            } else { window._currentNavNextIndex = 0; }
+                            renderNavContainer();
+                        };
+                    }
+                }
+        
                 dynamicContentBox.innerHTML = `
                     <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
                         <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
@@ -1188,123 +1048,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                     <div style="padding: 0 15px;">
                         <h1 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; color: var(--accent-color);">${post.title}</h1>
-                        <div class="post-meta" style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 15px;">
+                        <div class="post-meta" style="color: #596573; font-size: 0.8rem; margin-bottom: 15px;">
                             <span>📅 ${post.date || 'حديث'}</span> | <span>📁 ${post.category || 'عام'}</span>
                         </div>
                         
-                        <div class="single-post-content" style="line-height: 2; font-size: 0.95rem;">
+                        ${tocHtml}
+                        
+                        ${topAd}
+                        <div class="single-post-content" style="line-height: 2; color: #2C3E50; font-size: 0.95rem;">
                             ${post.processedContent}
                         </div>
+                        ${botAd}
         
-                        <div id="bottom-navigation-wrapper" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
+                        <div id="bottom-navigation-wrapper" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
         
-                        <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                        <div style="margin-top: 25px; display: flex; justify-content: flex-end; border-top: 1px solid #E2D8C5; padding-top: 15px;">
                             <button onclick="closePostView(); return false;" style="cursor: pointer; border: none; background: var(--primary-color); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem;"><i class="fa-solid fa-arrow-right"></i> العودة إلى الرئيسية</button>
                         </div>
                     </div>
                 `;
         
                 history.pushState({ slug: post.slug }, post.title, `?article=${post.slug}`);
-                
-                setTimeout(() => {
-                    renderNavContainer();
-                    if (typeof renderArticleAds === 'function') {
-                        renderArticleAds(data.ads);
-                    }
-                }, 100);
+                renderNavContainer();
             }
         };
-        
-        function renderNavContainer() {
-            let sequencedPosts = window._currentSequencedPosts || (window.siteBlogData ? window.siteBlogData.posts : []);
-            if (!sequencedPosts) return;
-
-            let pPost = window._currentNavPrevIndex !== undefined && window._currentNavPrevIndex !== -1 ? sequencedPosts[window._currentNavPrevIndex] : null;
-            let nPost = window._currentNavNextIndex !== undefined && window._currentNavNextIndex !== -1 ? sequencedPosts[window._currentNavNextIndex] : null;
-
-            let pHtml = pPost ? `
-                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%;">
-                    <button type="button" id="custom-prev-arrow-btn" style="background: var(--primary-color); color: #fff; padding: 4px 12px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; font-size: 0.75rem; gap: 5px;" title="المقال السابق"><i class="fa-solid fa-arrow-right"></i> السابق</button>
-                    <div style="border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; background: var(--card-bg); width: 100%; text-align: right;">
-                        <a href="?article=${pPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.75rem; display: block;" title="${pPost.title}" onclick="openPostBySlug('${pPost.slug}'); return false;">${getShortTitle(pPost.title)}</a>
-                    </div>
-                </div>` : `<span></span>`;
-
-            let nHtml = nPost ? `
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; width: 100%;">
-                    <button type="button" id="custom-next-arrow-btn" style="background: var(--primary-color); color: #fff; padding: 4px 12px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer; font-size: 0.75rem; gap: 5px;" title="المقال التالي">التالي <i class="fa-solid fa-arrow-left"></i></button>
-                    <div style="border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; background: var(--card-bg); width: 100%; text-align: left;">
-                        <a href="?article=${nPost.slug}" class="nav-article-link" style="text-decoration: none; color: var(--accent-color); font-weight: 600; font-size: 0.75rem; display: block;" title="${nPost.title}" onclick="openPostBySlug('${nPost.slug}'); return false;">${getShortTitle(nPost.title)}</a>
-                    </div>
-                </div>` : `<span></span>`;
-
-            const navBox = document.getElementById('bottom-navigation-wrapper');
-            if (navBox) {
-                navBox.innerHTML = `<div>${pHtml}</div><div>${nHtml}</div>`;
-                attachNavEvents(sequencedPosts);
-            }
-        }
-
-        function renderArticleAds(adsData) {
-            if (!adsData) return;
-        
-            function injectAd(containerId, isOn, codeString) {
-                const container = document.getElementById(containerId);
-                if (!container) return;
-        
-                if (isOn && codeString) {
-                    container.style.display = 'flex';
-                    container.innerHTML = ''; 
-        
-                    const wrapper = document.createElement('div');
-                    wrapper.innerHTML = codeString;
-        
-                    Array.from(wrapper.childNodes).forEach(node => {
-                        if (node.nodeName === 'SCRIPT') {
-                            const script = document.createElement('script');
-                            Array.from(node.attributes).forEach(attr => {
-                                script.setAttribute(attr.name, attr.value);
-                            });
-                            if (node.innerHTML) {
-                                script.innerHTML = node.innerHTML;
-                            }
-                            container.appendChild(script);
-                        } else {
-                            container.appendChild(node.cloneNode(true));
-                        }
-                    });
-                } else {
-                    container.style.display = 'none';
-                }
-            }
-        
-            injectAd('article-top-ad', adsData.topOn, adsData.topCode);
-            injectAd('article-mid-ad', adsData.midOn, adsData.midCode);
-            injectAd('article-bot-ad', adsData.botOn, adsData.botCode);
-        }
-
-        function attachNavEvents(sequencedPosts) {
-            const prevArrowBtn = document.getElementById('custom-prev-arrow-btn');
-            const nextArrowBtn = document.getElementById('custom-next-arrow-btn');
-            if (prevArrowBtn) {
-                prevArrowBtn.onclick = () => {
-                    if (window._currentNavPrevIndex > 0) {
-                        window._currentNavPrevIndex--;
-                        window._currentNavNextIndex = window._currentNavPrevIndex + 2 < sequencedPosts.length ? window._currentNavPrevIndex + 2 : -1;
-                    } else { window._currentNavPrevIndex = sequencedPosts.length - 1; }
-                    renderNavContainer();
-                };
-            }
-            if (nextArrowBtn) {
-                nextArrowBtn.onclick = () => {
-                    if (window._currentNavNextIndex !== -1 && window._currentNavNextIndex < sequencedPosts.length - 1) {
-                        window._currentNavNextIndex++;
-                        window._currentNavPrevIndex = window._currentNavNextIndex - 2 >= 0 ? window._currentNavNextIndex - 2 : -1;
-                    } else { window._currentNavNextIndex = 0; }
-                    renderNavContainer();
-                };
-            }
-        }
         
         window.closePostView = function() {
             const dynamicView = document.getElementById('dynamic-post-view');
@@ -1318,32 +1085,34 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
         
-        document.addEventListener('click', (e) => {
-            const link = e.target.closest('a');
-            if (link && link.getAttribute('href')) {
-                const href = link.getAttribute('href');
-                if (href.startsWith('#')) {
-                    e.preventDefault();
-                    const target = document.querySelector(href);
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (link && link.getAttribute('href')) {
+                    const href = link.getAttribute('href');
+                    if (href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                        return;
                     }
-                    return;
+                    if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
+                        e.preventDefault();
+                        let cleanSlug = href.includes('?article=') ? href.split('?article=')[1] : href.split('/').pop();
+                        cleanSlug = cleanSlug.replace('.html', '').split('&')[0].trim();
+                        openPostBySlug(cleanSlug);
+                    }
                 }
-                if (href.includes('post.html') || href.includes('articles/') || href.includes('?article=')) {
-                    e.preventDefault();
-                    let cleanSlug = href.includes('?article=') ? href.split('?article=')[1] : href.split('/').pop();
-                    cleanSlug = cleanSlug.replace('.html', '').split('&')[0].trim();
-                    openPostBySlug(cleanSlug);
-                }
-            }
-        });
-    
-        window.addEventListener('popstate', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const article = urlParams.get('article');
-            if (!article) closePostView();
-            else openPostBySlug(article);
+            });
+        
+            window.addEventListener('popstate', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const article = urlParams.get('article');
+                if (!article) closePostView();
+                else openPostBySlug(article);
+            });
         });
         
         function buildTree(items) {
@@ -1376,7 +1145,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 let hasChildren = node.children && node.children.length > 0;
                 let arrow = isRoot && hasChildren ? ' ▾' : (hasChildren ? ' ‹' : '');
-                let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;" rel="nofollow"` : 'rel="nofollow"';
+                let clickAttr = isInternalPost ? `onclick="openPostBySlug('${cleanSlug}'); return false;"` : '';
                 return `
                     <li>
                         <a href="${finalHref}" ${clickAttr}>${node.title}${arrow}</a>
@@ -1411,6 +1180,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (prevBtn) prevBtn.addEventListener('click', () => { clearInterval(sliderTimer); prevSlide(); sliderTimer = setInterval(nextSlide, 4000); });
         }
 
+
+        // دالة تصفية المقالات والسلايدر بناءً على التسمية المختارة
         window.filterPostsByCategory = function(categoryName) {
             let rawPosts = window.siteBlogData ? window.siteBlogData.posts || [] : [];
             let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
@@ -1419,6 +1190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 filteredPosts = filteredPosts.filter(p => (p.category || '').trim() === categoryName.trim());
             }
         
+            // 1. تحديث قائمة المقالات الرئيسية
             const container = document.getElementById('posts-container');
             if (container) {
                 if (filteredPosts.length > 0) {
@@ -1438,7 +1210,31 @@ document.addEventListener('DOMContentLoaded', async () => {
                     container.innerHTML = `<div class="post-card"><p>لا توجد مقالات تحت هذه التسمية.</p></div>`;
                 }
             }
+        
+            // 2. تحديث السلايدر العلوي ليطابق التسمية المختارة
+            const sliderWrapper = document.getElementById('square-slider-wrapper');
+            const sliderPosts = filteredPosts.slice(0, 4);
+            if (sliderWrapper && sliderPosts.length > 0) {
+                let sliderHtml = sliderPosts.map((p, idx) => `
+                    <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
+                        <div class="square-caption">
+                            <a href="?article=${p.slug}" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;" onclick="openPostBySlug('${p.slug}'); return false;">${p.title}</a>
+                            <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
+                        </div>
+                    </div>
+                `).join('');
+        
+                sliderHtml += `
+                    <button class="slider-arrow slider-prev" id="slider-prev-btn" aria-label="السابق"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button class="slider-arrow slider-next" id="slider-next-btn" aria-label="التالي"><i class="fa-solid fa-chevron-left"></i></button>
+                `;
+                sliderWrapper.innerHTML = sliderHtml;
+                if (typeof initSliderLogic === 'function') initSliderLogic();
+            } else if (sliderWrapper) {
+                sliderWrapper.innerHTML = `<div class="square-slide active" style="background: var(--card-bg); display:flex; align-items:center; justify-content:center;"><span style="color:var(--text-muted);">لا توجد صور بالسلايدر</span></div>`;
+            }
         };
+        
     </script>
 </body>
 </html>
