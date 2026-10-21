@@ -433,7 +433,7 @@
         #toc2-container {
             display: none;
         }
-        
+        /*
         @media (max-width: 768px) {
             #toc-container {
                 display: none !important;
@@ -441,8 +441,26 @@
             #toc2-container {
                 display: block !important;
                 position: sticky;
-                top: 54px; /* يثبت تماماً تحت الهيدر في الجوال */
+                top: 54px; /* يثبت تماماً تحت الهيدر في الجوال 
                 z-index: 998;
+                background: rgba(247, 244, 239, 0.95);
+                backdrop-filter: blur(5px);
+                padding: 6px 0;
+                margin-bottom: 15px;
+                width: 100%;
+            }
+        }*/
+
+        /* تثبيت شريط محتويات الجوال (toc2-container) تحت الهيدر مباشرة في الجوال */
+        @media (max-width: 768px) {
+            #toc-container {
+                display: none !important;
+            }
+            #toc2-container {
+                display: block !important;
+                position: sticky !important;
+                top: 55px !important; /* الارتفاع الدقيق لهيدر الجوال ليلتصق تحته مباشرة */
+                z-index: 998 !important;
                 background: rgba(247, 244, 239, 0.95);
                 backdrop-filter: blur(5px);
                 padding: 6px 0;
