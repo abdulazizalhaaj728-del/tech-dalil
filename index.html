@@ -448,24 +448,28 @@
 
     <style>
         /* إخفاء واظهار أشرطة المحتويات حسب الشاشة */
-        #toc2-container {
-            display: none;
-        }
-        
         @media (max-width: 768px) {
             #toc-container {
                 display: none !important;
             }
-            #toc2-container {
+            
+            /* جعل الشريط تابعاً للهيدر وثابتاً تحته أثناء التمرير */
+            .header-toc-attached {
                 display: block !important;
-                position: sticky;
-                top: 54px; /* يثبت تماماً تحت الهيدر في الجوال */
-                z-index: 998;
-                background: rgba(247, 244, 239, 0.95);
+                position: -webkit-sticky !important;
+                position: sticky !important;
+                top: 55px !important; /* الارتفاع الدقيق لهيدر الجوال لديك، يلتصق تحته تماماً */
+                z-index: 998 !important;
+                width: 100% !important;
+                background: rgba(247, 244, 239, 0.98) !important;
                 backdrop-filter: blur(5px);
-                padding: 6px 0;
-                margin-bottom: 15px;
-                width: 100%;
+                padding: 8px 12px !important;
+                margin-top: 0 !important;
+                margin-bottom: 15px !important;
+                border-radius: 0 0 8px 8px !important;
+                border: 1px solid var(--border-color) !important;
+                border-top: none !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
             }
         }
 
