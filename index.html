@@ -354,7 +354,7 @@
             position: sticky; 
             top: 75px; /* يبتعد عن القائمة الرئيسية بقليل جداً */
             align-self: flex-start; 
-            height: calc(100vh - 95px); /* يمتد لغاية أعلى حد الشاشة السفلي بقليل جداً */
+            height: calc(100vh - 70px); /* يمتد لغاية أعلى حد الشاشة السفلي بقليل جداً */
             overflow-y: auto; /* تفعيل السكرول الداخلي للشريط الجانبي إذا طال المحتوى */
         }
         
@@ -447,10 +447,10 @@
     </style>
 
     <style>
-        /* إخفاء واظهار أشرطة المحتويات حسب الشاشة */
+        /* إخفاء واظهار أشرطة المحتويات حسب الشاشة 
         #toc2-container {
             display: none;
-        }
+        }*/
         /*
         @media (max-width: 768px) {
             #toc-container {
@@ -470,26 +470,21 @@
         }*/
 
         @media (max-width: 768px) {
-            /* السماح للصفحة بالتمرير الطبيعي لضمان عمل الـ sticky */
-            body, .site-outer-frame, .three-columns-grid, .right-scrollable-section {
-                overflow: visible !important;
-            }
-        
             #toc-container {
                 display: none !important;
             }
-            
-            #toc2-container {
+            /* تنسيق شريط الجوال عندما يتبع للهيدر */
+            .header-toc-attached {
                 display: block !important;
-                position: -webkit-sticky !important;
-                position: sticky !important;
-                top: 50px !important; /* الارتفاع الفعلي لهيدر الجوال لديك */
-                z-index: 9999 !important;
-                background: rgba(247, 244, 239, 0.98) !important;
-                backdrop-filter: blur(5px);
-                padding: 6px 0;
-                margin-bottom: 15px;
                 width: 100%;
+                background: rgba(247, 244, 239, 0.95);
+                backdrop-filter: blur(5px);
+                padding: 6px 12px;
+                margin-top: 5px;
+                border-radius: 0 0 8px 8px;
+                border: 1px solid var(--border-color);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                z-index: 998;
             }
         }
                 
