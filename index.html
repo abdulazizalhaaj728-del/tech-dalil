@@ -347,8 +347,26 @@
         }
 
         .left-sticky-sidebar { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; position: sticky; top: 185px; align-self: flex-start; max-height: calc(100vh - 200px); overflow-y: auto;
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 15px; 
+            position: sticky; 
+            top: 75px; /* يبتعد عن القائمة الرئيسية بقليل جداً */
+            align-self: flex-start; 
+            height: calc(100vh - 90px); /* يمتد لغاية أعلى حد الشاشة السفلي بقليل جداً */
+            overflow-y: auto; /* تفعيل السكرول الداخلي للشريط الجانبي إذا طال المحتوى */
         }
+        
+        /* إخفاء شريط التمرير المزعج مع الحفاظ على إمكانية التمرير */
+        .left-sticky-sidebar::-webkit-scrollbar { 
+            display: none; 
+        }
+        .left-sticky-sidebar { 
+            scrollbar-width: none; 
+            -ms-overflow-style: none; 
+        }
+        
         .sidebar-widget { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
         .sidebar-widget h4, .sidebar-widget h3 { color: var(--accent-color); font-size: 0.95rem; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
         .sidebar-widget ul { list-style: none; }
