@@ -266,17 +266,17 @@
             "location": "footer"
         },
         {
-            "id": "w_1791992856671",
+            "id": "w_1792945408211",
             "title": "اتصل بنا",
             "type": "contact",
             "content": "",
             "active": true,
             "location": "footer",
             "contactData": {
-                "name": "",
-                "email": "",
+                "name": "عبدالعزيز الحاج",
+                "email": "abdulazizalhaaj728@gmail.com",
                 "phone": "",
-                "whatsapp": "",
+                "whatsapp": "966543913406",
                 "telegram": ""
             }
         },
