@@ -352,9 +352,9 @@
             border-radius: 12px; 
             padding: 15px; 
             position: sticky; 
-            top: 35px; /* يبتعد عن القائمة الرئيسية بقليل جداً */
+            top: 75px; /* يبتعد عن القائمة الرئيسية بقليل جداً */
             align-self: flex-start; 
-            height: calc(100vh - 90px); /* يمتد لغاية أعلى حد الشاشة السفلي بقليل جداً */
+            height: calc(100vh - 95px); /* يمتد لغاية أعلى حد الشاشة السفلي بقليل جداً */
             overflow-y: auto; /* تفعيل السكرول الداخلي للشريط الجانبي إذا طال المحتوى */
         }
         
@@ -469,17 +469,23 @@
             }
         }*/
 
-        /* تثبيت شريط محتويات الجوال (toc2-container) تحت الهيدر مباشرة في الجوال */
         @media (max-width: 768px) {
+            /* السماح للصفحة بالتمرير الطبيعي لضمان عمل الـ sticky */
+            body, .site-outer-frame, .three-columns-grid, .right-scrollable-section {
+                overflow: visible !important;
+            }
+        
             #toc-container {
                 display: none !important;
             }
+            
             #toc2-container {
                 display: block !important;
+                position: -webkit-sticky !important;
                 position: sticky !important;
-                top: 55px !important; /* الارتفاع الدقيق لهيدر الجوال ليلتصق تحته مباشرة */
-                z-index: 998 !important;
-                background: rgba(247, 244, 239, 0.95);
+                top: 50px !important; /* الارتفاع الفعلي لهيدر الجوال لديك */
+                z-index: 9999 !important;
+                background: rgba(247, 244, 239, 0.98) !important;
                 backdrop-filter: blur(5px);
                 padding: 6px 0;
                 margin-bottom: 15px;
