@@ -521,7 +521,7 @@
             /* ظهور قائمة الهيدر أسفل الهيدر مباشرة في أي مكان بالجوال */
             .main-menu-bar {
                 position: fixed !important;
-                top: 155px !important;
+                top: 55px !important;
                 left: 10px !important;
                 right: 10px !important;
                 z-index: 9999 !important;
@@ -576,7 +576,7 @@
                 flex: none !important;
             }
 
-            /* شريط محتويات المقال يبدأ طبيعياً داخل المقال، وعند التمرير يثبت تحت الهيدر تلقائياً */
+            /* شريط المحتويات يبدأ طبيعياً، وعند وصوله للهيدر يثبت تماماً دونه مع الحفاظ على عرضه الأصلي داخل الحاوية */
             #toc-container {
                 display: block !important;
                 position: static !important;
@@ -588,18 +588,14 @@
                 padding: 10px !important;
                 box-shadow: none !important;
                 z-index: 998 !important;
-                transition: none;
             }
             
-            /* كلاس الثبات يتم تفعيله بالـ JavaScript عند التمرير لتثبيته تحت الهيدر */
             #toc-container.toc-sticky-mobile {
                 position: fixed !important;
-                top: 55px !important;
-                left: 10px !important;
-                right: 10px !important;
-                width: calc(100% - 20px) !important;
-                max-width: 1210px;
-                margin: 0 auto !important;
+                top: 60px !important; /* مسافة تتناسب تماماً مع ارتفاع الهيدر ليتوقف رأس الشريط تحته مباشرة */
+                left: 15px !important;
+                right: 15px !important;
+                width: auto !important;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
             }
 
@@ -690,7 +686,7 @@
             <div class="top-social" style="display: none;"></div>
         </div>
 
-        <header>
+        <header id="site-header-element">
             <div class="header-logo" id="site-logo-container">
                 <img id="site-logo" alt="شعار الموقع" style="display: none;">
             </div>
@@ -1300,23 +1296,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         };
 
-        /* تفعيل مراقبة التمرير لتثبيت شريط المحتويات للجوال تحت الهيدر عند التمرير لأسفل */
+        /* مراقبة التمرير الدقيقة لتثبيت شريط المحتويات فور ملامسة رأسه لأسفل الهيدر */
         window.addEventListener('scroll', () => {
             if (window.innerWidth <= 768) {
                 const toc = document.getElementById('toc-container');
-                if (toc) {
-                    const rect = toc.getBoundingClientRect();
-                    // إذا وصل الجزء العلوي للشريط إلى منطقة الهيدر (تقريباً 55 بكسل)
-                    if (rect.top <= 55) {
+                const header = document.getElementById('site-header-element');
+                const postView = document.getElementById('dynamic-post-view');
+                
+                if (toc && header) {
+                    const headerBottom = header.getBoundingClientRect().bottom;
+                    const tocRect = toc.getBoundingClientRect();
+                    
+                    // إذا وصل الخط العلوي للشريط إلى أسفل الهيدر (أو تجاوزه للأعلى)
+                    if (tocRect.top <= headerBottom) {
                         toc.classList.add('toc-sticky-mobile');
-                    } else {
-                        // إذا رجعنا للأعلى ورجع مكانه الطبيعي ضمن المقال
-                        const postView = document.getElementById('dynamic-post-view');
-                        if (postView) {
-                            const postRect = postView.getBoundingClientRect();
-                            if (postRect.top > 55) {
-                                toc.classList.remove('toc-sticky-mobile');
-                            }
+                    } else if (postView) {
+                        // إذا رجع المستخدم لأعلى المقال وعاد الشريط لمكانه الطبيعي
+                        const postRect = postView.getBoundingClientRect();
+                        if (postRect.top > headerBottom) {
+                            toc.classList.remove('toc-sticky-mobile');
                         }
                     }
                 }
