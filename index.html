@@ -1297,25 +1297,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         /* مراقبة التمرير الدقيقة لتثبيت شريط المحتويات فور ملامسة رأسه لأسفل الهيدر */
+        /* مراقبة التمرير لتثبيت وإعادة شريط المحتويات لمكانه الطبيعي بدقة */
         window.addEventListener('scroll', () => {
             if (window.innerWidth <= 768) {
                 const toc = document.getElementById('toc-container');
                 const header = document.getElementById('site-header-element');
                 const postView = document.getElementById('dynamic-post-view');
                 
-                if (toc && header) {
+                if (toc && header && postView) {
                     const headerBottom = header.getBoundingClientRect().bottom;
-                    const tocRect = toc.getBoundingClientRect();
+                    const postRect = postView.getBoundingClientRect();
                     
-                    // إذا وصل الخط العلوي للشريط إلى أسفل الهيدر (أو تجاوزه للأعلى)
-                    if (tocRect.top <= headerBottom) {
-                        toc.classList.add('toc-sticky-mobile');
-                    } else if (postView) {
-                        // إذا رجع المستخدم لأعلى المقال وعاد الشريط لمكانه الطبيعي
-                        const postRect = postView.getBoundingClientRect();
-                        if (postRect.top > headerBottom) {
-                            toc.classList.remove('toc-sticky-mobile');
+                    // إذا كان المستخدم يمرر لأسفل ورأس الشريط وصل لأسفل الهيدر
+                    // بشرط أن يكون الجزء العلوي للمقال قد تجاوز الهيدر أو لامسه
+                    if (postRect.top <= headerBottom) {
+                        // نحسب موقع الشريط بالنسبة لموقعه الأصلي أو الهيدر
+                        const tocOriginalTop = toc.getBoundingClientRect().top;
+                        if (tocOriginalTop <= headerBottom && !toc.classList.contains('toc-sticky-mobile')) {
+                            toc.classList.add('toc-sticky-mobile');
                         }
+                    }
+                    
+                    // إذا قام المستخدم بالتمرير لأعلى وعاد رأس المقال للظهور (أو صار تحت الهيدر)
+                    if (postRect.top > headerBottom - 10) {
+                        toc.classList.remove('toc-sticky-mobile');
                     }
                 }
             }
