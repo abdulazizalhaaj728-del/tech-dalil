@@ -27,6 +27,11 @@
             padding: 10px;
         }
 
+        /* الاستثناء: عدم تأثر الهيدر، الشريط العلوي، التذييل، وحقوق الطبع بتغيير الخط */
+        .top-bar, header, .main-menu-bar, .site-footer, .footer-container, .footer-bottom-bar {
+            font-family: 'Cairo', sans-serif !important;
+        }
+
         .site-outer-frame {
             max-width: 1230px;
             width: 100%;
@@ -103,7 +108,7 @@
             border-bottom: 2px solid var(--primary-color); padding: 10px;
             display: grid; grid-template-columns: 200px 1fr 200px; align-items: center; gap: 15px;
             width: 100%; margin: 10px auto 0; border-radius: 10px; border: 1px solid var(--border-color);
-            position: sticky; top: -200; z-index: 1000;
+            position: sticky; top: -200px; z-index: 1000;
         }
         .header-logo { display: flex; align-items: center; justify-content: flex-start; }
         .header-logo img { max-height: 100px; }
@@ -252,15 +257,14 @@
             font-size: 0.88rem !important;
         }
 
+        /* تعديل الوضع الليلي ليعتمد الأبيض كعمومي ولون الثيم الحالي كلون ثانوي */
         body.light-mode {
-            --bg-color: #f8fafc !important;
-            --card-bg: #ffffff !important;
+            --bg-color: #ffffff !important;
+            --card-bg: #f8fafc !important;
             --text-main: #0f172a !important;
             --text-muted: #475569 !important;
             --border-color: #cbd5e1 !important;
-            --primary-color: #0284c7 !important;
-            --accent-color: #2563eb !important;
-            background-color: #f8fafc !important;
+            background-color: #ffffff !important;
             color: #0f172a !important;
         }
 
@@ -274,9 +278,9 @@
         body.light-mode .footer-container,
         body.light-mode .left-sticky-sidebar,
         body.light-mode .news-mini-container {
-            background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #0f172a !important;
+            background-color: var(--card-bg) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-main) !important;
         }
         
         body.light-mode .product-card {
@@ -289,12 +293,12 @@
         }
         
         body.light-mode .dropdown-menu {
-            background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
+            background-color: var(--card-bg) !important;
+            border-color: var(--border-color) !important;
         }
         
         body.light-mode .dropdown-menu li a {
-            color: #0f172a !important;
+            color: var(--text-main) !important;
         }
         
         body.light-mode .dropdown-menu li a:hover {
@@ -514,16 +518,24 @@
                 flex-shrink: 0;
             }
         
+            /* تعديل ظهور قائمة الهيدر في الجوال لتكون أسفل الهيدر مباشرة وبشكل ثابت في أي مكان */
             .main-menu-bar {
-                position: relative !important;
-                top: auto !important;
+                position: fixed !important;
+                top: 55px !important;
+                left: 10px !important;
+                right: 10px !important;
+                z-index: 9999 !important;
+                max-width: 1230px;
+                margin: 0 auto !important;
             }
             .mega-menu {
                 display: none;
                 flex-direction: column !important;
                 gap: 2px !important;
-                padding: 8px !important;
-                margin-top: 5px !important;
+                padding: 10px !important;
+                max-height: 75vh;
+                overflow-y: auto;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             }
             .mega-menu.mobile-active {
                 display: flex !important;
@@ -564,22 +576,26 @@
                 flex: none !important;
             }
 
-            /* إرجاع شريط المحتويات (TOC) ليكون داخل المقال بشكل طبيعي وعادي */
+            /* تثبيت شريط محتويات المقال (TOC) للجوال تحت الهيدر مباشرة وعدم اختفائه مع الاسكرول */
             #toc-container {
                 display: block !important;
-                position: static !important;
-                width: 100% !important;
-                margin: 15px 0 !important;
+                position: fixed !important;
+                top: 55px !important;
+                left: 10px !important;
+                right: 10px !important;
+                width: calc(100% - 20px) !important;
+                max-width: 1210px;
+                margin: 0 auto !important;
                 background: var(--card-bg) !important;
                 border: 1px solid var(--border-color) !important;
                 border-radius: 8px !important;
-                padding: 10px !important;
-                box-shadow: none !important;
-                z-index: 1 !important;
+                padding: 8px 10px !important;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+                z-index: 998 !important;
             }
 
             #dynamic-post-view {
-                padding-top: 0 !important;
+                padding-top: 45px !important; /* مساحة لتعويض تثبيت شريط المحتويات */
             }
 
             .single-post-content table,
