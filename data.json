@@ -314,7 +314,7 @@
     ],
     "ads": {
         "topOn": true,
-        "topCode": "",
+        "topCode": "<script>\n  atOptions = {\n    'key' : '6ec42ea54492db5ee0aa092a3c3ab240',\n    'format' : 'iframe',\n    'height' : 300,\n    'width' : 250,\n    'params' : {}\n  };\n</script>\n<script src=\"https://bauval.org/22/6ec42ea54492db5ee0aa092a3c3ab240\"></script>",
         "midOn": true,
         "midCode": "",
         "botOn": true,
