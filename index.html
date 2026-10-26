@@ -490,11 +490,6 @@
     }
 }
 
-        
-                
-        /* =========================================================
-           تنسيقات شاشة الجوال والتابلت فقط (Media Query for Mobile)
-           ========================================================= */
 /* =========================================================
            تنسيقات شاشة الجوال والتابلت فقط (Media Query for Mobile)
            ========================================================= */
@@ -636,22 +631,23 @@
             /* =========================================================
                التثبيت الصحيح والنهائي لشريط محتويات المقال (TOC) في الجوال
                ========================================================= */
-            #toc-container {
-                display: block !important;
-                position: fixed !important;
-                top: 52px !important; /* يلتصق تماماً تحت الهيدر الثابت */
-                left: 10px !important;
-                right: 10px !important;
-                width: calc(100% - 20px) !important;
-                z-index: 999 !important; /* طبقة عالية جداً لضمان عدم اختفائه أبداً */
-                background: rgba(247, 244, 239, 0.98) !important;
-                backdrop-filter: blur(5px);
-                padding: 6px 10px !important;
-                margin: 0 auto !important;
-                border-radius: 0 0 8px 8px !important;
-                border: 1px solid var(--border-color) !important;
-                border-top: none !important;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            @media (max-width: 768px) {
+                #toc-container {
+                    display: block !important;
+                    position: fixed !important;
+                    top: 48px !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    width: 100% !important;
+                    z-index: 9999 !important;
+                    background: rgba(247, 244, 239, 0.98) !important;
+                    backdrop-filter: blur(5px);
+                    padding: 6px 12px !important;
+                    margin: 0 !important;
+                    border-radius: 0 !important;
+                    border-bottom: 1px solid var(--border-color) !important;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+                }
             }
         }
         
