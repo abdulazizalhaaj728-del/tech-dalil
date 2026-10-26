@@ -27,7 +27,7 @@
             padding: 10px;
         }
 
-        /* الاستثناء: عدم تأثر الهيدر، الشريط العلوي، التذييل، وحقوق الطبع بتغيير الخط */
+        /* استثناء الهيدر والشريط العلوي والتذييل من تغيير الخط */
         .top-bar, header, .main-menu-bar, .site-footer, .footer-container, .footer-bottom-bar {
             font-family: 'Cairo', sans-serif !important;
         }
@@ -257,7 +257,7 @@
             font-size: 0.88rem !important;
         }
 
-        /* تعديل الوضع الليلي ليعتمد الأبيض كعمومي ولون الثيم الحالي كلون ثانوي */
+        /* الوضع الليلي: الأبيض عمومي ولون الثيم الحالي ثانوي */
         body.light-mode {
             --bg-color: #ffffff !important;
             --card-bg: #f8fafc !important;
@@ -518,7 +518,7 @@
                 flex-shrink: 0;
             }
         
-            /* تعديل ظهور قائمة الهيدر في الجوال لتكون أسفل الهيدر مباشرة وبشكل ثابت في أي مكان */
+            /* ظهور قائمة الهيدر أسفل الهيدر مباشرة في أي مكان بالجوال */
             .main-menu-bar {
                 position: fixed !important;
                 top: 55px !important;
@@ -576,9 +576,23 @@
                 flex: none !important;
             }
 
-            /* تثبيت شريط محتويات المقال (TOC) للجوال تحت الهيدر مباشرة وعدم اختفائه مع الاسكرول */
+            /* شريط محتويات المقال يبدأ طبيعياً داخل المقال، وعند التمرير يثبت تحت الهيدر تلقائياً */
             #toc-container {
                 display: block !important;
+                position: static !important;
+                width: 100% !important;
+                margin: 15px 0 !important;
+                background: var(--card-bg) !important;
+                border: 1px solid var(--border-color) !important;
+                border-radius: 8px !important;
+                padding: 10px !important;
+                box-shadow: none !important;
+                z-index: 998 !important;
+                transition: none;
+            }
+            
+            /* كلاس الثبات يتم تفعيله بالـ JavaScript عند التمرير لتثبيته تحت الهيدر */
+            #toc-container.toc-sticky-mobile {
                 position: fixed !important;
                 top: 55px !important;
                 left: 10px !important;
@@ -586,16 +600,11 @@
                 width: calc(100% - 20px) !important;
                 max-width: 1210px;
                 margin: 0 auto !important;
-                background: var(--card-bg) !important;
-                border: 1px solid var(--border-color) !important;
-                border-radius: 8px !important;
-                padding: 8px 10px !important;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
-                z-index: 998 !important;
             }
 
             #dynamic-post-view {
-                padding-top: 45px !important; /* مساحة لتعويض تثبيت شريط المحتويات */
+                padding-top: 0 !important;
             }
 
             .single-post-content table,
@@ -1290,6 +1299,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }, 100);
             }
         };
+
+        /* تفعيل مراقبة التمرير لتثبيت شريط المحتويات للجوال تحت الهيدر عند التمرير لأسفل */
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth <= 768) {
+                const toc = document.getElementById('toc-container');
+                if (toc) {
+                    const rect = toc.getBoundingClientRect();
+                    // إذا وصل الجزء العلوي للشريط إلى منطقة الهيدر (تقريباً 55 بكسل)
+                    if (rect.top <= 55) {
+                        toc.classList.add('toc-sticky-mobile');
+                    } else {
+                        // إذا رجعنا للأعلى ورجع مكانه الطبيعي ضمن المقال
+                        const postView = document.getElementById('dynamic-post-view');
+                        if (postView) {
+                            const postRect = postView.getBoundingClientRect();
+                            if (postRect.top > 55) {
+                                toc.classList.remove('toc-sticky-mobile');
+                            }
+                        }
+                    }
+                }
+            }
+        });
         
         function renderNavContainer() {
             let sequencedPosts = window._currentSequencedPosts || (window.siteBlogData ? window.siteBlogData.posts : []);
