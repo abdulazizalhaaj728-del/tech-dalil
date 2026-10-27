@@ -1245,12 +1245,14 @@
         function initSearchFeature(rawPosts) {
             const searchModal = document.getElementById('search-modal');
             const searchBtn = document.getElementById('h-search-btn');
+            const searchBtn2 = document.getElementById('search-btn');            
             const closeSearch = document.getElementById('close-search-modal');
             const searchInput = document.getElementById('site-search-input');
             const resultsContainer = document.getElementById('search-results-container');
 
             if (searchBtn && searchModal) {
                 searchBtn.onclick = () => searchModal.style.display = 'flex';
+                searchBtn2.onclick = () => searchModal.style.display = 'flex';
             }
             if (closeSearch && searchModal) {
                 closeSearch.onclick = () => searchModal.style.display = 'none';
