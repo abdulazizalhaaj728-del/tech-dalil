@@ -541,8 +541,9 @@
                 left: 10px !important;
                 right: 10px !important;
                 z-index: 9999 !important;
-                max-width: 1230px;
+                max-width: 100% !important;
                 margin: 0 auto !important;
+                box-sizing: border-box !important;
             }
             .mega-menu {
                 display: none;
@@ -551,7 +552,7 @@
                 padding: 12px !important;
                 max-height: 80vh !important;
                 overflow-y: auto !important;
-                overflow-x: visible !important;
+                overflow-x: hidden !important;
                 box-shadow: 0 10px 25px rgba(0,0,0,0.3);
                 border: 2px solid var(--primary-color) !important;
                 border-radius: 10px !important;
@@ -562,12 +563,13 @@
             .mega-menu.mobile-active {
                 display: flex !important;
             }
-            .mega-menu > li {
+            .mega-menu > li, .mega-menu li {
                 border: 1px solid var(--border-color) !important;
                 border-radius: 6px !important;
                 background: var(--bg-color);
                 width: 100% !important;
                 margin-bottom: 4px;
+                box-sizing: border-box !important;
             }
             .mega-menu li a, .mega-menu > a {
                 padding: 10px 12px !important;
@@ -576,9 +578,10 @@
                 justify-content: space-between !important;
                 align-items: center !important;
                 width: 100% !important;
+                box-sizing: border-box !important;
             }
         
-            /* القوائم الفرعية مطاطية ومرنة للأسفل داخل المستطيل بحدود كاملة من اليمين واليسار */
+            /* القوائم الفرعية متراصة عمودياً ومطاطية للأسفل بداخل المستطيل تماماً بحدود واضحة */
             .mega-menu .dropdown-menu {
                 position: static !important;
                 display: block !important;
@@ -588,18 +591,23 @@
                 margin: 0 !important;
                 padding: 5px 10px !important;
                 width: 100% !important;
+                box-sizing: border-box !important;
             }
             .dropdown-menu li {
                 border-bottom: 1px dashed var(--border-color) !important;
                 width: 100% !important;
+                margin-bottom: 2px;
             }
             .dropdown-menu li:last-child {
                 border-bottom: none !important;
+                margin-bottom: 0;
             }
             .dropdown-menu li a {
                 padding-right: 15px !important;
             }
         }
+
+            
 
             
 
