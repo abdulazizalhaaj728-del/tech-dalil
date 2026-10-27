@@ -309,6 +309,7 @@
             margin-bottom: 11px !important;
         }
 
+        /* تعديلات الجداول البوند 1 و 5 (إجبار ألوان ونزع التحديد الخلفي + تصغير الهوامش في الجوال) */
         .single-post-content table,
         .dynamic-post-content-box table {
             width: 100% !important;
@@ -329,20 +330,32 @@
             word-wrap: break-word;
         }
 
+        /* (البند 5) إجبار ألوان الصف الأول والعمود الأول وإزالة أي خلفيات إضافية وخاصة بالخلايا */
         .single-post-content tr:first-child th, 
         .single-post-content tr:first-child td,
         .dynamic-post-content-box tr:first-child th, 
-        .dynamic-post-content-box tr:first-child td {
+        .dynamic-post-content-box tr:first-child td,
+        .single-post-content tr td:first-child,
+        .dynamic-post-content-box tr td:first-child,
+        .single-post-content tr th:first-child,
+        .dynamic-post-content-box tr th:first-child {
             background-color: #3b281b !important; 
             color: #e6ccb2 !important; 
             font-weight: bold !important;
         }
 
-        .single-post-content tr td:first-child,
-        .dynamic-post-content-box tr td:first-child {
-            background-color: #3b281b !important; 
-            color: #e6ccb2 !important; 
-            font-weight: bold !important;
+        /* إزالة أي تحديد خلفية أو لون نص موروث من المصدر لخلايا المحتوى العادية وتوحيدها */
+        .single-post-content td:not(:first-child),
+        .dynamic-post-content-box td:not(:first-child) {
+            background-color: #e6ccb2 !important;
+            color: #000000 !important;
+        }
+        .single-post-content tr:not(:first-child) td span,
+        .single-post-content tr:not(:first-child) td font,
+        .dynamic-post-content-box tr:not(:first-child) td span,
+        .dynamic-post-content-box tr:not(:first-child) td font {
+            color: inherit !important;
+            background: transparent !important;
         }
 
         .left-sticky-sidebar { 
@@ -518,7 +531,7 @@
                 flex-shrink: 0;
             }
         
-            /* ظهور قائمة الهيدر أسفل الهيدر مباشرة في أي مكان بالجوال */
+            /* (البند 2) ظهور القوائم وتعديل الحواف والأطفال مع ميزة السحب الأفقي للمحتوى المتجاوز */
             .main-menu-bar {
                 position: fixed !important;
                 top: 55px !important;
@@ -535,6 +548,8 @@
                 padding: 10px !important;
                 max-height: 75vh;
                 overflow-y: auto;
+                overflow-x: auto; /* تفعيل السحب الأفقي للعناصر الطويلة */
+                -webkit-overflow-scrolling: touch;
                 box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             }
             .mega-menu.mobile-active {
@@ -544,8 +559,23 @@
                 padding: 10px 12px !important;
                 font-size: 0.85rem !important;
                 border-bottom: 1px solid var(--border-color);
+                white-space: nowrap; /* عدم انقسام الكلمة ونزولها */
             }
-        
+            
+            /* (البند 2) إظهار العناصر الفرعية تماماً مهما زادت وبنفس الهامش وتجنب القطع الأيسر */
+            .mega-menu .dropdown-menu {
+                position: static !important;
+                display: block !important;
+                box-shadow: none !important;
+                background: rgba(0,0,0,0.1) !important;
+                border: none !important;
+                margin-right: 15px !important;
+                padding-right: 0 !important;
+            }
+            .dropdown-menu li a {
+                padding-right: 15px !important;
+            }
+
             .top-right-row {
                 display: flex !important;
                 flex-direction: column !important;
@@ -576,7 +606,7 @@
                 flex: none !important;
             }
 
-            /* شريط المحتويات يبدأ طبيعياً، وعند وصوله للهيدر يثبت تماماً دونه مع الحفاظ على عرضه الأصلي داخل الحاوية */
+            /* (البند 3) شريط المحتويات ينزل 10 بكسلات إضافية عند الالتصاق بالهيدر */
             #toc-container {
                 display: block !important;
                 position: static !important;
@@ -592,7 +622,7 @@
             
             #toc-container.toc-sticky-mobile {
                 position: fixed !important;
-                top: 60px !important; /* مسافة تتناسب تماماً مع ارتفاع الهيدر ليتوقف رأس الشريط تحته مباشرة */
+                top: 65px !important; /* الارتفاع القديم 55 + 10 بكسلات إضافية */
                 left: 15px !important;
                 right: 15px !important;
                 width: auto !important;
@@ -601,6 +631,14 @@
 
             #dynamic-post-view {
                 padding-top: 0 !important;
+            }
+
+            /* (البند 1) تصغير الهامش في الجوال واستغلال المساحة ومنع انقسام الكلمة */
+            .single-post-content th, .single-post-content td,
+            .dynamic-post-content-box th, .dynamic-post-content-box td {
+                padding: 5px 6px !important;
+                font-size: 0.78rem !important;
+                white-space: nowrap !important; /* الكلمة الواحدة لا تنقسم وتنزل للأسفل */
             }
 
             .single-post-content table,
@@ -628,6 +666,13 @@
                 gap: 4px;
                 pointer-events: none;
                 margin-bottom: 5px;
+            }
+
+            /* (البند 4) روابط أسفل المقال قابلة للسحب الأفقي بالاصبع */
+            .nav-article-link-container, #bottom-navigation-wrapper > div {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
             }
 
             .article-ad-box {
@@ -1222,7 +1267,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
                 let tocHtml = `
                     <div id="toc-container" style="margin-bottom: 20px; width: 100%;">
-                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 40; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.9rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                        <select id="toc-select" onchange="if(this.value){ const target = document.querySelector(this.value); if(target) { const tocHeight = document.getElementById('toc-container').offsetHeight; const targetPos = target.getBoundingClientRect().top + window.pageYOffset - tocHeight - 50; window.scrollTo({ top: targetPos, behavior: 'smooth' }); } this.selectedIndex = 0; }" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); color: var(--text-main); font-family: 'Cairo', sans-serif; font-size: 0.9rem; font-weight: bold; cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                             ${tocOptions}
                         </select>
                     </div>
@@ -1296,8 +1341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         };
 
-        /* مراقبة التمرير الدقيقة لتثبيت شريط المحتويات فور ملامسة رأسه لأسفل الهيدر */
-        /* مراقبة التمرير لتثبيت وإعادة شريط المحتويات لمكانه الطبيعي بدقة */
+        /* (البند 3) مراقبة التمرير الدقيقة لتثبيت شريط المحتويات بعد نزوله 10 بكسلات إضافية */
         window.addEventListener('scroll', () => {
             if (window.innerWidth <= 768) {
                 const toc = document.getElementById('toc-container');
@@ -1308,17 +1352,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const headerBottom = header.getBoundingClientRect().bottom;
                     const postRect = postView.getBoundingClientRect();
                     
-                    // إذا كان المستخدم يمرر لأسفل ورأس الشريط وصل لأسفل الهيدر
-                    // بشرط أن يكون الجزء العلوي للمقال قد تجاوز الهيدر أو لامسه
                     if (postRect.top <= headerBottom) {
-                        // نحسب موقع الشريط بالنسبة لموقعه الأصلي أو الهيدر
                         const tocOriginalTop = toc.getBoundingClientRect().top;
                         if (tocOriginalTop <= headerBottom && !toc.classList.contains('toc-sticky-mobile')) {
                             toc.classList.add('toc-sticky-mobile');
                         }
                     }
                     
-                    // إذا قام المستخدم بالتمرير لأعلى وعاد رأس المقال للظهور (أو صار تحت الهيدر)
                     if (postRect.top > headerBottom - 10) {
                         toc.classList.remove('toc-sticky-mobile');
                     }
@@ -1429,7 +1469,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
         
+        /* إغلاق القوائم عند النقر في أي مكان خارجها (البند 2) */
         document.addEventListener('click', (e) => {
+            const mainMenu = document.getElementById('site-main-menu');
+            const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
+            if (mainMenu && mainMenu.classList.contains('mobile-active')) {
+                if (!mainMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                    mainMenu.classList.remove('mobile-active');
+                    const icon = hamburgerBtn.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-xmark');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            }
+
             const link = e.target.closest('a');
             if (link && link.getAttribute('href')) {
                 const href = link.getAttribute('href');
