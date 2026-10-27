@@ -128,7 +128,7 @@
         .header-center h1 span { color: var(--primary-color); }
         .header-center p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 5px; }
 
-        .header-themes-bar {
+.header-themes-bar {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -136,30 +136,69 @@
             padding: 3px 6px;
             background: rgba(0,0,0,0.15);
             border-radius: 6px;
-            max-width: 310px;
+            max-width: 330px; /* قمنا بتوسيعها قليلاً لتكفي جميع الأزرار بنفس المقاس */
             margin: 0 auto;
         }
-        .header-themes-bar button, .header-themes-bar .h-control-btn {
+
+        /* توحيد الارتفاع والعرض الداخلي لجميع الأزرار وحاوية الثيمات لتكون متطابقة بالمللي */
+        .header-themes-bar button, 
+        .header-themes-bar .h-control-btn,
+        .header-themes-bar .header-color-group {
+            height: 28px;          /* ارتفاع موحد وثابت للجميع */
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* تنسيق أزرار الأيقونات والنصوص العادية */
+        .header-themes-bar button, 
+        .header-themes-bar .h-control-btn {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 2px 7px;
+            padding: 0 8px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.72rem;
-            display: flex;
-            align-items: center;
             gap: 3px;
         }
-        .header-themes-bar button:hover { background: rgba(2, 132, 199, 0.3); color: var(--accent-color); }
+
+        .header-themes-bar button:hover { 
+            background: rgba(2, 132, 199, 0.3); 
+            color: var(--accent-color); 
+        }
+
+        /* تنسيق مجموعة الثيمات لتأخذ نفس إطار وارتفاع بقية الأزرار */
         .header-color-group {
-            display: flex;
-            align-items: center;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 4px;
             overflow: hidden;
+            padding: 0 4px;
+            gap: 2px;
         }
+
+        /* الأزرار الداخلية داخل مجموعة الثيمات */
+        .header-color-group button {
+            border: none !important;
+            padding: 0 4px;
+            background: transparent !important;
+            height: 100%;
+        }
+
+        .header-color-group button:hover {
+            color: var(--accent-color);
+        }
+
+        /* تنسيق الخط الفاصل العمودي بين زر البحث وبقية الأزرار */
+        .header-themes-bar .h-separator {
+            width: 1px;
+            height: 18px;
+            background-color: var(--border-color);
+            margin: 0 2px;
+        }
+    
         .header-color-group button { border: none; padding: 2px 6px; background: transparent; }
 
         .ticker-wrapper { width: 100%; margin: 15px auto 0; padding: 0; }
@@ -806,24 +845,26 @@
             <div class="header-center">
                 <h1 id="site-main-heading">تكنو-<span>دليل</span></h1>
                 <p id="site-tagline">بوابة الحلول الرقمية</p>
-                <div class="header-themes-bar">
                     <div class="header-themes-bar">
-                        <!-- (1) زر البحث مع الخط الفاصل بجانبه تماماً كما في الصورة -->
+                        <!-- زر البحث -->
                         <button class="h-control-btn" id="h-search-btn" title="بحث"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        
+                        <!-- الخط الفاصل العمودي -->
                         <div class="h-separator"></div>
                     
-                        <!-- (2) مجموعة الثيمات (تظهر الآن ككتلة واحدة بنفس مقاس الأزرار الأخرى) -->
+                        <!-- مجموعة الثيمات (تم دمجها لتأخذ نفس كلاس الأزرار الموحد) -->
                         <div class="header-color-group h-control-btn">
                             <button id="h-prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
                             <span class="theme-icon-wrapper"><i class="fa-solid fa-palette"></i></span>
                             <button id="h-next-theme-btn" title="الثيم التالي"><i class="fa-solid fa-chevron-left"></i></button>
                         </div>
                     
-                        <!-- (3) بقية الأزرار -->
+                        <!-- زر الخط -->
                         <button class="h-control-btn" id="h-font-toggle-btn" title="تغيير الخط"><i class="fa-solid fa-font"></i> الخط</button>
+                        
+                        <!-- زر الوضع الليلي -->
                         <button class="h-control-btn" id="h-dark-mode-btn" title="الوضع الليلي"><i class="fa-solid fa-moon"></i></button>
                     </div>
-                </div>
             </div>
         
             <button type="button" class="mobile-menu-btn" id="mobile-hamburger-btn" aria-label="فتح القائمة">
