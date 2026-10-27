@@ -809,7 +809,7 @@
                 <div class="header-themes-bar">
                     <div class="header-color-group">
                         <button id="h-prev-theme-btn" title="الثيم السابق"><i class="fa-solid fa-chevron-right"></i></button>
-                        <span style="padding: 0 4px; font-size: 0.75rem; color: var(--accent-color);"><i class="fa-solid fa-palette"></i></span>
+                        <span style="padding: 0 4px; font-size: 0.65rem; color: var(--accent-color);"><i class="fa-solid fa-palette"></i></span>
                         <button id="h-next-theme-btn" title="الثيم التالي"><i class="fa-solid fa-chevron-left"></i></button>
                     </div>
                     <button class="h-control-btn" id="h-font-toggle-btn" title="تغيير الخط"><i class="fa-solid fa-font"></i> الخط</button>
@@ -1252,8 +1252,12 @@
 
             if (searchBtn && searchModal) {
                 searchBtn.onclick = () => searchModal.style.display = 'flex';
+            }
+
+            if (searchBtn && searchModal) {
                 searchBtn2.onclick = () => searchModal.style.display = 'flex';
             }
+            
             if (closeSearch && searchModal) {
                 closeSearch.onclick = () => searchModal.style.display = 'none';
             }
