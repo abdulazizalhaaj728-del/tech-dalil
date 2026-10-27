@@ -534,7 +534,8 @@
             }
         
             /* (البند 2) القوائم الرئيسية بحدود ظاهرة يميناً ويساراً، والفرعية تتمدد ولا تختفي عناصرها السفلية */
-.main-menu-bar {
+@media (max-width: 768px) {
+            .main-menu-bar {
                 position: fixed !important;
                 top: 55px !important;
                 left: 10px !important;
@@ -547,13 +548,16 @@
                 display: none;
                 flex-direction: column !important;
                 gap: 4px !important;
-                padding: 10px !important;
-                max-height: 75vh;
-                overflow-y: auto;
+                padding: 12px !important;
+                max-height: 80vh !important;
+                overflow-y: auto !important;
+                overflow-x: visible !important;
                 box-shadow: 0 10px 25px rgba(0,0,0,0.3);
                 border: 2px solid var(--primary-color) !important;
                 border-radius: 10px !important;
                 background-color: var(--card-bg) !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
             }
             .mega-menu.mobile-active {
                 display: flex !important;
@@ -563,6 +567,7 @@
                 border-radius: 6px !important;
                 background: var(--bg-color);
                 width: 100% !important;
+                margin-bottom: 4px;
             }
             .mega-menu li a, .mega-menu > a {
                 padding: 10px 12px !important;
@@ -573,12 +578,12 @@
                 width: 100% !important;
             }
         
-            /* القوائم الفرعية مطاطية ومرنة للأسفل داخل المستطيل دون قص الحدود */
+            /* القوائم الفرعية مطاطية ومرنة للأسفل داخل المستطيل بحدود كاملة من اليمين واليسار */
             .mega-menu .dropdown-menu {
                 position: static !important;
                 display: block !important;
                 box-shadow: none !important;
-                background: rgba(0,0,0,0.1) !important;
+                background: rgba(0,0,0,0.15) !important;
                 border: none !important;
                 margin: 0 !important;
                 padding: 5px 10px !important;
@@ -595,6 +600,8 @@
                 padding-right: 15px !important;
             }
         }
+
+            
 
     
             .top-right-row {
