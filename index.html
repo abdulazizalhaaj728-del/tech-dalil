@@ -581,10 +581,10 @@
                 box-sizing: border-box !important;
             }
         
-            /* القوائم الفرعية متراصة عمودياً ومطاطية للأسفل بداخل المستطيل تماماً بحدود واضحة */
+            /* إخفاء القوائم الفرعية افتراضياً في الجوال حتى يتم الضغط على العنصر */
             .mega-menu .dropdown-menu {
                 position: static !important;
-                display: block !important;
+                display: none !important; 
                 box-shadow: none !important;
                 background: rgba(0,0,0,0.15) !important;
                 border: none !important;
@@ -593,6 +593,12 @@
                 width: 100% !important;
                 box-sizing: border-box !important;
             }
+            
+            /* تفعيل ظهور الفرعي عند النقر/الإضافة */
+            .mega-menu li.mobile-open > .dropdown-menu {
+                display: block !important;
+            }
+
             .dropdown-menu li {
                 border-bottom: 1px dashed var(--border-color) !important;
                 width: 100% !important;
@@ -914,240 +920,240 @@
     </div>
     
     <script>
-document.addEventListener('DOMContentLoaded', async () => {
-    const jsonPath = `data.json?t=${Date.now()}`;
-
-    try {
-        const response = await fetch(jsonPath);
-        const data = await response.json();
-        window.siteBlogData = data; 
+        document.addEventListener('DOMContentLoaded', async () => {
+            const jsonPath = `data.json?t=${Date.now()}`;
         
-        let rawPosts = data.posts || [];
-        let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
-
-        let menuTree = data.menu ? buildTree(data.menu) : [];
-        let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
-        window._currentSequencedPosts = sequencedPosts;
-
-        initThemeAndFontControls(data);
-        initSearchFeature(rawPosts);
-
-        const topPagesContainer = document.getElementById('top-static-pages-container');
-        let staticLinksMap = [
-            { key: 'about', label: 'من نحن' },
-            { key: 'terms', label: 'اتفاقية الاستخدام' },
-            { key: 'privacy', label: 'سياسة الخصوصية' },
-            { key: 'contact', label: 'اتصل بنا' }
-        ];
-
-        if (topPagesContainer && data.staticPagesLinks) {
-            let linksHtml = '';
-            staticLinksMap.forEach(item => {
-                let linkVal = data.staticPagesLinks[item.key];
-                if (linkVal && linkVal.trim() !== '') {
-                    let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
-                    linksHtml += `<a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;">${item.label}</a>`;
-                }
-            });
-            topPagesContainer.innerHTML = linksHtml;
-        }
-
-        let topFeatured = null;
-        if (filteredPosts.length > 0) {
-            let sortedFeatured = [...filteredPosts].sort((a, b) => {
-                let viewsA = a.views || a.visits || 0;
-                let viewsB = b.views || b.visits || 0;
-                if (viewsB !== viewsA) return viewsB - viewsA;
-
-                let commentsA = a.commentsCount || (a.comments ? a.comments.length : 0);
-                let commentsB = b.commentsCount || (b.comments ? b.comments.length : 0);
-                if (commentsB !== commentsA) return commentsB - commentsA;
-
-                let dateA = new Date(a.date || '2026-01-01').getTime();
-                let dateB = new Date(b.date || '2026-01-01').getTime();
-                if (dateA !== dateB) return dateA - dateB;
-
-                let lenA = (a.content || '').length;
-                let lenB = (b.content || '').length;
-                return lenB - lenA;
-            });
-            topFeatured = sortedFeatured[0];
-        }
-
-        const siteLogoEl = document.getElementById('site-logo'); 
-        if (siteLogoEl && data.settings) {
-            if (data.settings.showLogo === false) {
-                siteLogoEl.style.display = 'none';
-            } else {
-                siteLogoEl.style.display = 'block';
-                if (data.settings.logoUrl) siteLogoEl.src = data.settings.logoUrl;
-                if (data.settings.logoHeight) siteLogoEl.style.height = data.settings.logoHeight;
-            }
-        }
-
-        const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
-        const mainMenu = document.getElementById('site-main-menu');
+            try {
+                const response = await fetch(jsonPath);
+                const data = await response.json();
+                window.siteBlogData = data; 
+                
+                let rawPosts = data.posts || [];
+                let filteredPosts = rawPosts.filter(p => (p.category || '').trim() !== 'الصفحات الثابتة');
         
-        if (hamburgerBtn && mainMenu) {
-            hamburgerBtn.addEventListener('click', () => {
-                mainMenu.classList.toggle('mobile-active');
-                const icon = hamburgerBtn.querySelector('i');
-                if (icon) {
-                    icon.classList.toggle('fa-bars');
-                    icon.classList.toggle('fa-xmark');
+                let menuTree = data.menu ? buildTree(data.menu) : [];
+                let sequencedPosts = getOrderedPosts(menuTree, filteredPosts);
+                window._currentSequencedPosts = sequencedPosts;
+        
+                initThemeAndFontControls(data);
+                initSearchFeature(rawPosts);
+        
+                const topPagesContainer = document.getElementById('top-static-pages-container');
+                let staticLinksMap = [
+                    { key: 'about', label: 'من نحن' },
+                    { key: 'terms', label: 'اتفاقية الاستخدام' },
+                    { key: 'privacy', label: 'سياسة الخصوصية' },
+                    { key: 'contact', label: 'اتصل بنا' }
+                ];
+        
+                if (topPagesContainer && data.staticPagesLinks) {
+                    let linksHtml = '';
+                    staticLinksMap.forEach(item => {
+                        let linkVal = data.staticPagesLinks[item.key];
+                        if (linkVal && linkVal.trim() !== '') {
+                            let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
+                            linksHtml += `<a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;">${item.label}</a>`;
+                        }
+                    });
+                    topPagesContainer.innerHTML = linksHtml;
                 }
-            });
-        }
-
-        const container = document.getElementById('posts-container');
-        if (filteredPosts.length > 0) {
-            if (container) {
-                container.innerHTML = filteredPosts.map(post => `
-                    <div class="post-card">
-                        <div class="post-title">
-                            <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}'); return false;">${post.title}</a>
-                        </div>
-                        <div class="post-meta">
-                            <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
-                        </div>
-                        <div class="post-excerpt">${post.description || ''}</div>
-                        <a href="?article=${post.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;" onclick="openPostBySlug('${post.slug}'); return false;">للقراءة أكثر ←</a>
-                    </div>
-                `).join('');
-            }
-            
-            const sliderWrapper = document.getElementById('square-slider-wrapper');
-            const sliderPosts = filteredPosts.slice(0, 4);
-            if (sliderWrapper && sliderPosts.length > 0) {
-                let sliderHtml = sliderPosts.map((p, idx) => `
-                    <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
-                        <div class="square-caption">
-                            <a href="?article=${p.slug}" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;" onclick="openPostBySlug('${p.slug}'); return false;">${p.title}</a>
-                            <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
-                        </div>
-                    </div>
-                `).join('');
-
-                sliderHtml += `
-                    <button class="slider-arrow slider-prev" id="slider-prev-btn" aria-label="السابق"><i class="fa-solid fa-chevron-right"></i></button>
-                    <button class="slider-arrow slider-next" id="slider-next-btn" aria-label="التالي"><i class="fa-solid fa-chevron-left"></i></button>
-                `;
-                sliderWrapper.innerHTML = sliderHtml;
-                initSliderLogic();
-            }
-        } else {
-            if (container) {
-                container.innerHTML = `<div class="post-card"><p>لا توجد مقالات منشورة حالياً.</p></div>`;
-            }
-        }
-
-        if (data.menu && data.menu.length > 0) {
-            const menuContainer = document.getElementById('site-main-menu');
-            if (menuContainer) {
-                menuContainer.innerHTML = generateMenuHtml(menuTree, true);
-            }
-        }
-
-        const areWidgetsEnabled = data.settings ? (data.settings.showWidgets !== false) : true;
-        const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
-        const footerWidgetsContainer = document.getElementById('site-footer-widgets');
-
-        if (!areWidgetsEnabled) {
-            if (sidebarWidgetsContainer) sidebarWidgetsContainer.style.display = 'none';
-            if (footerWidgetsContainer) footerWidgetsContainer.style.display = 'none';
-        } else {
-            let sidebarHtml = '', footerHtml = '';
-
-            if (data.widgets && data.widgets.length > 0) {
-                data.widgets.forEach(w => {
-                    if (!w.active) return;
-                    let contentBox = '';
-
-                    if (w.type === 'categories') {
-                        let categories = w.categoriesList || [...new Set(filteredPosts.map(p => p.category).filter(Boolean))];
-                        let catListHtml = `<li><a href="#" onclick="filterPostsByCategory('ALL'); return false;" style="font-size: 0.68rem; font-weight: bold; color: var(--accent-color);"><i class="fa-solid fa-border-all" style="margin-left: 5px;"></i>إظهار الكل</a></li>`;
-                        catListHtml += categories.map(cat => `
-                            <li><a href="#" onclick="filterPostsByCategory('${cat}'); return false;" style="font-size: 0.68rem;"><i class="fa-solid fa-folder" style="margin-left: 5px; color: var(--primary-color);"></i>${cat}</a></li>
-                        `).join('');
-                        contentBox = `<ul class="recent-posts-list">${catListHtml}</ul>`;
-                    } 
-                    else if (w.type === 'recent' || (w.title && w.title.includes('أحدث المواضيع'))) {
-                        let recentPosts = filteredPosts.slice(0, 3);
-                        contentBox = '<ul class="recent-posts-list">' + recentPosts.map(p => `
-                            <li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}'); return false;" style="font-size: 0.7rem; display: flex; align-items: center; gap: 5px;">
-                                <i class="fa-solid fa-clock" style="color: var(--primary-color);"></i>${p.title}
-                            </a></li>
-                        `).join('') + '</ul>';
+        
+                let topFeatured = null;
+                if (filteredPosts.length > 0) {
+                    let sortedFeatured = [...filteredPosts].sort((a, b) => {
+                        let viewsA = a.views || a.visits || 0;
+                        let viewsB = b.views || b.visits || 0;
+                        if (viewsB !== viewsA) return viewsB - viewsA;
+        
+                        let commentsA = a.commentsCount || (a.comments ? a.comments.length : 0);
+                        let commentsB = b.commentsCount || (b.comments ? b.comments.length : 0);
+                        if (commentsB !== commentsA) return commentsB - commentsA;
+        
+                        let dateA = new Date(a.date || '2026-01-01').getTime();
+                        let dateB = new Date(b.date || '2026-01-01').getTime();
+                        if (dateA !== dateB) return dateA - dateB;
+        
+                        let lenA = (a.content || '').length;
+                        let lenB = (b.content || '').length;
+                        return lenB - lenA;
+                    });
+                    topFeatured = sortedFeatured[0];
+                }
+        
+                const siteLogoEl = document.getElementById('site-logo'); 
+                if (siteLogoEl && data.settings) {
+                    if (data.settings.showLogo === false) {
+                        siteLogoEl.style.display = 'none';
+                    } else {
+                        siteLogoEl.style.display = 'block';
+                        if (data.settings.logoUrl) siteLogoEl.src = data.settings.logoUrl;
+                        if (data.settings.logoHeight) siteLogoEl.style.height = data.settings.logoHeight;
                     }
-                    else if (w.type === 'featured' || (w.title && w.title.includes('مميزة'))) {
-                        if (topFeatured) {
-                            contentBox = `
-                                <div style="font-size: 0.8rem;">
-                                    <a href="?article=${topFeatured.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; display: block; margin-bottom: 5px;" onclick="openPostBySlug('${topFeatured.slug}'); return false;">${topFeatured.title}</a>
-                                    <p style="color: var(--text-muted); font-size: 0.75rem; line-height: 1.4;">${topFeatured.description ? topFeatured.description.substring(0, 80) + '...' : ''}</p>
+                }
+        
+                const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
+                const mainMenu = document.getElementById('site-main-menu');
+                
+                if (hamburgerBtn && mainMenu) {
+                    hamburgerBtn.addEventListener('click', () => {
+                        mainMenu.classList.toggle('mobile-active');
+                        const icon = hamburgerBtn.querySelector('i');
+                        if (icon) {
+                            icon.classList.toggle('fa-bars');
+                            icon.classList.toggle('fa-xmark');
+                        }
+                    });
+                }
+        
+                const container = document.getElementById('posts-container');
+                if (filteredPosts.length > 0) {
+                    if (container) {
+                        container.innerHTML = filteredPosts.map(post => `
+                            <div class="post-card">
+                                <div class="post-title">
+                                    <a href="?article=${post.slug}" onclick="openPostBySlug('${post.slug}'); return false;">${post.title}</a>
+                                </div>
+                                <div class="post-meta">
+                                    <span>📅 ${post.date}</span> | <span>📁 ${post.category || 'عام'}</span>
+                                </div>
+                                <div class="post-excerpt">${post.description || ''}</div>
+                                <a href="?article=${post.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; font-size: 0.85rem;" onclick="openPostBySlug('${post.slug}'); return false;">للقراءة أكثر ←</a>
+                            </div>
+                        `).join('');
+                    }
+                    
+                    const sliderWrapper = document.getElementById('square-slider-wrapper');
+                    const sliderPosts = filteredPosts.slice(0, 4);
+                    if (sliderWrapper && sliderPosts.length > 0) {
+                        let sliderHtml = sliderPosts.map((p, idx) => `
+                            <div class="square-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${p.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'}');">
+                                <div class="square-caption">
+                                    <a href="?article=${p.slug}" class="square-title" style="color: inherit; text-decoration: none; display: block; cursor: pointer;" onclick="openPostBySlug('${p.slug}'); return false;">${p.title}</a>
+                                    <div class="square-desc">${p.description ? p.description.substring(0, 70) + '...' : ''}</div>
+                                </div>
+                            </div>
+                        `).join('');
+        
+                        sliderHtml += `
+                            <button class="slider-arrow slider-prev" id="slider-prev-btn" aria-label="السابق"><i class="fa-solid fa-chevron-right"></i></button>
+                            <button class="slider-arrow slider-next" id="slider-next-btn" aria-label="التالي"><i class="fa-solid fa-chevron-left"></i></button>
+                        `;
+                        sliderWrapper.innerHTML = sliderHtml;
+                        initSliderLogic();
+                    }
+                } else {
+                    if (container) {
+                        container.innerHTML = `<div class="post-card"><p>لا توجد مقالات منشورة حالياً.</p></div>`;
+                    }
+                }
+        
+                if (data.menu && data.menu.length > 0) {
+                    const menuContainer = document.getElementById('site-main-menu');
+                    if (menuContainer) {
+                        menuContainer.innerHTML = generateMenuHtml(menuTree, true);
+                    }
+                }
+        
+                const areWidgetsEnabled = data.settings ? (data.settings.showWidgets !== false) : true;
+                const sidebarWidgetsContainer = document.getElementById('left-widgets-area');
+                const footerWidgetsContainer = document.getElementById('site-footer-widgets');
+        
+                if (!areWidgetsEnabled) {
+                    if (sidebarWidgetsContainer) sidebarWidgetsContainer.style.display = 'none';
+                    if (footerWidgetsContainer) footerWidgetsContainer.style.display = 'none';
+                } else {
+                    let sidebarHtml = '', footerHtml = '';
+        
+                    if (data.widgets && data.widgets.length > 0) {
+                        data.widgets.forEach(w => {
+                            if (!w.active) return;
+                            let contentBox = '';
+        
+                            if (w.type === 'categories') {
+                                let categories = w.categoriesList || [...new Set(filteredPosts.map(p => p.category).filter(Boolean))];
+                                let catListHtml = `<li><a href="#" onclick="filterPostsByCategory('ALL'); return false;" style="font-size: 0.68rem; font-weight: bold; color: var(--accent-color);"><i class="fa-solid fa-border-all" style="margin-left: 5px;"></i>إظهار الكل</a></li>`;
+                                catListHtml += categories.map(cat => `
+                                    <li><a href="#" onclick="filterPostsByCategory('${cat}'); return false;" style="font-size: 0.68rem;"><i class="fa-solid fa-folder" style="margin-left: 5px; color: var(--primary-color);"></i>${cat}</a></li>
+                                `).join('');
+                                contentBox = `<ul class="recent-posts-list">${catListHtml}</ul>`;
+                            } 
+                            else if (w.type === 'recent' || (w.title && w.title.includes('أحدث المواضيع'))) {
+                                let recentPosts = filteredPosts.slice(0, 3);
+                                contentBox = '<ul class="recent-posts-list">' + recentPosts.map(p => `
+                                    <li><a href="?article=${p.slug}" onclick="openPostBySlug('${p.slug}'); return false;" style="font-size: 0.7rem; display: flex; align-items: center; gap: 5px;">
+                                        <i class="fa-solid fa-clock" style="color: var(--primary-color);"></i>${p.title}
+                                    </a></li>
+                                `).join('') + '</ul>';
+                            }
+                            else if (w.type === 'featured' || (w.title && w.title.includes('مميزة'))) {
+                                if (topFeatured) {
+                                    contentBox = `
+                                        <div style="font-size: 0.8rem;">
+                                            <a href="?article=${topFeatured.slug}" style="color: var(--accent-color); font-weight: bold; text-decoration: none; display: block; margin-bottom: 5px;" onclick="openPostBySlug('${topFeatured.slug}'); return false;">${topFeatured.title}</a>
+                                            <p style="color: var(--text-muted); font-size: 0.75rem; line-height: 1.4;">${topFeatured.description ? topFeatured.description.substring(0, 80) + '...' : ''}</p>
+                                        </div>
+                                    `;
+                                } else {
+                                    contentBox = `<p style="font-size: 0.75rem; color: var(--text-muted);">لا توجد مقالات مميزة حالياً</p>`;
+                                }
+                            } 
+                            else if (w.type === 'contact' && w.contactData) {
+                                let cd = w.contactData;
+                                contentBox = `<div style="font-size: 0.75rem; line-height: 1.6;">`;
+                                if (cd.name) contentBox += `<p><i class="fa-solid fa-user"></i> ${cd.name}</p>`;
+                                if (cd.email) contentBox += `<p><i class="fa-solid fa-envelope"></i> <a href="mailto:${cd.email}" style="color: var(--accent-color);">${cd.email}</a></p>`;
+                                if (cd.phone) contentBox += `<p><i class="fa-solid fa-phone"></i> <a href="tel:${cd.phone}" style="color: var(--accent-color);">${cd.phone}</a></p>`;
+                                if (cd.whatsapp) contentBox += `<p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/${cd.whatsapp}" target="_blank" style="color: var(--accent-color);">واتساب</a></p>`;
+                                if (cd.telegram) contentBox += `<p><i class="fa-brands fa-telegram"></i> <a href="https://t.me/${cd.telegram}" target="_blank" style="color: var(--accent-color);">تليجرام</a></p>`;
+                                contentBox += `</div>`;
+                            } 
+                            else if (w.type === 'static-pages' || (w.title && w.title.includes('الصفحات الثابتة'))) {
+                                let pagesListItems = '';
+                                if (data.staticPagesLinks) {
+                                    staticLinksMap.forEach(item => {
+                                        let linkVal = data.staticPagesLinks[item.key];
+                                        if (linkVal && linkVal.trim() !== '') {
+                                            let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
+                                            pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
+                                        }
+                                    });
+                                }
+                                contentBox = `<ul class="recent-posts-list">${pagesListItems || '<li>لا توجد صفحات ثابتة</li>'}</ul>`;
+                            } 
+                            else {
+                                contentBox = `<div style="font-size: 0.68rem;">${w.content || ''}</div>`;
+                            }
+        
+                            let widgetBlock = `
+                                <div class="widget-card" id="${w.id || ''}">
+                                    <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">${w.title}</h3>
+                                    <div class="widget-content">${contentBox}</div>
                                 </div>
                             `;
-                        } else {
-                            contentBox = `<p style="font-size: 0.75rem; color: var(--text-muted);">لا توجد مقالات مميزة حالياً</p>`;
-                        }
-                    } 
-                    else if (w.type === 'contact' && w.contactData) {
-                        let cd = w.contactData;
-                        contentBox = `<div style="font-size: 0.75rem; line-height: 1.6;">`;
-                        if (cd.name) contentBox += `<p><i class="fa-solid fa-user"></i> ${cd.name}</p>`;
-                        if (cd.email) contentBox += `<p><i class="fa-solid fa-envelope"></i> <a href="mailto:${cd.email}" style="color: var(--accent-color);">${cd.email}</a></p>`;
-                        if (cd.phone) contentBox += `<p><i class="fa-solid fa-phone"></i> <a href="tel:${cd.phone}" style="color: var(--accent-color);">${cd.phone}</a></p>`;
-                        if (cd.whatsapp) contentBox += `<p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/${cd.whatsapp}" target="_blank" style="color: var(--accent-color);">واتساب</a></p>`;
-                        if (cd.telegram) contentBox += `<p><i class="fa-brands fa-telegram"></i> <a href="https://t.me/${cd.telegram}" target="_blank" style="color: var(--accent-color);">تليجرام</a></p>`;
-                        contentBox += `</div>`;
-                    } 
-                    else if (w.type === 'static-pages' || (w.title && w.title.includes('الصفحات الثابتة'))) {
-                        let pagesListItems = '';
-                        if (data.staticPagesLinks) {
-                            staticLinksMap.forEach(item => {
-                                let linkVal = data.staticPagesLinks[item.key];
-                                if (linkVal && linkVal.trim() !== '') {
-                                    let cleanSlug = linkVal.replace('.html', '').split('/').pop().replace('?article=', '').trim();
-                                    pagesListItems += `<li><a href="?article=${cleanSlug}" onclick="openPostBySlug('${cleanSlug}'); return false;" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-angle-left" style="margin-left: 5px; color: var(--primary-color);"></i>${item.label}</a></li>`;
-                                }
-                            });
-                        }
-                        contentBox = `<ul class="recent-posts-list">${pagesListItems || '<li>لا توجد صفحات ثابتة</li>'}</ul>`;
-                    } 
-                    else {
-                        contentBox = `<div style="font-size: 0.68rem;">${w.content || ''}</div>`;
+        
+                            if (w.location === 'footer') footerHtml += widgetBlock;
+                            else sidebarHtml += widgetBlock;
+                        });
                     }
-
-                    let widgetBlock = `
-                        <div class="widget-card" id="${w.id || ''}">
-                            <h3 class="widget-title" style="font-size: 0.85rem; margin-bottom: 8px;">${w.title}</h3>
-                            <div class="widget-content">${contentBox}</div>
-                        </div>
-                    `;
-
-                    if (w.location === 'footer') footerHtml += widgetBlock;
-                    else sidebarHtml += widgetBlock;
-                });
+        
+                    if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
+                    if (footerWidgetsContainer) {
+                        footerWidgetsContainer.style.minHeight = "220px";
+                        footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
+                    }
+                }
+        
+                const urlParams = new URLSearchParams(window.location.search);
+                const articleParam = urlParams.get('article');
+                if (articleParam) {
+                    let slug = articleParam.split('/').pop().replace('.html', '');
+                    openPostBySlug(slug);
+                }
+        
+            } catch (err) {
+                console.error("تعذر جلب ملف بيانات المدونة:", err);
             }
-
-            if (sidebarWidgetsContainer) sidebarWidgetsContainer.innerHTML = sidebarHtml;
-            if (footerWidgetsContainer) {
-                footerWidgetsContainer.style.minHeight = "220px";
-                footerWidgetsContainer.innerHTML = footerHtml || '<div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.8rem;">منطقة التذييل فارغة</div>';
-            }
-        }
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const articleParam = urlParams.get('article');
-        if (articleParam) {
-            let slug = articleParam.split('/').pop().replace('.html', '');
-            openPostBySlug(slug);
-        }
-
-    } catch (err) {
-        console.error("تعذر جلب ملف بيانات المدونة:", err);
-    }
-});
+        });
 
         function initThemeAndFontControls(data) {
             const themes = ['theme-default', 'theme-blue-1', 'theme-pink', 'theme-wood', 'theme-green', 'theme-purple'];
@@ -1570,6 +1576,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                         icon.classList.remove('fa-xmark');
                         icon.classList.add('fa-bars');
                     }
+                }
+            }
+
+            if (window.innerWidth <= 768) {
+                const menuToggle = e.target.closest('.mega-menu li:has(.dropdown-menu) > a');
+                if (menuToggle) {
+                    e.preventDefault();
+                    const parentLi = menuToggle.parentElement;
+                    parentLi.classList.toggle('mobile-open');
                 }
             }
 
