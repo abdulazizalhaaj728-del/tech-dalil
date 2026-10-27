@@ -534,7 +534,7 @@
             }
         
             /* (البند 2) القوائم الرئيسية بحدود ظاهرة يميناً ويساراً، والفرعية تتمدد ولا تختفي عناصرها السفلية */
-            .main-menu-bar {
+.main-menu-bar {
                 position: fixed !important;
                 top: 55px !important;
                 left: 10px !important;
@@ -553,6 +553,7 @@
                 box-shadow: 0 10px 25px rgba(0,0,0,0.3);
                 border: 2px solid var(--primary-color) !important;
                 border-radius: 10px !important;
+                background-color: var(--card-bg) !important;
             }
             .mega-menu.mobile-active {
                 display: flex !important;
@@ -560,27 +561,42 @@
             .mega-menu > li {
                 border: 1px solid var(--border-color) !important;
                 border-radius: 6px !important;
-                background: var(--card-bg);
+                background: var(--bg-color);
+                width: 100% !important;
             }
             .mega-menu li a, .mega-menu > a {
                 padding: 10px 12px !important;
                 font-size: 0.85rem !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                width: 100% !important;
             }
         
-            /* القوائم الفرعية تتمدد بالكامل عمودياً دون قص */
+            /* القوائم الفرعية مطاطية ومرنة للأسفل داخل المستطيل دون قص الحدود */
             .mega-menu .dropdown-menu {
                 position: static !important;
                 display: block !important;
                 box-shadow: none !important;
-                background: rgba(0,0,0,0.15) !important;
+                background: rgba(0,0,0,0.1) !important;
                 border: none !important;
                 margin: 0 !important;
                 padding: 5px 10px !important;
+                width: 100% !important;
             }
             .dropdown-menu li {
                 border-bottom: 1px dashed var(--border-color) !important;
+                width: 100% !important;
             }
+            .dropdown-menu li:last-child {
+                border-bottom: none !important;
+            }
+            .dropdown-menu li a {
+                padding-right: 15px !important;
+            }
+        }
 
+    
             .top-right-row {
                 display: flex !important;
                 flex-direction: column !important;
