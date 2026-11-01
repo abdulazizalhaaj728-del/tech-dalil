@@ -303,6 +303,21 @@
             "content": "",
             "active": true,
             "location": "footer"
+        },
+        {
+            "id": "w_1793515741993",
+            "title": "اتصل بنا",
+            "type": "contact",
+            "content": "",
+            "active": true,
+            "location": "sidebar",
+            "contactData": {
+                "name": "Abdulaziz Othman Alhaaj",
+                "email": "abdulazizalhaaj728@gmail.com",
+                "phone": "",
+                "whatsapp": "966543913406",
+                "telegram": ""
+            }
         }
     ],
     "ads": {
