@@ -14,11 +14,11 @@
     },
     "ads": {
         "topOn": true,
-        "topCode": "<ins style=\"width: 300px; height:250px\" data-width=\"300\" data-height=\"250\" class=\"i63a6fb5f3d\" data-domain=\"//data527.click\" data-affquery=\"/d8950cb1ab1f5e1c28f5/63a6fb5f3d/?placementName=default\"><script src=\"//data527.click/js/responsive.js\" async></script></ins>",
+        "topCode": "",
         "midOn": true,
-        "midCode": "<ins style=\"width: 300px; height:250px\" data-width=\"300\" data-height=\"250\" class=\"i63a6fb5f3d\" data-domain=\"//data527.click\" data-affquery=\"/d8950cb1ab1f5e1c28f5/63a6fb5f3d/?placementName=default\"><script src=\"//data527.click/js/responsive.js\" async></script></ins>",
+        "midCode": "",
         "botOn": true,
-        "botCode": "<ins style=\"width: 300px; height:250px\" data-width=\"300\" data-height=\"250\" class=\"i63a6fb5f3d\" data-domain=\"//data527.click\" data-affquery=\"/d8950cb1ab1f5e1c28f5/63a6fb5f3d/?placementName=default\"><script src=\"//data527.click/js/responsive.js\" async></script></ins>"
+        "botCode": ""
     },
     "posts": [],
     "pages": []
