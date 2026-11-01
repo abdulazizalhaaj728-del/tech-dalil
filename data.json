@@ -13,12 +13,12 @@
         "contact": ""
     },
     "ads": {
-        "topOn": true,
-        "topCode": "<script type=\"text/javascript\" src=\"//my-pu.sh/933df99dbe64eb5d48c7/43d3d25479/?placementName=default\"></script>",
-        "midOn": true,
-        "midCode": "<script type=\"text/javascript\" src=\"//my-pu.sh/933df99dbe64eb5d48c7/43d3d25479/?placementName=default\"></script>",
-        "botOn": true,
-        "botCode": "<script type=\"text/javascript\" src=\"//my-pu.sh/933df99dbe64eb5d48c7/43d3d25479/?placementName=default\"></script>"
+        "topOn": false,
+        "topCode": "",
+        "midOn": false,
+        "midCode": "",
+        "botOn": false,
+        "botCode": ""
     },
     "posts": [],
     "pages": []
